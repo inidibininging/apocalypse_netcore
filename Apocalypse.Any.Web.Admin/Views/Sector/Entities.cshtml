@@ -1,0 +1,30 @@
+﻿@model CharacterEntityListViewModel<CharacterEntity>
+@{
+    ViewData["Title"] = "Sector";
+}
+
+<h2>Sector</h2>
+<h3>@Model.Name</h3>
+<table class="table table-dark">
+  <thead>
+    <tr>    
+        @foreach (var attribute in typeof(CharacterSheet).GetProperties())
+        {
+            <th scop="col">@attribute.Name</th>
+        }
+        
+    </tr>
+  </thead>
+@foreach(var entity in Model.Entities)
+{
+    <tr scope="row">
+        <th scope="row">@entity.Name</th>
+        @foreach(var prop in entity.Stats.GetType().GetProperties())
+        {
+            <td>@Html.DisplayName(prop.GetValue(entity)?.ToString())</td>
+        }
+    </tr>
+}
+</table>
+
+

@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Apocalypse.Any.Domain.Common.DrawingOrder\Apocalypse.Any.Domain.Common.DrawingOrder.csproj" />
+    <ProjectReference Include="..\Apocalypse.Any.Domain.Common.Model.Network\Apocalypse.Any.Domain.Common.Model.Network.csproj" />
+    <ProjectReference Include="..\Apocalypse.Any.Domain.Common.Model\Apocalypse.Any.Domain.Common.Model.csproj" />
+    <ProjectReference Include="..\Apocalypse.Any.Domain.Server.Model\Apocalypse.Any.Domain.Server.Model.csproj" />
+    <ProjectReference Include="..\Apocalypse.Any.Domain.Server.Sector.Model\Apocalypse.Any.Domain.Server.Sector.Model.csproj" />
+    <ProjectReference Include="..\Apocalypse.Any.Infrastructure.Common.Services.Serializer.Interfaces\Apocalypse.Any.Infrastructure.Common.Services.Serializer.Interfaces.csproj" />
+    <ProjectReference Include="..\Apocalypse.Any.Infrastructure.Server.Sector.Interfaces\Apocalypse.Any.Infrastructure.Server.Sector.Interfaces.csproj" />
+    <ProjectReference Include="..\Apocalypse.Any.Infrastructure.Server.Services.Data.Interfaces\Apocalypse.Any.Infrastructure.Server.Services.Data.Interfaces.csproj" />
+    <ProjectReference Include="..\Apocalypse.Any.Infrastructure.Server.Services.Mechanics.Interfaces\Apocalypse.Any.Infrastructure.Server.Services.Mechanics.Interfaces.csproj" />
+  </ItemGroup>
+
+</Project>

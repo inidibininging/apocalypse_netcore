@@ -1,0 +1,46 @@
+using System;
+
+namespace Apocalypse.Any.Infrastructure.Server.Language
+{
+    public enum LexiconSymbol
+    {
+        NA,
+        SkipMaterial,
+        Separator,
+        PositiveSign,
+        NegativeSign,
+        Modify,
+        Position,
+        Scale,
+        Color,
+        Alpha,
+        Rotation,
+        X,
+        Y,
+        Create,
+        CreatorIdentifier,
+        CreatorLetter,
+        Destroyer,
+        DestroyerLetter,
+        Destroy,
+        EntityIdentifier,
+        FactionIdentifier,
+        FactionLetter,
+        EntityLetter,
+        Entity,
+        Stats,
+        Attribute,
+        FunctionIdentifier,
+        FunctionLetter,
+        Function,
+        Execute,
+        Number,
+        Miliseconds,
+        Seconds,
+        Minutes,
+        Hours,
+        Wait,
+        Every,
+        NotFound,
+    }
+}

@@ -1,0 +1,16 @@
+@model CLIViewModel
+@{
+    ViewData["Title"] = "CLI";
+}
+
+<form asp-controller="World" asp-action="CLIPass" method="post">
+    <div class="form-group">
+        <label asp-for="Expression" class="control-label"></label>
+        <input asp-for="Expression" class="form-control" />
+    </div>        
+</form>
+
+@foreach(var message in Model.Messages)
+{
+    <div class="alert alert-warning" role="alert">@message</div>
+}

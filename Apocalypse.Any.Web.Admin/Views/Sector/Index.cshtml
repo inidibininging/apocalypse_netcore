@@ -1,0 +1,12 @@
+﻿
+<h2>@ViewData["tag"]</h2>
+<h3>MaxPlayers: @ViewData["MaxPlayers"]</h3>
+<h3>MaxEnemies: @ViewData["MaxEnemies"]</h3>
+
+@* @((SectorBoundary)ViewData["SectorBoundary"]).MinSectorX;
+
+@((SectorBoundary)ViewData["SectorBoundary"]).MaxSectorX;
+
+@((SectorBoundary)ViewData["SectorBoundary"]).MaxSectorY;
+
+@((SectorBoundary)ViewData["SectorBoundary"]).MinSectorY; *@

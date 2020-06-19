@@ -1,0 +1,42 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="Apocalypse.Any.GameServer.Config.MainWindow"
+        xmlns:vm="clr-namespace:Apocalypse.Any.GameServer.Config.ViewModel"
+        Title="Apocalypse.Any.GameServer.Config">
+    <Window.DataContext>
+        <vm:StatesViewModel />
+    </Window.DataContext>
+    <StackPanel DataContext="{Binding, ElementName=Connector}">
+        <StackPanel Width="250" Orientation="Horizontal">
+            <StackPanel Orientation="Vertical">
+                <StackPanel Orientation="Vertical">
+                    <TextBlock Text="Server IP:" Width="250" />
+                    <TextBox Text="{Binding IP, Mode=TwoWay}" Width="250"/>
+                </StackPanel>
+                <StackPanel Orientation="Vertical">
+                    <TextBlock Text="Port:" Width="250" />
+                    <TextBox Text="{Binding Port, Mode=TwoWay}" Width="250" />
+                </StackPanel>
+            </StackPanel>
+            <Button Name="ConnectButton" Content="Connect" Command="{Binding ConnectCommand}" />
+            <TextBlock Text="{Binding Message}" />
+        </StackPanel>
+        <ListBox Items="{Binding States}">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel>
+                        <TextBlock Text="{Binding}"/>
+                    </StackPanel>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+        <StackPanel>
+            <Button Name="DeleteStateButton" Content="Delete State" />
+            <Button Name="AddButton" Content="Add State" />
+            <Button Name="RemoveButton" Content="Remove State" />
+        </StackPanel>
+    </StackPanel>
+</Window>
