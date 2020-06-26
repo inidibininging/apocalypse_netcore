@@ -38,7 +38,7 @@ Here are some features buried in the game code:
 - blablabla...
 
 
-## some words regarding frameworks
+## Some words regarding other frameworks
 I know that there are some cool frameworks on top of MonoGame like MonoGame.Extended that can handle many things and tackle many problems including all that I confronted here, but my intention was to understand the problems and see how It works and not to have a working framework that does everything for you.
 
 
