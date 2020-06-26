@@ -32,10 +32,9 @@ Here are some features buried in the game code:
 - Wrapper for the MonoGame sound api
 - RPG stats
 - Inventory
-- State machine
+- State machine - based game server
 - Planet generator
 - Possiblity to make sectors within the game at runtime
-- blablabla...
 
 
 ## Some words regarding other frameworks
