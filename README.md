@@ -9,7 +9,7 @@ The idea evolved into a non-working multiplayer game, that is byfar unfinished a
 
 The final view that I had for this game is a space hack-n-slay game that can function as a plattform for other games (thats the game client in code here).
 
-The other games should be played in same universe (game server) but from other devices and apps, for example a smart-phone, raspberry pi, telegramm etc.
+The other games should be played in the same universe (game server) but from other devices and apps, for example a smart-phone, raspberry pi, telegramm etc.
 
 Every device should have a certain perspective/view to the game and play a different role.
 
