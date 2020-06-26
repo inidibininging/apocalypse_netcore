@@ -174,6 +174,3 @@ For more examples you can look into "apocalypse.echse"
 - some stuff is broken
 - numbers must be written, either with a "+" or "-" prefix.
 
-
-
-# more to come, but not right now
