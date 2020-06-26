@@ -15,7 +15,7 @@ Every device should have a certain perspective/view to the game and play a diffe
 
 So, if you are interested: 
 
-`Help is always welcome`
+`Help is always welcomed`
 
 ---
 Here are some features buried in the game code:
