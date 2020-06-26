@@ -1,7 +1,7 @@
 # apocalypse_netcore
 Game developed for my own self-teaching purpouses
 
-# what is this?
+# What is this?
 I developed this "game" with a little gaming framework on top of the MonoGame Framework in order to understand some principles and problems while making games.
 
 The idea evolved into a non-working multiplayer game, that is byfar unfinished and without a final goal. Consider the current state as 'when it's done'.
@@ -43,16 +43,16 @@ I know that there are some cool frameworks on top of MonoGame like MonoGame.Exte
 
 
 ---
-# installation
+# Installation
 
-## requirements
+## Requirements
 Things you need for the code to compile:
 - .NET Core 2.1 SDK (client/server) https://dotnet.microsoft.com/download/dotnet-core/2.1
 - Monogame https://www.monogame.net/downloads/
 - Monogame Pipeline (included in some installations)
 - Git Bash
 
-## installation steps
+## Installation Steps
 - build the content pipeline with the MonoGame Pipeline 
 - build the client
 - create a folder in the clients output folder named "Content"
@@ -62,20 +62,20 @@ Things you need for the code to compile:
 - start the server
 - start the client
 
-## font issues
+## Font Issues
 If the client crashes and complaints because the font is missing, use another font with the monogame pipeline and retry.
 
-## othe media
+## Other Media
 The license for sounds and images is stored in this repository under "Apocalypse.Any.Client\Content\LICENSE"
 
-## scripting language
+## Scripting Language
 
 I provided a half-working scripting language. Here are 
 
 some examples of what you can do:
 
 
-### : and ! symbol
+### : and !
 
 You can create functions with the ":" symbol and call it via "!".
 
@@ -167,7 +167,7 @@ Mod modifies a value of a game entity (specifically a CharacterEntity)
 
 For more examples you can look into "apocalypse.echse"
 
-#### limitations
+#### Scripting Language Limitations
 
 - there is no possibility now for writing comments or calling functions synchronously
 - names are only limited to letters WithoutSpaceInBetween
