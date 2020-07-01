@@ -68,18 +68,6 @@
 /processorParam:TextureFormat=Color
 /build:Image/debris.png
 
-#begin Image/dummytile.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:Image/dummytile.png
-
 #begin Image/fog.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -547,6 +535,18 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:Image/mediumShips_edit.png
+
+#begin Image/miniCity.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Image/miniCity.png
 
 #begin Image/planets.png
 /importer:TextureImporter
