@@ -1,4 +1,5 @@
 using Apocalypse.Any.Core.Utilities;
+using Apocalypse.Any.Domain.Server.Configuration.Model;
 using Apocalypse.Any.Domain.Server.DataLayer;
 using Apocalypse.Any.Domain.Server.Model;
 using Apocalypse.Any.Domain.Server.Model.Interfaces;
@@ -29,19 +30,26 @@ namespace Apocalypse.Any.GameServer.States.Sector.Storage
     /// <summary>
     /// Builder for IGameSectorLayerService
     /// </summary>
-    public class InMemoryStorageGameSectorLayerServiceFactory : IGameSectorLayerServiceStateMachineFactory<GameServerConfiguration>, IGameSectorLayerServiceFactory
+    public class InMemoryStorageGameSectorLayerServiceFactory : IGameSectorLayerServiceStateMachineFactory<IGameSectorData>, IGameSectorLayerServiceFactory
     {
-        public IStateMachine<string, IGameSectorLayerService> BuildStateMachine(GameServerConfiguration gameServerConfiguration)
+
+        public InMemoryStorageGameSectorLayerServiceFactory(ISerializationAdapter serializationAdapter)
+        {
+            SerializationAdapter = serializationAdapter;
+        }
+
+        public ISerializationAdapter SerializationAdapter { get; }
+
+        public IStateMachine<string, IGameSectorLayerService> BuildStateMachine(IGameSectorData gameServerConfiguration)
         {
             if (gameServerConfiguration == null)
                 throw new NotImplementedException();
             return BuildDefaultStateMachine(gameServerConfiguration);
         }
 
-        private IStateMachine<string, IGameSectorLayerService> BuildDefaultStateMachine(GameServerConfiguration gameServerConfiguration)
+        private IStateMachine<string, IGameSectorLayerService> BuildDefaultStateMachine(IGameSectorData gameServerConfiguration)
         {
-            var inMemoryStorage = new Dictionary<string, IState<string, IGameSectorLayerService>>();
-            var serializer = Activator.CreateInstance(gameServerConfiguration.SerializationAdapterType.LoadType(true, false)[0]) as ISerializationAdapter;
+            var inMemoryStorage = new Dictionary<string, IState<string, IGameSectorLayerService>>();            
 
             inMemoryStorage.Add(ServerGameSectorNewBook.BuildGameStateDataLayerState, new BuildGameStateDataLayerState());
             inMemoryStorage.Add(ServerGameSectorNewBook.BuildDataLayerState, new BuildDataLayerState<GameStateDataLayer>());
@@ -53,13 +61,7 @@ namespace Apocalypse.Any.GameServer.States.Sector.Storage
                 new CommandStateActionDelegate<string, IGameSectorLayerService>(
                     new Action<IStateMachine<string, IGameSectorLayerService>>((machine) =>
                     {
-                        machine.SharedContext.SectorBoundaries = new SectorBoundary()
-                        {
-                            MinSectorX = 0,
-                            MaxSectorX = gameServerConfiguration.SectorXSize,
-                            MinSectorY = 0,
-                            MaxSectorY = gameServerConfiguration.SectorYSize
-                        };
+                        machine.SharedContext.SectorBoundaries = gameServerConfiguration.SectorBoundaries;
                     })));
             inMemoryStorage.Add("BuildMaxes",
                 new CommandStateActionDelegate<string, IGameSectorLayerService>(
@@ -161,7 +163,7 @@ namespace Apocalypse.Any.GameServer.States.Sector.Storage
                         }
                     })));
 
-            inMemoryStorage.Add(ServerGameSectorNewBook.UpdateGameStateDataState, new UpdateGameStateDataState(new PlayerSpaceshipUpdateGameStateFactory(serializer)));
+            inMemoryStorage.Add(ServerGameSectorNewBook.UpdateGameStateDataState, new UpdateGameStateDataState(new PlayerSpaceshipUpdateGameStateFactory(SerializationAdapter)));
             inMemoryStorage.Add(ServerGameSectorNewBook.RemoveDestroyedProjectilesState, new RemoveDestroyedProjectilesState(new DestroyedProjectilesIterator()));
 
             inMemoryStorage.Add(ServerGameSectorNewBook.ProcessRotationMapsForPlayerMechanicsState, new ProcessRotationMapsForPlayerMechanicsState());

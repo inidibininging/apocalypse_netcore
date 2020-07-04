@@ -5,6 +5,7 @@ using Apocalypse.Any.Domain.Common.Mechanics;
 using Apocalypse.Any.Domain.Common.Model;
 using Apocalypse.Any.Domain.Common.Model.Network;
 using Apocalypse.Any.Domain.Common.Network;
+using Apocalypse.Any.Domain.Server.Configuration.Model;
 using Apocalypse.Any.Domain.Server.Model;
 using Apocalypse.Any.Domain.Server.Model.Interfaces;
 using Apocalypse.Any.Domain.Server.Model.Network;
@@ -61,7 +62,7 @@ namespace Apocalypse.Any.GameServer.GameInstance
         /// <summary>
         /// Factory for game sector contexts
         /// </summary>
-        public IGameSectorLayerServiceStateMachineFactory<GameServerConfiguration> SectorStateMachine { get; set; }
+        public IGameSectorLayerServiceStateMachineFactory<IGameSectorData> SectorStateMachine { get; set; }
 
         public IList<ISingleUpdeatableMechanic<IGameSectorsOwner, IGameSectorsOwner>> SectorsOwnerMechanics { get; set; }
 
@@ -76,7 +77,7 @@ namespace Apocalypse.Any.GameServer.GameInstance
         private NetIncomingMessageBusService<NetServer> ServerInput { get; set; }
         private NetOutgoingMessageBusService<NetServer> ServerOutput { get; set; }
 
-        private ExampleLoginAndRegistrationService AuthenticationService { get; set; }
+        private IUserAuthenticationService AuthenticationService { get; set; }
 
         public GameServerConfiguration Configuration { get; set; }
 
@@ -90,50 +91,23 @@ namespace Apocalypse.Any.GameServer.GameInstance
         private ISerializationAdapter SerializationAdapter { get; set; }
         #endregion EntityFactories
 
-        public WorldGame
-        (
-            GameServerConfiguration configuration
-        )
+        public WorldGame(GameServerConfiguration configuration)
         {
             Configuration = configuration;
+
             var leSerializationType = configuration.SerializationAdapterType.LoadType(true, false)[0];
             SerializationAdapter = Activator.CreateInstance(leSerializationType) as ISerializationAdapter;
+            
             GameSectorLayerServices = new Dictionary<string, IStateMachine<string, IGameSectorLayerService>>();
-            SectorStateMachine = new InMemoryStorageGameSectorLayerServiceFactory();
             AuthenticationService = new ExampleLoginAndRegistrationService();
-            CreateServer(
-                Configuration.ServerPeerName,
-                Configuration.ServerIp,
-                Configuration.ServerPort);
+            SectorStateMachine = new InMemoryStorageGameSectorLayerServiceFactory(SerializationAdapter);
+            
+            CreateServer(Configuration.ServerPeerName, Configuration.ServerIp, Configuration.ServerPort);
+            CreateWorldLayersAndMechanics();
+            CreateServerCommunicationLayer();
 
-            //translator
-            var serverTranslator = new NetworkCommandTranslator(SerializationAdapter);
-            var serverMessageTranslator = new NetIncomingMessageNetworkCommandConnectionTranslator(serverTranslator);
-
-
-            var cliPassthrough = new CLIPassthroughMechanic(AuthenticationService);
-            var writer = new GameSectorLayerWriterMechanic
-            {
-                RedisHost = Configuration.RedisHost,
-                RedisPort = Configuration.RedisPort
-            };
-            var rediCliPassthrough = new RedisCLIPassthroughMechanic(AuthenticationService)
-            {
-                RedisHost = Configuration.RedisHost,
-                RedisPort = Configuration.RedisPort
-            };
-
-            SectorsOwnerMechanics = new List<ISingleUpdeatableMechanic<IGameSectorsOwner, IGameSectorsOwner>>
-            {
-                //routeTrespassingMarker,
-                //playerShifter,
-                cliPassthrough,
-                rediCliPassthrough,
-                writer
-            };
-
-            //create default starting sector
-            //AddSectorStateMachine(Configuration.StartingSector);
+            var startingSector = Configuration.SectorConfigurations.FirstOrDefault(s => s.Tag == Configuration.StartingSector);
+            //create default starting sector            
             BuildSector(
                 Configuration.StartingSector,
                 Configuration.StartingSector,
@@ -142,6 +116,7 @@ namespace Apocalypse.Any.GameServer.GameInstance
                 Configuration.StartingSector);
 
 
+            //MAIN SECTOR
             var inGameSectorStateMachine = GameSectorLayerServices[Configuration.StartingSector];
             inGameSectorStateMachine.SharedContext = new GameSectorLayerService
             {
@@ -151,11 +126,8 @@ namespace Apocalypse.Any.GameServer.GameInstance
             //inGameSectorStateMachine.SharedContext.CurrentStatus = GameSectorStatus.Running;
             inGameSectorStateMachine
                 .GetService
-                .Get(Configuration.BuildOperation)
+                .Get(startingSector.BuildOperation)
                 .Handle(inGameSectorStateMachine);
-
-
-
 
             var sectorList = new List<string>();
             for (int sectorIndex = 0; sectorIndex < 1; sectorIndex++)
@@ -182,6 +154,53 @@ namespace Apocalypse.Any.GameServer.GameInstance
 
 
 
+            //Language script file
+            LanguageScriptFileEvaluator languageScriptFileEvaluator = new LanguageScriptFileEvaluator(startingSector.StartupScript, startingSector.StartupFunction);
+            foreach (var sector in GameSectorLayerServices.Values)
+            {
+                languageScriptFileEvaluator.Evaluate(sector);
+            }
+
+            Console.WriteLine("runner starting..." + startingSector.StartupFunction);
+            CreateGameTimeIfNotExists(null);
+            Console.WriteLine(CurrentGameTime);
+            foreach (var sector in GameSectorLayerServices.Values)
+            {
+                sector.SharedContext.CurrentGameTime = CurrentGameTime;
+                sector.Run(startingSector.StartupFunction);
+            }
+        }
+
+        private void CreateWorldLayersAndMechanics()
+        {
+            var cliPassthrough = new CLIPassthroughMechanic(AuthenticationService);
+            var writer = new GameSectorLayerWriterMechanic
+            {
+                RedisHost = Configuration.RedisHost,
+                RedisPort = Configuration.RedisPort
+            };
+            var rediCliPassthrough = new RedisCLIPassthroughMechanic(AuthenticationService)
+            {
+                RedisHost = Configuration.RedisHost,
+                RedisPort = Configuration.RedisPort
+            };
+
+            SectorsOwnerMechanics = new List<ISingleUpdeatableMechanic<IGameSectorsOwner, IGameSectorsOwner>>
+            {
+                //routeTrespassingMarker,
+                //playerShifter,
+                cliPassthrough,
+                rediCliPassthrough,
+                writer
+            };
+        }
+
+        private void CreateServerCommunicationLayer()
+        {
+            //translator
+            var serverTranslator = new NetworkCommandTranslator(SerializationAdapter);
+            var serverMessageTranslator = new NetIncomingMessageNetworkCommandConnectionTranslator(serverTranslator);
+
             //datalayer to gather data out of the game world
             var serverStateDataLayer = new ServerGameStateService<WorldGame>(
                                                 AuthenticationService,
@@ -199,23 +218,8 @@ namespace Apocalypse.Any.GameServer.GameInstance
                 GetLogger());
 
             GameStateContext.Initialize();
-
-            //Language script file
-            LanguageScriptFileEvaluator languageScriptFileEvaluator = new LanguageScriptFileEvaluator(Configuration.StartupScript, Configuration.StartupFunction);
-            foreach (var sector in GameSectorLayerServices.Values)
-            {
-                languageScriptFileEvaluator.Evaluate(sector);
-            }
-
-            Console.WriteLine("runner starting..." + Configuration.StartupFunction);
-            CreateGameTimeIfNotExists(null);
-            Console.WriteLine(CurrentGameTime);
-            foreach (var sector in GameSectorLayerServices.Values)
-            {
-                sector.SharedContext.CurrentGameTime = CurrentGameTime;
-                sector.Run(Configuration.StartupFunction);
-            }
         }
+
         private void BuildSector(string sectorName,
                                 string sectorUp,
                                 string sectorLeft,
@@ -263,6 +267,7 @@ namespace Apocalypse.Any.GameServer.GameInstance
                         GameSectorDestinationTag = sectorUp
                     },
                 });
+
             var routeTrespassingMarker = new RouteTrespassingMarkerMechanic(new RouteDualMediator(null, null), 100);
             var mediator = new RouteDualMediator(routeTrespassingMarker, playerShifter);
             routeTrespassingMarker.setRouteMediator(mediator);
@@ -272,6 +277,7 @@ namespace Apocalypse.Any.GameServer.GameInstance
             SectorsOwnerMechanics.Add(playerShifter);
 
         }
+
         /// <summary>
         /// Creates a server object ( NetServer ) for interacting with clients
         /// </summary>
@@ -295,6 +301,7 @@ namespace Apocalypse.Any.GameServer.GameInstance
             Console.WriteLine(Server.ToString());
         }
 
+
         private void AddSectorStateMachine(string sectorName)
         {
             if (string.IsNullOrWhiteSpace(sectorName))
@@ -302,7 +309,12 @@ namespace Apocalypse.Any.GameServer.GameInstance
             if (GameSectorLayerServices.ContainsKey(sectorName))
                 throw new SectorAlreadyExistsException(sectorName);
 
-            GameSectorLayerServices.Add(sectorName, SectorStateMachine.BuildStateMachine(Configuration));
+            //Get the sector configuration or overwrites it with the starting sector configuration
+            var sectorConfiguration = Configuration.SectorConfigurations.FirstOrDefault(s => s.Tag == sectorName);
+            if (sectorConfiguration == null)
+                sectorConfiguration = Configuration.SectorConfigurations.FirstOrDefault(s => s.Tag == Configuration.StartingSector);
+
+            GameSectorLayerServices.Add(sectorName, SectorStateMachine.BuildStateMachine(sectorConfiguration));
         }
 
         private TimeSpan TotalRealTime { get; set; }
@@ -344,10 +356,15 @@ namespace Apocalypse.Any.GameServer.GameInstance
 
             foreach (var sector in GameSectorLayerServices.Values.Where(sector => sector.SharedContext.CurrentStatus == GameSectorStatus.Running))
             {
+                //run the default sector run operation if not specified
+                var sectorRunOperation = Configuration.SectorConfigurations.FirstOrDefault(s => s.Tag == sector.SharedContext.Tag)?.RunOperation;
+                if(sectorRunOperation == null)
+                    sectorRunOperation = Configuration.SectorConfigurations.FirstOrDefault(s => s.Tag == Configuration.StartingSector).RunOperation;
+
                 sector.SharedContext.CurrentGameTime = CurrentGameTime;
                 sector
                     .GetService
-                    .Get(Configuration.RunOperation)
+                    .Get(sectorRunOperation)
                     //  .Get("RunInParallel")
                     .Handle(sector);
             }

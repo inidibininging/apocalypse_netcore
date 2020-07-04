@@ -21,7 +21,7 @@ namespace Apocalypse.Any.Infrastructure.Server.Language
         public LanguageScriptFileEvaluator Evaluate(IStateMachine<string, IGameSectorLayerService> context)
         {
             if (!System.IO.File.Exists(FilePath))
-                throw new FileNotFoundException("No mechanic specified", FilePath);
+                throw new FileNotFoundException("No echse file specified", FilePath);
             var scriptFileContent = File.ReadAllText(FilePath);
             Interpreter.Context = context;
             Interpreter.Run(scriptFileContent);

@@ -1,6 +1,8 @@
 ﻿using Apocalypse.Any.Domain.Common.Mechanics;
 using Apocalypse.Any.Domain.Common.Model.Network;
+using Apocalypse.Any.Domain.Server.Configuration.Model;
 using Apocalypse.Any.Domain.Server.Model;
+using Apocalypse.Any.Domain.Server.Model.Interfaces;
 using Apocalypse.Any.Infrastructure.Common.Services.Network.Interfaces.Factories;
 using Apocalypse.Any.Infrastructure.Server.Services.Data.Interfaces;
 using Microsoft.Xna.Framework;
@@ -15,7 +17,7 @@ namespace Apocalypse.Any.GameServer.GameInstance
         Dictionary<string, IStateMachine<string, IGameSectorLayerService>> GameSectorLayerServices { get; set; }
         PlayerSpaceshipFactory PlayerFactory { get; set; }
         IList<ISingleUpdeatableMechanic<IGameSectorsOwner, IGameSectorsOwner>> SectorsOwnerMechanics { get; set; }
-        IGameSectorLayerServiceStateMachineFactory<GameServerConfiguration> SectorStateMachine { get; set; }
+        IGameSectorLayerServiceStateMachineFactory<IGameSectorData> SectorStateMachine { get; set; }
 
         void BroadcastMessage(string message);
         bool ForwardClientDataToGame(GameStateUpdateData updateData);

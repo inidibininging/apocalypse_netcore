@@ -9,7 +9,7 @@ namespace Apocalypse.Any.Infrastructure.Common.Services.Serializer.YamlAdapter
                 new SharpYaml.Serialization.SerializerSettings()
                 {
                     EmitAlias = false,
-                    EmitJsonComptible= true                      
+                    EmitJsonComptible= false                      
                 });
         
         public YamlSerializerAdapter()
