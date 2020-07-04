@@ -13,6 +13,8 @@ namespace Apocalypse.Any.Infrastructure.Server.Services.Mechanics
         
         public ImageData Update(ImageData entity)
         {
+            if (!entity.SelectedFrame.Contains("planet") && !entity.SelectedFrame.Contains("fog"))
+                return entity;
             // var x = entity.Width*entity.Scale.X;
             // var y = entity.Height*entity.Scale.Y;
             // var circum = (System.MathF.Pow(x,2) + System.MathF.Pow(y,2)) / 2;

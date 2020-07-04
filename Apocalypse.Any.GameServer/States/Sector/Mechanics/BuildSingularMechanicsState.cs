@@ -190,18 +190,18 @@ namespace Apocalypse.Any.GameServer.States.Sector.Mechanics
                         );
             }
 
-            if(!machine.SharedContext.SingularMechanics.ImageDataMechanics.ContainsKey("move_props_around"))
+            if (!machine.SharedContext.SingularMechanics.ImageDataMechanics.ContainsKey("move_props_around"))
             {
                 machine.SharedContext.SingularMechanics.ImageDataMechanics.Add("move_props_around",
                                 new ThrustProxyImageDataMechanic(
                                     new ThrustMechanic()
                                 )
                                 {
-                                    SpeedFactor = (float)Randomness.Instance.From(1,100) / 200f
+                                    SpeedFactor = (float)Randomness.Instance.From(1, 100) / 200f
                                 });
             }
 
-            if(!machine.SharedContext.SingularMechanics.ImageDataMechanics.ContainsKey("strecth_prop"))
+            if (!machine.SharedContext.SingularMechanics.ImageDataMechanics.ContainsKey("strecth_prop"))
             {
                 var morph = new Func<ImageData,ImageData>((entity)=>
                 {

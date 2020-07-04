@@ -16,6 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Apocalypse.Any.Client\Apocalypse.Any.Client.csproj" />
     <ProjectReference Include="..\Apocalypse.Any.Domain.Server.Model\Apocalypse.Any.Domain.Server.Model.csproj" />
     <ProjectReference Include="..\Apocalypse.Any.Infrastructure.Common.Services.Serializer.JsonAdapter\Apocalypse.Any.Infrastructure.Common.Services.Serializer.JsonAdapter.csproj" />
     <ProjectReference Include="..\Apocalypse.Any.Infrastructure.Common.Services.Serializer.MsgPackAdapter\Apocalypse.Any.Infrastructure.Common.Services.Serializer.MsgPackAdapter.csproj" />

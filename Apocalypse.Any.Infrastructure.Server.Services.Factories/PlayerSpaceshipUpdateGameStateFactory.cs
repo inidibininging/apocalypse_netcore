@@ -14,7 +14,7 @@ namespace Apocalypse.Any.Infrastructure.Server.Services.Transformations
 {
     public class PlayerSpaceshipUpdateGameStateFactory : CheckWithReflectionFactoryBase<GameStateData>
     {
-        public int DrawingDistance { get; set; } = 768;
+        public int DrawingDistance { get; set; } = 1024;
         public ISerializationAdapter SerializationAdapter { get; }
 
         public PlayerSpaceshipUpdateGameStateFactory(ISerializationAdapter serializationAdapter)
@@ -115,7 +115,7 @@ namespace Apocalypse.Any.Infrastructure.Server.Services.Transformations
                 .ImageData
                 .Where(e => Vector2.Distance(
                                 e.Position.ToVector2(),
-                                player.CurrentImage.Position.ToVector2()) <= DrawingDistance || e.SelectedFrame.Contains("fog"))
+                                player.CurrentImage.Position.ToVector2()) <= DrawingDistance + 1024 || e.SelectedFrame.Contains("fog"))
                 .ToList());
 
             //get selected item of player (just in case) / for now...

@@ -51,7 +51,7 @@ namespace Apocalypse.Any.GameServer.States.Sector.Factories
             machine.SharedContext.Factories.EnemyFactory.Add(nameof(UncofiguredEnemyFactory), new UncofiguredEnemyFactory());
             machine.SharedContext.Factories.ImageDataFactory.Add(nameof(RandomPlanetFactory), new RandomPlanetFactory());
             machine.SharedContext.Factories.ImageDataFactory.Add(nameof(RandomMediumSpaceshipFactory), new RandomMediumSpaceshipFactory());
-            machine.SharedContext.Factories.ImageDataFactory.Add(nameof(RandomFogFactory),new RandomFogFactory());
+            machine.SharedContext.Factories.ImageDataFactory.Add(nameof(RandomFogFactory),new RandomFogFactory());            
             machine.SharedContext.Factories.ProjectileFactory.Add(nameof(ProjectileFactory), new ProjectileFactory(new ThrustMechanic()));
 
 

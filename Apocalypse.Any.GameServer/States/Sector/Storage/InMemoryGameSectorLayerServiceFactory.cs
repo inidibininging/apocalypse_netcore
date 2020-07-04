@@ -47,7 +47,8 @@ namespace Apocalypse.Any.GameServer.States.Sector.Storage
             inMemoryStorage.Add(ServerGameSectorNewBook.BuildDataLayerState, new BuildDataLayerState<GameStateDataLayer>());
             inMemoryStorage.Add(ServerGameSectorNewBook.BuildFactoriesState, new BuildFactoriesState());
             inMemoryStorage.Add(ServerGameSectorNewBook.BuildSingularMechanicsState, new BuildSingularMechanicsState());
-
+            inMemoryStorage.Add(nameof(BuildMiniCityFactories), new BuildMiniCityFactories(new Client.Services.RectangularFrameGeneratorService(), "Image/miniCity"));
+            
             inMemoryStorage.Add("BuildSectorBoundaries",
                 new CommandStateActionDelegate<string, IGameSectorLayerService>(
                     new Action<IStateMachine<string, IGameSectorLayerService>>((machine) =>
@@ -92,10 +93,11 @@ namespace Apocalypse.Any.GameServer.States.Sector.Storage
                 {
                     ServerGameSectorNewBook.BuildDataLayerState,
                     ServerGameSectorNewBook.BuildGameStateDataLayerState,
-                    "BuildSectorBoundaries",
+                    "BuildSectorBoundaries",                    
                     "BuildMaxes",
                     "BuildMessages",
                     ServerGameSectorNewBook.BuildFactoriesState,
+                    nameof(BuildMiniCityFactories),
                     ServerGameSectorNewBook.BuildSingularMechanicsState,
                     "MarkSectorAsRunning"
                 }
@@ -108,6 +110,7 @@ namespace Apocalypse.Any.GameServer.States.Sector.Storage
             inMemoryStorage.Add(ServerGameSectorNewBook.CreateRandomPlanetState, new CreateRandomPlanetCommand());
             inMemoryStorage.Add(ServerGameSectorNewBook.CreateRandomMediumSpaceShipState, new CreateRandomMediumSpaceShipCommand());
             inMemoryStorage.Add(ServerGameSectorNewBook.CreateRandomFogCommand, new CreateRandomFogCommand());
+            inMemoryStorage.Add(nameof(CreateRandomMiniCityCommand), new CreateRandomMiniCityCommand());
 
             //update ALL!!!!
             // inMemoryStorage.Add(ServerGameSectorNewBook.UpdateAllSingularEnemyMechanicsState, new UpdateAllSingularEnemyMechanicsState());
@@ -135,6 +138,11 @@ namespace Apocalypse.Any.GameServer.States.Sector.Storage
                             }
                         }
                     })));
+
+            //inMemoryStorage.Add("UpdateProps", 
+            //    new CommandStateActionDelegate<string, IGameSectorLayerService>(
+            //        new Action<IStateMachine<string, IGameSectorLayerService>>((machine) =>{ })));
+
             inMemoryStorage.Add("UpdateProps", new CommandStateActionDelegate<string, IGameSectorLayerService>(
                     new Action<IStateMachine<string, IGameSectorLayerService>>((machine) =>
                     {
@@ -142,7 +150,9 @@ namespace Apocalypse.Any.GameServer.States.Sector.Storage
                         {
                             foreach (var imageData in machine.SharedContext.DataLayer.ImageData)
                             {
-                                if (imageData.SelectedFrame.Contains("planet", StringComparison.OrdinalIgnoreCase) && mech.Key == "move_props_around")
+                                if ( (imageData.SelectedFrame.Contains("planet", StringComparison.OrdinalIgnoreCase) ||
+                                     imageData.SelectedFrame.Contains("miniCity", StringComparison.OrdinalIgnoreCase)) &&
+                                     mech.Key == "move_props_around")
                                 {
                                     continue;
                                 }
@@ -150,6 +160,7 @@ namespace Apocalypse.Any.GameServer.States.Sector.Storage
                             }
                         }
                     })));
+
             inMemoryStorage.Add(ServerGameSectorNewBook.UpdateGameStateDataState, new UpdateGameStateDataState(new PlayerSpaceshipUpdateGameStateFactory(serializer)));
             inMemoryStorage.Add(ServerGameSectorNewBook.RemoveDestroyedProjectilesState, new RemoveDestroyedProjectilesState(new DestroyedProjectilesIterator()));
 
