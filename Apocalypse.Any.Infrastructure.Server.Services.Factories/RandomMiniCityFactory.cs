@@ -121,21 +121,26 @@ namespace Apocalypse.Any.Infrastructure.Server.Services.Factories {
                     yield return streetCenter;
                 }
 
-                var streetSize = Randomness.Instance.From(4, 12);
+                var streetSize = Randomness.Instance.From(2, 14);
+                var lastStreetUp = 1;
+                var lastStreetDown = 1;
+                var lastStreetLeft = 1;
+                var lastStreetRight = 1;
                 while (streetSize-- >= 0)
                 {
                     var nextDirection = Randomness.Instance.From(0, 4);
-
                     switch (nextDirection)
                     {
                         case Up:
+                            
                             var streetUp = new MovementBehaviour()
                             {
                                 X = streetCenter.Position.X,
-                                Y = streetCenter.Position.Y - streetCenter.Height
+                                Y = streetCenter.Position.Y - streetCenter.Height * lastStreetUp
                             };
-                            if (Nodes.Any(t => Vector2.Distance(t.Item2, streetUp) <= tileSize))
+                            if (Nodes.Any(t => Vector2.Distance(t.Item2, streetUp) <= tileSize/2))
                                 break;
+                            lastStreetUp++;
                             var streetUpImageData = StreetVerticalMaker.Create(streetUp);
                             streetUpImageData.LayerDepth -= CityLayer;
                             Nodes.Add(new Tuple<int, Vector2>(Up, streetUp));
@@ -145,10 +150,11 @@ namespace Apocalypse.Any.Infrastructure.Server.Services.Factories {
                             var streetDown = new MovementBehaviour()
                             {
                                 X = streetCenter.Position.X,
-                                Y = streetCenter.Position.Y + streetCenter.Height
+                                Y = streetCenter.Position.Y + streetCenter.Height * lastStreetDown
                             };
                             if (Nodes.Any(t => Vector2.Distance(t.Item2, streetDown) <= tileSize))
                                 break;
+                            lastStreetDown++;
                             var streetDownImageData = StreetVerticalMaker.Create(streetDown);
                             streetDownImageData.LayerDepth -= CityLayer;
                             Nodes.Add(new Tuple<int, Vector2>(Down, streetDown));
@@ -157,11 +163,12 @@ namespace Apocalypse.Any.Infrastructure.Server.Services.Factories {
                         case Left:
                             var streetLeft = new MovementBehaviour()
                             {
-                                X = streetCenter.Position.X - streetCenter.Width,
+                                X = streetCenter.Position.X - streetCenter.Width * lastStreetLeft,
                                 Y = streetCenter.Position.Y
                             };
                             if (Nodes.Any(t => Vector2.Distance(t.Item2, streetLeft) <= tileSize))
                                 break;
+                            lastStreetLeft++;
                             var streeLeftImageData = StreetHorizontalMaker.Create(streetLeft);
                             streeLeftImageData.LayerDepth -= CityLayer;
                             Nodes.Add(new Tuple<int, Vector2>(Left, streetLeft));
@@ -171,11 +178,12 @@ namespace Apocalypse.Any.Infrastructure.Server.Services.Factories {
                         default:
                             var streetRight = new MovementBehaviour()
                             {
-                                X = streetCenter.Position.X + streetCenter.Width,
+                                X = streetCenter.Position.X + streetCenter.Width * lastStreetRight,
                                 Y = streetCenter.Position.Y
                             };
                             if (Nodes.Any(t => Vector2.Distance(t.Item2, streetRight) <= tileSize))
                                 break;
+                            lastStreetRight++;
                             var streetRightImageData = StreetHorizontalMaker.Create(streetRight);
                             streetRightImageData.LayerDepth -= CityLayer;
                             Nodes.Add(new Tuple<int, Vector2>(Right, streetRight));
