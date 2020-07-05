@@ -50,10 +50,10 @@ namespace Apocalypse.Any.Infrastructure.Server.Services.Factories {
         public int ChancePercentageOfLeftRight { get; set; } = 50;
         public int ChancePercentageOfUpDown { get; set; } = 50;
 
-        private static List<Tuple<int,Vector2>> Nodes { get; set; } = new List<Tuple<int, Vector2>>();
-        private static List<Vector2> CenterNodes { get; set; } = new List<Vector2>();
+        private List<Tuple<int,Vector2>> Nodes { get; set; } = new List<Tuple<int, Vector2>>();
+        private List<Vector2> CenterNodes { get; set; } = new List<Vector2>();
 
-        private static List<Vector2> Buildings { get; set; } = new List<Vector2>();
+        private List<Vector2> Buildings { get; set; } = new List<Vector2>();
 
         public override bool CanUse<TParam> (TParam instance) => CanUseByTType<TParam, IGameSectorBoundaries> ();
 
@@ -109,7 +109,7 @@ namespace Apocalypse.Any.Infrastructure.Server.Services.Factories {
                             nextPosition.X += tileSize;
                             break;
                     }
-                    if (CenterNodes.Any(t => Vector2.Distance(t, nextPosition) <= tileSize))
+                    if (CenterNodes.Any(t => Vector2.Distance(t, nextPosition) <= tileSize) || Nodes.Any(t => Vector2.Distance(t.Item2, nextPosition) <= tileSize / 2))
                     {
                         centers--;
                         continue;
@@ -121,10 +121,11 @@ namespace Apocalypse.Any.Infrastructure.Server.Services.Factories {
                     yield return streetCenter;
                 }
 
-                var streetSize = Randomness.Instance.From(0, 12);
+                var streetSize = Randomness.Instance.From(4, 12);
                 while (streetSize-- >= 0)
                 {
                     var nextDirection = Randomness.Instance.From(0, 4);
+
                     switch (nextDirection)
                     {
                         case Up:
@@ -181,70 +182,75 @@ namespace Apocalypse.Any.Infrastructure.Server.Services.Factories {
                             yield return streetRightImageData;
                             break;
                     }
+
                 }
             }
 
             //build cities in between
             //get maxed out 
-            var buildings = 1;
+            var buildings = Randomness.Instance.From(5,20);
             while(buildings-- >= 0)
             {
-                var atmostUp = Nodes.FirstOrDefault(m => m.Item2.Y == Nodes.Min(n => n.Item2.Y));
-                var atmostDown = Nodes.FirstOrDefault(m => m.Item2.Y == Nodes.Max(n => n.Item2.Y));
-                var atmostLeft = Nodes.FirstOrDefault(m => m.Item2.X == Nodes.Min(n => n.Item2.X));
-                var atmostRight = Nodes.FirstOrDefault(m => m.Item2.X == Nodes.Max(n => n.Item2.X));
+                //var atmostUp = Nodes.FirstOrDefault(m => m.Item2.Y == Nodes.Min(n => n.Item2.Y));
+                //var atmostDown = Nodes.FirstOrDefault(m => m.Item2.Y == Nodes.Max(n => n.Item2.Y));
+                //var atmostLeft = Nodes.FirstOrDefault(m => m.Item2.X == Nodes.Min(n => n.Item2.X));
+                //var atmostRight = Nodes.FirstOrDefault(m => m.Item2.X == Nodes.Max(n => n.Item2.X));
 
-                var buildingSize = Randomness.Instance.From(2,5);
+                var selectedNode = Nodes.ElementAt(Randomness.Instance.From(0, Nodes.Count - 1));
 
-                var nextDirection = Randomness.Instance.From(0, 4);                
+                var buildingSize = Randomness.Instance.From(2,3);
+
+                //var nextDirection = Randomness.Instance.From(0, 4);                
                 var buildingTopCreated = false;
 
                 while (buildingSize-- >= 0)
                 {
-                    
                     ImageData nextBuildingChunk = null;
                     MovementBehaviour nextPosition = null;
-                    switch (nextDirection)
+
+                    switch (selectedNode.Item1)
                     {
                         case Up:
-                            nextPosition = new MovementBehaviour() 
-                            { 
-                                X = atmostUp.Item2.X,
-                                Y = atmostUp.Item2.Y - (tileSize * buildingSize)
+                            nextPosition = new MovementBehaviour()
+                            {
+                                X = selectedNode.Item2.X - (tileSize * buildingSize),
+                                Y = selectedNode.Item2.Y 
                             };
                             break;
                         case Down:
                             nextPosition = new MovementBehaviour()
                             {
-                                X = atmostDown.Item2.X,
-                                Y = atmostDown.Item2.Y + (tileSize * buildingSize)
+                                X = selectedNode.Item2.X + (tileSize * buildingSize),
+                                Y = selectedNode.Item2.Y 
                             };
                             break;
                         case Left:
                             nextPosition = new MovementBehaviour()
                             {
-                                X = atmostLeft.Item2.X - (tileSize * buildingSize),
-                                Y = atmostLeft.Item2.Y 
+                                X = selectedNode.Item2.X,
+                                Y = selectedNode.Item2.Y + (tileSize * buildingSize)
                             };
                             break;
                         case Right:
                             nextPosition = new MovementBehaviour()
                             {
-                                X = atmostLeft.Item2.X + (tileSize * buildingSize),
-                                Y = atmostLeft.Item2.Y
+                                X = selectedNode.Item2.X,
+                                Y = selectedNode.Item2.Y + (tileSize * buildingSize)
                             };
                             break;
                     }
-                    if (Nodes.Any(t => Vector2.Distance(t.Item2, nextPosition) <= tileSize) || CenterNodes.Any(t => Vector2.Distance(t, nextPosition) <= tileSize))
+                    if (Nodes.Any(t => Vector2.Distance(t.Item2, nextPosition) <= tileSize / (buildingSize == 0 ? 1: buildingSize)) || 
+                        CenterNodes.Any(t => Vector2.Distance(t, nextPosition) <= tileSize) ||
+                        Buildings.Any(t => Vector2.Distance(t, nextPosition) <= tileSize))
                         continue;
-                    if (buildingTopCreated)
+                    if (!buildingTopCreated)
                     {                        
                         nextBuildingChunk = BuildingMaker.Create(nextPosition);
+                        buildingTopCreated = true;
                     }
                     else
                     {
                         nextBuildingChunk = BuildingTopMaker.Create(nextPosition);
-                        buildingTopCreated = true;
                     }
                     Buildings.Add(nextPosition);
                     yield return nextBuildingChunk;
@@ -252,5 +258,7 @@ namespace Apocalypse.Any.Infrastructure.Server.Services.Factories {
             }
             CityLayer -= DrawingPlainOrder.MicroPlainStep;
         }
+
+        //private Tuple<int, Vector2> GetStreetFreeForBuilding()
     }
 }
