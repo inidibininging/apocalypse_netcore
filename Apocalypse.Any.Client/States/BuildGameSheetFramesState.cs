@@ -19,7 +19,12 @@ namespace Apocalypse.Any.Client.States
             machine.SharedContext.Messages.Add(nameof(BuildGameSheetFramesState));
             machine.SharedContext.GameSheet.Frames = FrameGeneratorService.GenerateGameSheetAtlas();
 
-            foreach (var currentFrame in FrameGeneratorService.GenerateGameSheetAtlas("player", 32, 32, 0, 3, 7, 7))
+            //foreach (var currentFrame in FrameGeneratorService.GenerateGameSheetAtlas("player", 32, 32, 0, 3, 7, 7))
+            //    machine.SharedContext.GameSheet.Frames.Add(currentFrame.Key, currentFrame.Value);
+            foreach (var currentFrame in FrameGeneratorService.GenerateGameSheetAtlas("player", 32, 32, 0, 4, 0, 3))
+                machine.SharedContext.GameSheet.Frames.Add(currentFrame.Key, currentFrame.Value);
+
+            foreach (var currentFrame in FrameGeneratorService.GenerateGameSheetAtlas("player", 32, 32, 0, 3, 4, 4))
                 machine.SharedContext.GameSheet.Frames.Add(currentFrame.Key, currentFrame.Value);
 
             foreach (var currentFrame in FrameGeneratorService.GenerateGameSheetAtlas("enemy", 32, 32, 0, 8, 0, 1))
@@ -35,6 +40,11 @@ namespace Apocalypse.Any.Client.States
                 machine.SharedContext.GameSheet.Frames.Add(currentFrame.Key, currentFrame.Value);
 
             foreach (var currentFrame in FrameGeneratorService.GenerateGameSheetAtlas("explosion", 32, 32, 0, 3, 8, 8))
+                machine.SharedContext.GameSheet.Frames.Add(currentFrame.Key, currentFrame.Value);
+
+            foreach (var currentFrame in FrameGeneratorService.GenerateGameSheetAtlas("faces", 32, 32, 0, 4, 0, 2))
+                machine.SharedContext.GameSheet.Frames.Add(currentFrame.Key, currentFrame.Value);
+            foreach (var currentFrame in FrameGeneratorService.GenerateGameSheetAtlas("faces", 32, 32, 0, 3, 3, 3))
                 machine.SharedContext.GameSheet.Frames.Add(currentFrame.Key, currentFrame.Value);
 
             //@todo exploding diarrhea

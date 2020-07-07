@@ -20,6 +20,9 @@ namespace Apocalypse.Any.Infrastructure.Common.Services.Network.Interfaces.Facto
         protected override PlayerSpaceship UseConverter<TParam>(TParam parameter)
         {
             var loginToken = parameter as string;
+            var yFrame = Randomness.Instance.From(0, 4);
+            var xFrame = Randomness.Instance.From(0, yFrame == 4 ? 3 : 4);
+            
             return new PlayerSpaceship()
             {
                 Name = loginToken,
@@ -38,8 +41,8 @@ namespace Apocalypse.Any.Infrastructure.Common.Services.Network.Interfaces.Facto
                 {
                     Id = Guid.NewGuid().ToString(),
                     Alpha = new AlphaBehaviour() { Alpha = 1 },
-                    Path = "Image/gamesheetExtended",
-                    SelectedFrame = $"{IdPrefix}_{Randomness.Instance.From(0, 3)}_7",
+                    Path = "Image/ships",
+                    SelectedFrame = $"{IdPrefix}_{xFrame}_{yFrame}",
                     Height = 32,
                     Width = 32,
                     Scale = new Vector2(1.5f, 1.5f),

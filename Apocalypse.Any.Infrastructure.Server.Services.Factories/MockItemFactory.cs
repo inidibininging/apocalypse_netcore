@@ -14,7 +14,7 @@ namespace Apocalypse.Any.Infrastructure.Common.Services.Network.Interfaces.Facto
 {
     public class MockItemFactory : CheckWithReflectionFactoryBase<Item>//, IItemFactory
     {
-        private string IdPrefix { get; set; } = "minerals";
+        private string IdPrefix { get; set; } = "faces";
         private CharacterSheetFactory CharacterSheetFactory { get; set; }
         public SectorRandomPositionFactory RandomSectorPositionGenerator { get; set; }
         private ICharacterNameGenerator<Item> NameGenerator { get; set; }
@@ -43,19 +43,22 @@ namespace Apocalypse.Any.Infrastructure.Common.Services.Network.Interfaces.Facto
 
         private Item GenerateItem(
             ICharacterSheet characterSheet,
-            Vector2 generatedPosition) => new Item()
+            Vector2 generatedPosition) {
+            var yFrame = Randomness.Instance.From(0, 3);
+            var xFrame = Randomness.Instance.From(0, yFrame == 3 ? 3 : 4);
+            return new Item()
             {
-                Name = "Item", // needs a ItemNameGenerator, based on stats
+                Name = "Survivor", // needs a ItemNameGenerator, based on stats
                 Used = false,
                 InstantUse = Randomness.Instance.TrueOrFalse(),
                 Stats = characterSheet as CharacterSheet, //OUCH !!! Design fail
-                Factions = new List<string>() { "Items", "Generated"},
+                Factions = new List<string>() { "Items", "Generated" },
                 CurrentImage = new ImageData()
                 {
                     Id = $"itm_{Guid.NewGuid().ToString()}",
                     Alpha = new AlphaBehaviour() { Alpha = 1.0f },
                     Path = "Image/gamesheetExtended",
-                    SelectedFrame = $"{IdPrefix}_{Randomness.Instance.From(0, 7)}_{Randomness.Instance.From(2, 3)}",
+                    SelectedFrame = $"{IdPrefix}_{xFrame}_{yFrame}",
                     Height = 32,
                     Width = 32,
                     Scale = new Vector2(1),
@@ -71,9 +74,10 @@ namespace Apocalypse.Any.Infrastructure.Common.Services.Network.Interfaces.Facto
                         Y = generatedPosition.Y
                     },
                     Rotation = new RotationBehaviour() { Rotation = Randomness.Instance.From(0, 360) },
-                    
+
                 }
             };
+        }
 
         private Item GenerateExperienceChunkItem(int exp, Vector2 generatedPosition) => new Item()
         {
