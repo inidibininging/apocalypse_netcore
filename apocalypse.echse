@@ -135,6 +135,7 @@ Wait +15 Seconds
 !MakeAShip
 !MakeAShip
 !MakeAShip
+!CreateRandomMiniCityCommand
 !MakeAWeakEnemy
 !CreateRandomFogCommand
 !CreateRandomFogCommand

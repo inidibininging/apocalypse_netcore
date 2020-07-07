@@ -38,19 +38,20 @@ namespace Apocalypse.Any.GameServer.States.Sector.Factories
             }
 
 
-            var centerFrames = FrameGeneratorService.GenerateGameSheetAtlas("miniCity", 32, 32, 0, 0, 1, 1);
+            var centerFrames = FrameGeneratorService.GenerateGameSheetAtlas("miniCity", 32, 32, 1, 6, 5, 5);
             var horizontalFramesChunkA = FrameGeneratorService.GenerateGameSheetAtlas("miniCity", 32, 32, 0, 5, 0, 0);
-            var verticalFramesChunkA = FrameGeneratorService.GenerateGameSheetAtlas("miniCity", 32, 32, 3, 5, 1, 1);
-            var verticalFramesChunkB = FrameGeneratorService.GenerateGameSheetAtlas("miniCity", 32, 32, 0, 5, 2, 2);
+            
+            var verticalFramesChunkA = FrameGeneratorService.GenerateGameSheetAtlas("miniCity", 32, 32, 0, 6, 1, 1);
+            var verticalFramesChunkB = FrameGeneratorService.GenerateGameSheetAtlas("miniCity", 32, 32, 0, 2, 2, 2);
             
             var finalVerticalFramesChunk = verticalFramesChunkA
                                             .Union(verticalFramesChunkB.Select(kv => kv))
                                             .ToDictionary(kv => kv.Key, kv => kv.Value);
             
-            var buildingTops = FrameGeneratorService.GenerateGameSheetAtlas("miniCity", 32, 32, 1, 4, 3, 3);            
-            var buildingDownsA = FrameGeneratorService.GenerateGameSheetAtlas("miniCity", 32, 32, 5, 5, 3, 3);
-            var buildingDownsB = FrameGeneratorService.GenerateGameSheetAtlas("miniCity", 32, 32, 0, 5, 4, 5);
-            var buildingDownsC = FrameGeneratorService.GenerateGameSheetAtlas("miniCity", 32, 32, 0, 1, 6, 6);
+            var buildingTops = FrameGeneratorService.GenerateGameSheetAtlas("miniCity", 32, 32, 3, 6, 2, 2);            
+            var buildingDownsA = FrameGeneratorService.GenerateGameSheetAtlas("miniCity", 32, 32, 0, 6, 3, 4);
+            var buildingDownsB = FrameGeneratorService.GenerateGameSheetAtlas("miniCity", 32, 32, 0, 5, 4, 0);
+            var buildingDownsC = FrameGeneratorService.GenerateGameSheetAtlas("miniCity", 32, 32, 0, 0, 5, 5);
 
             var finalBuildingDowns = buildingDownsA
                                             .Union(buildingDownsB.Select(kv => kv))
