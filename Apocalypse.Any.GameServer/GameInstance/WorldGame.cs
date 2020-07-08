@@ -404,10 +404,11 @@ namespace Apocalypse.Any.GameServer.GameInstance
 
         public GameStateData RegisterGameStateData(string loginToken)
         {
+            var newPlayer = CreatePlayerSpaceShip(loginToken);
             GameSectorLayerServices[Configuration.StartingSector]
                     .SharedContext
                     .DataLayer
-                    .Players.Add(CreatePlayerSpaceShip(loginToken));
+                    .Players.Add(newPlayer);
             return GameSectorLayerServices[Configuration.StartingSector]
                     .SharedContext
                     .IODataLayer.RegisterGameStateData(loginToken);

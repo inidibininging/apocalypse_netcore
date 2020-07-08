@@ -17,7 +17,7 @@ namespace Apocalypse.Any.Client.States.UI.Inventory
             if (machine.SharedContext.MultiplayerText == null)
                 return;
             machine.SharedContext.MultiplayerText.Text = "";
-            machine.SharedContext.MultiplayerText.Color = Color.Yellow;
+            machine.SharedContext.MultiplayerText.Color = Color.Purple;
             machine.SharedContext.MultiplayerText.LayerDepth = DrawingPlainOrder.UIFX;
 
             var cursorImageAsVector = machine.SharedContext.CursorImage.Position.ToVector2();
@@ -30,11 +30,13 @@ namespace Apocalypse.Any.Client.States.UI.Inventory
                 return;
 
             //TODO: possible bug if current image of items changes.. there will be a flickering effect on the item info text
-            var itemData = machine.SharedContext.LastMetadataBag.Items.FirstOrDefault(item => item.CurrentImage.Id == hoveredItemImage.ServerData.Id);
 
+            machine.SharedContext.LastMetadataBag.Items.ForEach(itm => itm.CurrentImage.Scale = new Vector2(1));
+
+            var itemData = machine.SharedContext.LastMetadataBag.Items.FirstOrDefault(item => item.CurrentImage.Id == hoveredItemImage.ServerData.Id);
             if (itemData == null)
                 return;
-
+            hoveredItemImage.Scale = new Vector2(hoveredItemImage.Scale.X + 0.5f, hoveredItemImage.Scale.Y + 0.5f);
             machine.SharedContext.MultiplayerText.Text = $@"{itemData.Name}
 ATK: {itemData.Stats.Attack}
 DEF: {itemData.Stats.Defense}

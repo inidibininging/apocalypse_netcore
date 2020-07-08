@@ -57,15 +57,15 @@ namespace Apocalypse.Any.Infrastructure.Common.Services.Network.Interfaces.Facto
                 {
                     Id = $"itm_{Guid.NewGuid().ToString()}",
                     Alpha = new AlphaBehaviour() { Alpha = 1.0f },
-                    Path = "Image/gamesheetExtended",
+                    Path = "Image/faces",
                     SelectedFrame = $"{IdPrefix}_{xFrame}_{yFrame}",
                     Height = 32,
                     Width = 32,
                     Scale = new Vector2(1),
                     Color = new Color
                             (
-                                                100,
                                                 255,
+                                                128,
                                                 255
                             ),
                     Position = new MovementBehaviour()
@@ -73,7 +73,7 @@ namespace Apocalypse.Any.Infrastructure.Common.Services.Network.Interfaces.Facto
                         X = generatedPosition.X,
                         Y = generatedPosition.Y
                     },
-                    Rotation = new RotationBehaviour() { Rotation = Randomness.Instance.From(0, 360) },
+                    Rotation = new RotationBehaviour() { Rotation = 0 },//Randomness.Instance.From(0, 360) },
 
                 }
             };
