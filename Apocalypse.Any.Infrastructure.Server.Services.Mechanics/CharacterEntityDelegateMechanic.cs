@@ -8,6 +8,7 @@ namespace Apocalypse.Any.Infrastructure.Server.Services.Mechanics
         : ISingleCharacterEntityMechanic<TCharacterEntity>
         where TCharacterEntity : CharacterEntity, new()
     {
+        public bool Active { get; set; } = true;
         Func<TCharacterEntity,TCharacterEntity> CharacterEntityDelegate { get; set; }
         public CharacterEntityDelegateMechanic(Func<TCharacterEntity,TCharacterEntity> characterEntityDelegate)
         {

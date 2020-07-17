@@ -17,12 +17,15 @@ namespace Apocalypse.Any.Infrastructure.Server.Services.Factories
     {
         public override bool CanUse<TParam>(TParam instance) => CanUseByTType<TParam, string>();
 
-        //TODO: finish this
+        public override List<Type> GetValidParameterTypes()
+        {
+            return new List<Type>() { typeof(string) };
+        }
         protected override TCharacter UseConverter<TParam>(TParam parameter)
             => new TCharacter()
             {
                 Name = $"{typeof(TCharacter).Name}{ Guid.NewGuid()}",
-                Factions = new List<string>() { parameter as string },
+                Tags = new List<string>() { parameter as string },
                 CurrentImage = new ImageData(),
                 IconImage = new ImageData(),
                 Stats = new CharacterSheet()

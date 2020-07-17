@@ -16,7 +16,12 @@ namespace Apocalypse.Any.Infrastructure.Server.Services.Factories
         public string IdPrefix { get; set; } = "enemy";
 
         public override bool CanUse<TParam>(TParam instance) => CanUseByTType<TParam, string>();
-        
+
+        public override List<Type> GetValidParameterTypes()
+        {
+            return new List<Type>() { typeof(string) };
+        }
+
         private static CharacterSheetFactory RandomSheet {get;set;} = new CharacterSheetFactory();
         protected override EnemySpaceship UseConverter<TParam>(TParam parameter)
         {
@@ -48,7 +53,7 @@ namespace Apocalypse.Any.Infrastructure.Server.Services.Factories
                     Rotation = new RotationBehaviour() { Rotation = 180 },
                     LayerDepth = DrawingPlainOrder.Entities
                 },
-                Factions = new List<string>() { "Enemies","Generated" }
+                Tags = new List<string>() { "Enemies","Generated" }
             };
         }
     }

@@ -10,7 +10,7 @@ namespace Apocalypse.Any.Infrastructure.Server.Services.Mechanics
     {
         private readonly bool useRight = Randomness.Instance.From(0,100) > 50;
         private readonly float randomRotation = Randomness.Instance.From(0,100)/1500f;
-        
+        public bool Active { get; set; } = true;
         public ImageData Update(ImageData entity)
         {
             if (!entity.SelectedFrame.Contains("planet") && !entity.SelectedFrame.Contains("fog"))

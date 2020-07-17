@@ -50,5 +50,10 @@ namespace Apocalypse.Any.Infrastructure.Server.Services.Factories
                 LayerDepth = DrawingPlainOrder.Entities - DrawingPlainOrder.PlainStep
             };
         }
+
+        public override List<Type> GetValidParameterTypes()
+        {
+            return new List<Type>() { typeof(MovementBehaviour) };
+        }
     }
 }

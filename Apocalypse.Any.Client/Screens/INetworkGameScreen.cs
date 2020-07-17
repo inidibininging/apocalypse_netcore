@@ -55,6 +55,7 @@ namespace Apocalypse.Any.Client.Screens
         IWindow InventoryWindow { get; set; }
         IWindow CharacterWindow { get; set; }
         IWindow TradeWindow { get; set; }
-        IWindow ChatWindow { get; set; }
+        IWindow ChatWindow { get; set; }        
+        IWindow DialogWindow { get; set; }
     }
 }

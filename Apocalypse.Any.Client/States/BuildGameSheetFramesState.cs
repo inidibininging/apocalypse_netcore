@@ -102,6 +102,8 @@ namespace Apocalypse.Any.Client.States
 
             foreach (var currentFrame in FrameGeneratorService.GenerateGameSheetAtlas("miniCity", 32, 32, 0, 0, 5, 5))
                 machine.SharedContext.GameSheet.Frames.Add(currentFrame.Key, currentFrame.Value);
+
+
         }
     }
 }

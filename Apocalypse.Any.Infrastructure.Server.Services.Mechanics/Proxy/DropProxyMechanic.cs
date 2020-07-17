@@ -3,6 +3,7 @@ using Apocalypse.Any.Domain.Common.Model;
 using Apocalypse.Any.Domain.Server.Model;
 using Apocalypse.Any.Infrastructure.Server.Services.Mechanics.Interfaces;
 using System;
+using System.Collections.Generic;
 
 namespace Apocalypse.Any.Infrastructure.Server.Services.Mechanics.Proxy
 {
@@ -11,6 +12,7 @@ namespace Apocalypse.Any.Infrastructure.Server.Services.Mechanics.Proxy
         ISingleMechanic<TCharacterEntity, CharacterEntity>
         where TCharacterEntity : CharacterEntity
     {
+        public bool Active { get; set; } = true;
         public int Offset { get; set; }
         public IDropMechanic Drop { get; private set; }
 
@@ -35,6 +37,11 @@ namespace Apocalypse.Any.Infrastructure.Server.Services.Mechanics.Proxy
             if(Offset == 0)
                 throw new InvalidOperationException("Offset not set");
             return Drop.Update(character, Offset, Offset);
+        }
+
+        public override List<Type> GetValidParameterTypes()
+        {
+            return new List<Type>() { typeof(CharacterEntity) };
         }
     }
 }

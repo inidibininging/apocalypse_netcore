@@ -24,9 +24,9 @@ namespace Apocalypse.Any.Infrastructure.Server.Language
 
             var factionToDestroy = DestroyExpression.Identifier.Name;
             GetAllValidCharacters(machine)
-                .Where(character => character.Factions.Contains(factionToDestroy))
+                .Where(character => character.Tags.Contains(factionToDestroy))
                 .ToList()
-                .ForEach(character => character.Factions.Remove(factionToDestroy));
+                .ForEach(character => character.Tags.Remove(factionToDestroy));
 
             //commented out for now. users should not be created through script for now.            
             //if (machine.SharedContext.Factories.PlayerFactory.ContainsKey(CreateExpression.Creator.Name))

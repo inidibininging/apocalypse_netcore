@@ -67,6 +67,12 @@ namespace Apocalypse.Any.GameServer.States.Sector.Mechanics.PlayerMechanics
                 {
                     if (cmd == DefaultKeys.Boost)
                     {
+                        //Fix for not using boost for players in a dialog
+                        if (player.Tags.Contains(ProcessPlayerDialogsRequestsState.PlayerOnDialogEvent))
+                        {
+                            return;
+                        }
+
                         var playerPositionBeforeThrust = new MovementBehaviour()
                         {
                             X = player.CurrentImage.Position.X,

@@ -7,6 +7,7 @@ using Apocalypse.Any.Domain.Server.Model;
 using Apocalypse.Any.Infrastructure.Server.Services.Mechanics.Interfaces;
 using Microsoft.Xna.Framework;
 using System;
+using System.Collections.Generic;
 
 namespace Apocalypse.Any.Infrastructure.Common.Services.Network.Interfaces.Factories
 {
@@ -20,6 +21,10 @@ namespace Apocalypse.Any.Infrastructure.Common.Services.Network.Interfaces.Facto
             if (thrustMechanics == null)
                 throw new ArgumentNullException(nameof(thrustMechanics));
             ThrustMechanics = thrustMechanics;
+        }
+        public override List<Type> GetValidParameterTypes()
+        {
+            return new List<Type>() { typeof(ICharacterEntity) };
         }
 
         public override bool CanUse<TParam>(TParam instance)

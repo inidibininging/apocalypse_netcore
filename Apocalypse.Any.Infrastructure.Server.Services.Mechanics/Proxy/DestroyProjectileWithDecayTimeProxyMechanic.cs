@@ -7,6 +7,7 @@ namespace Apocalypse.Any.Infrastructure.Server.Services.Mechanics.Proxy
 {
     public class DestroyProjectileWithDecayTimeProxyMechanic : ISingleEntityWithImageMechanic<Projectile>
     {
+        public bool Active { get; set; } = true;
         public TimeSpan DestroyTimeSpan { get; set; }
         private MarkProjectileWithDecayTimeAsDestroyedMechanic DestroyProjectileWithDecayTime { get; set; }
 

@@ -6,6 +6,7 @@ using Apocalypse.Any.Client.States.Services;
 using Apocalypse.Any.Client.States.UI;
 using Apocalypse.Any.Client.States.UI.Character;
 using Apocalypse.Any.Client.States.UI.Chat;
+using Apocalypse.Any.Client.States.UI.Dialog;
 using Apocalypse.Any.Client.States.UI.Info;
 using Apocalypse.Any.Client.States.UI.Inventory;
 using Apocalypse.Any.Core.Drawing;
@@ -84,6 +85,7 @@ namespace Apocalypse.Any.Client.States.Storage
                     ClientGameScreenBook.BuildCharacterWindow,
                     ClientGameScreenBook.BuildInfoWindow,
                     ClientGameScreenBook.BuildInventoryWindow,
+                    nameof(BuildDialogWindowState),
                     //ClientGameScreenBook.ReadServerDataFromConsole,
                     // ClientGameScreenBook.FillWithDefaultServerDataState,
                     ClientGameScreenBook.Connect,
@@ -168,7 +170,9 @@ namespace Apocalypse.Any.Client.States.Storage
                     ClientGameScreenBook.UpdateScreen,
                     ClientGameScreenBook.UpdateCamera,
                     ClientGameScreenBook.UpdateInventoryWindow,
+                    nameof(UpdateDialogWindowState),
                     nameof(UpdateInventoryItemHoverTextState),
+                    nameof(UpdateDialogHoverTextState),
                     ClientGameScreenBook.UpdateInfoWindow,
                     ClientGameScreenBook.SendGameStateUpdateData,
                     "UpdateBackground",
@@ -203,8 +207,11 @@ namespace Apocalypse.Any.Client.States.Storage
             inMemoryStorage.Add(ClientGameScreenBook.BuildInventoryWindow, new BuildInventoryWindowState(dummyHudSheetToChangeInTheFuture));
             inMemoryStorage.Add(ClientGameScreenBook.UpdateInventoryWindow, new UpdateInventoryWindowState());
             inMemoryStorage.Add(ClientGameScreenBook.UpdateInventoryImages, new UpdateInventoryImagesState(new PlayerInventoryDrawingFactory()));
-
+            inMemoryStorage.Add(nameof(UpdateDialogHoverTextState), new UpdateDialogHoverTextState());
             inMemoryStorage.Add(ClientGameScreenBook.BuildChatWindow, new BuildChatWindowState());
+            
+            inMemoryStorage.Add(nameof(BuildDialogWindowState), new BuildDialogWindowState());
+            inMemoryStorage.Add(nameof(UpdateDialogWindowState), new UpdateDialogWindowState());
 
             inMemoryStorage.Add(ClientGameScreenBook.BuildInfoWindow, new BuildInfoWindowState());
             inMemoryStorage.Add(ClientGameScreenBook.UpdateInfoWindow, new UpdateInfoWindowState());

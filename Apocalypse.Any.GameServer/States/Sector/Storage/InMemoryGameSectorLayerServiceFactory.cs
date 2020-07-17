@@ -1,3 +1,5 @@
+using Apocalypse.Any.Client.Services;
+using Apocalypse.Any.Client.States.UI.Dialog;
 using Apocalypse.Any.Core.Utilities;
 using Apocalypse.Any.Domain.Server.DataLayer;
 using Apocalypse.Any.Domain.Server.Model;
@@ -12,7 +14,9 @@ using Apocalypse.Any.GameServer.States.Services;
 using Apocalypse.Any.Infrastructure.Common.Services.Network.Interfaces.Factories;
 using Apocalypse.Any.Infrastructure.Common.Services.Network.Interfaces.Transformations;
 using Apocalypse.Any.Infrastructure.Common.Services.Serializer.Interfaces;
+using Apocalypse.Any.Infrastructure.Server.Services.Data;
 using Apocalypse.Any.Infrastructure.Server.Services.Data.Interfaces;
+using Apocalypse.Any.Infrastructure.Server.Services.Factories;
 using Apocalypse.Any.Infrastructure.Server.Services.Mechanics;
 using Apocalypse.Any.Infrastructure.Server.Services.Mechanics.ProjectileMechanics;
 using Apocalypse.Any.Infrastructure.Server.Services.Transformations;
@@ -44,11 +48,22 @@ namespace Apocalypse.Any.GameServer.States.Sector.Storage
             var serializer = Activator.CreateInstance(gameServerConfiguration.SerializationAdapterType.LoadType(true, false)[0]) as ISerializationAdapter;
 
             inMemoryStorage.Add(ServerGameSectorNewBook.BuildGameStateDataLayerState, new BuildGameStateDataLayerState());
-            inMemoryStorage.Add(ServerGameSectorNewBook.BuildDataLayerState, new BuildDataLayerState<GameStateDataLayer>());
+            inMemoryStorage.Add(ServerGameSectorNewBook.BuildDataLayerState, new BuildDataLayerState<GenericGameStateDataLayer>());
             inMemoryStorage.Add(ServerGameSectorNewBook.BuildFactoriesState, new BuildFactoriesState());
             inMemoryStorage.Add(ServerGameSectorNewBook.BuildSingularMechanicsState, new BuildSingularMechanicsState());
             inMemoryStorage.Add(nameof(BuildMiniCityFactories), new BuildMiniCityFactories(new Client.Services.RectangularFrameGeneratorService(), "Image/miniCity"));
-            
+            inMemoryStorage.Add(nameof(CreateOrUpdateIdentifiableCircularLocationState), new CreateOrUpdateIdentifiableCircularLocationState(
+                                                                                        new RectangularFrameGeneratorService(),
+                                                                                        new ImageToRectangleTransformationService()));
+
+            inMemoryStorage.Add("BuildPlayerDialogService",
+                new CommandStateActionDelegate<string, IGameSectorLayerService>(
+                    new Action<IStateMachine<string, IGameSectorLayerService>>((machine) =>
+                    {
+                        machine.SharedContext.PlayerDialogService = new ExamplePlayerDialogService(new ExampleDialogService(new RandomPortraitGeneratorFactory()));
+                    })));
+
+
             inMemoryStorage.Add("BuildSectorBoundaries",
                 new CommandStateActionDelegate<string, IGameSectorLayerService>(
                     new Action<IStateMachine<string, IGameSectorLayerService>>((machine) =>
@@ -93,7 +108,8 @@ namespace Apocalypse.Any.GameServer.States.Sector.Storage
                 {
                     ServerGameSectorNewBook.BuildDataLayerState,
                     ServerGameSectorNewBook.BuildGameStateDataLayerState,
-                    "BuildSectorBoundaries",                    
+                    "BuildPlayerDialogService",
+                    "BuildSectorBoundaries",
                     "BuildMaxes",
                     "BuildMessages",
                     ServerGameSectorNewBook.BuildFactoriesState,
@@ -134,6 +150,11 @@ namespace Apocalypse.Any.GameServer.States.Sector.Storage
                         {
                             foreach (var entity in machine.SharedContext.DataLayer.Players)
                             {
+                                //Fix for skipping players that are in a dialog
+                                if (mech.Key == "thrust_players" && entity.Tags.Contains(ProcessPlayerDialogsRequestsState.PlayerOnDialogEvent))
+                                {
+                                    continue;
+                                }
                                 mech.Value.Update(entity);
                             }
                         }
@@ -169,6 +190,7 @@ namespace Apocalypse.Any.GameServer.States.Sector.Storage
             inMemoryStorage.Add(ServerGameSectorNewBook.ProcessThrustForPlayerMechanicsState, new ProcessThrustForPlayerMechanicsState());
             inMemoryStorage.Add(ServerGameSectorNewBook.ProcessCollisionMechanicState, new ProcessCollisionMechanicState(new RectangleCollisionMechanic(),
                                                                                             new ImageToRectangleTransformationService()));
+            inMemoryStorage.Add(nameof(ProcessPlayerDialogsRequestsState), new ProcessPlayerDialogsRequestsState());
             inMemoryStorage.Add(ServerGameSectorNewBook.ProcessPlayerChooseStatState, new ProcessPlayerChooseStatState());
             inMemoryStorage.Add(ServerGameSectorNewBook.ProcessUseInventoryForPlayerState, new ProcessUseInventoryForPlayerState());
             inMemoryStorage.Add(ServerGameSectorNewBook.ProcessInventoryLeftState, new ProcessInventoryLeftState());
@@ -289,6 +311,8 @@ namespace Apocalypse.Any.GameServer.States.Sector.Storage
                     ServerGameSectorNewBook.ProcessUseInventoryForPlayerState,
                     ServerGameSectorNewBook.ProcessCollisionMechanicState,
                     ServerGameSectorNewBook.ProcessPlayerChooseStatState,
+                    nameof(CreateOrUpdateIdentifiableCircularLocationState),
+                    nameof(ProcessPlayerDialogsRequestsState),
                     ServerGameSectorNewBook.ProcessInventoryLeftState,
                     ServerGameSectorNewBook.ProcessInventoryRightState,
                     ServerGameSectorNewBook.ProcessReleaseStatState,

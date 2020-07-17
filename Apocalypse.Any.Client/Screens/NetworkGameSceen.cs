@@ -45,6 +45,7 @@ namespace Apocalypse.Any.Client.Screens
         public IWindow CharacterWindow { get; set; }
         public IWindow TradeWindow { get; set; }
         public IWindow ChatWindow { get; set; }
+        public IWindow DialogWindow { get; set; }
 
         #endregion UI
 
@@ -106,10 +107,13 @@ namespace Apocalypse.Any.Client.Screens
             StrenghImage.Draw(spriteBatch);
 
             CursorImage.Draw(spriteBatch);
-            // LerpMouseImage.Draw(spriteBatch);
+            //LerpMouseImage.Draw(spriteBatch);
 
             if (InfoWindow?.IsVisible == true)
                 InfoWindow?.Draw(spriteBatch);
+
+            if (DialogWindow?.IsVisible == true)
+                DialogWindow?.Draw(spriteBatch);
 
             if (InventoryWindow?.IsVisible == true)
                 InventoryWindow.Draw(spriteBatch);

@@ -29,8 +29,6 @@ namespace Apocalypse.Any.GameServer.States.Sector.Mechanics.PlayerMechanics
                  .ToList()
                  .ForEach(player =>
                  {
-
-
                      machine
                     .SharedContext
                     .IODataLayer

@@ -2,10 +2,18 @@ using Apocalypse.Any.Domain.Common.Model;
 using Apocalypse.Any.Domain.Common.Model.Network;
 using Apocalypse.Any.Domain.Server.Model.Interfaces;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 
 namespace Apocalypse.Any.Domain.Server.DataLayer
 {
-    public class GameStateDataLayer : IGameSectorDataLayer<PlayerSpaceship, EnemySpaceship, Item, Projectile, CharacterEntity, CharacterEntity, ImageData>
+    public class GameStateDataLayer : IGameSectorDataLayer<
+        PlayerSpaceship, 
+        EnemySpaceship, 
+        Item, 
+        Projectile, 
+        CharacterEntity, 
+        CharacterEntity, 
+        ImageData>
     {
         public ConcurrentBag<PlayerSpaceship> Players { get; set; } = new ConcurrentBag<PlayerSpaceship>();
         public ConcurrentBag<EnemySpaceship> Enemies { get; set; } = new ConcurrentBag<EnemySpaceship>();

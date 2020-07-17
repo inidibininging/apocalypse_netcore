@@ -10,6 +10,7 @@ namespace Apocalypse.Any.Infrastructure.Server.Services.Mechanics.PositionMechan
         : ISingleFullPositionHolderMechanic<IFullPositionHolder>,
         IRandomRotationMechanic
     {
+        public bool Active { get; set; } = true;
         public IFullPositionHolder Update(IFullPositionHolder target)
         {
             var doRotation = Convert.ToSingle(Randomness.Instance.From(0, 100)) / 100f > 0.5;

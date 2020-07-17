@@ -8,6 +8,7 @@ namespace Apocalypse.Any.GameServer.Mechanics.Proxy
     public class ThrustProxyImageDataMechanic
     : ISingleFullPositionHolderMechanic<ImageData>
     {
+        public bool Active { get; set; } = true;
         private ThrustMechanic ThrustMechanics { get; set; }
         public float SpeedFactor { get; set; }
 

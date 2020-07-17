@@ -4,4 +4,9 @@
     {
         TDestination Update(TSource source);
     }
+    public interface ISingleEntityTransformationMechanic<T> :
+        ISingleEntityTransformationMechanic<T,T>
+    {
+        new T Update(T source);
+    }
 }

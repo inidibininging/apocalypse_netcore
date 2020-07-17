@@ -18,7 +18,9 @@ namespace Apocalypse.Any.Client.States.UI.Info
         }
 
         public void Handle(IStateMachine<string, INetworkGameScreen> machine)
-        {            
+        {
+            machine.SharedContext.InfoWindow.IsVisible = false;
+            return;
             machine.SharedContext.Messages.Add(nameof(UpdateInfoWindowState));
 
             var player = GetPlayerImage(machine);
@@ -39,14 +41,14 @@ namespace Apocalypse.Any.Client.States.UI.Info
             }
 
             var offsetLeftX = 128;
-            machine.SharedContext.InfoWindow.Position.X = player.Position.X - (288) - offsetLeftX;
-            machine.SharedContext.InfoWindow.Position.Y = player.Position.Y - 386;
+            machine.SharedContext.InfoWindow.Position.X = player.Position.X - (386*2) - offsetLeftX;
+            machine.SharedContext.InfoWindow.Position.Y = player.Position.Y - 386*2;
 
             var infoText = machine.SharedContext.InfoWindow.As<VisualText>(LabelName);
             infoText.Text = string.Join(System.Environment.NewLine, machine.SharedContext.Messages);
-            infoText.Position.X = player.Position.X - 16 - offsetLeftX;//$"Experience:{machine.SharedContext.CurrentSheetSnapshot.Experience}";//ddddd
-            infoText.Position.Y = player.Position.Y + 96;
-            infoText.Scale = new Vector2(0.75f);
+            infoText.Position.X = machine.SharedContext.InfoWindow.Position.X + 128;//player.Position.X - 16 - offsetLeftX;//$"Experience:{machine.SharedContext.CurrentSheetSnapshot.Experience}";//ddddd
+            infoText.Position.Y = machine.SharedContext.InfoWindow.Position.Y + (machine.SharedContext.InfoWindow.Scale.Y);//player.Position.Y + 96;
+            infoText.Scale = new Vector2(0.5f);
             infoText.LayerDepth = machine.SharedContext.InfoWindow.LayerDepth + (DrawingPlainOrder.PlainStep);
 
             machine.SharedContext.InfoWindow.Update(machine.SharedContext.UpdateGameTime);

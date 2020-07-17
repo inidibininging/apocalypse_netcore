@@ -26,7 +26,7 @@ namespace Apocalypse.Any.Client.States.UI.Info
             //build an info text here
             machine.SharedContext.InfoWindow.Add(LabelName, new VisualText());
             machine.SharedContext.InfoWindow.As<VisualText>(LabelName).Text = "0";
-            machine.SharedContext.InfoWindow.As<VisualText>(LabelName).Color = Color.Yellow;
+            machine.SharedContext.InfoWindow.As<VisualText>(LabelName).Color = Color.Pink;
             machine.SharedContext.InfoWindow.IsVisible = true;
         }
     }

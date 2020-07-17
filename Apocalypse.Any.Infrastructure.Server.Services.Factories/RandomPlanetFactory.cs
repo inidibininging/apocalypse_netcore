@@ -6,6 +6,7 @@ using Apocalypse.Any.Domain.Server.Model;
 using Apocalypse.Any.Domain.Server.Model.Interfaces;
 using Microsoft.Xna.Framework;
 using System;
+using System.Collections.Generic;
 
 namespace Apocalypse.Any.Infrastructure.Server.Services.Factories
 {
@@ -14,7 +15,10 @@ namespace Apocalypse.Any.Infrastructure.Server.Services.Factories
         public string IdPrefix { get; set; } = "planetsRandom";
 
         public override bool CanUse<TParam>(TParam instance) => CanUseByTType<TParam, IGameSectorBoundaries>();
-
+        public override List<Type> GetValidParameterTypes()
+        {
+            return new List<Type>() { typeof(IGameSectorBoundaries) };
+        }
         protected override ImageData UseConverter<TParam>(TParam parameter)
         {
             var sectorBoundaries = parameter as IGameSectorBoundaries;

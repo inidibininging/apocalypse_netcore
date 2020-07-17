@@ -9,6 +9,7 @@ namespace Apocalypse.Any.Infrastructure.Server.Services.Mechanics.Bridge
     : ISingleEntityWithImageMechanic<TEntityWithImage>
         where TEntityWithImage : IEntityWithImage
     {
+        public bool Active { get; set; } = true;
         public ISingleFullPositionHolderMechanic<IFullPositionHolder> SingleFullPositionHolderMechanic { get; }
 
         public SingleCharacterEntityWithImageDataAdapter(ISingleFullPositionHolderMechanic<IFullPositionHolder> singleFullPositionHolderMechanic)

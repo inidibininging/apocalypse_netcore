@@ -131,7 +131,7 @@ namespace Apocalypse.Any.Infrastructure.Server.Language
         }
         private void HandleFaction(IStateMachine<string, IGameSectorLayerService> machine)
         {
-            var belongsToFaction = new Func<CharacterEntity, bool>(entity => entity.Factions != null && entity.Factions.Any(factionName => factionName == ModifyExpression.Identifier.Name));
+            var belongsToFaction = new Func<CharacterEntity, bool>(entity => entity.Tags != null && entity.Tags.Any(factionName => factionName == ModifyExpression.Identifier.Name));
             var characters = GetAllValidCharacters(machine).Where(belongsToFaction);
             if (characters.Count() != 0)
             {

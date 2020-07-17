@@ -16,6 +16,10 @@ namespace Apocalypse.Any.Infrastructure.Common.Services.Network.Interfaces.Facto
         public string IdPrefix { get; set; } = "player";
 
         public override bool CanUse<TParam>(TParam instance) => typeof(TParam) == typeof(string);
+        public override List<Type> GetValidParameterTypes()
+        {
+            return new List<Type>() { typeof(string) };
+        }
 
         protected override PlayerSpaceship UseConverter<TParam>(TParam parameter)
         {
@@ -51,7 +55,7 @@ namespace Apocalypse.Any.Infrastructure.Common.Services.Network.Interfaces.Facto
                     Rotation = new RotationBehaviour() { Rotation = 180 },
                     LayerDepth = DrawingPlainOrder.Entities
                 },
-                Factions = new List<string>() { "Players" }
+                Tags = new List<string>() { "Players" }
             };
         }
     }

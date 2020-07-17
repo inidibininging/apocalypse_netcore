@@ -14,6 +14,6 @@ namespace Apocalypse.Any.Domain.Common.Model
         public CharacterSheet Stats { get; set; }
         public ImageData CurrentImage { get; set; }
         public ImageData IconImage { get; set; } //TODO: decouple this
-        public List<string> Factions { get; set; }
+        public List<string> Tags { get; set; }
     }
 }

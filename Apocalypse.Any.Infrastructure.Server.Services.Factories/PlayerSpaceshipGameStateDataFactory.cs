@@ -11,6 +11,10 @@ namespace Apocalypse.Any.Infrastructure.Common.Services.Network.Interfaces.Facto
         //and this is what i didn't want. reflection, hidden inside generics.
         //Dear reflection: you won. for now.
         public override bool CanUse<TParam>(TParam parameter) => typeof(TParam) == typeof(PlayerSpaceship);
+        public override List<Type> GetValidParameterTypes()
+        {
+            return new List<Type>() { typeof(PlayerSpaceship) };
+        }
 
         protected override GameStateData UseConverter<TParam>(TParam parameter)
         {

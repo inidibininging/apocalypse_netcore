@@ -12,6 +12,7 @@ namespace Apocalypse.Any.Infrastructure.Server.Services.Mechanics.Proxy
     public class NeverLeaveTheScreenProxyMechanic :
         ISingleFullPositionHolderMechanic<IFullPositionHolder>
     {
+        public bool Active { get; set; } = true;
         private Func<IGameSectorBoundaries> GetSectorBoundaries { get; set; }
         private NeverLeaveTheSectorMechanic NeverLeaveTheScreenMechanics { get; set; }
 

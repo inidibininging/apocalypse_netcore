@@ -9,6 +9,7 @@ namespace Apocalypse.Any.Infrastructure.Server.Services.Mechanics.Proxy
         : ISingleFullPositionHolderMechanic<TFullPositionHolder>
         where TFullPositionHolder : IFullPositionHolder
     {
+        public bool Active { get; set; } = true;
         private IAttractionMechanic AttractionMechanics { get; set; }
         private Func<TFullPositionHolder,IFullPositionHolder> GetTarget { get; set; }
 

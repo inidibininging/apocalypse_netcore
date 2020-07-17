@@ -21,7 +21,7 @@ namespace Apocalypse.Any.Client.States.UI.Character
             machine.SharedContext.CharacterWindow = new ApocalypseWindow();
             machine.SharedContext.CharacterWindow.Position = new MovementBehaviour();
             machine.SharedContext.CharacterWindow.Rotation = new RotationBehaviour();
-            machine.SharedContext.CharacterWindow.Color = Color.DarkViolet;
+            machine.SharedContext.CharacterWindow.Color = Color.BlueViolet;
             machine.SharedContext.CharacterWindow.Scale = new Vector2(128, 64);
             machine.SharedContext.CharacterWindow.Alpha.Alpha = 0.5f;
             machine.SharedContext.CharacterWindow.LayerDepth = DrawingPlainOrder.UI;

@@ -4,5 +4,6 @@
     {
         public string LoginToken { get; set; }
         public string ChosenStat { get; set; }
+
     }
 }

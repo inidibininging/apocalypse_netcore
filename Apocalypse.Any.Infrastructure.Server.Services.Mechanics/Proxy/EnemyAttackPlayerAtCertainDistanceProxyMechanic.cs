@@ -8,6 +8,7 @@ namespace Apocalypse.Any.Infrastructure.Server.Services.Mechanics.Proxy
     public class EnemyAttackPlayerAtCertainDistanceProxyMechanic
     : ISingleEntityWithImageMechanic<EnemySpaceship>
     {
+        public bool Active { get; set; } = true;
         public EnemyCreateProjectileIfPlayerIsNearMechanic EnemyCreateProjectileIfPlayerIsNearMechanic { get; set; }
         public EnemyAttackPlayerAtCertainDistanceProxyMechanic(EnemyCreateProjectileIfPlayerIsNearMechanic enemyCreateProjectileIfPlayerIsNearMechanic)
         {

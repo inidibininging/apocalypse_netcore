@@ -21,6 +21,7 @@ namespace Apocalypse.Any.GameServer.States.Sector
         public string Tag { get; set; }
         public GameSectorStatus CurrentStatus { get; set; }
         public GameTime CurrentGameTime { get; set; }
+        
 
         public IGameSectorFactoryLayer<PlayerSpaceship,
                                 EnemySpaceship,
@@ -37,7 +38,7 @@ namespace Apocalypse.Any.GameServer.States.Sector
                                 string> Factories
         { get; set; }
 
-        public IGameSectorDataLayer<PlayerSpaceship,
+        public IExpandedGameSectorDataLayer<PlayerSpaceship,
                                     EnemySpaceship,
                                     Item,
                                     Projectile,
@@ -46,8 +47,9 @@ namespace Apocalypse.Any.GameServer.States.Sector
                                     ImageData> DataLayer
         { get; set; }
 
+
         public IGameSectorSingularMechanicsLayer<string,
-                                                 IGameSectorDataLayer<PlayerSpaceship,
+                                                 IExpandedGameSectorDataLayer<PlayerSpaceship,
                                                                       EnemySpaceship,
                                                                       Item,
                                                                       Projectile,
@@ -64,7 +66,7 @@ namespace Apocalypse.Any.GameServer.States.Sector
         { get; set; }
 
         public IGameSectorPluralMechanicsLayer<string,
-                                               IGameSectorDataLayer<PlayerSpaceship,
+                                               IExpandedGameSectorDataLayer<PlayerSpaceship,
                                                                     EnemySpaceship,
                                                                     Item,
                                                                     Projectile,
@@ -78,9 +80,11 @@ namespace Apocalypse.Any.GameServer.States.Sector
                                                CharacterEntity,
                                                CharacterEntity,
                                                ImageData> PluralMechanics
-        { get; set; }
+        { get; set; }        
+
 
         public IUserLoginService LoginService { get; set; }
         public IWorldGameStateDataIOLayer IODataLayer { get; set; }
+        public IPlayerDialogService PlayerDialogService { get; set; }
     }
 }

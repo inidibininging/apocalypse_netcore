@@ -8,6 +8,7 @@ namespace Apocalypse.Any.Infrastructure.Server.Services.Mechanics
     : ISingleFullPositionHolderMechanic<TEntity>
     where TEntity : IFullPositionHolder
     {
+        public bool Active { get; set; } = true;
         private Func<TEntity,TEntity> EntityDelegate { get; }
         public DelegateFullPositionHolderMechanic(
             Func<TEntity,TEntity> entityDelegate)

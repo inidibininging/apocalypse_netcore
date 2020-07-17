@@ -69,8 +69,8 @@ namespace Apocalypse.Any.Client.States.UI.Inventory
                 return;
             }
 
-            inventoryWindow.Position.X = (player.Position.X + (ScreenService.Instance.Resolution.X / 2) - 768);
-            inventoryWindow.Position.Y = (player.Position.Y - (ScreenService.Instance.Resolution.Y / 2)) + 256;
+            inventoryWindow.Position.X = (player.Position.X - 96); //(ScreenService.Instance.Resolution.X / 2) - 768);
+            inventoryWindow.Position.Y = player.Position.Y + 128;
             
             //inventoryWindow.Position.X = MathHelper.Lerp(inventoryWindow.Position.X, machine.SharedContext.CursorImage.Position.X + inventoryWindow.Scale.X, 0.05f);
             //inventoryWindow.Position.Y = MathHelper.Lerp(inventoryWindow.Position.Y, machine.SharedContext.CursorImage.Position.Y , 0.05f);

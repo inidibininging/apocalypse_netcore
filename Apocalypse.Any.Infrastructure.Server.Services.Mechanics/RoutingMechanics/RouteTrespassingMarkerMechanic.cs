@@ -14,6 +14,7 @@ namespace Apocalypse.Any.Infrastructure.Server.Services.Mechanics.RoutingMechani
     public class RouteTrespassingMarkerMechanic
         : ISingleUpdeatableGameSectorRouteMechanic
     {
+        public bool Active { get; set; } = true;
         public int Offset { get; private set; }
 
         public IEnumerable<EntityGameSectorRoute> EntityGameSectorRoutes { get; set; } = new List<EntityGameSectorRoute>();

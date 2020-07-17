@@ -9,6 +9,7 @@ namespace Apocalypse.Any.Infrastructure.Server.Services.Mechanics
     : ISingleCharacterEntityMechanic<TEntity>
     where TEntity : CharacterEntity, new()
     {
+        public bool Active { get; set; } = true;
         private Func<TEntity,TEntity> EntityDelegate { get; }
         public DelegateSingleCharacterEntityMechanic(
             Func<TEntity,TEntity> entityDelegate)

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Apocalypse.Any.Core.Behaviour;
 using Apocalypse.Any.Core.Utilities;
 using Apocalypse.Any.Domain.Common.DrawingOrder;
@@ -13,6 +14,10 @@ namespace Apocalypse.Any.Infrastructure.Server.Services.Factories
     {
         private const string IdPrefix = "fog_edit";
         public override bool CanUse<TParam>(TParam instance)=> CanUseByTType<TParam,IGameSectorBoundaries>();
+        public override List<Type> GetValidParameterTypes()
+        {
+            return new List<Type>() { typeof(IGameSectorBoundaries) };
+        }
         private int MaxR {get;set;}
         private int MaxG {get;set;}
         private int MaxB {get;set;}

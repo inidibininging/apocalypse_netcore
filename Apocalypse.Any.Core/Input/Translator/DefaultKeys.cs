@@ -24,6 +24,9 @@
         public const string OpenCharacter = "+open_character";
         public const string CloseCharacter = "+close_character";
 
+        public const string OpenDialog = "+open_dialog";
+        public const string CloseDialog = "+close_dialog";
+
         public const string OpenInventory = "+open_inventory";
         public const string UpdateInventory = "+update_inventory";
         public const string CloseInventory = "+close_inventory";

@@ -11,6 +11,8 @@ namespace Apocalypse.Any.Infrastructure.Server.Adapters.Redis
 
         protected DateTime ExecutionTime { get; set; }
         public bool Executing { get; private set; }
+        public bool Active { get; set; } = true;
+
         public IGameSectorsOwner Update(IGameSectorsOwner entity)
         {
             // Console.WriteLine(this.GetType().FullName);

@@ -14,6 +14,8 @@ namespace Apocalypse.Any.Domain.Common.Model
         public CharacterSheet Stats { get; set; }
         public string ChosenStat { get; set; }
         public string GameSectorTag { get; set; }
+        public string EventName { get; set; }
+        public DialogNode CurrentDialog { get; set; }
         //TODO: make a paginator, with tokens, like googles API, in order to scroll through information
     }
 }

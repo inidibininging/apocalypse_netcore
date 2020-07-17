@@ -16,6 +16,11 @@ namespace Apocalypse.Any.Infrastructure.Server.Services.Factories.Network
             throw new NotImplementedException();
         }
 
+        public override List<Type> GetValidParameterTypes()
+        {
+            throw new NotImplementedException();
+        }
+
         //private void LoadDefaultGameStates()
         //{
         //    InternalGameStates.GetOrAdd((byte)ServerInternalGameStates.InitialGameState, new InitialGameState(new NetworkCommandToInitialGameState(WorldGameStateDataLayer)));

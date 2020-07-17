@@ -8,7 +8,7 @@ namespace Apocalypse.Any.GameServer.States.Sector.Mechanics
 {
     public class InMemorySingularMechanics :
         IGameSectorSingularMechanicsLayer<string,
-                                          IGameSectorDataLayer<
+                                          IExpandedGameSectorDataLayer<
                                               PlayerSpaceship,
                                               EnemySpaceship,
                                               Item,
@@ -29,6 +29,6 @@ namespace Apocalypse.Any.GameServer.States.Sector.Mechanics
         public Dictionary<string, ISingleCharacterEntityMechanic<EnemySpaceship>> EnemyMechanics { get; set; }
         public Dictionary<string, ISingleCharacterEntityMechanic<Item>> ItemMechanics { get; set; }
         public Dictionary<string, ISingleEntityWithImageMechanic<Projectile>> ProjectileMechanics { get; set; }
-        public Dictionary<string, ISingleFullPositionHolderMechanic<ImageData>> ImageDataMechanics { get; set; }
+        public Dictionary<string, ISingleFullPositionHolderMechanic<ImageData>> ImageDataMechanics { get; set; }        
     }
 }

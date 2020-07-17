@@ -1,10 +1,13 @@
 using Apocalypse.Any.Client.Screens;
 using Apocalypse.Any.Core.Services;
+using Apocalypse.Any.Domain.Common.DrawingOrder;
 using Apocalypse.Any.Domain.Common.Model;
 using Apocalypse.Any.Infrastructure.Common.Services.Network;
+using Microsoft.Xna.Framework;
 using Newtonsoft.Json.Linq;
 using States.Core.Infrastructure.Services;
 using System;
+using System.Linq;
 
 namespace Apocalypse.Any.Client.States
 {
@@ -33,9 +36,8 @@ namespace Apocalypse.Any.Client.States
 
             machine.SharedContext.Messages.Add($"CX:{cam.X}");
             machine.SharedContext.Messages.Add($"CY:{cam.Y}");
-
-            machine.SharedContext.Messages.Add($"X:{viewPortRect.X}");
-            machine.SharedContext.Messages.Add($"Y:{viewPortRect.Y}");
+            //machine.SharedContext.Messages.Add($"X:{viewPortRect.X}");
+            //machine.SharedContext.Messages.Add($"Y:{viewPortRect.Y}");
             machine.SharedContext.Messages.Add($"W:{viewPortRect.Width}");
             machine.SharedContext.Messages.Add($"H:{viewPortRect.Height}");
 
@@ -68,6 +70,7 @@ namespace Apocalypse.Any.Client.States
                 machine.SharedContext.Messages.Add("metadata cannot be converted to player metadata bag");
                 return;
             }
+
             if(metadataBagConverted.Items != null)
             {
                 machine.SharedContext.Messages.Add($"items:{metadataBagConverted.Items?.Count}");
@@ -83,6 +86,34 @@ namespace Apocalypse.Any.Client.States
             if (machine.SharedContext.FirstSheetSnapshot == null)
                 machine.SharedContext.FirstSheetSnapshot = metadataBagConverted.Stats;
             machine.SharedContext.CurrentSheetSnapshot = metadataBagConverted.Stats;
+
+
+
+            var playerImage = machine.SharedContext.Images.FirstOrDefault(img => img.ServerData.Id == machine.SharedContext.PlayerImageId);
+            if (playerImage == null || machine.SharedContext.LastMetadataBag == null)
+                return;
+            //WHY IS THIS NOT WORKING????
+//            var cursorImageAsVector = machine.SharedContext.CursorImage.Position.ToVector2();
+//            if (Vector2.Distance(cursorImageAsVector, playerImage.Position.ToVector2()) < 16)
+//            {
+                
+//                machine.SharedContext.MultiplayerText.Text = $@"
+//ATK: {machine.SharedContext.LastMetadataBag.Stats.Attack}
+//DEF: {machine.SharedContext.LastMetadataBag.Stats.Defense}
+//STR: {machine.SharedContext.LastMetadataBag.Stats.Strength}
+//SPD: {machine.SharedContext.LastMetadataBag.Stats.Speed}
+//TEC: {machine.SharedContext.LastMetadataBag.Stats.Technology}
+//AUR: {machine.SharedContext.LastMetadataBag.Stats.Aura}
+//CHR: {machine.SharedContext.LastMetadataBag.Stats.Charisma}";
+//                var spacing = machine.SharedContext.MultiplayerText.Text.Split(Environment.NewLine).Length;
+//                machine.SharedContext.MultiplayerText.Alpha.Alpha = 1;
+//                machine.SharedContext.MultiplayerText.LayerDepth = DrawingPlainOrder.UIFX;
+//                machine.SharedContext.MultiplayerText.Color = Color.Purple;
+//                machine.SharedContext.MultiplayerText.Scale = new Vector2(1.5f);
+//                machine.SharedContext.MultiplayerText.Position.X = playerImage.Position.X + 16;
+//                machine.SharedContext.MultiplayerText.Position.Y = playerImage.Position.Y + spacing;
+//                machine.SharedContext.Messages.Add(machine.SharedContext.MultiplayerText.Text);
+//            }
         }
     }
 }

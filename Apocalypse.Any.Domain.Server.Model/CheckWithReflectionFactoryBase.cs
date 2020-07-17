@@ -1,10 +1,13 @@
 ﻿using Apocalypse.Any.Domain.Server.Model.Interfaces;
+using System;
+using System.Collections.Generic;
 
 namespace Apocalypse.Any.Domain.Server.Model
 {
     public abstract class CheckWithReflectionFactoryBase<T> : IGenericTypeFactory<T>
     //where T : class
-    {
+    {        
+
         public abstract bool CanUse<TParam>(TParam instance);
 
         protected bool CanUseByTType<TParamSubject, TParamToProofAgainst>()
@@ -28,5 +31,8 @@ namespace Apocalypse.Any.Domain.Server.Model
         }
 
         protected abstract T UseConverter<TParam>(TParam parameter);
+
+        public abstract List<Type> GetValidParameterTypes();
+        
     }
 }

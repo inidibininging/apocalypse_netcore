@@ -104,6 +104,8 @@ namespace Apocalypse.Any.Core.Text
                 );
         }
 
+        public Vector2 TextLength() => string.IsNullOrWhiteSpace(Text) ? Vector2.Zero : Font.MeasureString(Text);
+
         public override void Update(GameTime time)
         {
             foreach (var obj in this)

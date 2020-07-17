@@ -6,6 +6,7 @@ namespace Apocalypse.Any.Domain.Common.Mechanics
         : ISingleMechanic<TEntity, CharacterEntity>
         where TEntity : CharacterEntity, new()
     {
+        
         TEntity Update(TEntity singularEntity);
     }
 }

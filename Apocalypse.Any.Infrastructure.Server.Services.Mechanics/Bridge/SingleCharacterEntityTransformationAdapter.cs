@@ -9,6 +9,7 @@ namespace Apocalypse.Any.Infrastructure.Server.Services.Mechanics.Bridge
         : ISingleCharacterEntityMechanic<TCharacterEntity>
         where TCharacterEntity : CharacterEntity, new()
     {
+        public bool Active { get; set; } = true;
         private Func<TSourceType> GetSource { get; set; }
         private ISingleEntityTransformationMechanic<TSourceType, TCharacterEntity> SingleEntityTransformationMechanic { get; set; }
 

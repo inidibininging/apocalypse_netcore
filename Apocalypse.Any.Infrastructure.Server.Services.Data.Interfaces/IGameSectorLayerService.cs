@@ -1,3 +1,4 @@
+using Apocalypse.Any.Core.Input;
 using Apocalypse.Any.Domain.Common.Model;
 using Apocalypse.Any.Domain.Common.Model.Network;
 using Apocalypse.Any.Domain.Server.Model.Interfaces;
@@ -17,6 +18,12 @@ namespace Apocalypse.Any.Infrastructure.Server.Services.Data.Interfaces
         /// </summary>
         IWorldGameStateDataIOLayer IODataLayer { get; set; }
 
+        /// <summary>
+        /// Represents an interface to the player dialogs
+        /// </summary>
+        IPlayerDialogService PlayerDialogService { get; set; }
+
+
         //Dictionary<string,IGameSectorFactory<GameStateData>> GameStateDataLayer { get; set; }
 
         /// <summary>
@@ -24,7 +31,9 @@ namespace Apocalypse.Any.Infrastructure.Server.Services.Data.Interfaces
         /// </summary>
         IList<string> Messages { get; set; }
 
-        IGameSectorDataLayer<PlayerSpaceship,
+
+
+        IExpandedGameSectorDataLayer<PlayerSpaceship,
                              EnemySpaceship,
                              Item,
                              Projectile,
@@ -33,8 +42,10 @@ namespace Apocalypse.Any.Infrastructure.Server.Services.Data.Interfaces
                              ImageData> DataLayer
         { get; set; }
 
+
+
         IGameSectorSingularMechanicsLayer<string,
-                                          IGameSectorDataLayer<
+                                          IExpandedGameSectorDataLayer<
                                               PlayerSpaceship,
                                               EnemySpaceship,
                                               Item,
@@ -52,7 +63,7 @@ namespace Apocalypse.Any.Infrastructure.Server.Services.Data.Interfaces
         { get; set; }
 
         IGameSectorPluralMechanicsLayer<string,
-                                        IGameSectorDataLayer<PlayerSpaceship,
+                                        IExpandedGameSectorDataLayer<PlayerSpaceship,
                                                              EnemySpaceship,
                                                              Item,
                                                              Projectile,
@@ -67,6 +78,7 @@ namespace Apocalypse.Any.Infrastructure.Server.Services.Data.Interfaces
                                         CharacterEntity,
                                         ImageData> PluralMechanics
         { get; set; }
+
 
         IGameSectorFactoryLayer<PlayerSpaceship,
                                 EnemySpaceship,

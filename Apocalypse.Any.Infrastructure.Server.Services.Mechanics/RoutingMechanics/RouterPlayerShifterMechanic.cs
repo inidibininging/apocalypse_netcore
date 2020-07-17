@@ -10,6 +10,7 @@ namespace Apocalypse.Any.Infrastructure.Server.Services.Mechanics.RoutingMechani
     public class RouterPlayerShifterMechanic
         : ISingleUpdeatableGameSectorRouteMechanic
     {
+        public bool Active { get; set; } = true;
         private IEnumerable<GameSectorRoutePair> GameSectorRoutes { get; set; }
         public IEnumerable<EntityGameSectorRoute> EntityGameSectorRoutes { get; set; } = new List<EntityGameSectorRoute>();
         private RouteDualMediator RouteMediator { get; set; }

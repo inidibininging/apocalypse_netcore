@@ -24,6 +24,7 @@ namespace Apocalypse.Any.Domain.Server.Model.Interfaces
         ConcurrentBag<TEntitiesBaseType> GeneralCharacter { get; set; }
         ConcurrentBag<TImageData> ImageData { get; set; }
         ConcurrentBag<TItem> PlayerItems { get; set; }
+        
 
         #endregion Entities
     }

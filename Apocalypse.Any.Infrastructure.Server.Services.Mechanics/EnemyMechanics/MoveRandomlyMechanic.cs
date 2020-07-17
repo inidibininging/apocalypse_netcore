@@ -9,6 +9,7 @@ namespace Apocalypse.Any.Infrastructure.Server.Services.Mechanics.EnemyMechanics
     public class MoveRandomlyMechanic
     : ISingleCharacterEntityMechanic<EnemySpaceship>
     {
+        public bool Active { get; set; } = true;
         private ThrustMechanic ThrustMechanics { get; set; }
         private RandomRotationMechanic RandomRotationMechanic { get; set; }
 

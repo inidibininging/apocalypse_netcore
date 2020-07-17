@@ -8,6 +8,7 @@ namespace Apocalypse.Any.Infrastructure.Server.Services.Proxy
     public class FacePointProxyMechanic :
         ISingleFullPositionHolderMechanic<IFullPositionHolder>
     {
+        public bool Active { get; set; } = true;
         private FacePointMechanic FacePointMechanics { get; set; }
         private Func<IFullPositionHolder,IFullPositionHolder> GetTarget { get; set; }
 

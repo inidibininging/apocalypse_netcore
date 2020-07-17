@@ -128,20 +128,14 @@ Wait +1 Seconds
 !TheRing
 
 :a
-Wait +15 Seconds
-!MakeAShip
-!MakeAShip
-!MakeAShip
+Wait +5 Seconds
 !MakeAShip
 !MakeAShip
 !MakeAShip
 !CreateRandomMiniCityCommand
 !MakeAWeakEnemy
 !CreateRandomFogCommand
-!CreateRandomFogCommand
-!CreateRandomFogCommand
-!CreateRandomFogCommand
-!CreateRandomFogCommand
+
 !b
 
 :b

@@ -13,6 +13,7 @@ namespace Apocalypse.Any.Infrastructure.Server.Services.Mechanics.CLI
     public class CLIPassthroughMechanic :
         ISingleUpdeatableGameSectorOwnerMechanic
     {
+        public bool Active { get; set; } = true;
         private readonly IUserAuthenticationService UserAuthenticationService;
         private readonly Interpreter CommandInterpreter;
         public CLIPassthroughMechanic(IUserAuthenticationService userAuthenticationService)

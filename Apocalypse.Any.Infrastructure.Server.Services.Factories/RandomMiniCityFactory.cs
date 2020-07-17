@@ -56,7 +56,10 @@ namespace Apocalypse.Any.Infrastructure.Server.Services.Factories {
         private List<Vector2> Buildings { get; set; } = new List<Vector2>();
 
         public override bool CanUse<TParam> (TParam instance) => CanUseByTType<TParam, IGameSectorBoundaries> ();
-
+        public override List<Type> GetValidParameterTypes()
+        {
+            return new List<Type>() { typeof(IGameSectorBoundaries) };
+        }
 
 
         protected override IEnumerable<ImageData> UseConverter<TParam> (TParam parameter) 

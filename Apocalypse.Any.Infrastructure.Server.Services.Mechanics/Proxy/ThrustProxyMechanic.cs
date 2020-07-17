@@ -8,6 +8,7 @@ namespace Apocalypse.Any.GameServer.Mechanics.Proxy
     public class ThrustProxyMechanic
     : ISingleFullPositionHolderMechanic<IFullPositionHolder>
     {
+        public bool Active { get; set; } = true;
         private ThrustMechanic ThrustMechanics { get; set; }
         public float SpeedFactor { get; set; }
 
@@ -19,7 +20,7 @@ namespace Apocalypse.Any.GameServer.Mechanics.Proxy
         }
 
         public IFullPositionHolder Update(IFullPositionHolder entity)
-        {
+        {            
             return ThrustMechanics.Update(entity, SpeedFactor);
         }
     }

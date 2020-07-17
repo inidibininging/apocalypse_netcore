@@ -19,6 +19,11 @@ namespace Apocalypse.Any.Infrastructure.Server.Services.Transformations
             return CanUseByTType<TParam, GameStateData>();
         }
 
+        public override List<Type> GetValidParameterTypes()
+        {
+            return new List<Type>() { typeof(GameStateData) };
+        }
+
         protected override GameStateData UseConverter<TParam>(TParam parameter)
         {
             if (!(parameter is GameStateData gameStateData))

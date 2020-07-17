@@ -1,6 +1,7 @@
 ﻿using Apocalypse.Any.Domain.Server.Model;
 using Apocalypse.Any.Domain.Server.Model.Interfaces;
 using Apocalypse.Any.Domain.Server.Sector.Model;
+using System;
 using System.Collections.Generic;
 
 namespace Apocalypse.Any.Infrastructure.Server.Services.Factories
@@ -11,7 +12,10 @@ namespace Apocalypse.Any.Infrastructure.Server.Services.Factories
         {
             return CanUseByTType<TParam, IEnumerable<IGameSectorData>>();
         }
-
+        public override List<Type> GetValidParameterTypes()
+        {
+            return new List<Type>() { typeof(IGameSectorData) };
+        }
         protected override IDictionary<GameSectorRoute, GameSectorRoute> UseConverter<TParam>(TParam parameter)
         {
             return null;

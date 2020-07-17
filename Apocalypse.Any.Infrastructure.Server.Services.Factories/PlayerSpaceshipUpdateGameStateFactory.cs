@@ -25,6 +25,10 @@ namespace Apocalypse.Any.Infrastructure.Server.Services.Transformations
         {
             return CanUseByTType<TParam, GameSectorLoginTokenBag>();
         }
+        public override List<Type> GetValidParameterTypes()
+        {
+            return new List<Type>() { typeof(GameSectorLoginTokenBag) };
+        }
 
         protected override GameStateData UseConverter<TParam>(TParam parameter)
         {
@@ -48,7 +52,8 @@ namespace Apocalypse.Any.Infrastructure.Server.Services.Transformations
                 Stats = player.Stats,
                 GameSectorTag = gameSector.Tag,
                 ChosenStat = player.ChosenStat,
-                Items = gameSector.DataLayer.Items.Where(item => item.OwnerName == player.Name).ToList()               
+                Items = gameSector.DataLayer.Items.Where(item => item.OwnerName == player.Name).ToList(),
+                CurrentDialog = gameSector?.PlayerDialogService.GetDialogNodeByLoginToken(player.LoginToken)
             };
 
             var cache = new GameStateData

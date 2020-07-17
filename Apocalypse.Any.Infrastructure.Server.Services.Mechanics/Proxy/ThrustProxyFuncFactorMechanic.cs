@@ -7,6 +7,7 @@ namespace Apocalypse.Any.Infrastructure.Server.Services.Mechanics.Proxy
     public class ThrustProxyFuncFactorMechanic
         : ISingleFullPositionHolderMechanic<IFullPositionHolder>
     {
+        public bool Active { get; set; } = true;
         private ThrustMechanic ThrustMechanics { get; set; }
         private Func<float> GetFactor { get; set; }
 

@@ -58,7 +58,7 @@ namespace Apocalypse.Any.GameServer.States.Sector
             }
 
             enemy.Name = EnemyNameGenerator.Generate(enemy);
-            enemy.Factions.Add("GeneratedEnemies");
+            enemy.Tags.Add("GeneratedEnemies");
             parameters.DataLayer.Enemies.Add(enemy);
             parameters.Messages.Add($"enemy {enemy.Name} created");
         }

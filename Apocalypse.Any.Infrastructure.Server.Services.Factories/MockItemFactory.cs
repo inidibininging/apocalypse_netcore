@@ -52,7 +52,7 @@ namespace Apocalypse.Any.Infrastructure.Common.Services.Network.Interfaces.Facto
                 Used = false,
                 InstantUse = Randomness.Instance.TrueOrFalse(),
                 Stats = characterSheet as CharacterSheet, //OUCH !!! Design fail
-                Factions = new List<string>() { "Items", "Generated" },
+                Tags = new List<string>() { "Items", "Generated" },
                 CurrentImage = new ImageData()
                 {
                     Id = $"itm_{Guid.NewGuid().ToString()}",
@@ -116,7 +116,10 @@ namespace Apocalypse.Any.Infrastructure.Common.Services.Network.Interfaces.Facto
         {
             return CanUseByTType<TParam, IGameSectorBoundaries>();
         }
-
+        public override List<Type> GetValidParameterTypes()
+        {
+            return new List<Type>() { typeof(IGameSectorBoundaries) };
+        }
         protected override Item UseConverter<TParam>(TParam parameter)
         {
             var sectorBoundaries = parameter as IGameSectorBoundaries;

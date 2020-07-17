@@ -6,11 +6,13 @@ using System;
 namespace Apocalypse.Any.Infrastructure.Server.Services.Mechanics.Bridge
 {
     //SPOT THE PATTERN.
-    public class SingleCharacterEntityFullPositionHolderAdapterMechanic<TCharacterEntity> : ISingleCharacterEntityMechanic<TCharacterEntity>
+    public class SingleCharacterEntityFullPositionHolderAdapterMechanic<TCharacterEntity> 
+        : ISingleCharacterEntityMechanic<TCharacterEntity>
         where TCharacterEntity : CharacterEntity, new()
 
     {
         public ISingleFullPositionHolderMechanic<IFullPositionHolder> SingleFullPositionHolderMechanic { get; private set; }
+        public bool Active { get; set; } = true;
 
         public SingleCharacterEntityFullPositionHolderAdapterMechanic(ISingleFullPositionHolderMechanic<IFullPositionHolder> singleFullPositionHolderMechanic)
         {

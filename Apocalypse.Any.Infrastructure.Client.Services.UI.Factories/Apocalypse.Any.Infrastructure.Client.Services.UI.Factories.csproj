@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Apocalypse.Any.Core\Apocalypse.Any.Core.csproj" />
+    <ProjectReference Include="..\Apocalypse.Any.Domain.Common.DrawingOrder\Apocalypse.Any.Domain.Common.DrawingOrder.csproj" />
+    <ProjectReference Include="..\Apocalypse.Any.Domain.Common.Drawing\Apocalypse.Any.Domain.Common.Drawing.csproj" />
+    <ProjectReference Include="..\Apocalypse.Any.Domain.Common.Model\Apocalypse.Any.Domain.Common.Model.csproj" />
+  </ItemGroup>
+
+</Project>
