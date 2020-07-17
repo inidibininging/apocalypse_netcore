@@ -18,7 +18,7 @@ namespace Apocalypse.Any.Client.States.UI.Dialog
             var hoveredText = machine.SharedContext.DialogWindow.Values.OfType<VisualText>().FirstOrDefault(inventoryItemImage => Vector2.Distance(cursorImageAsVector, inventoryItemImage.Position) < 32);
             
             foreach (var txt in machine.SharedContext.DialogWindow.Values.OfType<VisualText>())
-                txt.Scale = new Vector2(1);
+                txt.Scale = new Vector2(1.0f);
 
             if (hoveredText == null)
                 return;
@@ -28,8 +28,8 @@ namespace Apocalypse.Any.Client.States.UI.Dialog
             {
                 
             }
-
-            hoveredText.Scale = new Vector2(hoveredText.Scale.X + 0.5f, hoveredText.Scale.Y + 0.5f);
+            machine.SharedContext.LastMetadataBag.EventName = hoveredText.Text;
+            hoveredText.Scale = new Vector2(hoveredText.Scale.X + 0.25f, hoveredText.Scale.Y + 0.25f);
         }
     }
 }

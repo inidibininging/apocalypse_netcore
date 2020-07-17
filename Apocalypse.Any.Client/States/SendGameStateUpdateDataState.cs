@@ -69,7 +69,15 @@ namespace Apocalypse.Any.Client.States
                 else
                     cmds.Clear();
             }
-            
+            //this only works if last meta data bag is not overwritten
+            if(machine.SharedContext.LastMetadataBag != null &&
+                machine.SharedContext.LastMetadataBag.EventName != null &&
+                machine.SharedContext.LastMetadataBag.EventName.Contains("Exit") &&
+                cmds.Contains(DefaultKeys.Use))
+            {
+                cmds.Add(DefaultKeys.CloseDialog);
+                machine.SharedContext.LastMetadataBag.EventName = null;
+            }
 
             var sendResult = machine.SharedContext.Client.SendMessage(
                                     CreateMessage(

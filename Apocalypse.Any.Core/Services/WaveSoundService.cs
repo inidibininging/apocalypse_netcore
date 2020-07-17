@@ -136,9 +136,15 @@ namespace Apocalypse.Any.Core.Services
                 if (currentAudioPlays > maxAudioPlays){
                     return;
                 }
+                try
+                {
+                    currentAudioPlays += 1;
+                    Effects[audioFileName]?.Play();
+                }
+                catch (Exception ex)
+                {
 
-                currentAudioPlays += 1;
-                Effects[audioFileName].Play();
+                }
                 // using (var fx = Effects[audioFileName].CreateInstance())
                 // {
                 //     fx.Volume = 1f;

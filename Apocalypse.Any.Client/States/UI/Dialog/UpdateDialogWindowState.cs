@@ -56,8 +56,8 @@ namespace Apocalypse.Any.Client.States.UI.Dialog
                         {
                             
                             portrait.ApplyImageData(LastDialogPortrait);
-                            portrait.Position.X = machine.SharedContext.DialogWindow.Position.X + 256;
-                            portrait.Position.Y = machine.SharedContext.DialogWindow.Position.Y + (txtRow * portrait.Height) - 64;
+                            portrait.Position.X = machine.SharedContext.DialogWindow.Position.X + 320;
+                            portrait.Position.Y = machine.SharedContext.DialogWindow.Position.Y + (txtRow * portrait.Height) - 96;
                             portrait.LayerDepth = machine.SharedContext.DialogWindow.LayerDepth + (DrawingPlainOrder.PlainStep*2);
                             portrait.Alpha.Alpha = 1;
                         }
@@ -67,6 +67,61 @@ namespace Apocalypse.Any.Client.States.UI.Dialog
                         machine.SharedContext.DialogWindow.Add(LastDialogPortrait.Id, new ImageClient(LastDialogPortrait, machine.SharedContext.GameSheet.Frames));
                     }
                 }
+
+                //build corners
+                var upperCornerLeft = (machine.SharedContext.DialogWindow["upperCornerLeft"] as SpriteSheet);
+                var upperCornerRight = (machine.SharedContext.DialogWindow["upperCornerRight"] as SpriteSheet);
+                var lowerCornerLeft = (machine.SharedContext.DialogWindow[ "lowerCornerLeft"] as SpriteSheet);
+                var lowerCornerRight = (machine.SharedContext.DialogWindow["lowerCornerRight"] as SpriteSheet);
+
+                upperCornerLeft.Position.X = machine.SharedContext.DialogWindow.Position.X + 32;
+                upperCornerLeft.Position.Y = machine.SharedContext.DialogWindow.Position.Y + 32;
+                upperCornerRight.Position.X = machine.SharedContext.DialogWindow.Position.X + 640 - 32;
+                upperCornerRight.Position.Y = machine.SharedContext.DialogWindow.Position.Y + 32;
+                lowerCornerLeft.Position.X = machine.SharedContext.DialogWindow.Position.X + 32;
+                lowerCornerLeft.Position.Y = machine.SharedContext.DialogWindow.Position.Y + 448 - 32;
+                lowerCornerRight.Position.X = machine.SharedContext.DialogWindow.Position.X + 640 - 32;
+                lowerCornerRight.Position.Y = machine.SharedContext.DialogWindow.Position.Y + 448 - 32;
+
+                //build  walls
+
+                //build upper wall of dialog
+                for (int dialogWall = 1; dialogWall <= (machine.SharedContext.DialogWindow.Scale.X / 64) - 2; dialogWall++)
+                {
+                    (machine.SharedContext.DialogWindow[$"upperWall_{dialogWall}"] as SpriteSheet).Alpha.Alpha = 1f;
+                    (machine.SharedContext.DialogWindow[$"upperWall_{dialogWall}"] as SpriteSheet).Position.X = machine.SharedContext.DialogWindow.Position.X + (64 * dialogWall) + 32;
+                    (machine.SharedContext.DialogWindow[$"upperWall_{dialogWall}"] as SpriteSheet).Position.Y = machine.SharedContext.DialogWindow.Position.Y + 32;
+                }
+
+                //build lower wall of dialog
+                for (int dialogWall = 1; dialogWall <= (machine.SharedContext.DialogWindow.Scale.X / 64) - 2; dialogWall++)
+                {
+                    (machine.SharedContext.DialogWindow[$"lowerWall_{dialogWall}"] as SpriteSheet).Alpha.Alpha = 1f;
+                    (machine.SharedContext.DialogWindow[$"lowerWall_{dialogWall}"] as SpriteSheet).Position.X = machine.SharedContext.DialogWindow.Position.X + (64 * dialogWall) + 32;
+                    (machine.SharedContext.DialogWindow[$"lowerWall_{dialogWall}"] as SpriteSheet).Position.Y = machine.SharedContext.DialogWindow.Position.Y + machine.SharedContext.DialogWindow.Scale.Y - 32;
+                    (machine.SharedContext.DialogWindow[$"lowerWall_{dialogWall}"] as SpriteSheet).Rotation.Rotation = 62.5f;
+                }
+
+                //build left wall of dialog
+                for (int dialogWall = 1; dialogWall <= (machine.SharedContext.DialogWindow.Scale.X / 64) - 5; dialogWall++)
+                {
+                    (machine.SharedContext.DialogWindow[$"leftWall_{dialogWall}"] as SpriteSheet).Alpha.Alpha = 1f;
+                    (machine.SharedContext.DialogWindow[$"leftWall_{dialogWall}"] as SpriteSheet).Position.X = machine.SharedContext.DialogWindow.Position.X + 32;
+                    (machine.SharedContext.DialogWindow[$"leftWall_{dialogWall}"] as SpriteSheet).Position.Y = machine.SharedContext.DialogWindow.Position.Y + (64 * dialogWall) + 32;
+                    (machine.SharedContext.DialogWindow[$"leftWall_{dialogWall}"] as SpriteSheet).Rotation.Rotation = 31.5f;
+                }
+
+                //build right wall of dialog
+                for (int dialogWall = 1; dialogWall <= (machine.SharedContext.DialogWindow.Scale.X / 64) - 5; dialogWall++)
+                {
+                    (machine.SharedContext.DialogWindow[$"rightWall_{dialogWall}"] as SpriteSheet).Alpha.Alpha = 1f;
+                    (machine.SharedContext.DialogWindow[$"rightWall_{dialogWall}"] as SpriteSheet).Position.X = machine.SharedContext.DialogWindow.Position.X + machine.SharedContext.DialogWindow.Scale.X - 32;
+                    (machine.SharedContext.DialogWindow[$"rightWall_{dialogWall}"] as SpriteSheet).Position.Y = machine.SharedContext.DialogWindow.Position.Y + (64 * dialogWall) + 32;
+                    (machine.SharedContext.DialogWindow[$"rightWall_{dialogWall}"] as SpriteSheet).Rotation.Rotation = 31.5f;
+                }
+
+                //(machine.SharedContext.DialogWindow[$"lowerWall_{dialogWall}"] as SpriteSheet).Rotation.Rotation = 30;
+
                 machine.SharedContext.DialogWindow.Update(machine.SharedContext.UpdateGameTime);
             }
 
