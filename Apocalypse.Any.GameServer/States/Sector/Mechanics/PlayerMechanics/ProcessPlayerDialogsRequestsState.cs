@@ -106,14 +106,14 @@ namespace Apocalypse.Any.GameServer.States.Sector.Mechanics.PlayerMechanics
                             //commented for now. the player should not be capable of choosing the dialog
 
                             ////chooses dialog by id
-                            //if(commandAndArgument.Length >= 2) 
-                            //{
-                            //    //first argument should be the command itself. rest is the argument
-                            //    var dialogId = string.Join(' ', commandAndArgument.Skip(1));
-                            //    machine.SharedContext
-                            //        .PlayerDialogService
-                            //        .SwitchDialogNodeByLoginToken(player.LoginToken, dialogId);
-                            //}
+                            if (commandAndArgument.Length >= 2)
+                            {
+                                //first argument should be the command itself. rest is the argument
+                                var dialogId = string.Join(' ', commandAndArgument.Skip(1));
+                                machine.SharedContext
+                                    .PlayerDialogService
+                                    .SwitchDialogNodeByLoginToken(player.LoginToken, dialogId);
+                            }
                         }
                         if (cmd == DefaultKeys.CloseDialog)
                         {

@@ -78,6 +78,21 @@ namespace Apocalypse.Any.Client.States
                 cmds.Add(DefaultKeys.CloseDialog);
                 machine.SharedContext.LastMetadataBag.EventName = null;
             }
+            else
+            {
+                if (machine.SharedContext.LastMetadataBag != null &&
+                machine.SharedContext.LastMetadataBag.EventName != null &&
+                cmds.Contains(DefaultKeys.Use))
+                {
+                    var selectedDialog = machine.SharedContext.LastMetadataBag.CurrentDialog.DialogIdContent.FirstOrDefault(d => d.Item2 == machine.SharedContext.LastMetadataBag.EventName);
+                    if(selectedDialog != null)
+                    {
+                        cmds.Add($"{DefaultKeys.OpenDialog} {selectedDialog.Item1}");
+                    }
+                    machine.SharedContext.LastMetadataBag.EventName = null;
+                }
+            }
+            
 
             var sendResult = machine.SharedContext.Client.SendMessage(
                                     CreateMessage(
