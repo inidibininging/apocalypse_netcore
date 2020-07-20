@@ -2,7 +2,7 @@
 # apocalypse_netcore
 Game developed for my own self-teaching purpouses
 
-![](https://github.com/apocalypse_screen_01.png)
+![](https://github.com/inidibininging/apocalypse_netcore/blob/master/apocalypse_screen_01.png)
 # What is this?
 I developed this "game" with a little gaming framework on top of the MonoGame Framework in order to understand some principles and problems while making games.
 
@@ -44,7 +44,7 @@ I know that there are some cool frameworks on top of MonoGame like MonoGame.Exte
 
 
 ---
-![](https://github.com/apocalypse_screen_02.png)
+![](https://github.com/inidibininging/apocalypse_netcore/blob/master/apocalypse_screen_02.png)
 # Installation
 
 ## Requirements
@@ -67,7 +67,7 @@ Things you need for the code to compile:
 ## Font Issues
 If the client crashes and complaints because the font is missing, use another font with the monogame pipeline and retry.
 
-![](https://github.com/apocalypse_screen_03.png)
+![](https://github.com/inidibininging/apocalypse_netcore/blob/master/apocalypse_screen_03.png)
 ## Other Media
 The license for sounds and images is stored in this repository under "Apocalypse.Any.Client\Content\LICENSE"
 
