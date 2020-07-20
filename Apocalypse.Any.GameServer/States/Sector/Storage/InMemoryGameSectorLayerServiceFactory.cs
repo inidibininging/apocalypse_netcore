@@ -51,7 +51,7 @@ namespace Apocalypse.Any.GameServer.States.Sector.Storage
             inMemoryStorage.Add(ServerGameSectorNewBook.BuildDataLayerState, new BuildDataLayerState<GenericGameStateDataLayer>());
             inMemoryStorage.Add(ServerGameSectorNewBook.BuildFactoriesState, new BuildFactoriesState());
             inMemoryStorage.Add(ServerGameSectorNewBook.BuildSingularMechanicsState, new BuildSingularMechanicsState());
-            inMemoryStorage.Add(nameof(BuildMiniCityFactories), new BuildMiniCityFactories(new Client.Services.RectangularFrameGeneratorService(), "Image/miniCity"));
+            inMemoryStorage.Add(nameof(BuildMiniCityFactories), new BuildMiniCityFactories(new Client.Services.RectangularFrameGeneratorService(), $"Image/miniCity{ (Randomness.Instance.From(0,200) > 125 ? "2" : "") }"));
             inMemoryStorage.Add(nameof(CreateOrUpdateIdentifiableCircularLocationState), new CreateOrUpdateIdentifiableCircularLocationState(
                                                                                         new RectangularFrameGeneratorService(),
                                                                                         new ImageToRectangleTransformationService()));
