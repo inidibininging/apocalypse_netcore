@@ -1,3 +1,4 @@
+![](https://github.com/inidibininging/apocalypse_netcore/blob/master/apocalypse_logo_glitch.png)
 # apocalypse_netcore
 Game developed for my own self-teaching purpouses
 
