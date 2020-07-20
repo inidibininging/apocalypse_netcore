@@ -15,10 +15,11 @@ namespace Apocalypse.Any.Client.States.UI.Dialog
 {
     public class UpdateDialogWindowState : IState<string, INetworkGameScreen>
     {
-        public string LastDialogId { get; set; }
-        public string LastDialogContent { get; set; }
+        private string LastDialogId { get; set; }
+        private string LastDialogContent { get; set; }
         private List<Tuple<string, string>> LastDialogTree { get; set; }
         private ImageData LastDialogPortrait { get; set; }
+        private Dictionary<string,int> LastDialogPositions { get; set; } = new Dictionary<string, int>();
 
         public void Handle(IStateMachine<string, INetworkGameScreen> machine)
         {
@@ -30,23 +31,35 @@ namespace Apocalypse.Any.Client.States.UI.Dialog
                 machine.SharedContext.DialogWindow.IsVisible = false;
                 return;
             }
-            var txtRow = 1;
             if (machine.SharedContext.DialogWindow.IsVisible)
             {
+                //move the dialog in front of players ship
                 var playerImage = machine.SharedContext.Images.FirstOrDefault(img => img.ServerData.Id == machine.SharedContext.PlayerImageId);
                 machine.SharedContext.DialogWindow.Position.X = playerImage.Position.X - 256;
                 machine.SharedContext.DialogWindow.Position.Y = playerImage.Position.Y - 486;
                 machine.SharedContext.DialogWindow.LayerDepth = DrawingPlainOrder.UI - 0.1f;
                 machine.SharedContext.DialogWindow.Alpha.Alpha = 0.5f;
 
-                foreach (var text in machine.SharedContext.DialogWindow.Where(txts => txts.Value.GetType() == typeof(VisualText)))
+                //move title according to the window position
+                if (!string.IsNullOrWhiteSpace(LastDialogId))
                 {
-                    (text.Value as VisualText).Position.X = machine.SharedContext.DialogWindow.Position.X + (text.Value as VisualText).TextLength().X + 128;
-                    (text.Value as VisualText).Position.Y = machine.SharedContext.DialogWindow.Position.Y + (txtRow * 32) + 192;
-                    (text.Value as VisualText).LayerDepth = machine.SharedContext.DialogWindow.LayerDepth + (DrawingPlainOrder.PlainStep*2);
-                    txtRow += 1;
+                    (machine.SharedContext.DialogWindow[LastDialogId] as VisualText).Position.X = machine.SharedContext.DialogWindow.Position.X + (machine.SharedContext.DialogWindow[LastDialogId] as VisualText).TextLength().X + 128;
+                    (machine.SharedContext.DialogWindow[LastDialogId] as VisualText).Position.Y = machine.SharedContext.DialogWindow.Position.Y + (machine.SharedContext.DialogWindow[LastDialogId] as VisualText).TextLength().Y + 128;
+                    (machine.SharedContext.DialogWindow[LastDialogId] as VisualText).LayerDepth = machine.SharedContext.DialogWindow.LayerDepth + (DrawingPlainOrder.PlainStep * 2);
                 }
 
+                //move answers according to the window position
+                foreach (var text in machine.SharedContext.DialogWindow.Where(txts => txts.Value.GetType() == typeof(VisualText)))
+                {
+                    //skip the title
+                    if (!LastDialogPositions.ContainsKey(text.Key))
+                        continue;
+                    (text.Value as VisualText).Position.X = machine.SharedContext.DialogWindow.Position.X + (text.Value as VisualText).TextLength().X + 128;
+                    (text.Value as VisualText).Position.Y = machine.SharedContext.DialogWindow.Position.Y + (LastDialogPositions[text.Key] * 32) + 192;
+                    (text.Value as VisualText).LayerDepth = machine.SharedContext.DialogWindow.LayerDepth + (DrawingPlainOrder.PlainStep*2);
+                }
+
+                //move the portrait according to the window position
                 if (LastDialogPortrait != null)
                 {
                     if (machine.SharedContext.DialogWindow.ContainsKey(LastDialogPortrait.Id))
@@ -54,10 +67,9 @@ namespace Apocalypse.Any.Client.States.UI.Dialog
                         var portrait = machine.SharedContext.DialogWindow[LastDialogPortrait.Id] as ImageClient;
                         if (portrait != null)
                         {
-                            
-                            portrait.ApplyImageData(LastDialogPortrait);
+                            //portrait.ApplyImageData(LastDialogPortrait);
                             portrait.Position.X = machine.SharedContext.DialogWindow.Position.X + 320;
-                            portrait.Position.Y = machine.SharedContext.DialogWindow.Position.Y + (txtRow * portrait.Height) - 96;
+                            portrait.Position.Y = machine.SharedContext.DialogWindow.Position.Y - (portrait.Height + 64);
                             portrait.LayerDepth = machine.SharedContext.DialogWindow.LayerDepth + (DrawingPlainOrder.PlainStep*2);
                             portrait.Alpha.Alpha = 1;
                         }
@@ -125,21 +137,25 @@ namespace Apocalypse.Any.Client.States.UI.Dialog
                 machine.SharedContext.DialogWindow.Update(machine.SharedContext.UpdateGameTime);
             }
 
+            //this part happens when its either a new dialog or the dialog changed
             if (machine.SharedContext.LastMetadataBag.CurrentDialog?.Id != LastDialogId)
             {
-                if(LastDialogPortrait != null)
+                //remove the portrait
+                if (LastDialogPortrait != null)
                 {
                     machine.SharedContext.DialogWindow[LastDialogPortrait.Id].UnloadContent();
                     machine.SharedContext.DialogWindow.Remove(LastDialogPortrait.Id);
                 }
 
-                if(!string.IsNullOrWhiteSpace(LastDialogId))
+                //remove title
+                if (!string.IsNullOrWhiteSpace(LastDialogId))
                 {
                     //clean head
                     machine.SharedContext.DialogWindow[LastDialogId].UnloadContent();
                     machine.SharedContext.DialogWindow.Remove(LastDialogId);
                 }
 
+                //remove all dialog trees
                 if (LastDialogTree != null)
                 {
                     //clean nodes
@@ -154,16 +170,14 @@ namespace Apocalypse.Any.Client.States.UI.Dialog
 
                 }
 
-
-                //copy dialog
+                //copy new dialog information
                 LastDialogId = machine.SharedContext.LastMetadataBag.CurrentDialog?.Id;
                 LastDialogContent = machine.SharedContext.LastMetadataBag.CurrentDialog?.Content;
                 LastDialogTree = machine.SharedContext.LastMetadataBag.CurrentDialog?.DialogIdContent?.ToList();
                 LastDialogPortrait = machine.SharedContext.LastMetadataBag.CurrentDialog?.Portrait;
+                LastDialogPositions?.Clear();
 
-                //if (string.IsNullOrWhiteSpace(LastDialogId))
-                //    machine.SharedContext.DialogWindow.Clear();
-
+                //create the dialog title
                 if (LastDialogId != null)
                 {
                     machine.SharedContext.DialogWindow.Add(LastDialogId, new VisualText());
@@ -172,6 +186,8 @@ namespace Apocalypse.Any.Client.States.UI.Dialog
                     machine.SharedContext.DialogWindow.As<VisualText>(LastDialogId).Position.X = machine.SharedContext.DialogWindow.Position.X + machine.SharedContext.DialogWindow.Scale.X;
                     machine.SharedContext.DialogWindow.As<VisualText>(LastDialogId).Position.Y = machine.SharedContext.DialogWindow.Position.Y + machine.SharedContext.DialogWindow.Scale.Y;
                 }
+
+                //create the dialog tree
                 if(LastDialogTree != null)
                 {
                     var dialogOptionPosition = 1;
@@ -183,6 +199,7 @@ namespace Apocalypse.Any.Client.States.UI.Dialog
                         machine.SharedContext.DialogWindow.As<VisualText>(newDialog.Item1).Position.X = machine.SharedContext.DialogWindow.Position.X + machine.SharedContext.DialogWindow.Scale.X;
                         machine.SharedContext.DialogWindow.As<VisualText>(newDialog.Item1).Position.Y = machine.SharedContext.DialogWindow.Position.Y + machine.SharedContext.DialogWindow.Scale.Y + (dialogOptionPosition * machine.SharedContext.LastMetadataBag.CurrentDialog.FontSize);
                         dialogOptionPosition += 1;
+                        LastDialogPositions.Add(newDialog.Item1, dialogOptionPosition);
                     }
                 }
                 
