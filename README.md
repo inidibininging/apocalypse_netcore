@@ -1,5 +1,7 @@
+![](apocalypse_logo_glitch.png.png)
 # apocalypse_netcore
 Game developed for my own self-teaching purpouses
+
 
 # What is this?
 I developed this "game" with a little gaming framework on top of the MonoGame Framework in order to understand some principles and problems while making games.
