@@ -1,4 +1,3 @@
-![](apocalypse_logo_glitch.png.png)
 # apocalypse_netcore
 Game developed for my own self-teaching purpouses
 
