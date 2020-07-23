@@ -111,7 +111,7 @@ namespace Apocalypse.Any.GameServer.GameInstance
             var serverMessageTranslator = new NetIncomingMessageNetworkCommandConnectionTranslator(serverTranslator);
 
 
-            var cliPassthrough = new CLIPassthroughMechanic(AuthenticationService);
+            var cliPassthrough = new CLIPassthroughMechanic(AuthenticationService, Configuration.RunOperation);
             var writer = new GameSectorLayerWriterMechanic
             {
                 RedisHost = Configuration.RedisHost,
@@ -201,7 +201,7 @@ namespace Apocalypse.Any.GameServer.GameInstance
             GameStateContext.Initialize();
 
             //Language script file
-            LanguageScriptFileEvaluator languageScriptFileEvaluator = new LanguageScriptFileEvaluator(Configuration.StartupScript, Configuration.StartupFunction);
+            LanguageScriptFileEvaluator languageScriptFileEvaluator = new LanguageScriptFileEvaluator(Configuration.StartupScript, Configuration.StartupFunction, Configuration.RunOperation);
             foreach (var sector in GameSectorLayerServices.Values)
             {
                 languageScriptFileEvaluator.Evaluate(sector);

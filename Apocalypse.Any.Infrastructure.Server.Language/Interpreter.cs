@@ -15,10 +15,10 @@ namespace Apocalypse.Any.Infrastructure.Server.Language
         {
             return new MemoryStream(Encoding.UTF8.GetBytes(value ?? ""));
         }
-
-        public Interpreter()
+        public string RunOperation { get; set; }
+        public Interpreter(string runOperation)
         {
-
+            RunOperation = runOperation;
         }
         public IStateMachine<string, IGameSectorLayerService> Context { get; set; }
 

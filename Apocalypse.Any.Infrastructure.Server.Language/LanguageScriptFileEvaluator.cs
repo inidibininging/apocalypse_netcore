@@ -12,11 +12,11 @@ namespace Apocalypse.Any.Infrastructure.Server.Language
         private string FilePath { get; set; }
         public string MainFunction { get; set; }
         public Interpreter Interpreter { get; set; }
-        public LanguageScriptFileEvaluator(string filePath, string mainFunction)
+        public LanguageScriptFileEvaluator(string filePath, string startupFunction, string runOperation)
         {
             FilePath = filePath ?? throw new ArgumentNullException(nameof(filePath));
-            MainFunction = mainFunction ?? throw new ArgumentNullException(nameof(mainFunction));
-            Interpreter = new Interpreter();
+            MainFunction = startupFunction ?? throw new ArgumentNullException(nameof(startupFunction));
+            Interpreter = new Interpreter(runOperation);
         }
         public LanguageScriptFileEvaluator Evaluate(IStateMachine<string, IGameSectorLayerService> context)
         {
