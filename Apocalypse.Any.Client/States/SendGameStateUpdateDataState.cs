@@ -71,25 +71,25 @@ namespace Apocalypse.Any.Client.States
             }
             //this only works if last meta data bag is not overwritten
             if(machine.SharedContext.LastMetadataBag != null &&
-                machine.SharedContext.LastMetadataBag.EventName != null &&
-                machine.SharedContext.LastMetadataBag.EventName.Contains("Exit") &&
+                machine.SharedContext.LastMetadataBag.ClientEventName != null &&
+                machine.SharedContext.LastMetadataBag.ClientEventName.Contains("Exit") &&
                 cmds.Contains(DefaultKeys.Use))
             {
                 cmds.Add(DefaultKeys.CloseDialog);
-                machine.SharedContext.LastMetadataBag.EventName = null;
+                machine.SharedContext.LastMetadataBag.ClientEventName = null;
             }
             else
             {
                 if (machine.SharedContext.LastMetadataBag != null &&
-                machine.SharedContext.LastMetadataBag.EventName != null &&
+                machine.SharedContext.LastMetadataBag.ClientEventName != null &&
                 cmds.Contains(DefaultKeys.Use))
                 {
-                    var selectedDialog = machine.SharedContext.LastMetadataBag.CurrentDialog.DialogIdContent.FirstOrDefault(d => d.Item2 == machine.SharedContext.LastMetadataBag.EventName);
+                    var selectedDialog = machine.SharedContext.LastMetadataBag.CurrentDialog.DialogIdContent.FirstOrDefault(d => d.Item2 == machine.SharedContext.LastMetadataBag.ClientEventName);
                     if(selectedDialog != null)
                     {
                         cmds.Add($"{DefaultKeys.OpenDialog} {selectedDialog.Item1}");
                     }
-                    machine.SharedContext.LastMetadataBag.EventName = null;
+                    machine.SharedContext.LastMetadataBag.ClientEventName = null;
                 }
             }
             

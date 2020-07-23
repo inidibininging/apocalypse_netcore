@@ -79,7 +79,7 @@ namespace Apocalypse.Any.Client.States
             foreach (var currentFrame in FrameGeneratorService.GenerateGameSheetAtlas("fog_edit", 512, 512, 0, 2, 0, 3))
                 machine.SharedContext.GameSheet.Frames.Add(currentFrame.Key, currentFrame.Value);
 
-            foreach (var currentFrame in FrameGeneratorService.GenerateGameSheetAtlas("hud_misc_edit", 32, 32, 0, 8, 0, 7))
+            foreach (var currentFrame in FrameGeneratorService.GenerateGameSheetAtlas("hud_misc_edit", 32, 32, 0, 8, 0, 8))
                 machine.SharedContext.GameSheet.Frames.Add(currentFrame.Key, currentFrame.Value);
 
             foreach (var currentFrame in FrameGeneratorService.GenerateGameSheetAtlas("miniCity", 32, 32, 1, 6, 5, 5))

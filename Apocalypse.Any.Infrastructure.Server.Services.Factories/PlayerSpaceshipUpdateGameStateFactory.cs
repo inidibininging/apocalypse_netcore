@@ -24,7 +24,7 @@ namespace Apocalypse.Any.Infrastructure.Server.Services.Transformations
         public override bool CanUse<TParam>(TParam instance)
         {
             return CanUseByTType<TParam, GameSectorLoginTokenBag>();
-        }
+        } 
         public override List<Type> GetValidParameterTypes()
         {
             return new List<Type>() { typeof(GameSectorLoginTokenBag) };
@@ -47,13 +47,35 @@ namespace Apocalypse.Any.Infrastructure.Server.Services.Transformations
                 .Players
                 .FirstOrDefault(somePlayer => somePlayer.LoginToken == loginToken);
 
+
+            var playerRectangle = new Rectangle(player.CurrentImage.Position.ToVector2().ToPoint(), new Point((int)MathF.Round(player.Stats.Aura * (int)MathF.Round(player.CurrentImage.Width * player.CurrentImage.Scale.X))));
+
+
+            var playerCanUseDialog = gameSector
+                                    .DataLayer
+                                    .Layers
+                                    .Where(l => l.DataAsEnumerable<IdentifiableCircularLocation>().Any(
+                                            location =>
+                                                new Rectangle(location.Position.ToVector2().ToPoint(), new Vector2(location.Radius <= 1 ? 1 : location.Radius).ToPoint()).Intersects(
+                                                    playerRectangle))
+                                    )
+                                    .Any();
+
+            var playerNearEnemies = gameSector
+                                    .DataLayer
+                                    .Enemies
+                                    .Where(enemy => new Rectangle(enemy.CurrentImage.Position.ToVector2().ToPoint(), new Point((int)MathF.Round(enemy.CurrentImage.Width) * (int)enemy.CurrentImage.Width))
+                                                    .Intersects(playerRectangle))
+                                    .Any();
+
             var unserializedPlayerMetadata = new PlayerMetadataBag()
             {
                 Stats = player.Stats,
                 GameSectorTag = gameSector.Tag,
                 ChosenStat = player.ChosenStat,
                 Items = gameSector.DataLayer.Items.Where(item => item.OwnerName == player.Name).ToList(),
-                CurrentDialog = gameSector?.PlayerDialogService.GetDialogNodeByLoginToken(player.LoginToken)
+                CurrentDialog = gameSector.PlayerDialogService.GetDialogNodeByLoginToken(player.LoginToken),
+                ServerEventName = playerNearEnemies ? "Enemies" : playerCanUseDialog ? "Dialog" : string.Empty
             };
 
             var cache = new GameStateData
