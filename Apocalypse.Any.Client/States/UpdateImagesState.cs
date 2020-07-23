@@ -40,7 +40,7 @@ namespace Apocalypse.Any.Client.States
                     var newImageClient = new ImageClient(newImg, machine.SharedContext.GameSheet.Frames);
                     newImageClient.LoadContent(ScreenService.Instance.Content);
                     machine.SharedContext.Images.Add(newImageClient);
-                    if (newImageClient.SelectedFrame.Contains("projectile"))
+                    if (newImageClient.SelectedFrame != null && newImageClient.SelectedFrame.Contains("projectile"))
                         ScreenService.Instance.Sounds.Play($"SynthLaser0{Randomness.Instance.From(0, 3)}");
                 }
                 else
