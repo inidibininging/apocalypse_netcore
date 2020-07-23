@@ -22,6 +22,7 @@ using Apocalypse.Any.Infrastructure.Server.Language;
 using Apocalypse.Any.Infrastructure.Server.Services.Data.Interfaces;
 using Apocalypse.Any.Infrastructure.Server.Services.Mechanics.CLI;
 using Apocalypse.Any.Infrastructure.Server.Services.Mechanics.RoutingMechanics;
+using Apocalypse.Any.Infrastructure.Server.Services.Mechanics.SectorMechanics;
 using Apocalypse.Any.Infrastructure.Server.States;
 using Apocalypse.Any.Infrastructure.Server.States.Interfaces;
 using Lidgren.Network;
@@ -32,7 +33,9 @@ using Serilog;
 using Serilog.Extensions.Logging;
 using States.Core.Infrastructure.Services;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Threading;
@@ -56,7 +59,7 @@ namespace Apocalypse.Any.GameServer.GameInstance
         /// Sectors contexts.
         /// It means you dont return game sectors but rather a context to a game sector.
         /// </summary>
-        public Dictionary<string, IStateMachine<string, IGameSectorLayerService>> GameSectorLayerServices { get; set; }
+        public ConcurrentDictionary<string, IStateMachine<string, IGameSectorLayerService>> GameSectorLayerServices { get; set; }
 
         /// <summary>
         /// Factory for game sector contexts
@@ -98,7 +101,7 @@ namespace Apocalypse.Any.GameServer.GameInstance
             Configuration = configuration;
             var leSerializationType = configuration.SerializationAdapterType.LoadType(true, false)[0];
             SerializationAdapter = Activator.CreateInstance(leSerializationType) as ISerializationAdapter;
-            GameSectorLayerServices = new Dictionary<string, IStateMachine<string, IGameSectorLayerService>>();
+            GameSectorLayerServices = new ConcurrentDictionary<string, IStateMachine<string, IGameSectorLayerService>>();
             SectorStateMachine = new InMemoryStorageGameSectorLayerServiceFactory();
             AuthenticationService = new ExampleLoginAndRegistrationService();
             CreateServer(
@@ -110,7 +113,7 @@ namespace Apocalypse.Any.GameServer.GameInstance
             var serverTranslator = new NetworkCommandTranslator(SerializationAdapter);
             var serverMessageTranslator = new NetIncomingMessageNetworkCommandConnectionTranslator(serverTranslator);
 
-
+           
             var cliPassthrough = new CLIPassthroughMechanic(AuthenticationService, Configuration.RunOperation);
             var writer = new GameSectorLayerWriterMechanic
             {
@@ -122,13 +125,14 @@ namespace Apocalypse.Any.GameServer.GameInstance
                 RedisHost = Configuration.RedisHost,
                 RedisPort = Configuration.RedisPort
             };
-
+            var switchSectorsStatusMechanic = new SwitchSectorsStatusMechanic();
             SectorsOwnerMechanics = new List<ISingleUpdeatableMechanic<IGameSectorsOwner, IGameSectorsOwner>>
             {
                 //routeTrespassingMarker,
-                //playerShifter,
+                //playerShifter,                
                 cliPassthrough,
                 rediCliPassthrough,
+                switchSectorsStatusMechanic,
                 writer
             };
 
@@ -158,7 +162,7 @@ namespace Apocalypse.Any.GameServer.GameInstance
 
 
             var sectorList = new List<string>();
-            for (int sectorIndex = 0; sectorIndex < 1; sectorIndex++)
+            for (int sectorIndex = 0; sectorIndex < 2; sectorIndex++)
             {
                 var sectorId = System.Guid.NewGuid().ToString();
 
@@ -201,20 +205,43 @@ namespace Apocalypse.Any.GameServer.GameInstance
             GameStateContext.Initialize();
 
             //Language script file
-            LanguageScriptFileEvaluator languageScriptFileEvaluator = new LanguageScriptFileEvaluator(Configuration.StartupScript, Configuration.StartupFunction, Configuration.RunOperation);
-            foreach (var sector in GameSectorLayerServices.Values)
-            {
-                languageScriptFileEvaluator.Evaluate(sector);
-            }
-
+            //LanguageScriptFileEvaluator languageScriptFileEvaluator = new LanguageScriptFileEvaluator(Configuration.StartupScript, Configuration.StartupFunction, Configuration.RunOperation);
+            var startupScriptContent = File.ReadAllText(Configuration.StartupScript);
+            
             Console.WriteLine("runner starting..." + Configuration.StartupFunction);
             CreateGameTimeIfNotExists(null);
             Console.WriteLine(CurrentGameTime);
-            foreach (var sector in GameSectorLayerServices.Values)
+
+            GameSectorLayerServices.Values.AsParallel().ForAll((sector) =>
             {
+                new LanguageScriptEvaluator(startupScriptContent, Configuration.StartupFunction, Configuration.RunOperation).Evaluate(sector);
                 sector.SharedContext.CurrentGameTime = CurrentGameTime;
                 sector.Run(Configuration.StartupFunction);
-            }
+            });
+
+
+
+            Task.Factory.StartNew(() =>
+            {
+                while (true)
+                {
+
+                    var sectorName = $"generated_{Guid.NewGuid().ToString()}";
+                    BuildSector(sectorName,
+                                GameSectorLayerServices.ElementAt(Randomness.Instance.From(0, GameSectorLayerServices.Count - 1)).Key,
+                                GameSectorLayerServices.ElementAt(Randomness.Instance.From(0, GameSectorLayerServices.Count - 1)).Key,
+                                GameSectorLayerServices.ElementAt(Randomness.Instance.From(0, GameSectorLayerServices.Count - 1)).Key,
+                                GameSectorLayerServices.ElementAt(Randomness.Instance.From(0, GameSectorLayerServices.Count - 1)).Key);
+                    new LanguageScriptEvaluator(startupScriptContent, Configuration.StartupFunction, Configuration.RunOperation).Evaluate(GameSectorLayerServices[sectorName]);
+                    GameSectorLayerServices[sectorName].SharedContext.CurrentGameTime = CurrentGameTime;
+                    GameSectorLayerServices[sectorName].Run(Configuration.StartupFunction);
+
+                    var mainRouter = SectorsOwnerMechanics.FirstOrDefault(m => (m as RouterPlayerShifterMechanic) != null && (m as RouterPlayerShifterMechanic).GameSectorRoutes.Any(r => r.GameSectorTag == Configuration.StartingSector));
+                    foreach (var r in (mainRouter as RouterPlayerShifterMechanic)?.GameSectorRoutes)
+                        r.GameSectorDestinationTag = GameSectorLayerServices.ElementAt(Randomness.Instance.From(0, GameSectorLayerServices.Count - 1)).Key;
+                    Thread.Sleep(120000);
+                }
+            });
         }
         private void BuildSector(string sectorName,
                                 string sectorUp,
@@ -302,7 +329,7 @@ namespace Apocalypse.Any.GameServer.GameInstance
             if (GameSectorLayerServices.ContainsKey(sectorName))
                 throw new SectorAlreadyExistsException(sectorName);
 
-            GameSectorLayerServices.Add(sectorName, SectorStateMachine.BuildStateMachine(Configuration));
+            GameSectorLayerServices.TryAdd(sectorName, SectorStateMachine.BuildStateMachine(Configuration));
         }
 
         private TimeSpan TotalRealTime { get; set; }
@@ -339,17 +366,35 @@ namespace Apocalypse.Any.GameServer.GameInstance
             UpdateGameTime(CurrentGameTime);
             GameStateContext.Update();
 
-            foreach (var sectorOwnerMechanic in SectorsOwnerMechanics)
-                sectorOwnerMechanic.Update(this);
-
-            foreach (var sector in GameSectorLayerServices.Values.Where(sector => sector.SharedContext.CurrentStatus == GameSectorStatus.Running))
+            var sectorMechanicsInParallel = Parallel.ForEach(SectorsOwnerMechanics, (sectorOwnerMechanic) =>
             {
-                sector.SharedContext.CurrentGameTime = CurrentGameTime;
-                sector
-                    .GetService
-                    .Get(Configuration.RunOperation)
-                    //  .Get("RunInParallel")
-                    .Handle(sector);
+                sectorOwnerMechanic.Update(this);
+            });
+                //foreach (var sectorOwnerMechanic in SectorsOwnerMechanics)
+                //sectorOwnerMechanic.Update(this);
+            var sectorsInParallel = Parallel.ForEach(GameSectorLayerServices.Values.Where(sector => sector.SharedContext.CurrentStatus == GameSectorStatus.Running),
+                (sector) =>
+                {
+                    sector.SharedContext.CurrentGameTime = CurrentGameTime;
+                    sector
+                        .GetService
+                        .Get(Configuration.RunOperation)
+                        //  .Get("RunInParallel")
+                        .Handle(sector);
+                });
+            //foreach (var sector in GameSectorLayerServices.Values.Where(sector => sector.SharedContext.CurrentStatus == GameSectorStatus.Running))
+            //{
+            //    sector.SharedContext.CurrentGameTime = CurrentGameTime;
+            //    sector
+            //        .GetService
+            //        .Get(Configuration.RunOperation)
+            //        //  .Get("RunInParallel")
+            //        .Handle(sector);
+            //}
+
+            while (!sectorsInParallel.IsCompleted && !sectorMechanicsInParallel.IsCompleted)
+            {
+                Console.WriteLine("oh oh");
             }
             Thread.Sleep(TotalGameTime);
         }

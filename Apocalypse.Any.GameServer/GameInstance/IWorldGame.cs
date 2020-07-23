@@ -5,6 +5,7 @@ using Apocalypse.Any.Infrastructure.Common.Services.Network.Interfaces.Factories
 using Apocalypse.Any.Infrastructure.Server.Services.Data.Interfaces;
 using Microsoft.Xna.Framework;
 using States.Core.Infrastructure.Services;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 
 namespace Apocalypse.Any.GameServer.GameInstance
@@ -12,7 +13,7 @@ namespace Apocalypse.Any.GameServer.GameInstance
     public interface IWorldGame
     {
         GameServerConfiguration Configuration { get; set; }
-        Dictionary<string, IStateMachine<string, IGameSectorLayerService>> GameSectorLayerServices { get; set; }
+        ConcurrentDictionary<string, IStateMachine<string, IGameSectorLayerService>> GameSectorLayerServices { get; set; }
         PlayerSpaceshipFactory PlayerFactory { get; set; }
         IList<ISingleUpdeatableMechanic<IGameSectorsOwner, IGameSectorsOwner>> SectorsOwnerMechanics { get; set; }
         IGameSectorLayerServiceStateMachineFactory<GameServerConfiguration> SectorStateMachine { get; set; }
