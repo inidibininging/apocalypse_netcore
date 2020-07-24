@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Content;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
@@ -14,7 +15,7 @@ namespace Apocalypse.Any.Core.Services
     /// </summary>
     public class WaveSoundService : GameObject
     {
-        public Dictionary<string, SoundEffect> Effects { get; set; }
+        public ConcurrentDictionary<string, SoundEffect> Effects { get; set; }
 
         //IWavePlayer WaveOutDevice { get; set; }
         private Uri Location { get; set; }
@@ -23,7 +24,7 @@ namespace Apocalypse.Any.Core.Services
 
         public WaveSoundService() : base()
         {
-            Effects = new Dictionary<string, SoundEffect>();
+            Effects = new ConcurrentDictionary<string, SoundEffect>();
             Location = new Uri(Assembly.GetEntryAssembly().GetName().CodeBase);
             Directory = new FileInfo(Location.AbsolutePath).Directory.FullName;
         }
@@ -94,7 +95,7 @@ namespace Apocalypse.Any.Core.Services
                 //str.Name = Path.GetFileNameWithoutExtension(filePath);
                 
                 //!!!!-----
-                Effects.Add(audioFileName, SoundEffect.FromStream(File.OpenRead(filePath)));
+                Effects.TryAdd(audioFileName, SoundEffect.FromStream(File.OpenRead(filePath)));
                 
                 // Effects.Add(audioFileName, manager.Load<SoundEffect>(filePath));
             });

@@ -118,7 +118,7 @@ namespace Apocalypse.Any.Client.States.UI.Character
             }                
             else
             {
-                machine.SharedContext.DialogImage.SelectedFrame = "hud_misc_edit_3_6";
+                machine.SharedContext.DialogImage.SelectedFrame = "hud_misc_edit_0_1";
             }
 
             //health
