@@ -11,8 +11,8 @@ namespace Apocalypse.Any.Infrastructure.Common.Services.Network.Interfaces.Trans
             var realWidth = image.Width * image.Scale.X;
             var realHeight = image.Height * image.Scale.Y;
             return new Rectangle(
-                                    (int)MathF.Round(image.Position.X) - (int)MathF.Round(realWidth / 2),
-                                    (int)MathF.Round(image.Position.Y) - (int)MathF.Round(realHeight / 2),
+                                    (int)MathF.Round(image.Position.X) - (int)MathF.Round(realWidth / 2) - quadracticOffset,
+                                    (int)MathF.Round(image.Position.Y) - (int)MathF.Round(realHeight / 2) - quadracticOffset,
                                     (int)MathF.Round(realWidth) + quadracticOffset,
                                     (int)MathF.Round(realHeight) + quadracticOffset
                                 );
@@ -22,8 +22,8 @@ namespace Apocalypse.Any.Infrastructure.Common.Services.Network.Interfaces.Trans
             var realWidth = width * scale.X;
             var realHeight = height * scale.Y;
             return new Rectangle(
-                                    (int)MathF.Round(position.X) - (int)MathF.Round(realWidth / 2),
-                                    (int)MathF.Round(position.Y) - (int)MathF.Round(realHeight / 2),
+                                    (int)MathF.Round(position.X) - (int)MathF.Round(realWidth / 2) - quadracticOffset,
+                                    (int)MathF.Round(position.Y) - (int)MathF.Round(realHeight / 2) - quadracticOffset,
                                     (int)MathF.Round(realWidth) + quadracticOffset,
                                     (int)MathF.Round(realHeight) + quadracticOffset
                                 );
