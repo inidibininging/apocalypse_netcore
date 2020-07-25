@@ -56,7 +56,7 @@ namespace Apocalypse.Any.GameServer.States.Sector.Mechanics
                                                     .ImageData
                                                     .Any(buildingImage => FramesWithCircularLocation().Any(
                                                                                 frameWithCircularLocationKeyValuePair => frameWithCircularLocationKeyValuePair.Key == buildingImage.SelectedFrame &&
-                                                                                                                         frameWithCircularLocationKeyValuePair.Value.Intersects(ImageToRectangleTransformationService.Transform(buildingImage))
+                                                                                                                         frameWithCircularLocationKeyValuePair.Value.Intersects(ImageToRectangleTransformationService.TransformInRespectToCenter(buildingImage))
                                                                             )));
 
             var dialogsWithSameIdAsCircularLocations = machine.SharedContext

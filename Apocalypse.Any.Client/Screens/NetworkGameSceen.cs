@@ -32,7 +32,8 @@ namespace Apocalypse.Any.Client.Screens
 
         public SpriteSheet HealthImage { get; set; } = new SpriteSheet(null) { Path = "Image/hud_misc_edit" };
         public SpriteSheet SpeedImage { get; set; } = new SpriteSheet(null) { Path = "Image/hud_misc_edit" };
-        public SpriteSheet StrenghImage { get; set; } = new SpriteSheet(null) { Path = "Image/hud_misc_edit" };
+        public SpriteSheet StrenghImage { get; set; } = new SpriteSheet(null) { Path = "Image/hud_misc_edit" };       
+        public SpriteSheet DialogImage { get; set; } = new SpriteSheet(null) { Path = "Image/hud_misc_edit" };
         public SpriteSheet CursorImage { get; set; } = new SpriteSheet(null) { Path = "Image/hud_misc_edit" };
 
         //public SpriteSheet LerpMouseImage { get; set; } = new SpriteSheet(null) { Path = "Image/hud_misc" };
@@ -105,7 +106,7 @@ namespace Apocalypse.Any.Client.Screens
             HealthImage.Draw(spriteBatch);
             SpeedImage.Draw(spriteBatch);
             StrenghImage.Draw(spriteBatch);
-
+            DialogImage.Draw(spriteBatch);
             CursorImage.Draw(spriteBatch);
             //LerpMouseImage.Draw(spriteBatch);
 

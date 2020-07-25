@@ -39,8 +39,8 @@ namespace Apocalypse.Any.Infrastructure.Server.Services.Mechanics.EnemyMechanics
             if (enemy == null || player == null)
                 return;
 
-            var enemyRect = ImageToRectangle.Transform(enemy.CurrentImage, offsetEnemy);
-            var playerRect = ImageToRectangle.Transform(player.CurrentImage, offsetPlayer);
+            var enemyRect = ImageToRectangle.TransformInRespectToCenter(enemy.CurrentImage, offsetEnemy);
+            var playerRect = ImageToRectangle.TransformInRespectToCenter(player.CurrentImage, offsetPlayer);
 
             AttractionMechanics.Update(
             enemy.CurrentImage,

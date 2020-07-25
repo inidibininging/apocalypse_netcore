@@ -182,7 +182,7 @@ namespace Apocalypse.Any.GameServer.States.Sector.Storage
                         }
                     })));
 
-            inMemoryStorage.Add(ServerGameSectorNewBook.UpdateGameStateDataState, new UpdateGameStateDataState(new PlayerSpaceshipUpdateGameStateFactory(serializer)));
+            inMemoryStorage.Add(ServerGameSectorNewBook.UpdateGameStateDataState, new UpdateGameStateDataState(new PlayerSpaceshipUpdateGameStateFactory(serializer, new ImageToRectangleTransformationService())));
             inMemoryStorage.Add(ServerGameSectorNewBook.RemoveDestroyedProjectilesState, new RemoveDestroyedProjectilesState(new DestroyedProjectilesIterator()));
 
             inMemoryStorage.Add(ServerGameSectorNewBook.ProcessRotationMapsForPlayerMechanicsState, new ProcessRotationMapsForPlayerMechanicsState());

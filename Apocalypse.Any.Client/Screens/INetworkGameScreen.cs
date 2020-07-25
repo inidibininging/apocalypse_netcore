@@ -24,6 +24,7 @@ namespace Apocalypse.Any.Client.Screens
         SpriteSheet HealthImage { get; set; }
         SpriteSheet SpeedImage { get; set; }
         SpriteSheet StrenghImage { get; set; }
+        SpriteSheet DialogImage { get; set; }
         SpriteSheet CursorImage { get; set; }
         // SpriteSheet LerpMouseImage { get; set; }
 

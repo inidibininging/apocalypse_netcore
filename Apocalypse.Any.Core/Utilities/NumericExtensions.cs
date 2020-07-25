@@ -87,6 +87,11 @@ namespace Apocalypse.Any.Core.Utilities
             return (float)((Math.PI / 180) * val);
         }
 
+        public static Vector2 ToVector2(this float val)
+        {
+            return new Vector2(val);
+        }
+
         public static TimeSpan Seconds(this int val)
         {
             return TimeSpan.FromSeconds(val);

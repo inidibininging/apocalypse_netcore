@@ -44,7 +44,7 @@ namespace Apocalypse.Any.Infrastructure.Server.Services.Mechanics
             ImageToRectangle = imageToRectangleTransformationService;
         }
 
-        public Rectangle GetCurrentRectangle() => ImageToRectangle.Transform(CharacterEntity.CurrentImage);
+        public Rectangle GetCurrentRectangle() => ImageToRectangle.TransformInRespectToCenter(CharacterEntity.CurrentImage);
 
         public void OnCollision(ICollidable collidable)
         {

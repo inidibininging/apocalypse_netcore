@@ -102,9 +102,14 @@ namespace Apocalypse.Any.Client.States.Storage
                     return;
                 if (machine.SharedContext.InventoryWindow == null)
                     return;
-                logo.Scale = new Vector2() { X = 0.75f, Y = 0.75f };
-                logo.Position.X = machine.SharedContext.InventoryWindow.Position.X - 768;
-                logo.Position.Y = machine.SharedContext.InventoryWindow.Position.Y - 256;
+                if (machine.SharedContext.LastMetadataBag == null)
+                    logo.Alpha.Alpha = 0.00f;
+                else
+                    logo.Alpha.Alpha = 0.25f;
+                logo.Scale = new Vector2() { X = 0.25f, Y = 0.25f };
+                logo.Position.X = machine.SharedContext.InventoryWindow.Position.X + 64;
+                logo.Position.Y = machine.SharedContext.InventoryWindow.Position.Y + 232;
+                logo.LayerDepth = DrawingPlainOrder.UI;
             }));
 
             inMemoryStorage.Add("UpdateGameOverPosition", new CommandStateActionDelegate<string, INetworkGameScreen>((machine) =>

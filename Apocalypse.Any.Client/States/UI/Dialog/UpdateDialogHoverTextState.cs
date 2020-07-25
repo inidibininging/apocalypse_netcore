@@ -28,7 +28,7 @@ namespace Apocalypse.Any.Client.States.UI.Dialog
             {
                 
             }
-            machine.SharedContext.LastMetadataBag.EventName = hoveredText.Text;
+            machine.SharedContext.LastMetadataBag.ClientEventName = hoveredText.Text;
             hoveredText.Scale = new Vector2(hoveredText.Scale.X + 0.25f, hoveredText.Scale.Y + 0.25f);
         }
     }
