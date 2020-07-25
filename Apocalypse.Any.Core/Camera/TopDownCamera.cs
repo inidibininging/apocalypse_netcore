@@ -47,8 +47,10 @@ namespace Apocalypse.Any.Core.Camera
             Rotation = new RotationBehaviour();
         }
 
-        private int deltaScrollWheelValue = 0;
-        private int currentScrollWheelValue = 0;
+        private int scrollWheelValueRaw = 0;
+        private int scrollWheelValueBefore = 0;
+        public float NextZoom { get; private set; }
+        public float ZoomDifference { get; set; }
         private TimeSpan delayed = TimeSpan.FromMilliseconds(200);
         private TimeSpan counter = TimeSpan.Zero;
 
@@ -76,20 +78,26 @@ namespace Apocalypse.Any.Core.Camera
             }
             else
             {
-                deltaScrollWheelValue = 0;
-
-                var nextScrollValue = Mouse.GetState().ScrollWheelValue;
-
-                deltaScrollWheelValue = nextScrollValue - currentScrollWheelValue;
-                currentScrollWheelValue += deltaScrollWheelValue;
-                if (deltaScrollWheelValue != 0)
+                ZoomDifference = Math.Abs(NextZoom - Zoom);
+                if (ZoomDifference >= 0.0004 && NextZoom != 0)
                 {
-                    var factor = currentScrollWheelValue / 120;
+                    Zoom = MathHelper.Lerp(Zoom, NextZoom, 0.02f);
+                }
+                
+                //nextZoom = 0;
+                scrollWheelValueBefore = scrollWheelValueRaw;
+                scrollWheelValueRaw = Mouse.GetState().ScrollWheelValue;
 
-                    var nextZoom = (1 + ((float)factor / 10f));
+                float delta = scrollWheelValueRaw - scrollWheelValueBefore;
+                if(delta != 0)
+                {
+                    if (delta > 0)
+                        delta = 0.25f;
+                    if (delta < 0)
+                        delta = -0.25f;
 
-                    if (nextZoom > 0.5 && nextZoom < 1.5) // prevent from "zooming" in reverse??
-                        Zoom = MathHelper.Lerp(nextZoom,Zoom,0.06f);
+                    if (Zoom + delta > 0.5 && Zoom + delta < 1.5)
+                        NextZoom = Zoom + delta;
 
                 }
 

@@ -32,7 +32,7 @@ namespace Apocalypse.Any.Client.States
             var newImgs = new List<ImageData>();
             foreach (var newImg in machine.SharedContext.CurrentGameStateData.Images.ToList())
             {
-                System.Console.WriteLine(newImg.SelectedFrame);
+                
                 var foundOldImg = machine.SharedContext.Images.Find(oldImg => oldImg.ServerData.Id == newImg.Id);
                 if (foundOldImg == default(ImageClient))
                 {

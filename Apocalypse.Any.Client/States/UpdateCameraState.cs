@@ -38,6 +38,12 @@ namespace Apocalypse.Any.Client.States
 
                 ScreenService.Instance.DefaultScreenCamera.Position.X = MathHelper.Lerp(ScreenService.Instance.DefaultScreenCamera.Position.X, machine.SharedContext.CursorImage.Position.X, 0.05f);
                 ScreenService.Instance.DefaultScreenCamera.Position.Y = MathHelper.Lerp(ScreenService.Instance.DefaultScreenCamera.Position.Y, machine.SharedContext.CursorImage.Position.Y, 0.05f);
+                //if (ScreenService.Instance.DefaultScreenCamera.ZoomDifference <= 0.0422507524)
+                //{
+                //    var distance = Vector2.Distance(playerImage.Position, ScreenService.Instance.DefaultScreenCamera.Position);
+                //    if (distance >= 0.2)
+                //        ScreenService.Instance.DefaultScreenCamera.Zoom = 1f + (1.5f / distance);
+                //}
                 ScreenService.Instance.DefaultScreenCamera.Update(machine.SharedContext.UpdateGameTime);
             }
 
