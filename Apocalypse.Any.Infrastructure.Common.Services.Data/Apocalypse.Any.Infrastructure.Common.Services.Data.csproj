@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Apocalypse.Any.Domain.Common.Model.Network\Apocalypse.Any.Domain.Common.Model.Network.csproj" />
+    <ProjectReference Include="..\Apocalypse.Any.Infrastructure.Common.Services.Data.Interfaces\Apocalypse.Any.Infrastructure.Common.Services.Data.Interfaces.csproj" />
+  </ItemGroup>
+
+</Project>

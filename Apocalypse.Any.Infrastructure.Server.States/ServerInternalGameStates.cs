@@ -51,6 +51,6 @@
         /// User role gateway tha routes messages to the corresponding game state
         /// </summary>
         UserRoleGateWay = 9,
-
+        UpdateDelta = 10,
     };
 }

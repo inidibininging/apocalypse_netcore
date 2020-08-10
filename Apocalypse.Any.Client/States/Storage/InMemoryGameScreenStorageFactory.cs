@@ -15,6 +15,7 @@ using Apocalypse.Any.Core.Utilities;
 using Apocalypse.Any.Domain.Client.Model;
 using Apocalypse.Any.Domain.Common.DrawingOrder;
 using Apocalypse.Any.Domain.Common.Model.Network;
+using Apocalypse.Any.Infrastructure.Common.Services.Data;
 using Apocalypse.Any.Infrastructure.Common.Services.Network;
 using Apocalypse.Any.Infrastructure.Common.Services.Serializer.Interfaces;
 using Lidgren.Network;
@@ -47,7 +48,8 @@ namespace Apocalypse.Any.Client.States.Storage
                       machine.SharedContext.Messages.Add(ex.Message);
                       var identifier = machine.NewService.New(ClientGameScreenBook.FetchData, new FetchDataState(
                           new NetIncomingMessageBusService<NetClient>(machine.SharedContext.Client),
-                          serializer
+                          serializer,
+                          new DeltaGameStateDataService()
                       ));
                       return machine.GetService.Get(ClientGameScreenBook.FetchData);
                   }

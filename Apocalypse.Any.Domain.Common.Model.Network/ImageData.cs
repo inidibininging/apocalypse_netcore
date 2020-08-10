@@ -18,5 +18,27 @@ namespace Apocalypse.Any.Domain.Common.Model.Network
         public Vector2 Scale { get; set; }
         public float Width { get; set; }
         public float Height { get; set; }
+
+        public static implicit operator DeltaImageData(ImageData img)
+        {
+            return new DeltaImageData()
+            {
+                Id = img.Id,
+                LayerDepth = img.LayerDepth,
+                Alpha = img.Alpha.Alpha,
+                X = img.Position.X,
+                Y = img.Position.Y,
+                Rotation = img.Rotation.Rotation,
+                Width = img.Width,
+                Height = img.Height,
+                ScaleX = img.Scale.X,
+                ScaleY = img.Scale.Y,
+                R = img.Color.R,
+                G = img.Color.G,
+                B = img.Color.B,
+                Path = img.Path,
+                SelectedFrame = img.SelectedFrame,
+            };
+        }
     }
 }

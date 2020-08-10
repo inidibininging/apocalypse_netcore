@@ -7,6 +7,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Apocalypse.Any.Domain.Common.Model.Network\Apocalypse.Any.Domain.Common.Model.Network.csproj" />
     <ProjectReference Include="..\Apocalypse.Any.Domain.Server.Model.Network\Apocalypse.Any.Domain.Server.Model.Network.csproj" />
+    <ProjectReference Include="..\Apocalypse.Any.Infrastructure.Common.Services.Data.Interfaces\Apocalypse.Any.Infrastructure.Common.Services.Data.Interfaces.csproj" />
     <ProjectReference Include="..\Apocalypse.Any.Infrastructure.Common.Services.Network.Interfaces\Apocalypse.Any.Infrastructure.Common.Services.Network.Interfaces.csproj" />
     <ProjectReference Include="..\Apocalypse.Any.Infrastructure.Server.Services.Data\Apocalypse.Any.Infrastructure.Server.Services.Data.csproj" />
     <ProjectReference Include="..\Apocalypse.Any.Infrastructure.Server.States.Interfaces\Apocalypse.Any.Infrastructure.Server.States.Interfaces.csproj" />
