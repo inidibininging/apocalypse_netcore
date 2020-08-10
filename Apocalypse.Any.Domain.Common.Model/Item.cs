@@ -2,7 +2,8 @@ using Apocalypse.Any.Core.Model;
 
 namespace Apocalypse.Any.Domain.Common.Model
 {
-    public class Item : CharacterEntity, IOwnable
+
+    public class Item : CharacterEntity, IIdentifiableModel, IIdentifiableModel
     {
         public string Id { get; set; }
         public string OwnerName { get; set; }

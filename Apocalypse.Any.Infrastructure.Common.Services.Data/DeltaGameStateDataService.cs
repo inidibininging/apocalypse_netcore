@@ -102,7 +102,6 @@ namespace Apocalypse.Any.Infrastructure.Common.Services.Data
                         B = imgAfter.Color.B != imgBefore.Color.B ? (byte?)imgAfter.Color.B : null
                     });
                 }
-
             }
 
             //add new images
@@ -224,7 +223,6 @@ namespace Apocalypse.Any.Infrastructure.Common.Services.Data
                         );
                 }
             }
-
 
 
             if ((newImages = newImages.Where(i => i.Path != null)).Any())

@@ -39,6 +39,7 @@ namespace Apocalypse.Any.Client.States
             var messages = IncomingMessageBusService.FetchMessageChunk();
             if (!messages.Any())
                 return;
+            
 
 
             foreach (var currentMessage in messages)

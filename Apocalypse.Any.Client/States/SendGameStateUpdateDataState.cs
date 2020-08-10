@@ -94,7 +94,6 @@ namespace Apocalypse.Any.Client.States
                 }
             }
             
-
             if(machine.SharedContext.CurrentGameStateData == null || 
                     cmds.Contains("Exit") || 
                     cmds.Contains(DefaultKeys.Use) ||
