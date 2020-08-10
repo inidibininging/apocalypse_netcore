@@ -23,6 +23,7 @@
     <ProjectReference Include="..\Apocalypse.Any.Infrastructure.Common.Services.Serializer.YamlAdapter\Apocalypse.Any.Infrastructure.Common.Services.Serializer.YamlAdapter.csproj" />
     <ProjectReference Include="..\Apocalypse.Any.Infrastructure.Common.Services\Apocalypse.Any.Infrastructure.Common.Services.csproj" />
     <ProjectReference Include="..\Apocalypse.Any.Infrastructure.Server.Adapters.Redis\Apocalypse.Any.Infrastructure.Server.Adapters.Redis.csproj" />
+    <ProjectReference Include="..\Apocalypse.Any.Infrastructure.Server.PubSub\Apocalypse.Any.Infrastructure.Server.PubSub.csproj" />
     <ProjectReference Include="..\Apocalypse.Any.Infrastructure.Server.Services.Data\Apocalypse.Any.Infrastructure.Server.Services.Data.csproj" />
     <ProjectReference Include="..\Apocalypse.Any.Infrastructure.Server.Services.Factories\Apocalypse.Any.Infrastructure.Server.Services.Factories.csproj" />
     <ProjectReference Include="..\Apocalypse.Any.Infrastructure.Server.Services.Mechanics\Apocalypse.Any.Infrastructure.Server.Services.Mechanics.csproj" />

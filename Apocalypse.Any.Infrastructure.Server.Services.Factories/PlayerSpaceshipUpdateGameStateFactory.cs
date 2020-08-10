@@ -84,7 +84,7 @@ namespace Apocalypse.Any.Infrastructure.Server.Services.Transformations
                 Stats = player.Stats,
                 GameSectorTag = gameSector.Tag,
                 ChosenStat = player.ChosenStat,
-                Items = gameSector.DataLayer.Items.Where(item => item.OwnerName == player.Name).ToList(),
+                Items = gameSector.DataLayer.Items.Where(item => item.OwnerName == player.DisplayName).ToList(),
                 CurrentDialog = gameSector.PlayerDialogService.GetDialogNodeByLoginToken(player.LoginToken),
                 ServerEventName = playerNearEnemies ? "Enemies" : playerCanUseDialog ? "Dialog" : string.Empty
             };
@@ -137,7 +137,7 @@ namespace Apocalypse.Any.Infrastructure.Server.Services.Transformations
                 .Items
                 .Where(e => Vector2.Distance(
                                 e.CurrentImage.Position.ToVector2(),
-                                player.CurrentImage.Position.ToVector2()) <= DrawingDistance && !e.Taken)
+                                player.CurrentImage.Position.ToVector2()) <= DrawingDistance && !e.InInventory)
                 .Select(item => item.CurrentImage).ToList());
 
             cache.Images.AddRange(gameSector
@@ -160,7 +160,7 @@ namespace Apocalypse.Any.Infrastructure.Server.Services.Transformations
             var previousSelectedItem = gameSector
                                         .DataLayer
                                         .PlayerItems
-                                        .FirstOrDefault(pItem => pItem.OwnerName == player.Name && pItem.Selected);
+                                        .FirstOrDefault(pItem => pItem.OwnerName == player.DisplayName && pItem.Selected);
 
 
             unserializedPlayerMetadata.TimeStamp = DateTime.Now;

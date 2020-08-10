@@ -4,7 +4,7 @@ namespace Apocalypse.Any.Domain.Common.Model
 {
     public interface IEntityWithImage
     {
-        string Name { get; set; }
+        string DisplayName { get; set; }
         ImageData CurrentImage { get; set; }
     }
 }

@@ -41,18 +41,18 @@ namespace Apocalypse.Any.Infrastructure.Common.Services.Network.Interfaces.Facto
         //{
         //}
 
-        private Item GenerateItem(
+        private Item GenerateSurvivor(
             ICharacterSheet characterSheet,
             Vector2 generatedPosition) {
             var yFrame = Randomness.Instance.From(0, 3);
             var xFrame = Randomness.Instance.From(0, yFrame == 3 ? 3 : 4);
             return new Item()
             {
-                Name = "Survivor", // needs a ItemNameGenerator, based on stats
+                DisplayName = $"Survivor #{Guid.NewGuid().ToString().Replace("-","")}", // needs a ItemNameGenerator, based on stats
                 Used = false,
                 InstantUse = Randomness.Instance.TrueOrFalse(),
-                Stats = characterSheet as CharacterSheet, //OUCH !!! Design fail
-                Tags = new List<string>() { "Items", "Generated" },
+                Stats = characterSheet as CharacterSheet, //TODO: OUCH !!! Design fail. Serialize to class, but use interfaces everywhere
+                Tags = new List<string>() { "Items", "Generated", "Survivor" },
                 CurrentImage = new ImageData()
                 {
                     Id = $"itm_{Guid.NewGuid().ToString()}",
@@ -74,14 +74,14 @@ namespace Apocalypse.Any.Infrastructure.Common.Services.Network.Interfaces.Facto
                         Y = generatedPosition.Y
                     },
                     Rotation = new RotationBehaviour() { Rotation = 0 },//Randomness.Instance.From(0, 360) },
-
+                    
                 }
             };
         }
 
         private Item GenerateExperienceChunkItem(int exp, Vector2 generatedPosition) => new Item()
         {
-            Name = "MockItem of Great EXP", // needs a ItemNameGenerator, based on stats
+            DisplayName = "MockItem of Great EXP", // needs a ItemNameGenerator, based on stats
             Used = false,
             InstantUse = true,
             Stats = new CharacterSheet()
@@ -109,7 +109,7 @@ namespace Apocalypse.Any.Infrastructure.Common.Services.Network.Interfaces.Facto
                     Y = generatedPosition.Y
                 },
                 Rotation = new RotationBehaviour() { Rotation = Randomness.Instance.From(0, 360) }
-            }
+            }            
         };
 
         public override bool CanUse<TParam>(TParam instance)
@@ -137,8 +137,8 @@ namespace Apocalypse.Any.Infrastructure.Common.Services.Network.Interfaces.Facto
             {
                 Console.WriteLine(ex.Message);
             }
-            var item = GenerateItem(randomSheet, generatedPosition);
-            item.Name = NameGenerator.Generate(item);
+            var item = GenerateSurvivor(randomSheet, generatedPosition);
+            item.DisplayName = NameGenerator.Generate(item);
             return item;
         }
     }

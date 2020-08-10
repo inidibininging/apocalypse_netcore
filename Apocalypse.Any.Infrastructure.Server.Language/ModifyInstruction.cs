@@ -53,7 +53,7 @@ namespace Apocalypse.Any.Infrastructure.Server.Language
         }
         private void HandleEntity(IStateMachine<string, IGameSectorLayerService> machine)
         {
-            var getByName = new Func<CharacterEntity, bool>((entity) => entity.Name == ModifyExpression.Identifier.Name);
+            var getByName = new Func<CharacterEntity, bool>((entity) => entity.DisplayName == ModifyExpression.Identifier.Name);
             var selectedCharacter = GetAllValidCharacters(machine).FirstOrDefault(getByName);
             HandleCharacter(selectedCharacter);
         }

@@ -20,7 +20,7 @@ namespace Apocalypse.Any.Infrastructure.Server.Services.Data
         /// </summary>
         protected bool OnlyUniques { get; private set; }
 
-        public GenericInMemoryDataLayer(bool onlyUniques = false)
+        public GenericInMemoryDataLayer(string name, bool onlyUniques = false) : base(name)
         {
             OnlyUniques = onlyUniques;
         }
@@ -43,9 +43,18 @@ namespace Apocalypse.Any.Infrastructure.Server.Services.Data
             Data.Add(item as TData);
         }
 
+        
         protected override IEnumerable<T> AsEnumerableSafe<T>()
         {
             return Data.Cast<T>();
+        }
+
+        protected override bool UpdateEnumerable<T>(IEnumerable<T> items)
+        {
+            if (!items.All(item => CanUse(item)))
+                return false;
+            Data = new ConcurrentBag<TData>(items.Cast<TData>());
+            return true;
         }
     }
 }

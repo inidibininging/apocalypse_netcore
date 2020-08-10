@@ -17,7 +17,14 @@ namespace Apocalypse.Any.GameServer.States.Sector.Mechanics.PlayerMechanics
     {
         public const string PlayerOnDialogEvent = nameof(PlayerOnDialogEvent);
         private const string PlayerOnGameEvent = nameof(PlayerOnGameEvent);
+        public string RelationLayerName { get; }
 
+        public ProcessPlayerDialogsRequestsState(string relationLayerName)
+        {
+            if (string.IsNullOrWhiteSpace(relationLayerName))
+                throw new ArgumentNullException(nameof(relationLayerName));
+             RelationLayerName = relationLayerName;
+        }
         public void Handle(IStateMachine<string, IGameSectorLayerService> machine)
         {
             machine
@@ -27,6 +34,7 @@ namespace Apocalypse.Any.GameServer.States.Sector.Mechanics.PlayerMechanics
                 .ToList()
                 .ForEach(player =>
                 {
+
                     machine
                     .SharedContext
                     .IODataLayer
@@ -42,26 +50,30 @@ namespace Apocalypse.Any.GameServer.States.Sector.Mechanics.PlayerMechanics
                             
                             var commandAndArgument = cmd.Split(' ');
 
+
+                            //look for any location, that can be triggered
+                            //maybe this should be done with order by
+                            var nearLocation = machine
+                                                .SharedContext
+                                                .DataLayer
+                                                .Layers
+                                                .Where(layer => layer.GetValidTypes().Any(t => t == typeof(IdentifiableCircularLocation)))
+                                                .SelectMany(layer => layer.DataAsEnumerable<IdentifiableCircularLocation>())
+                                                .FirstOrDefault(location => Vector2.Distance(player.CurrentImage.Position, location.Position) <= location.Radius);
+                            if (nearLocation == null)
+                                return;
+
                             //uses the command without a dialog argument. this means the player doesn't explicitly know what it is choosing
-                            if(commandAndArgument.Length == 1)
+                            if (commandAndArgument.Length == 1)
                             {
-                                //look for any location, that can be triggered
-                                //maybe this should be done with order by
-                                var nearLocation = machine
-                                                    .SharedContext
-                                                    .DataLayer
-                                                    .Layers
-                                                    .Where(layer => layer.GetValidTypes().Any(t => t == typeof(IdentifiableCircularLocation)))
-                                                    .SelectMany(layer => layer.DataAsEnumerable<IdentifiableCircularLocation>())
-                                                    .FirstOrDefault(location => Vector2.Distance(player.CurrentImage.Position, location.Position) <= location.Radius);
-                                if (nearLocation == null)
-                                    return;
+                               
 
                                 var nearLocationDialogRelation = machine
                                                     .SharedContext
                                                     .DataLayer
                                                     .Layers
-                                                    .Where(layer => layer.GetValidTypes().Any(t => t == typeof(DynamicRelation)))
+                                                    .Where(layer => layer.Name == RelationLayerName && 
+                                                                                  layer.GetValidTypes().Any(t => t == typeof(DynamicRelation)))
                                                     .SelectMany(layer => layer.DataAsEnumerable<DynamicRelation>())
                                                     .FirstOrDefault(relation => (relation.Entity1 == typeof(IdentifiableCircularLocation) &&
                                                                                 relation.Entity2 == typeof(DialogNode) &&

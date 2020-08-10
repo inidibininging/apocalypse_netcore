@@ -23,7 +23,7 @@ namespace Apocalypse.Any.Client.States.UI.Dialog
             if (hoveredText == null)
                 return;
 
-            var dialog = machine.SharedContext.LastMetadataBag?.CurrentDialog.DialogIdContent.FirstOrDefault(dlg => dlg.Item2 == hoveredText.Text);
+            var dialog = machine.SharedContext.LastMetadataBag?.CurrentDialog.DialogIdContent?.FirstOrDefault(dlg => dlg.Item2 == hoveredText.Text);
             if(dialog == null)
             {
                 

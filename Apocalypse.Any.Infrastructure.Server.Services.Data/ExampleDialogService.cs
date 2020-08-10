@@ -24,7 +24,7 @@ namespace Apocalypse.Any.Infrastructure.Server.Services.Data
         public const string QuestionTransportPeople = nameof(QuestionTransportPeople);
 
         public IGenericTypeFactory<ImageData> PortraitGenerator { get; }
-
+        
         private void CreateDialogs()
         {
             var randomPortrait = PortraitGenerator.Create<MovementBehaviour>(new MovementBehaviour() { X = 0, Y = 0 });
@@ -34,7 +34,7 @@ namespace Apocalypse.Any.Infrastructure.Server.Services.Data
                 {
                     Id = GenericPeopleStartDialog,
                     Content = "Welcome stranger, can I help you?",
-                    FontSize = 20,
+                    //FontSize = 20,
                     DialogIdContent = new List<Tuple<string,string>>()
                     {
                         new Tuple<string, string>(QuestionWhoAreYou, "Q: Who are you?"),
@@ -49,7 +49,7 @@ namespace Apocalypse.Any.Infrastructure.Server.Services.Data
                 {
                     Id = QuestionWhoAreYou,
                     Content = "I am a random npc. This is some generic answer",
-                    FontSize = 20,
+                    //FontSize = 20,
                     DialogIdContent = new List<Tuple<string,string>>()
                     {
                         new Tuple<string, string>(GenericPeopleStartDialog,"I want to know something else"),
@@ -60,7 +60,7 @@ namespace Apocalypse.Any.Infrastructure.Server.Services.Data
                 {
                     Id =QuestionWhatIsThisPlace,
                     Content = "This is a random place in the universe",
-                    FontSize = 20,
+                    //FontSize = 20,
                     DialogIdContent = new List<Tuple<string,string>>()
                     {
                         new Tuple<string, string>($"{QuestionWhatIsThisPlace}_Option_1","Really? Tell me more"),
@@ -73,7 +73,7 @@ namespace Apocalypse.Any.Infrastructure.Server.Services.Data
                 {
                     Id = QuestionTrade,
                     Content = "Unfortunately, we cannot trade. Trading is not implemented yet.",
-                    FontSize = 20,
+                    //FontSize = 20,
                     DialogIdContent = new List<Tuple<string,string>>()
                     {
                         new Tuple<string, string>(GenericPeopleStartDialog,"Ok, I want to know something else"),
@@ -83,8 +83,8 @@ namespace Apocalypse.Any.Infrastructure.Server.Services.Data
                 new DialogNode()
                 {
                     Id = QuestionDropPeople,
-                    Content = "Not right now. This place is overcrowded and we don't have enough resources",
-                    FontSize = 20,
+                    Content = "Of course. Tell me, who should stay?",
+                    //FontSize = 20,
                     DialogIdContent = new List<Tuple<string,string>>()
                     {
                         new Tuple<string, string>(GenericPeopleStartDialog, "Ok"),
@@ -102,14 +102,14 @@ namespace Apocalypse.Any.Infrastructure.Server.Services.Data
     Sed luctus sapien porttitor eros ornare eleifend. Suspendisse potenti.
     Nulla facilisi. In scelerisque consectetur lectus, non tempus lorem. 
     Phasellus a tellus et erat egestas gravida. Nulla vel leo mattis, malesuada nibh sed, fermentum nisl.",
-                    FontSize = 20,
+                    //FontSize = 20,
                     Portrait = randomPortrait
                 },
                 new DialogNode()
                 {
                     Id = $"{QuestionWhatIsThisPlace}_Option_2",
                     Content = "I would like to, but you are a bit skeptic",
-                    FontSize = 20,
+                    //FontSize = 20,
                     DialogIdContent = new List<Tuple<string,string>>()
                     {
                         new Tuple<string, string>(GenericPeopleStartDialog, "Ok"),
@@ -120,56 +120,56 @@ namespace Apocalypse.Any.Infrastructure.Server.Services.Data
                 {
                     Id = $"{QuestionWhatIsThisPlace}_Option_3",
                     Content = "Yeah, fuck off",
-                    FontSize = 20,
+                    //FontSize = 20,
                     Portrait = randomPortrait
                 },
                 new DialogNode()
                 {
                     Id = "Example_SubOption_4",
                     Content = "This is example suboption 4",
-                    FontSize = 20,
+                    //FontSize = 20,
                     Portrait = randomPortrait
                 },
                 new DialogNode()
                 {
                     Id = "Example_SubOption_5",
                     Content = "This is example suboption 5",
-                    FontSize = 20,
+                    //FontSize = 20,
                     Portrait = randomPortrait
                 },
                 new DialogNode()
                 {
                     Id = "Example_SubOption_6",
                     Content = "This is example suboption 6",
-                    FontSize = 20,
+                    //FontSize = 20,
                     Portrait = randomPortrait
                 },
                 new DialogNode()
                 {
                     Id = "Example_SubOption_7",
                     Content = "This is example suboption 7",
-                    FontSize = 20,
+                    //FontSize = 20,
                     Portrait = randomPortrait
                 },
                 new DialogNode()
                 {
                     Id = "Example_SubOption_8",
                     Content = "This is example suboption 8",
-                    FontSize = 20,
+                    //FontSize = 20,
                     Portrait = randomPortrait
                 },
                 new DialogNode()
                 {
                     Id = "Example_SubOption_9",
                     Content = "This is example suboption 9",
-                    FontSize = 20,
+                    //FontSize = 20,
                     Portrait = randomPortrait
                 },
                 new DialogNode()
                 {
                     Id = "Example_SubOption_10",
                     Content = "This is example suboption 10",
-                    FontSize = 20,
+                    //FontSize = 20,
                     Portrait = randomPortrait
                 },
             }
@@ -178,7 +178,7 @@ namespace Apocalypse.Any.Infrastructure.Server.Services.Data
 
 
         public DialogNode GetDialogNode(string id) => this.AsEnumerableSafe<DialogNode>().FirstOrDefault(dialog => dialog.Id == id);
-        public ExampleDialogService(IGenericTypeFactory<ImageData> portraitGenerator)
+        public ExampleDialogService(IGenericTypeFactory<ImageData> portraitGenerator) : base(nameof(ExampleDialogService))
         {
             PortraitGenerator = portraitGenerator ?? throw new ArgumentNullException(nameof(portraitGenerator));
             CreateDialogs();

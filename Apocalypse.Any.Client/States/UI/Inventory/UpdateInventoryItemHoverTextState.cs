@@ -37,7 +37,7 @@ namespace Apocalypse.Any.Client.States.UI.Inventory
             if (itemData == null)
                 return;
             hoveredItemImage.Scale = new Vector2(hoveredItemImage.Scale.X + 0.5f, hoveredItemImage.Scale.Y + 0.5f);
-            machine.SharedContext.MultiplayerText.Text = $@"{itemData.Name}
+            machine.SharedContext.MultiplayerText.Text = $@"{itemData.DisplayName}
 ATK: {itemData.Stats.Attack}
 DEF: {itemData.Stats.Defense}
 STR: {itemData.Stats.Strength}

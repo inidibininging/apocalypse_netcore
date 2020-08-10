@@ -1,4 +1,5 @@
-﻿using Apocalypse.Any.Infrastructure.Server.Services.Data.Interfaces;
+﻿using Apocalypse.Any.Domain.Common.Model;
+using Apocalypse.Any.Infrastructure.Server.Services.Data.Interfaces;
 using States.Core.Infrastructure.Services;
 using System;
 using System.Collections.Concurrent;
@@ -21,7 +22,7 @@ namespace Apocalypse.Any.GameServer.States.Sector.Mechanics.ItemMechanics
                 .SharedContext
                 .DataLayer
                 .Players
-                .Select(plyr => new { Player = plyr, ExperienceGain = playerItemsToConsume.FirstOrDefault(grp => grp.Key == plyr.Name)?.Sum(itm => itm.Stats.Experience) })
+                .Select(plyr => new { Player = plyr, ExperienceGain = playerItemsToConsume.FirstOrDefault(grp => grp.Key == plyr.DisplayName)?.Sum(itm => itm.Stats.Experience) })
                 .ToList()
                 .ForEach(playerItemsResult => playerItemsResult.Player.Stats.Experience += playerItemsResult.ExperienceGain.HasValue ? playerItemsResult.ExperienceGain.Value : 0);
 
@@ -29,7 +30,7 @@ namespace Apocalypse.Any.GameServer.States.Sector.Mechanics.ItemMechanics
             machine
                 .SharedContext
                 .DataLayer
-                .Items = new ConcurrentBag<Domain.Common.Model.Item>(
+                .Items = new ConcurrentBag<Item>(
                     machine
                     .SharedContext
                     .DataLayer

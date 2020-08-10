@@ -1,6 +1,8 @@
+using Apocalypse.Any.Core.Model;
 using Apocalypse.Any.Domain.Common.Mechanics;
 using Apocalypse.Any.Domain.Common.Model;
 using Apocalypse.Any.Domain.Common.Model.Network;
+using System;
 using System.Collections.Generic;
 
 namespace Apocalypse.Any.Domain.Server.Model.Interfaces
@@ -21,5 +23,6 @@ namespace Apocalypse.Any.Domain.Server.Model.Interfaces
         Dictionary<TMechanicIdentifier, IEnumerableCharacterEntityMechanic<TItem>> ItemMechanics { get; set; }
         Dictionary<TMechanicIdentifier, IEnumerableMechanic<TProjectile, Projectile>> ProjectileMechanics { get; set; }
         Dictionary<TMechanicIdentifier, IEnumerableFullPositionHolderMechanic<TImageData>> UnnamedPropMechanics { get; set; }
+
     }
 }

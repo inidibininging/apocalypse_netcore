@@ -18,7 +18,7 @@
 @foreach(var entity in Model.Entities)
 {
     <tr scope="row">
-        <th scope="row">@entity.Name</th>
+        <th scope="row">@entity.DisplayName</th>
         @foreach(var prop in entity.Stats.GetType().GetProperties())
         {
             <td>@Html.DisplayName(prop.GetValue(entity)?.ToString())</td>

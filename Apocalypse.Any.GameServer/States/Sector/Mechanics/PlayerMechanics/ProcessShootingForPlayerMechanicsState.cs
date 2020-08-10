@@ -38,13 +38,13 @@ namespace Apocalypse.Any.GameServer.States.Sector.Mechanics.PlayerMechanics
                    playerGameState.Commands.ForEach(cmd =>
                    {
                        if (cmd == DefaultKeys.Shoot &&
-                           player.Stats.Strength > machine.SharedContext.DataLayer.Projectiles.Count(proj => proj.OwnerName == player.Name))
+                           player.Stats.Strength > machine.SharedContext.DataLayer.Projectiles.Count(proj => proj.OwnerName == player.DisplayName))
                        {
                            var projectile = machine.SharedContext.Factories.ProjectileFactory[nameof(ProjectileFactory)].Create(player);
                            machine.SharedContext.DataLayer.Projectiles.Add(projectile);
                        }
                        if (cmd == DefaultKeys.AltShoot &&
-                           player.Stats.Strength > machine.SharedContext.DataLayer.Projectiles.Count(proj => proj.OwnerName == player.Name))
+                           player.Stats.Strength > machine.SharedContext.DataLayer.Projectiles.Count(proj => proj.OwnerName == player.DisplayName))
                        {
                            var divisor = player.Stats.Aura == 0 ? 1 : player.Stats.Aura;
                            var projectileCount = player.Stats.Experience / divisor;
@@ -137,7 +137,11 @@ namespace Apocalypse.Any.GameServer.States.Sector.Mechanics.PlayerMechanics
         private TimeSpan GetCalculatedCooldownBasedOnPlayerStatsForShooting(Player player, GameTime gameTime)
         {
             //TODO: this should be used in combination with an API that makes all the player's RPG calculations.
-            return gameTime.ElapsedGameTime.Add(TimeSpan.FromMilliseconds(player.Stats.Attack * player.Stats.Aura));
+            var playerStats = player.Stats.Attack * (player.Stats.Experience == 0 ? 1 : player.Stats.Experience);
+            if (playerStats == 0)
+                playerStats = player.Stats.Attack;
+            
+            return gameTime.ElapsedGameTime.Add(TimeSpan.FromMilliseconds(player.Stats.Attack / playerStats));
         }
 
     }

@@ -79,7 +79,7 @@ namespace Apocalypse.Any.GameServer.States.Sector.Mechanics.PlayerMechanics
                             Y = player.CurrentImage.Position.Y,
                         };
 
-                        for (int currentSpeedTime = 0; currentSpeedTime < player.Stats.Speed; currentSpeedTime++)
+                        for (int currentSpeedTime = 0; currentSpeedTime < player.Stats.Speed*2; currentSpeedTime++)
                         {
                             machine.SharedContext.SingularMechanics.PlayerMechanics["thrust_players"].Update(player);
                         }

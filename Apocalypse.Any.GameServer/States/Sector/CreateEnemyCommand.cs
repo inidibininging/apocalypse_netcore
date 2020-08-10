@@ -57,10 +57,10 @@ namespace Apocalypse.Any.GameServer.States.Sector
                 return;
             }
 
-            enemy.Name = EnemyNameGenerator.Generate(enemy);
+            enemy.DisplayName = EnemyNameGenerator.Generate(enemy);
             enemy.Tags.Add("GeneratedEnemies");
             parameters.DataLayer.Enemies.Add(enemy);
-            parameters.Messages.Add($"enemy {enemy.Name} created");
+            parameters.Messages.Add($"enemy {enemy.DisplayName} created");
         }
 
         public void Handle(IStateMachine<string, IGameSectorLayerService> machine)

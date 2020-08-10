@@ -21,7 +21,7 @@ namespace Apocalypse.Any.Infrastructure.Common.Services.Network.Interfaces.Facto
             //aaaand a cast. fukk
             var player = parameter as PlayerSpaceship;
 
-            Console.WriteLine($"Creating game state for player {player.Name}");
+            Console.WriteLine($"Creating game state for player {player.DisplayName}");
             return new GameStateData()
             {
                 LoginToken = player.LoginToken,

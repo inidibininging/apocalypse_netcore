@@ -7,9 +7,11 @@ namespace Apocalypse.Any.Domain.Server.Model.Interfaces
 {
     public interface IGenericTypeDataLayer
     {
+        string Name { get; }
         List<Type> GetValidTypes();
         IEnumerable<T> DataAsEnumerable<T>();
         bool CanUse<T>(T item);
         void Add<T>(T item);
+        bool Remove<T>(Func<T, bool> predicate);
     }
 }

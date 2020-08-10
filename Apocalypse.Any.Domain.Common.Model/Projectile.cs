@@ -9,7 +9,7 @@ namespace Apocalypse.Any.Domain.Common.Model
         public string OwnerName { get; set; }
         public ImageData CurrentImage { get; set; }
         public bool Destroyed { get; set; }
-        public string Name { get; set; }
+        public string DisplayName { get; set; }
         public TimeSpan DecayTime { get; set; }
         public DateTime CreationTime { get; set; }
     }

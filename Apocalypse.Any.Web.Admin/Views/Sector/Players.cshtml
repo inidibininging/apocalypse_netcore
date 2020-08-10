@@ -19,7 +19,7 @@
 @foreach(var entity in Model.Entities)
 {
     <tr>
-        <th scope="row">@entity.Name</th>
+        <th scope="row">@entity.DisplayName</th>
         @foreach(var prop in entity.Stats.GetType().GetProperties())
         {        
             try

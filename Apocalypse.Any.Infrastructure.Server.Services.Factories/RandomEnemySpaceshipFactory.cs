@@ -29,7 +29,7 @@ namespace Apocalypse.Any.Infrastructure.Server.Services.Factories
             var sheet = RandomSheet.GetRandomSheet();
             return new EnemySpaceship()
             {
-                Name = enemyName,
+                DisplayName = enemyName,
                 Stats = new CharacterSheet()
                 {
                     Speed = sheet.Speed,

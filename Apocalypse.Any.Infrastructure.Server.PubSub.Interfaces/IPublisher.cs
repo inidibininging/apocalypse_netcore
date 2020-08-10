@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Apocalypse.Any.Infrastructure.Server.PubSub.Interfaces
 {
-    public interface IPublisher<TopicType,ContentType>
+    public interface IPublisher<TopicType, ContentType>
     {
         void Publish(TopicType topic, ContentType content);
     }

@@ -209,7 +209,7 @@ namespace Apocalypse.Any.Infrastructure.Common.Services.Network.Interfaces.Facto
             if (foundProp == null || !foundProp.Any())
             {
                 Console.WriteLine("no prop found");
-                return entity.Name;
+                return entity.DisplayName;
             }
             else
             {

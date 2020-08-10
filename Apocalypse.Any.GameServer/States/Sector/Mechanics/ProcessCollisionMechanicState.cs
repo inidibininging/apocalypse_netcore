@@ -39,7 +39,7 @@ namespace Apocalypse.Any.GameServer.States.Sector.Mechanics
                                     {
                                         if (target.GetType() == typeof(PlayerSpaceship))
                                         {
-                                            if (machine.SharedContext.DataLayer.Players.Any(p => p.Name == projectile.OwnerName))
+                                            if (machine.SharedContext.DataLayer.Players.Any(p => p.DisplayName == projectile.OwnerName))
                                             {
                                                 return;
                                             }
@@ -51,7 +51,7 @@ namespace Apocalypse.Any.GameServer.States.Sector.Mechanics
 
                                         if (target.GetType() == typeof(EnemySpaceship))
                                         {
-                                            if (machine.SharedContext.DataLayer.Enemies.Any(enemy => enemy.Name == projectile.OwnerName))
+                                            if (machine.SharedContext.DataLayer.Enemies.Any(enemy => enemy.DisplayName == projectile.OwnerName))
                                             {
                                                 return;
                                             }
@@ -61,14 +61,14 @@ namespace Apocalypse.Any.GameServer.States.Sector.Mechanics
                                                 currentEnemy.Stats.Health -= projectile.Damage;
                                                 if( currentEnemy.Stats.Health <= currentEnemy.Stats.GetMinAttributeValue())
                                                 {
-                                                    var belongingToPlayer = machine.SharedContext.DataLayer.Players.FirstOrDefault(player => player.Name == projectile.OwnerName );
+                                                    var belongingToPlayer = machine.SharedContext.DataLayer.Players.FirstOrDefault(player => player.DisplayName == projectile.OwnerName );
                                                     if(belongingToPlayer != null)
                                                     {
                                                         belongingToPlayer.Stats.Kills++;
                                                     }
                                                     else
                                                     {
-                                                        var belongingToAnEnemy = machine.SharedContext.DataLayer.Enemies.FirstOrDefault(enemy => enemy.Name == projectile.OwnerName );
+                                                        var belongingToAnEnemy = machine.SharedContext.DataLayer.Enemies.FirstOrDefault(enemy => enemy.DisplayName == projectile.OwnerName );
                                                         if(belongingToAnEnemy != null)
                                                         {
                                                             belongingToAnEnemy.Stats.Kills++;
@@ -89,7 +89,7 @@ namespace Apocalypse.Any.GameServer.States.Sector.Mechanics
                     {
                         if (target.GetType() == typeof(Projectile))
                         {
-                            if (machine.SharedContext.DataLayer.Enemies.Any(possibleOwner => possibleOwner.Name == (target as Projectile).OwnerName))
+                            if (machine.SharedContext.DataLayer.Enemies.Any(possibleOwner => possibleOwner.DisplayName == (target as Projectile).OwnerName))
                                 return;
 
                             //enemy.Stats.Health -= (target as Projectile).Damage;
@@ -111,7 +111,7 @@ namespace Apocalypse.Any.GameServer.States.Sector.Mechanics
                         //consumption
                         var item = (target as Item);
 
-                        if (item.Taken)
+                        if (item.InInventory)
                             return;
                         
 
@@ -121,9 +121,9 @@ namespace Apocalypse.Any.GameServer.States.Sector.Mechanics
                         player.Stats.Strength += item.Stats.Strength;
                         //player.Stats.Speed += item.Stats.Speed;
                         player.Stats.Experience += item.Stats.Experience;
-                        item.OwnerName = player.Name;
-                        machine.SharedContext.Messages.Add($"item {item.Name} passed to {player.Name}");
-                        item.Taken = true;
+                        item.OwnerName = player.DisplayName;
+                        machine.SharedContext.Messages.Add($"item {item.DisplayName} passed to {player.DisplayName}");
+                        item.InInventory = true;
                     }, ImageToRectangleService))
                 )
                 .Concat

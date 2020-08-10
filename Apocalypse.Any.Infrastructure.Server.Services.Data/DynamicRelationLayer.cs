@@ -26,6 +26,10 @@ namespace Apocalypse.Any.Infrastructure.Server.Services.Data
     {
         private ConcurrentBag<DynamicRelation> InMemoryData { get; set; } = new ConcurrentBag<DynamicRelation>();
 
+        public DynamicRelationLayer(string name) : base(name)
+        {
+
+        }
         public override bool CanUse<T>(T instance)
         {
 
@@ -60,6 +64,15 @@ namespace Apocalypse.Any.Infrastructure.Server.Services.Data
             //return a cloned list because the types can be changed.
             //this is not safe enough but at least something. definitely a TODO
             return InMemoryData.Cast<T>().Where(relation => CanUse(relation));
+        }
+
+        protected override bool UpdateEnumerable<T>(IEnumerable<T> items)
+        {
+            var itemsAsList = items.OfType<DynamicRelation>().DefaultIfEmpty().ToList();
+            //if (itemsAsList.Any())
+            //    return false;
+            InMemoryData = new ConcurrentBag<DynamicRelation>(itemsAsList);
+            return true;
         }
     }
 

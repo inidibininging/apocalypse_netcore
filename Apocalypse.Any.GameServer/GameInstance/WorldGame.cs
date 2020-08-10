@@ -4,6 +4,7 @@ using Apocalypse.Any.Core.Utilities;
 using Apocalypse.Any.Domain.Common.Mechanics;
 using Apocalypse.Any.Domain.Common.Model;
 using Apocalypse.Any.Domain.Common.Model.Network;
+using Apocalypse.Any.Domain.Common.Model.PubSub;
 using Apocalypse.Any.Domain.Common.Network;
 using Apocalypse.Any.Domain.Server.Model;
 using Apocalypse.Any.Domain.Server.Model.Interfaces;
@@ -19,6 +20,8 @@ using Apocalypse.Any.Infrastructure.Common.Services.Serializer.Interfaces;
 using Apocalypse.Any.Infrastructure.Common.Services.Serializer.YamlAdapter;
 using Apocalypse.Any.Infrastructure.Server.Adapters.Redis;
 using Apocalypse.Any.Infrastructure.Server.Language;
+using Apocalypse.Any.Infrastructure.Server.PubSub;
+using Apocalypse.Any.Infrastructure.Server.PubSub.Interfaces;
 using Apocalypse.Any.Infrastructure.Server.Services.Data.Interfaces;
 using Apocalypse.Any.Infrastructure.Server.Services.Mechanics.CLI;
 using Apocalypse.Any.Infrastructure.Server.Services.Mechanics.RoutingMechanics;
@@ -160,7 +163,7 @@ namespace Apocalypse.Any.GameServer.GameInstance
             var sectorList = new List<string>();
             for (int sectorIndex = 0; sectorIndex < 1; sectorIndex++)
             {
-                var sectorId = System.Guid.NewGuid().ToString();
+                var sectorId = Guid.NewGuid().ToString();
 
                 var sectorDown = Configuration.StartingSector;
                 var sectorUp = Configuration.StartingSector;
@@ -230,6 +233,7 @@ namespace Apocalypse.Any.GameServer.GameInstance
             {
                 Tag = anotherSector
             };
+
             anotherSectorStateMachine
                 .GetService
                 .Get(ServerGameSectorNewBook.BuildDefaultSectorState)
@@ -346,10 +350,15 @@ namespace Apocalypse.Any.GameServer.GameInstance
             {
                 sector.SharedContext.CurrentGameTime = CurrentGameTime;
                 sector
+                    .SharedContext
+                    .EventDispatcher
+                    .DispatchEvents(gameTime);
+                sector
                     .GetService
                     .Get(Configuration.RunOperation)
                     //  .Get("RunInParallel")
                     .Handle(sector);
+                
             }
             Thread.Sleep(TotalGameTime);
         }
@@ -402,6 +411,8 @@ namespace Apocalypse.Any.GameServer.GameInstance
             throw new NotImplementedException("new users cannot be inserted into this demo");
         }
 
+
+
         public GameStateData RegisterGameStateData(string loginToken)
         {
             var newPlayer = CreatePlayerSpaceShip(loginToken);
@@ -409,9 +420,80 @@ namespace Apocalypse.Any.GameServer.GameInstance
                     .SharedContext
                     .DataLayer
                     .Players.Add(newPlayer);
+
+            
+            FirePlayerRegisteredEvent(newPlayer);
+
+            //for demo purpouses
+            var demoItem = GameSectorLayerServices[Configuration.StartingSector]
+                            .SharedContext
+                            .Factories
+                            .ItemFactory
+                            [nameof(MockItemFactory)]
+                            .Create(GameSectorLayerServices[Configuration.StartingSector]
+                            .SharedContext.SectorBoundaries);
+            if (demoItem != null)
+            {
+                demoItem.OwnerName = newPlayer.DisplayName;
+                GameSectorLayerServices[Configuration.StartingSector]
+                    .SharedContext
+                    .DataLayer
+                    .Items
+                    .Add(demoItem);
+            }
+
             return GameSectorLayerServices[Configuration.StartingSector]
                     .SharedContext
                     .IODataLayer.RegisterGameStateData(loginToken);
+        }
+
+        /// <summary>
+        /// Fires an event if the player is registered for the first time
+        /// </summary>
+        /// <param name="newPlayer"></param>
+        private void FirePlayerRegisteredEvent(PlayerSpaceship newPlayer)
+        {
+            var playerRegisteredEventLayer = GameSectorLayerServices[Configuration.StartingSector]
+                                                        .SharedContext
+                                                        .DataLayer
+                                                        .Layers
+                                                        .Where(l => l.Name == "PlayerRegisteredEvent" &&
+                                                                    l.GetValidTypes().Any(t => t == typeof(EventQueueArgument)))
+                                                        .FirstOrDefault();
+            if(playerRegisteredEventLayer == null)
+            {
+                throw new InvalidOperationException($"Cannot use {nameof(FirePlayerRegisteredEvent)}. EventQueue PlayerRegistered doesn't exist");
+            }
+            //get relation layer for event
+            var playerRegisteredEventRelationLayer = GameSectorLayerServices[Configuration.StartingSector]
+                                                    .SharedContext
+                                                    .DataLayer
+                                                    .Layers
+                                                    .Where(l => l.Name == "PlayerRegisteredEvent" &&
+                                                                l.GetValidTypes().Any(t => t == typeof(DynamicRelation)))
+                                                    .FirstOrDefault();
+            if (playerRegisteredEventRelationLayer == null)
+            {
+                throw new InvalidOperationException($"Cannot use {nameof(FirePlayerRegisteredEvent)}. DynamicRelation layer with the name PlayerRegistered doesn't exist");
+            }
+            var playerRegisteredEventRelation = new DynamicRelation()
+            {
+                Id = Guid.NewGuid().ToString(),
+                Entity1 = typeof(PlayerSpaceship),
+                Entity1Id = newPlayer.Id,
+                Entity2 = null,
+                Entity2Id = string.Empty,
+            };
+            playerRegisteredEventRelationLayer.Add(playerRegisteredEventRelation);
+
+            var playerRegisteredEvent = new EventQueueArgument()
+            {
+                Id = Guid.NewGuid().ToString(),
+                EventName = "PlayerRegistered",
+                DynamicRelationId = playerRegisteredEventRelation.Id
+            };
+            //TODO: event queue argument factory
+            playerRegisteredEventLayer.Add(playerRegisteredEvent);
         }
 
         private TimeSpan SendingDelta { get; set; } = TimeSpan.Zero;
