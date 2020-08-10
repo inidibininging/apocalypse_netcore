@@ -93,25 +93,52 @@ namespace Apocalypse.Any.Client.States
                 }
             }
             
-
-            var sendResult = machine.SharedContext.Client.SendMessage(
-                                    CreateMessage(
-                                        machine,
-                                        NetworkCommandConstants.UpdateCommand,
-                                        new GameStateUpdateData()
-                                        {
-                                            LoginToken = machine.SharedContext.LoginToken,
-                                            Commands = cmds,
-                                            Screen = new ScreenData()
+            if(machine.SharedContext.CurrentGameStateData == null || 
+                    cmds.Contains("Exit") || 
+                    cmds.Contains(DefaultKeys.Use) ||
+                    cmds.Contains(DefaultKeys.CloseDialog))
+            {
+                var sendResult = machine.SharedContext.Client.SendMessage(
+                                        CreateMessage(
+                                            machine,
+                                            NetworkCommandConstants.UpdateCommand,
+                                            new GameStateUpdateData()
                                             {
-                                                ScreenWidth = (int)MathF.Round(ScreenService.Instance.Resolution.X),
-                                                ScreenHeight = (int)MathF.Round(ScreenService.Instance.Resolution.Y)
-                                            }
-                                        }),
-                                    NetDeliveryMethod.UnreliableSequenced);
+                                                LoginToken = machine.SharedContext.LoginToken,
+                                                Commands = cmds,
+                                                Screen = new ScreenData()
+                                                {
+                                                    ScreenWidth = (int)MathF.Round(ScreenService.Instance.Resolution.X),
+                                                    ScreenHeight = (int)MathF.Round(ScreenService.Instance.Resolution.Y)
+                                                }
+                                            }),
+                                        NetDeliveryMethod.UnreliableSequenced);
+                if (sendResult == NetSendResult.FailedNotConnected)
+                    machine.GetService.Get(ClientGameScreenBook.Connect).Handle(machine);
+            }
+            else
+            {
+                var sendResult = machine.SharedContext.Client.SendMessage(
+                                        CreateMessage(
+                                            machine,
+                                            NetworkCommandConstants.UpdateCommandDelta,
+                                            new GameStateUpdateData()
+                                            {
+                                                LoginToken = machine.SharedContext.LoginToken,
+                                                Commands = cmds,
+                                                Screen = new ScreenData()
+                                                {
+                                                    ScreenWidth = (int)MathF.Round(ScreenService.Instance.Resolution.X),
+                                                    ScreenHeight = (int)MathF.Round(ScreenService.Instance.Resolution.Y)
+                                                }
+                                            }),
+                                        NetDeliveryMethod.UnreliableSequenced);
+                if (sendResult == NetSendResult.FailedNotConnected)
+                    machine.GetService.Get(ClientGameScreenBook.Connect).Handle(machine);
+            }
 
-            if (sendResult == NetSendResult.FailedNotConnected)
-                machine.GetService.Get(ClientGameScreenBook.Connect).Handle(machine);
+
+            
         }
     }
 }

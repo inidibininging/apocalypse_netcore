@@ -1,4 +1,6 @@
-﻿namespace Apocalypse.Any.Domain.Common.Model.Network
+﻿using System;
+
+namespace Apocalypse.Any.Domain.Common.Model.Network
 {
     public class ScreenData
     {

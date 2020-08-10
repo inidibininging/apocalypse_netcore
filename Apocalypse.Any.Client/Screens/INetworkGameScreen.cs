@@ -50,6 +50,7 @@ namespace Apocalypse.Any.Client.Screens
         IInputService InputService { get; set; }
         IdentifiableNetworkCommand CurrentNetworkCommand { get; set; }
         GameStateData CurrentGameStateData { get; set; }
+
         PlayerMetadataBag LastMetadataBag { get; set; }
 
         IWindow InfoWindow { get; set; }
