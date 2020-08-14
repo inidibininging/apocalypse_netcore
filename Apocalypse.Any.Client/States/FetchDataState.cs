@@ -8,7 +8,9 @@ using Lidgren.Network;
 using Newtonsoft.Json;
 using States.Core.Infrastructure.Services;
 using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Apocalypse.Any.Client.States
 {
@@ -20,7 +22,7 @@ namespace Apocalypse.Any.Client.States
         public INetIncomingMessageBusService IncomingMessageBusService { get; private set; }
         public ISerializationAdapter SerializationAdapter { get; }
         public IDeltaGameStateDataService DeltaGameStateDataService { get; }
-
+        
         public FetchDataState(INetIncomingMessageBusService incomingMessageBusService, ISerializationAdapter serializationAdapter, IDeltaGameStateDataService deltaGameStateDataService)
         {
             IncomingMessageBusService = incomingMessageBusService ?? throw new ArgumentNullException(nameof(incomingMessageBusService));
@@ -37,7 +39,7 @@ namespace Apocalypse.Any.Client.States
             var messages = IncomingMessageBusService.FetchMessageChunk();
             if (!messages.Any())
                 return;
-            
+
 
             foreach (var currentMessage in messages)
             {
@@ -52,7 +54,7 @@ namespace Apocalypse.Any.Client.States
                 var readMsg = currentMessage.ReadString();
 
                 bool failsToUpcast = false;
-                try 
+                try
                 {
                     var serverMessage = SerializationAdapter.DeserializeObject<IdentifiableNetworkCommand>(readMsg);
                     machine.SharedContext.CurrentNetworkCommand = serverMessage;
@@ -90,21 +92,21 @@ namespace Apocalypse.Any.Client.States
                     {
                         var a = DateTime.Now;
                         machine.SharedContext.CurrentGameStateData = SerializationAdapter.DeserializeObject<GameStateData>(machine.SharedContext.CurrentNetworkCommand.Data);
-                        var diff = DateTime.Now - a;                        
+                        var diff = DateTime.Now - a;
                         machine.SharedContext.Messages.Add("Added CurrentNetworkCommand from UpdateCommand");
                     }
 
-                    if(machine.SharedContext.CurrentNetworkCommand.CommandName == NetworkCommandConstants.UpdateCommandDelta)
+                    if (machine.SharedContext.CurrentNetworkCommand.CommandName == NetworkCommandConstants.UpdateCommandDelta)
                     {
                         var a = DateTime.Now;
                         var delta = SerializationAdapter.DeserializeObject<DeltaGameStateData>(machine.SharedContext.CurrentNetworkCommand.Data);
                         var gameStateData = DeltaGameStateDataService.UpdateGameStateData(machine.SharedContext.CurrentGameStateData, delta);
                         machine.SharedContext.CurrentGameStateData = gameStateData;
                         var diff = DateTime.Now - a;
-
                         machine.SharedContext.Messages.Add("Added CurrentNetworkCommand from UpdateCommandDelta");
                     }
-                    if(machine.SharedContext.CurrentGameStateData != null)
+
+                    if (machine.SharedContext.CurrentGameStateData != null)
                     {
                         machine.SharedContext.LoginToken = machine.SharedContext.CurrentGameStateData.LoginToken;
                         machine.SharedContext.Messages.Add("Added LoginToken");
@@ -117,6 +119,7 @@ namespace Apocalypse.Any.Client.States
                     machine.SharedContext.Messages.Add(ex.Message);
                 }
             }
+           
         }
     }
 }
