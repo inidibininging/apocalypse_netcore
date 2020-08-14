@@ -46,7 +46,8 @@ namespace Apocalypse.Any.Infrastructure.Common.Services.Data
             return deltaGameState;
         }
 
-        private static List<DeltaImageData> GetDeltaImages(GameStateData gameStateDataBefore, GameStateData gameStateDataAfter)
+
+        private List<DeltaImageData> GetDeltaImages(GameStateData gameStateDataBefore, GameStateData gameStateDataAfter)
         {
             //new images
             var newImages = gameStateDataAfter
@@ -62,7 +63,7 @@ namespace Apocalypse.Any.Infrastructure.Common.Services.Data
                                                 .Intersect
                                                 (
                                                     gameStateDataBefore.Images.Select(img => img.Id)
-                                                );    
+                                                );
             var images = new List<DeltaImageData>();
 
             //add delta of changed images
@@ -71,7 +72,7 @@ namespace Apocalypse.Any.Infrastructure.Common.Services.Data
                                 .Where(img => imagesFoundInBeforeAndAfter.Contains(img.Id)))
             {
                 var imgBefore = gameStateDataBefore.Images.FirstOrDefault(imgB => imgB.Id == imgAfter.Id);
-                if(imgBefore == null)
+                if (imgBefore == null)
                 {
                     images.Add((DeltaImageData)imgAfter);
                 }
@@ -84,11 +85,11 @@ namespace Apocalypse.Any.Infrastructure.Common.Services.Data
                         Width = imgAfter.Width != imgBefore.Width ? (float?)imgAfter.Width : null,
                         Height = imgAfter.Height != imgBefore.Height ? (float?)imgAfter.Height : null,
                         LayerDepth = imgAfter.LayerDepth != imgBefore.LayerDepth ? (float?)imgAfter.LayerDepth : null,
-                        
+
                         X = imgAfter.Position.X != imgBefore.Position.X ? (float?)imgAfter.Position.X : null,
                         Y = imgAfter.Position.Y != imgBefore.Position.Y ? (float?)imgAfter.Position.Y : null,
                         Rotation = imgAfter.Rotation.Rotation != imgBefore.Rotation.Rotation ? (float?)imgAfter.Rotation.Rotation : null,
-                        
+
                         ScaleX = imgAfter.Scale.X != imgBefore.Scale.X ? (float?)imgAfter.Scale.X : null,
                         ScaleY = imgAfter.Scale.Y != imgBefore.Scale.Y ? (float?)imgAfter.Scale.Y : null,
                         SelectedFrame = imgAfter.SelectedFrame != imgBefore.SelectedFrame ? imgAfter.SelectedFrame : null,
@@ -98,7 +99,7 @@ namespace Apocalypse.Any.Infrastructure.Common.Services.Data
                         B = imgAfter.Color.B != imgBefore.Color.B ? (byte?)imgAfter.Color.B : null
                     });
                 }
-                
+
             }
 
             //add new images
@@ -111,18 +112,56 @@ namespace Apocalypse.Any.Infrastructure.Common.Services.Data
             return images;
         }
 
-        private static GameStateData GetChangedImagesFromDelta(GameStateData gameStateDataBefore, DeltaGameStateData gameStateDataAfter)
+        public IEnumerable<(string imageId,
+                                    ImageData imageData,
+                                    DeltaImageData deltaImage)> GetSharedImagesWithDelta
+            (
+                IEnumerable<ImageData> images,
+                IEnumerable<DeltaImageData> deltaImages
+            )
+            =>
+            from img in images
+            join imgDelta in deltaImages
+            on img.Id equals imgDelta.Id
+            select (
+                img.Id,
+                img,
+                imgDelta
+            );
+
+        public IEnumerable<ImageData> GetNewImagesFromDelta
+            (
+                IEnumerable<ImageData> images,
+                IEnumerable<DeltaImageData> deltaImages
+            )
+            => from imgAfter in deltaImages
+               where
+               !(from img
+                 in images
+                 select img.Id).Contains(imgAfter.Id)
+               select (ImageData)imgAfter;
+
+        public IEnumerable<ImageData> GetImagesToRemove
+            (
+                IEnumerable<ImageData> images,
+                IEnumerable<DeltaImageData> deltaImages
+            )
+            => images.Except(images.Where(afterImageAsDelta => !GetSharedImagesWithDelta(images, deltaImages)
+                                                                .Select(g => g.imageId)
+                                                                .Concat(GetNewImagesFromDelta(images, deltaImages).Select(i => i.Id))
+                                                                .Contains(afterImageAsDelta.Id)));
+        public GameStateData ApplyChangesFromDeltaToGameStateData(GameStateData gameStateDataBefore, DeltaGameStateData gameStateDataAfter)
         {
             //update shared images
             var images = from img in gameStateDataBefore.Images
-                    join imgDelta in gameStateDataAfter.Images
-                    on img.Id equals imgDelta.Id
-                    select new
-                    {
-                        id = img.Id,
-                        imgBefore = img,
-                        delta = imgDelta
-                    };
+                         join imgDelta in gameStateDataAfter.Images
+                         on img.Id equals imgDelta.Id
+                         select new
+                         {
+                             id = img.Id,
+                             imgBefore = img,
+                             delta = imgDelta
+                         };
 
             var newImages = from imgAfter in gameStateDataAfter.Images
                             where
@@ -142,7 +181,7 @@ namespace Apocalypse.Any.Infrastructure.Common.Services.Data
                                         .Images
                                         .Except(imagesToRemove)
                                         .ToList();
-                                        
+
 
 
 
@@ -156,11 +195,11 @@ namespace Apocalypse.Any.Infrastructure.Common.Services.Data
                 imgPack.imgBefore.Width = imgPack.delta.Width.HasValue && imgPack.delta.Width.Value != imgPack.imgBefore.Width ? imgPack.delta.Width.Value : imgPack.imgBefore.Width;
                 imgPack.imgBefore.Height = imgPack.delta.Height.HasValue && imgPack.delta.Height.Value != imgPack.imgBefore.Height ? imgPack.delta.Height.Value : imgPack.imgBefore.Height;
                 imgPack.imgBefore.LayerDepth = imgPack.delta.LayerDepth.HasValue && imgPack.delta.LayerDepth.Value != imgPack.imgBefore.LayerDepth ? imgPack.delta.LayerDepth.Value : imgPack.imgBefore.LayerDepth;
-                
+
                 imgPack.imgBefore.Rotation.Rotation = imgPack.delta.Rotation.HasValue && imgPack.delta.Rotation.Value != imgPack.imgBefore.Rotation.Rotation ? imgPack.delta.Rotation.Value : imgPack.imgBefore.Rotation.Rotation;
                 imgPack.imgBefore.Position.X = imgPack.delta.X.HasValue && imgPack.delta.X.Value != imgPack.imgBefore.Position.X ? imgPack.delta.X.Value : imgPack.imgBefore.Position.X;
                 imgPack.imgBefore.Position.Y = imgPack.delta.Y.HasValue && imgPack.delta.Y.Value != imgPack.imgBefore.Position.Y ? imgPack.delta.Y.Value : imgPack.imgBefore.Position.Y;
-                
+
                 imgPack.imgBefore.Path = !string.IsNullOrWhiteSpace(imgPack.delta.Path) && imgPack.delta.Path != imgPack.imgBefore.Path ? imgPack.delta.Path : imgPack.imgBefore.Path;
                 imgPack.imgBefore.SelectedFrame = !string.IsNullOrWhiteSpace(imgPack.delta.SelectedFrame) && imgPack.delta.SelectedFrame != imgPack.imgBefore.SelectedFrame ? imgPack.delta.SelectedFrame : imgPack.imgBefore.SelectedFrame;
                 var scaleXChanged = imgPack.delta.ScaleX.HasValue && imgPack.delta.ScaleX.Value != imgPack.imgBefore.Scale.X;
@@ -186,7 +225,7 @@ namespace Apocalypse.Any.Infrastructure.Common.Services.Data
                 }
             }
 
-            
+
 
             if ((newImages = newImages.Where(i => i.Path != null)).Any())
             {
@@ -218,8 +257,8 @@ namespace Apocalypse.Any.Infrastructure.Common.Services.Data
             if (deltaGameStateData.ScreenHeight != null && gameStateData.Screen.ScreenHeight != deltaGameStateData.ScreenHeight)
                 gameStateData.Screen.ScreenHeight = deltaGameStateData.ScreenHeight.Value;
 
-            gameStateData = GetChangedImagesFromDelta(gameStateData, deltaGameStateData);
-            
+            gameStateData = ApplyChangesFromDeltaToGameStateData(gameStateData, deltaGameStateData);
+
             return gameStateData;
         }
     }
