@@ -41,6 +41,8 @@ namespace Apocalypse.Any.Client.Screens
         public ICharacterSheet FirstSheetSnapshot { get; set; }
         public ICharacterSheet CurrentSheetSnapshot { get; set; }
 
+
+        public VisualText MoneyCount { get; set; }
         public IWindow InfoWindow { get; set; }
         public IWindow InventoryWindow { get; set; }
         public IWindow CharacterWindow { get; set; }
@@ -108,6 +110,7 @@ namespace Apocalypse.Any.Client.Screens
             StrenghImage.Draw(spriteBatch);
             DialogImage.Draw(spriteBatch);
             CursorImage.Draw(spriteBatch);
+            
             //LerpMouseImage.Draw(spriteBatch);
 
             if (InfoWindow?.IsVisible == true)
@@ -120,7 +123,10 @@ namespace Apocalypse.Any.Client.Screens
                 InventoryWindow.Draw(spriteBatch);
 
             if (CharacterWindow?.IsVisible == true)
+            {
+                MoneyCount.Draw(spriteBatch);
                 CharacterWindow?.Draw(spriteBatch);
+            }
 
             if (CharacterWindow?.IsVisible == true)
                 CharacterWindow?.Draw(spriteBatch);

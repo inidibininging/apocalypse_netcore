@@ -52,6 +52,8 @@ namespace Apocalypse.Any.Client.Screens
         GameStateData CurrentGameStateData { get; set; }
         PlayerMetadataBag LastMetadataBag { get; set; }
 
+        VisualText MoneyCount { get; set; }
+
         IWindow InfoWindow { get; set; }
         IWindow InventoryWindow { get; set; }
         IWindow CharacterWindow { get; set; }

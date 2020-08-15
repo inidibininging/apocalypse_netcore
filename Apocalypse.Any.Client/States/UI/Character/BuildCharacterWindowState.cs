@@ -1,5 +1,6 @@
 using Apocalypse.Any.Client.Screens;
 using Apocalypse.Any.Core.Behaviour;
+using Apocalypse.Any.Core.Text;
 using Apocalypse.Any.Domain.Common.Drawing.UI;
 using Apocalypse.Any.Domain.Common.DrawingOrder;
 using Microsoft.Xna.Framework;
@@ -19,6 +20,9 @@ namespace Apocalypse.Any.Client.States.UI.Character
                 machine.SharedContext.StrenghImage.SpriteSheetRectangle.Add(kv.Key, kv.Value);
                 machine.SharedContext.DialogImage.SpriteSheetRectangle.Add(kv.Key, kv.Value);
             }
+
+            machine.SharedContext.MoneyCount = new VisualText();
+            
             machine.SharedContext.CharacterWindow = new ApocalypseWindow();
             machine.SharedContext.CharacterWindow.Position = new MovementBehaviour();
             machine.SharedContext.CharacterWindow.Rotation = new RotationBehaviour();
@@ -37,11 +41,13 @@ namespace Apocalypse.Any.Client.States.UI.Character
             machine.SharedContext.StrenghImage.Color = Color.DarkViolet;
             machine.SharedContext.SpeedImage.Color = Color.Violet;
             machine.SharedContext.DialogImage.Color = Color.BlueViolet;
+            machine.SharedContext.MoneyCount.Color = Color.Yellow;
 
             machine.SharedContext.HealthImage.LayerDepth = machine.SharedContext.CharacterWindow.LayerDepth + DrawingPlainOrder.PlainStep;
             machine.SharedContext.SpeedImage.LayerDepth = machine.SharedContext.CharacterWindow.LayerDepth + DrawingPlainOrder.PlainStep;
             machine.SharedContext.StrenghImage.LayerDepth = machine.SharedContext.CharacterWindow.LayerDepth + DrawingPlainOrder.PlainStep;
             machine.SharedContext.DialogImage.LayerDepth = machine.SharedContext.CharacterWindow.LayerDepth + DrawingPlainOrder.PlainStep;
+            machine.SharedContext.MoneyCount.LayerDepth = machine.SharedContext.CharacterWindow.LayerDepth + DrawingPlainOrder.PlainStep;
         }
     }
 }
