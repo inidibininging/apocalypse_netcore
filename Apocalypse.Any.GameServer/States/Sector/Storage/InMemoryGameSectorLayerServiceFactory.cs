@@ -1,6 +1,7 @@
 using Apocalypse.Any.Client.Services;
 using Apocalypse.Any.Client.States.UI.Dialog;
 using Apocalypse.Any.Core.Utilities;
+using Apocalypse.Any.Domain.Common.Model;
 using Apocalypse.Any.Domain.Common.Model.PubSub;
 using Apocalypse.Any.Domain.Server.DataLayer;
 using Apocalypse.Any.Domain.Server.Model;
@@ -34,11 +35,14 @@ using System.Threading.Tasks;
 namespace Apocalypse.Any.GameServer.States.Sector.Storage
 {
     /// <summary>
-    /// Builder for IGameSectorLayerService
+    /// Builder of IGameSectorLayerService
     /// </summary>
     public class InMemoryStorageGameSectorLayerServiceFactory : IGameSectorLayerServiceStateMachineFactory<GameServerConfiguration>, IGameSectorLayerServiceFactory
     {
         private const string DialogLocationRelationLayerName = "DialogLocations";
+        private const string DropPlayerItemDialogName = "DropPlayerItemDialogEvent";
+        private const string PlayerRegisteredEventName = "PlayerRegisteredEvent";
+        private const string DefaultSectorBank = "DefaultBank";
 
         public IStateMachine<string, IGameSectorLayerService> BuildStateMachine(GameServerConfiguration gameServerConfiguration)
         {
@@ -62,19 +66,25 @@ namespace Apocalypse.Any.GameServer.States.Sector.Storage
                                                                                         new RectangularFrameGeneratorService(),
                                                                                         new ImageToRectangleTransformationService(),
                                                                                         DialogLocationRelationLayerName));
-            inMemoryStorage.Add(ServerGameSectorNewBook.BuildDataLayerState, new BuildDataLayerState<GenericGameStateDataLayer>(
-                    new List<string>() { "DropPlayerItemDialogEvent", "PlayerRegisteredEvent" },
-                    DialogLocationRelationLayerName
+            inMemoryStorage.Add(ServerGameSectorNewBook.BuildDataLayerState, 
+                new BuildDataLayerState<GenericGameStateDataLayer>(
+                    DialogLocationRelationLayerName, 
+                    DropPlayerItemDialogName,
+                    PlayerRegisteredEventName,
+                    DefaultSectorBank,
+                    () => new IntBankFactory()
                 ));
-            inMemoryStorage.Add(nameof(CreateOrUpdateItemDialogRelationsState), new CreateOrUpdateItemDialogRelationsState("DropPlayerItemDialogEvent"));
-            inMemoryStorage.Add(nameof(CreatePlayerSelectsItemDialogEventState), new CreatePlayerSelectsItemDialogEventState("DropPlayerItemDialogEvent"));
+
+            inMemoryStorage.Add(nameof(AddDroppedItemsAsCurrencyToPlayersBankState), new AddDroppedItemsAsCurrencyToPlayersBankState(new ShortCounterThreshold()));
+            inMemoryStorage.Add(nameof(CreateOrUpdateItemDialogRelationsState), new CreateOrUpdateItemDialogRelationsState(DropPlayerItemDialogName));
+            inMemoryStorage.Add(nameof(CreatePlayerSelectsItemDialogEventState), new CreatePlayerSelectsItemDialogEventState(DropPlayerItemDialogName));
 
             inMemoryStorage.Add("BuildPlayerDialogService",
                 new CommandStateActionDelegate<string, IGameSectorLayerService>(
                     new Action<IStateMachine<string, IGameSectorLayerService>>((machine) =>
                     {
                         machine.SharedContext.PlayerDialogService = new ExamplePlayerDialogService(() => (machine.SharedContext.DataLayer.Layers.FirstOrDefault(l => (l as IDialogService) != null) as IDialogService));                        
-                    })));
+                    })));            
             inMemoryStorage.Add("BuildEventDispatcher",
                 new CommandStateActionDelegate<string, IGameSectorLayerService>(
                     new Action<IStateMachine<string, IGameSectorLayerService>>((machine) =>
@@ -341,10 +351,14 @@ namespace Apocalypse.Any.GameServer.States.Sector.Storage
                     ServerGameSectorNewBook.ProcessUseInventoryForPlayerState,
                     ServerGameSectorNewBook.ProcessCollisionMechanicState,
                     ServerGameSectorNewBook.ProcessPlayerChooseStatState,
+
+                    //dialog related states
                     nameof(CreateOrUpdateIdentifiableCircularLocationState),
                     nameof(CreateOrUpdateItemDialogRelationsState),
                     nameof(CreatePlayerSelectsItemDialogEventState),
                     nameof(ProcessPlayerDialogsRequestsState),
+                    nameof(AddDroppedItemsAsCurrencyToPlayersBankState),
+
                     ServerGameSectorNewBook.ProcessInventoryLeftState,
                     ServerGameSectorNewBook.ProcessInventoryRightState,
                     ServerGameSectorNewBook.ProcessReleaseStatState,

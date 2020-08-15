@@ -50,7 +50,7 @@ namespace Apocalypse.Any.GameServer.States.Sector.Mechanics.PlayerMechanics
                                         .DataLayer
                                         .Layers
                                         .SelectMany(l => l.DataAsEnumerable<DynamicRelation>())
-                                        .Where(dr => dr.Id == content.DynamicRelationId))
+                                        .Where(dr => dr.Id == content.ReferenceId))
             {
                 Item item = null;
                 DialogNode dialog = null;
@@ -91,7 +91,7 @@ namespace Apocalypse.Any.GameServer.States.Sector.Mechanics.PlayerMechanics
                     }
 
 
-                    //disown item from player
+                    //disown item from player                    
                     item.OwnerName = null;
                     item.InInventory = false;
 
@@ -155,7 +155,7 @@ namespace Apocalypse.Any.GameServer.States.Sector.Mechanics.PlayerMechanics
                 var playerBank = gameSectorLayerService
                                     .DataLayer
                                     .Layers
-                                    .Where(l => l.Name == DestinationLayerNameOfItem && l.GetValidTypes().Any(t => t == typeof(IntBank)))
+                                    .Where(l => l.DisplayName == DestinationLayerNameOfItem && l.GetValidTypes().Any(t => t == typeof(IntBank)))
                                     .SelectMany(l => l.DataAsEnumerable<IntBank>())
                                     .FirstOrDefault(b => b.OwnerName == player.LoginToken);
 
@@ -167,14 +167,17 @@ namespace Apocalypse.Any.GameServer.States.Sector.Mechanics.PlayerMechanics
 
 
                 //get the player bank relations
-                var playerBankRelationLayer = gameSectorLayerService
-                                            .DataLayer
-                                            .Layers
-                                            .Where(l => l.Name == "PlayerBankRelations" &&
-                                                         l.GetValidTypes().Any(t => t == typeof(DynamicRelation)))
-                                            .FirstOrDefault();
+                var playerBankRelationLayers = gameSectorLayerService
+                                                .DataLayer
+                                                .Layers
+                                                .OfType<DynamicRelationLayer<Item, IntBank>>()
+                                                .AsEnumerable<IGenericTypeDataLayer>()
+                                                .Union(gameSectorLayerService
+                                                .DataLayer
+                                                .Layers
+                                                .OfType<DynamicRelationLayer<IntBank, Item>>());
 
-                if (playerBankRelationLayer != null)
+                if (playerBankRelationLayers.Any())
                 {
                     /* if a relation between the player's bank and an item exists, 
                      * cool, lets update it 
@@ -182,32 +185,47 @@ namespace Apocalypse.Any.GameServer.States.Sector.Mechanics.PlayerMechanics
                      * 
                      * one problem here can be if the item is transferred to another players bank
                      */
-                    var playerBankItemRelation = playerBankRelationLayer
-                                                        .DataAsEnumerable<DynamicRelation>()
-                                                        .FirstOrDefault(dr => (dr.Entity1 == typeof(Item) &&
+                    var playerBankItemRelation = playerBankRelationLayers
+                                                        .SelectMany(l => l.DataAsEnumerable<DynamicRelation>())
+                                                        .Where(dr => (dr.Entity1 == typeof(Item) &&
                                                                               dr.Entity1Id == item.Id &&
                                                                               dr.Entity2 == typeof(IntBank)) ||
                                                                               (dr.Entity1 == typeof(IntBank) &&
                                                                               dr.Entity2Id == item.Id &&
                                                                               dr.Entity2 == typeof(Item)));
                     
-                    if (playerBankItemRelation == null)
+                    if (!playerBankItemRelation.Any())
                     {
-                        playerBankRelationLayer.Add(new DynamicRelation()
-                        {
-                            Id = Guid.NewGuid().ToString(),
-                            Entity1 = typeof(Item),
-                            Entity1Id = item.Id,
-                            Entity2 = typeof(IntBank),
-                            Entity2Id = playerBank.Id
-                        });
+                        foreach(var playerBankRelationLayer in playerBankRelationLayers)
+                            playerBankRelationLayer.Add(new DynamicRelation()
+                            {
+                                Id = Guid.NewGuid().ToString(),
+                                Entity1 = typeof(Item),
+                                Entity1Id = item.Id,
+                                Entity2 = typeof(IntBank),
+                                Entity2Id = playerBank.Id
+                            });
                     }
                     else
                     {
                         //update what?
                     }
                 }
-            }                    
+                else
+                {
+
+                    
+                    //playerBankRelationLayer.Add(new DynamicRelation()
+                    //{
+                    //    Id = Guid.NewGuid().ToString(),
+                    //    Entity1 = typeof(Item),
+                    //    Entity1Id = item.Id,
+                    //    Entity2 = typeof(IntBank),
+                    //    Entity2Id = playerBank.Id
+                    //});
+                }
+            }
+                            
         }
         
     }

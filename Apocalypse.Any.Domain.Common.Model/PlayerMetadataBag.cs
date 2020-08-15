@@ -6,10 +6,12 @@ namespace Apocalypse.Any.Domain.Common.Model
 {
     /// <summary>
     /// Holds all relevant information for a client
+    /// This can be seen as a "session bag"
     /// </summary>
     public class PlayerMetadataBag
     {
         public DateTime TimeStamp { get; set; }
+        public int MoneyCount { get; set; }
         public List<Item> Items { get; set; }
         public CharacterSheet Stats { get; set; }
         public string ChosenStat { get; set; }

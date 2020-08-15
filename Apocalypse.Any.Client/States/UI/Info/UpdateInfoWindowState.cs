@@ -19,9 +19,14 @@ namespace Apocalypse.Any.Client.States.UI.Info
 
         public void Handle(IStateMachine<string, INetworkGameScreen> machine)
         {
-            machine.SharedContext.InfoWindow.IsVisible = false;
-            return;
-            machine.SharedContext.Messages.Add(nameof(UpdateInfoWindowState));
+
+            //machine.SharedContext.Messages.Add(nameof(UpdateInfoWindowState));
+            var moneyCount = machine.SharedContext.LastMetadataBag?.MoneyCount.ToString();
+
+            if (!string.IsNullOrWhiteSpace(moneyCount))
+                machine.SharedContext.Messages.Add(moneyCount);
+
+            //TODO: put the money count in the "character window"
 
             var player = GetPlayerImage(machine);
             if (player == null)

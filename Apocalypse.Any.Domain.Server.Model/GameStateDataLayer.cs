@@ -4,6 +4,7 @@ using Apocalypse.Any.Domain.Server.Model.Interfaces;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 
+//TODO: change the namespace of the class to Apocalypse.Any.Domain.Server.Model.Layer
 namespace Apocalypse.Any.Domain.Server.DataLayer
 {
     public class GameStateDataLayer : IGameSectorDataLayer<

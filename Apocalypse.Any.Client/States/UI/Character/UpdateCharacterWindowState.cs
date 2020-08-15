@@ -69,6 +69,7 @@ namespace Apocalypse.Any.Client.States.UI.Character
             machine.SharedContext.CharacterWindow.Position.X = MathHelper.Lerp(machine.SharedContext.CharacterWindow.Position.X, machine.SharedContext.CursorImage.Position.X - 128, 0.1f);
             machine.SharedContext.CharacterWindow.Position.Y = MathHelper.Lerp(machine.SharedContext.CharacterWindow.Position.Y, machine.SharedContext.CursorImage.Position.Y - 128, 0.1f);
 
+            
             machine.SharedContext.HealthImage.Position.X = machine.SharedContext.CharacterWindow.Position.X + 32;
             machine.SharedContext.HealthImage.Position.Y = machine.SharedContext.CharacterWindow.Position.Y + 32;
             machine.SharedContext.SpeedImage.Position.X = machine.SharedContext.CharacterWindow.Position.X + (32 + 64);

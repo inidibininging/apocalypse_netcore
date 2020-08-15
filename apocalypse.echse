@@ -153,6 +153,7 @@ Wait +5 Seconds
 !MakeAWeakEnemy
 !CreateRandomFogCommand
 !MakeAnnoyingEnemies
+!MakeAnnoyingEnemies
 
 !b
 

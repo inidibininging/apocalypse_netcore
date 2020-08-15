@@ -3,7 +3,7 @@ using System;
 
 namespace Apocalypse.Any.Domain.Common.Model
 {
-    public class Projectile : IEntityWithImage
+    public class Projectile : IEntityWithImage, IDisplayableByName, IOwnable
     {
         public int Damage { get; set; }
         public string OwnerName { get; set; }

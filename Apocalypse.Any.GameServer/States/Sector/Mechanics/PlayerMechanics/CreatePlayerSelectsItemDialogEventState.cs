@@ -84,11 +84,12 @@ namespace Apocalypse.Any.GameServer.States.Sector.Mechanics.PlayerMechanics
                                                     .SharedContext
                                                     .DataLayer
                                                     .Layers
-                                                    .Where(l => l.Name == PlayerSelectsDialogItemEventName))
+                                                    .Where(l => l.DisplayName == PlayerSelectsDialogItemEventName))
                         {
                             eventLayer.Add(new EventQueueArgument()
                             {
-                                DynamicRelationId = itemDialogRelation.Id,
+                                ReferenceId = itemDialogRelation.Id,
+                                ReferenceType = typeof(DynamicRelation),
                                 EventName = PlayerSelectsDialogItemEventName,
                                 Id = Guid.NewGuid().ToString()
                             });
@@ -119,11 +120,12 @@ namespace Apocalypse.Any.GameServer.States.Sector.Mechanics.PlayerMechanics
                                                     .SharedContext
                                                     .DataLayer
                                                     .Layers
-                                                    .Where(l => l.Name == PlayerSelectsDialogItemEventName))
+                                                    .Where(l => l.DisplayName == PlayerSelectsDialogItemEventName))
                         {
                             eventLayer.Add(new EventQueueArgument()
                             {
-                                DynamicRelationId = itemDialogRelation.Id,
+                                ReferenceId = itemDialogRelation.Id,
+                                ReferenceType = typeof(DynamicRelation),
                                 EventName = PlayerSelectsDialogItemEventName,
                                 Id = Guid.NewGuid().ToString()
                             });

@@ -9,6 +9,9 @@ using System.Text;
 
 namespace Apocalypse.Any.Infrastructure.Server.PubSub
 {
+    /// <summary>
+    /// Dispatches events from EventQueueQuery and passes them to the GetListenersQuery
+    /// </summary>
     public class EventDispatcher : IEventDispatcher
     {
         private Func<IEnumerable<EventQueue>> EventQueueQuery { get; }
@@ -23,7 +26,7 @@ namespace Apocalypse.Any.Infrastructure.Server.PubSub
 
         public void DispatchEvents(GameTime gameTime)
         {
-            foreach (var eventQueueGroup in EventQueueQuery().GroupBy(q => q.Name))
+            foreach (var eventQueueGroup in EventQueueQuery().GroupBy(q => q.DisplayName))
             {
                 foreach (var eventQueue in eventQueueGroup)
                 {
@@ -31,8 +34,9 @@ namespace Apocalypse.Any.Infrastructure.Server.PubSub
 
                     foreach (var eventQueueArgument in events)
                     {
+                        Console.WriteLine(eventQueueArgument.EventName + " fired");
                         foreach (var listener in GetListenersQuery().Where(l => l != null))
-                        {
+                        {                            
                             listener.Notify(eventQueueGroup.Key, eventQueueArgument);
                         }
                     }

@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
+//TODO: change the namespace to Apocalypse.Any.Domain.Server.Model.Layer
 namespace Apocalypse.Any.Domain.Server.Model
 {
     public class GenericGameStateDataLayer : 
@@ -74,6 +75,6 @@ namespace Apocalypse.Any.Domain.Server.Model
         }
 
         IEnumerable<IGenericTypeDataLayer> IGenericGameSectorDataLayer.GetLayersByName(string layerName)
-        => Layers.Where(l => l.Name == layerName);
+        => Layers.Where(l => l.DisplayName == layerName);
     }
 }

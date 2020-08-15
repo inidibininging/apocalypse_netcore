@@ -80,10 +80,6 @@ namespace Apocalypse.Any.Client.States
 
                 try
                 {
-                    
-                    
-                    
-
                     machine.SharedContext.CurrentGameStateData = SerializationAdapter.DeserializeObject<GameStateData>(machine.SharedContext.CurrentNetworkCommand.Data);
                     machine.SharedContext.Messages.Add("Added CurrentNetworkCommand");
 

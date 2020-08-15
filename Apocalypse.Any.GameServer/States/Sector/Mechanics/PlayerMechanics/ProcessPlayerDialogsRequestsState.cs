@@ -72,7 +72,7 @@ namespace Apocalypse.Any.GameServer.States.Sector.Mechanics.PlayerMechanics
                                                     .SharedContext
                                                     .DataLayer
                                                     .Layers
-                                                    .Where(layer => layer.Name == RelationLayerName && 
+                                                    .Where(layer => layer.DisplayName == RelationLayerName && 
                                                                                   layer.GetValidTypes().Any(t => t == typeof(DynamicRelation)))
                                                     .SelectMany(layer => layer.DataAsEnumerable<DynamicRelation>())
                                                     .FirstOrDefault(relation => (relation.Entity1 == typeof(IdentifiableCircularLocation) &&

@@ -453,45 +453,62 @@ namespace Apocalypse.Any.GameServer.GameInstance
         /// <param name="newPlayer"></param>
         private void FirePlayerRegisteredEvent(PlayerSpaceship newPlayer)
         {
+            const string PlayerRegisteredEventName = "PlayerRegisteredEvent";
             var playerRegisteredEventLayer = GameSectorLayerServices[Configuration.StartingSector]
                                                         .SharedContext
                                                         .DataLayer
                                                         .Layers
-                                                        .Where(l => l.Name == "PlayerRegisteredEvent" &&
+                                                        .Where(l => l.DisplayName == PlayerRegisteredEventName &&
                                                                     l.GetValidTypes().Any(t => t == typeof(EventQueueArgument)))
                                                         .FirstOrDefault();
             if(playerRegisteredEventLayer == null)
             {
                 throw new InvalidOperationException($"Cannot use {nameof(FirePlayerRegisteredEvent)}. EventQueue PlayerRegistered doesn't exist");
             }
+
             //get relation layer for event
-            var playerRegisteredEventRelationLayer = GameSectorLayerServices[Configuration.StartingSector]
-                                                    .SharedContext
-                                                    .DataLayer
-                                                    .Layers
-                                                    .Where(l => l.Name == "PlayerRegisteredEvent" &&
-                                                                l.GetValidTypes().Any(t => t == typeof(DynamicRelation)))
-                                                    .FirstOrDefault();
-            if (playerRegisteredEventRelationLayer == null)
-            {
-                throw new InvalidOperationException($"Cannot use {nameof(FirePlayerRegisteredEvent)}. DynamicRelation layer with the name PlayerRegistered doesn't exist");
-            }
-            var playerRegisteredEventRelation = new DynamicRelation()
-            {
-                Id = Guid.NewGuid().ToString(),
-                Entity1 = typeof(PlayerSpaceship),
-                Entity1Id = newPlayer.Id,
-                Entity2 = null,
-                Entity2Id = string.Empty,
-            };
-            playerRegisteredEventRelationLayer.Add(playerRegisteredEventRelation);
+            //var playerRegisteredEventRelationLayer = GameSectorLayerServices[Configuration.StartingSector]
+            //                                        .SharedContext
+            //                                        .DataLayer
+            //                                        .Layers
+            //                                        .Where(l => l.DisplayName == PlayerRegisteredEventName &&
+            //                                                    l.GetValidTypes().Any(t => t == typeof(DynamicRelation)))
+            //                                        .FirstOrDefault();
+            //var playerRegisteredEventRelationLayer = GameSectorLayerServices[Configuration.StartingSector]
+            //                                        .SharedContext
+            //                                        .DataLayer
+            //                                        .Layers
+            //                                        .Where(l => l.DisplayName == PlayerRegisteredEventName &&
+            //                                                    l.GetValidTypes().Any(t => t == typeof(DynamicRelation)))
+            //                                        .FirstOrDefault();
+
+
+            //if (playerRegisteredEventRelationLayer == null)
+            //{
+            //    throw new InvalidOperationException($"Cannot use {nameof(FirePlayerRegisteredEvent)}. DynamicRelation layer with the name PlayerRegistered doesn't exist");
+            //}
+
+            //var playerRegisteredEventRelation = new DynamicRelation()
+            //{
+            //    Id = Guid.NewGuid().ToString(),
+            //    Entity1 = typeof(PlayerSpaceship),
+            //    Entity1Id = newPlayer.Id,
+            //    Entity2 = null,
+            //    Entity2Id = string.Empty,
+            //};
+            //playerRegisteredEventRelationLayer.Add(playerRegisteredEventRelation);
+            //if (!playerRegisteredEventRelationLayer.DataAsEnumerable<DynamicRelation>().Contains(playerRegisteredEventRelation))
+            //    throw new InvalidOperationException($"Adding the players relation for PlayerRegisteredEvent didn't work. The relation to add is not valid for {playerRegisteredEventRelationLayer.DisplayName}");
+
 
             var playerRegisteredEvent = new EventQueueArgument()
             {
                 Id = Guid.NewGuid().ToString(),
-                EventName = "PlayerRegistered",
-                DynamicRelationId = playerRegisteredEventRelation.Id
+                EventName = PlayerRegisteredEventName, // changed this
+                ReferenceId = newPlayer.Id, //playerRegisteredEventRelation.Id
+                ReferenceType = typeof(PlayerSpaceship)
             };
+
             //TODO: event queue argument factory
             playerRegisteredEventLayer.Add(playerRegisteredEvent);
         }

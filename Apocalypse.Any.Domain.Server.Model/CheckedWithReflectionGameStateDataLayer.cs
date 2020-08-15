@@ -8,11 +8,11 @@ namespace Apocalypse.Any.Domain.Server.Model
 {
     public abstract class CheckedWithReflectionGameStateDataLayer : IGenericTypeDataLayer
     {
-        public string Name { get; }
+        public string DisplayName { get; }
 
         public CheckedWithReflectionGameStateDataLayer(string name)
         {
-            Name = name;
+            DisplayName = name;
         }
         public abstract bool CanUse<T>(T instance);
         public abstract List<Type> GetValidTypes();
@@ -32,6 +32,8 @@ namespace Apocalypse.Any.Domain.Server.Model
 
         protected bool CheckTypeOfWith(Type subjectType, Type toProofAgainst)
         {
+            if (subjectType == null || toProofAgainst == null)
+                return false;
             var tparam = subjectType;
             var tparamInstance = toProofAgainst;
             if (tparam == tparamInstance)
@@ -45,6 +47,8 @@ namespace Apocalypse.Any.Domain.Server.Model
 
         protected bool CheckTypeOfToProofAgainstWith<TParamToProofAgainst>(Type subjectType)
         {
+            if (subjectType == null)
+                return false;
             var tparam = subjectType;
             var tparamInstance = typeof(TParamToProofAgainst);
             if (tparam == tparamInstance)
@@ -57,6 +61,8 @@ namespace Apocalypse.Any.Domain.Server.Model
         }
         protected bool CheckTypeOfSubjectWithType<TParamSubject>(Type toProofAgainst)
         {
+            if (toProofAgainst == null)
+                return false;
             var tparam = typeof(TParamSubject);
             var tparamInstance = toProofAgainst;
             if (tparam == tparamInstance)

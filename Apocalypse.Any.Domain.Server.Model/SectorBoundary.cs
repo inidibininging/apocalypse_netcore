@@ -2,6 +2,10 @@
 
 namespace Apocalypse.Any.Domain.Server.Model
 {
+    /// <summary>
+    /// Represents a rectangular sector
+    /// TODO: there should a vice-versa conversion of the this class into a rectangle
+    /// </summary>
     public class SectorBoundary : IGameSectorBoundaries
     {
         public int MinSectorX { get; set; }

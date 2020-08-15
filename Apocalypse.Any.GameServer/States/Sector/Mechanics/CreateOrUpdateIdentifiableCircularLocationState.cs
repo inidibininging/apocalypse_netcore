@@ -100,7 +100,7 @@ namespace Apocalypse.Any.GameServer.States.Sector.Mechanics
                     var firstRelationLayerRelatedtoLocations = machine.SharedContext
                                                             .DataLayer
                                                             .Layers
-                                                            .FirstOrDefault(layer => layer.Name == DialogLocationRelationLayerName && layer.GetValidTypes().Any(t => t == typeof(DynamicRelation)));
+                                                            .FirstOrDefault(layer => layer.DisplayName == DialogLocationRelationLayerName && layer.GetValidTypes().Any(t => t == typeof(DynamicRelation)));
 
                     if (firstAppearingCircularLocationListLayer == null ||
                         firstRelationLayerRelatedtoLocations == null)
@@ -115,7 +115,7 @@ namespace Apocalypse.Any.GameServer.States.Sector.Mechanics
                     .Select(image => new IdentifiableCircularLocation()
                     {
                         Id = image.Id,
-                        Name = $"BUILDING BLOCK {Guid.NewGuid()}", //TODO: INSERT_PLACE_NAME_GENERATOR
+                        DisplayName = $"BUILDING BLOCK {Guid.NewGuid()}", //TODO: INSERT_PLACE_NAME_GENERATOR
                         Position = new MovementBehaviour()
                         {
                             X = image.Position.X,

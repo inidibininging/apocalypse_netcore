@@ -6,10 +6,13 @@ using System.Text;
 
 namespace Apocalypse.Any.Domain.Common.Model
 {
+    /// <summary>
+    /// A location defined as circular with 
+    /// </summary>
     public class IdentifiableCircularLocation : CircularLocation, IIdentifiableModel
     {
         public string Id { get ; set ; }
-        public string Name { get; set; }
+        public string DisplayName { get; set; }
         
     }
 }

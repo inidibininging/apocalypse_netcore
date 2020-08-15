@@ -20,17 +20,25 @@ namespace Apocalypse.Any.GameServer.States.Sector
     public class BuildDataLayerState<TDataLayer> : IState<string, IGameSectorLayerService>
         where TDataLayer : IExpandedGameSectorDataLayer<PlayerSpaceship, EnemySpaceship, Item, Projectile, CharacterEntity, CharacterEntity, ImageData>
     {
-        
-        public BuildDataLayerState(IEnumerable<string> eventNames,
-                                    string dialogLocationRelationLayerName)
-        {
-            EventNames = eventNames;
-            DialogLocationRelationLayerName = dialogLocationRelationLayerName;
 
+        public BuildDataLayerState(string dialogLocationRelationLayerName,
+                                    string dropPlayerItemEventName,
+                                    string playerRegisteredEventName,
+                                    string playerBankLayerName,
+                                    Func<IGenericTypeFactory<IntBank>> bankFactory)
+        {
+            DialogLocationRelationLayerName = dialogLocationRelationLayerName ?? throw new ArgumentNullException(nameof(dialogLocationRelationLayerName));
+            DropPlayerItemEventName = dropPlayerItemEventName ?? throw new ArgumentNullException(nameof(dropPlayerItemEventName));
+            PlayerRegisteredEventName = playerRegisteredEventName ?? throw new ArgumentNullException(nameof(playerRegisteredEventName));
+            PlayerBankLayerName = playerBankLayerName ?? throw new ArgumentNullException(nameof(playerBankLayerName));
+            BankFactory = bankFactory ?? throw new ArgumentNullException(nameof(bankFactory));
         }
 
-        public IEnumerable<string> EventNames { get; }
         public string DialogLocationRelationLayerName { get; }
+        public string DropPlayerItemEventName { get; }
+        public string PlayerRegisteredEventName { get; }
+        public string PlayerBankLayerName { get; }
+        public Func<IGenericTypeFactory<IntBank>> BankFactory { get; }
 
         public void Handle(IStateMachine<string, IGameSectorLayerService> machine)
         {
@@ -49,22 +57,30 @@ namespace Apocalypse.Any.GameServer.States.Sector
 
             machine.SharedContext.DataLayer = Activator.CreateInstance<TDataLayer>();
             machine.SharedContext.DataLayer.Layers.Add(new ExampleDialogService(new RandomPortraitGeneratorFactory()));
+
+            //dialog related stuff
             machine.SharedContext.DataLayer.Layers.Add(new GenericInMemoryDataLayer<IdentifiableCircularLocation>(null));
-            machine.SharedContext.DataLayer.Layers.Add(new GenericInMemoryDataLayer<IntBank>("The Bank"));
             machine.SharedContext.DataLayer.Layers.Add(new DynamicRelationLayer<IdentifiableCircularLocation, DialogNode>(DialogLocationRelationLayerName));
+            machine.SharedContext.DataLayer.Layers.Add(new DynamicRelationLayer<Item, DialogNode>(DropPlayerItemEventName));
+            machine.SharedContext.DataLayer.Layers.Add(new DynamicRelationLayer<PlayerSpaceship, IntBank>(DropPlayerItemEventName));
 
-            machine.SharedContext.DataLayer.Layers.Add(new DynamicRelationLayer<Item, DialogNode>("DropPlayerItemDialogEvent"));
-            machine.SharedContext.DataLayer.Layers.Add(new DynamicRelationLayer<Item, IntBank>("PlayerRegisteredEvent")); 
-            var eventHandlers = new GenericInMemoryDataLayer<IIdentifiableNotifiableModel>("DropPlayerItemDialogEvent");
-            eventHandlers.Add(new PlayerItemDialogNotifier("DropPlayerItemDialogEvent", "The Bank",() => machine.SharedContext));
+            //bank related stuff
+            machine.SharedContext.DataLayer.Layers.Add(new GenericInMemoryDataLayer<IntBank>(PlayerBankLayerName));
+            machine.SharedContext.DataLayer.Layers.Add(new DynamicRelationLayer<Item, IntBank>(DropPlayerItemEventName)); 
+
+            //add events
+            var eventHandlers = new GenericInMemoryDataLayer<IIdentifiableNotifiableModel>(DropPlayerItemEventName);
+            eventHandlers.Add(new PlayerItemDialogNotifier(DropPlayerItemEventName, PlayerBankLayerName, () => machine.SharedContext));
+            eventHandlers.Add(new CreatePlayerBankOnPlayerRegistrationNotifier(PlayerRegisteredEventName,  PlayerBankLayerName, BankFactory, () => machine.SharedContext));
+            
             machine.SharedContext.DataLayer.Layers.Add(eventHandlers);
-            
-            foreach (var eventName in EventNames)
-            {
-                machine.SharedContext.DataLayer.Layers.Add(new EventQueue(eventName));
-            }
 
-            
+
+            machine.SharedContext.DataLayer.Layers.Add(new EventQueue(DropPlayerItemEventName));
+            machine.SharedContext.DataLayer.Layers.Add(new EventQueue(PlayerRegisteredEventName)); 
+
+
+
         }
     }
 }

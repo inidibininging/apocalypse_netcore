@@ -79,8 +79,17 @@ namespace Apocalypse.Any.Infrastructure.Server.Services.Transformations
                                                     .Intersects(playerRectangleWithAura))
                                     .Any();
 
+            var bankAccountSum = gameSector
+                        .DataLayer
+                        .GetLayersByType<IntBank>()
+                        .SelectMany(l => l.DataAsEnumerable<IntBank>())
+                        .Where(b => b.OwnerName == player.LoginToken)
+                        .Sum(b => b.Amount);
+                        
+
             var unserializedPlayerMetadata = new PlayerMetadataBag()
             {
+                MoneyCount = bankAccountSum,
                 Stats = player.Stats,
                 GameSectorTag = gameSector.Tag,
                 ChosenStat = player.ChosenStat,

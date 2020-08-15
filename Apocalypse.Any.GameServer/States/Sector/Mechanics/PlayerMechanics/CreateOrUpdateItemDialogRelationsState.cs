@@ -21,11 +21,11 @@ namespace Apocalypse.Any.GameServer.States.Sector.Mechanics.PlayerMechanics
     public class CreateOrUpdateItemDialogRelationsState : IState<string, IGameSectorLayerService>     
     {
 
-        public string DialogEventService { get; set; }
+        public string PlayerItemDropEventName { get; set; }
 
         public CreateOrUpdateItemDialogRelationsState(string dialogEventService)
         {
-            DialogEventService = dialogEventService ?? throw new ArgumentNullException(nameof(dialogEventService));
+            PlayerItemDropEventName = dialogEventService ?? throw new ArgumentNullException(nameof(dialogEventService));
         }
 
         /// <summary>
@@ -47,9 +47,12 @@ namespace Apocalypse.Any.GameServer.States.Sector.Mechanics.PlayerMechanics
                                         .GroupBy(item => item.OwnerName)
                                         .Where(g => players.Any(player => player.LoginToken == g.Key));
 
-            var relationLayer = dataLayer
-                                .GetLayersByType<DynamicRelation>()
-                                .FirstOrDefault(l => l.Name == DialogEventService);
+            var relationLayers = dataLayer.Layers
+                                    .Where(l => l.DisplayName == PlayerItemDropEventName)
+                                    .OfType<DynamicRelationLayer<DialogNode, Item>>()
+                                    .AsEnumerable<IGenericTypeDataLayer>()
+                                    .Union(dataLayer.Layers.OfType<DynamicRelationLayer<Item, DialogNode>>());
+                                   
 
             var dialogLayer = dataLayer
                                 .GetLayersByType<DialogNode>()
@@ -67,21 +70,22 @@ namespace Apocalypse.Any.GameServer.States.Sector.Mechanics.PlayerMechanics
             dialogLayer.Remove<DialogNode>(d => dialogsToRemove.Any(dtr => dtr.Id == d.Id));
 
             //remove any relation containing something with dialogs
-            if(relationLayer == null)
+            if(!relationLayers.Any())
             {
                 return;                
             }
-            relationLayer.Remove<DynamicRelation>(dr =>
+            foreach(var relationLayer in relationLayers)
+                relationLayer.Remove<DynamicRelation>(dr =>
                                             dialogsToRemove.Any(d =>
-                                            (d.Id == dr.Entity2Id && dr.Entity2 == typeof(DialogNode)) ||
-                                            (d.Id == dr.Entity1Id && dr.Entity1 == typeof(DialogNode))));
+                                            (d.Id == dr.Entity2Id && dr.Entity2 == typeof(DialogNode) && dr.Entity1 == typeof(Item)) ||
+                                            (d.Id == dr.Entity1Id && dr.Entity1 == typeof(DialogNode) && dr.Entity2 == typeof(Item))));
 
 
 
             var dropItemQueue = dataLayer                                
-                                .GetLayersByName(DialogEventService)
+                                .GetLayersByName(PlayerItemDropEventName)
                                 .FirstOrDefault(l => (l as IEventQueue) != null && 
-                                                      l.Name == DialogEventService);
+                                                      l.DisplayName == PlayerItemDropEventName);
                 
             foreach (var itemGroup in itemsGroupedByPlayer)
             {
@@ -104,7 +108,7 @@ namespace Apocalypse.Any.GameServer.States.Sector.Mechanics.PlayerMechanics
                     dialogRoutes.Add(new Tuple<string,string>(itemDialogKey, item.DisplayName));
                     
                     if(dropItemQueue != null)
-                    {                        
+                    {
                         var relation = new DynamicRelation()
                         {
                             Id = Guid.NewGuid().ToString(),
@@ -114,15 +118,18 @@ namespace Apocalypse.Any.GameServer.States.Sector.Mechanics.PlayerMechanics
                             Entity2Id = itemDialogKey
                         };
 
-                        relationLayer.Add(relation);
+                        foreach(var relationLayer in relationLayers)
+                            relationLayer.Add(relation);
 
-                        ////send event to queue
+
+                        //send event to queue
                         //dropItemQueue.Add(new EventQueueArgument()
-                        // {
-                        //     Id = Guid.NewGuid().ToString(),
-                        //     EventName = DialogEventService,
-                        //     DynamicRelationId = relation.Id
-                        // });
+                        //{
+                        //    Id = Guid.NewGuid().ToString(),
+                        //    EventName = DialogEventService,
+                        //    ReferenceId = relation.Id,
+                        //    ReferenceType = typeof(DynamicRelation)
+                        //});
                     }
 
                 }
@@ -138,7 +145,7 @@ namespace Apocalypse.Any.GameServer.States.Sector.Mechanics.PlayerMechanics
                 {
                     startDialog.DialogIdContent.Add(new Tuple<string, string>(
                         dialogRootNodeKey, 
-                        $"My Items"));
+                        $"Inventory"));
                 }
             }
 
