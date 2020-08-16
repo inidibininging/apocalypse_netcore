@@ -57,6 +57,7 @@ namespace Apocalypse.Any.Client.States.UI.Character
                 FadeTo.Update(machine.SharedContext.SpeedImage.Alpha, 1, 0.1f);
                 FadeTo.Update(machine.SharedContext.StrenghImage.Alpha, 1, 0.1f);
                 FadeTo.Update(machine.SharedContext.DialogImage.Alpha, 1, 0.1f);
+                machine.SharedContext.MoneyCount.Update(machine.SharedContext.UpdateGameTime);
             }
             else
             {
@@ -200,6 +201,8 @@ namespace Apocalypse.Any.Client.States.UI.Character
 
             if (strengthPercentage <= 0.1f)
                 machine.SharedContext.StrenghImage.SelectedFrame = "hud_misc_edit_7_4";
+
+            
         }
     }
 }

@@ -53,118 +53,120 @@ namespace Apocalypse.Any.Client.States
 
             foreach (var img in imagesToDispose)
             {
-                if (img.SelectedFrame.Contains("enemy"))
+                if(img.SelectedFrame != null)
                 {
-                    img.SelectedFrame = "explosion_0_8";
-                    img.Scale = new Vector2(img.Scale.X + 1, img.Scale.Y + 1);
-                    img.Color = Color.Yellow;
-
-                    for (var i = 0; i < 10; i++)
+                    if (img.SelectedFrame.Contains("enemy"))
                     {
-                        machine.SharedContext
-                                .As<RandomDebrisField>(nameof(RandomDebrisField))
-                                .Add(img.Position.X,
-                                    img.Position.Y,
-                                    new Color(
-                                        new Vector3(108,
-                                                    108,
-                                                    255)),
-                                    ((float)Randomness.Instance.From(20, 150) / 200f));
+                        img.SelectedFrame = "explosion_0_8";
+                        img.Scale = new Vector2(img.Scale.X + 1, img.Scale.Y + 1);
+                        img.Color = Color.Yellow;
+
+                        for (var i = 0; i < 10; i++)
+                        {
+                            machine.SharedContext
+                                    .As<RandomDebrisField>(nameof(RandomDebrisField))
+                                    .Add(img.Position.X,
+                                        img.Position.Y,
+                                        new Color(
+                                            new Vector3(108,
+                                                        108,
+                                                        255)),
+                                        ((float)Randomness.Instance.From(20, 150) / 200f));
+                        }
+
+                        ScreenService.Instance.Sounds.Play($"SynthRainbow0{Randomness.Instance.From(0, 3)}");
                     }
 
-                    ScreenService.Instance.Sounds.Play($"SynthRainbow0{Randomness.Instance.From(0, 3)}");
-                }
+                    if (img.SelectedFrame == "thrust_6_8")
+                    {
+                        img.LayerDepth = DrawingPlainOrder.EntitiesFX;
+                        img.Alpha.Alpha -= 0.05f;
+                        img.SelectedFrame = "thrust_7_8";
+                        continue;
+                    }
+                    if (img.SelectedFrame == "thrust_7_8")
+                    {
+                        img.LayerDepth = DrawingPlainOrder.EntitiesFX;
+                        img.Alpha.Alpha -= 0.05f;
+                        img.SelectedFrame = "thrust_8_8";
+                        continue;
+                    }
+                    if (img.SelectedFrame == "thrust_8_8")
+                    {
+                        img.LayerDepth = DrawingPlainOrder.EntitiesFX;
+                        img.Alpha.Alpha -= 0.05f;
+                        img.SelectedFrame = "thrust_0_9";
+                        continue;
+                    }
+                    if (img.SelectedFrame == "thrust_0_9")
+                    {
+                        img.LayerDepth = DrawingPlainOrder.EntitiesFX;
+                        img.Alpha.Alpha -= 0.05f;
+                        img.SelectedFrame = "thrust_1_9";
+                        continue;
+                    }
+                    if (img.SelectedFrame == "thrust_1_9")
+                    {
+                        img.LayerDepth = DrawingPlainOrder.EntitiesFX;
+                        img.Alpha.Alpha -= 0.05f;
+                        img.SelectedFrame = "thrust_2_9";
+                        // ScreenService.Instance.Sounds.Play($"SynthHitElectro0{Randomness.Instance.From(0, 2)}");
+                        continue;
+                    }
+                    if (img.SelectedFrame == "thrust_2_9")
+                    {
+                        img.LayerDepth = DrawingPlainOrder.EntitiesFX;
+                        img.Alpha.Alpha -= 0.05f;
+                        img.SelectedFrame = "thrust_3_9";
+                        continue;
+                    }
+                    if (img.SelectedFrame == "thrust_3_9")
+                    {
+                        img.LayerDepth = DrawingPlainOrder.EntitiesFX;
+                        img.Alpha.Alpha -= 0.05f;
+                        img.SelectedFrame = "thrust_4_9";
+                        continue;
+                    }
+                    if (img.SelectedFrame == "thrust_4_9")
+                    {
+                        img.LayerDepth = DrawingPlainOrder.EntitiesFX;
+                        img.Alpha.Alpha -= 0.05f;
+                        img.SelectedFrame = "thrust_5_9";
+                        continue;
+                    }
+                    if (img.SelectedFrame == "thrust_5_9")
+                    {
+                        img.LayerDepth = DrawingPlainOrder.EntitiesFX;
+                        img.Alpha.Alpha -= 0.05f;
+                        img.SelectedFrame = "thrust_6_9";
+                        continue;
+                    }
+                    if (img.SelectedFrame == "thrust_6_9")
+                    {
+                        img.LayerDepth = DrawingPlainOrder.EntitiesFX;
+                        img.Alpha.Alpha -= 0.05f;
+                        img.SelectedFrame = "thrust_7_9";
+                        continue;
+                    }
+                    if (img.SelectedFrame == "projectile_4_7")
+                    {
+                        img.SelectedFrame = "explosion_0_8";
+                        ScreenService.Instance.Sounds.Play($"SynthBoomElector0{Randomness.Instance.From(0, 2)}");//{Randomness.Instance.From(0, 1)}");
+                        continue;
+                    }
 
-                if (img.SelectedFrame == "thrust_6_8")
-                {
-                    img.LayerDepth = DrawingPlainOrder.EntitiesFX;
-                    img.Alpha.Alpha -= 0.05f;
-                    img.SelectedFrame = "thrust_7_8";
-                    continue;
-                }
-                if (img.SelectedFrame == "thrust_7_8")
-                {
-                    img.LayerDepth = DrawingPlainOrder.EntitiesFX;
-                    img.Alpha.Alpha -= 0.05f;
-                    img.SelectedFrame = "thrust_8_8";
-                    continue;
-                }
-                if (img.SelectedFrame == "thrust_8_8")
-                {
-                    img.LayerDepth = DrawingPlainOrder.EntitiesFX;
-                    img.Alpha.Alpha -= 0.05f;
-                    img.SelectedFrame = "thrust_0_9";
-                    continue;
-                }
-                if (img.SelectedFrame == "thrust_0_9")
-                {
-                    img.LayerDepth = DrawingPlainOrder.EntitiesFX;
-                    img.Alpha.Alpha -= 0.05f;
-                    img.SelectedFrame = "thrust_1_9";
-                    continue;
-                }
-                if (img.SelectedFrame == "thrust_1_9")
-                {
-                    img.LayerDepth = DrawingPlainOrder.EntitiesFX;
-                    img.Alpha.Alpha -= 0.05f;
-                    img.SelectedFrame = "thrust_2_9";
-                    // ScreenService.Instance.Sounds.Play($"SynthHitElectro0{Randomness.Instance.From(0, 2)}");
-                    continue;
-                }
-                if (img.SelectedFrame == "thrust_2_9")
-                {
-                    img.LayerDepth = DrawingPlainOrder.EntitiesFX;
-                    img.Alpha.Alpha -= 0.05f;
-                    img.SelectedFrame = "thrust_3_9";
-                    continue;
-                }
-                if (img.SelectedFrame == "thrust_3_9")
-                {
-                    img.LayerDepth = DrawingPlainOrder.EntitiesFX;
-                    img.Alpha.Alpha -= 0.05f;
-                    img.SelectedFrame = "thrust_4_9";
-                    continue;
-                }
-                if (img.SelectedFrame == "thrust_4_9")
-                {
-                    img.LayerDepth = DrawingPlainOrder.EntitiesFX;
-                    img.Alpha.Alpha -= 0.05f;
-                    img.SelectedFrame = "thrust_5_9";
-                    continue;
-                }
-                if (img.SelectedFrame == "thrust_5_9")
-                {
-                    img.LayerDepth = DrawingPlainOrder.EntitiesFX;
-                    img.Alpha.Alpha -= 0.05f;
-                    img.SelectedFrame = "thrust_6_9";
-                    continue;
-                }
-                if (img.SelectedFrame == "thrust_6_9")
-                {
-                    img.LayerDepth = DrawingPlainOrder.EntitiesFX;
-                    img.Alpha.Alpha -= 0.05f;
-                    img.SelectedFrame = "thrust_7_9";
-                    continue;
-                }
-                if (img.SelectedFrame == "projectile_4_7")
-                {
-                    img.SelectedFrame = "explosion_0_8";
-                    ScreenService.Instance.Sounds.Play($"SynthBoomElector0{Randomness.Instance.From(0, 2)}");//{Randomness.Instance.From(0, 1)}");
-                    continue;
-                }
+                    if (img.SelectedFrame == "explosion_0_8")
+                    {
+                        img.SelectedFrame = "explosion_1_8";
+                        continue;
+                    }
 
-                if (img.SelectedFrame == "explosion_0_8")
-                {
-                    img.SelectedFrame = "explosion_1_8";
-                    continue;
-                }
-
-                if (img.SelectedFrame == "explosion_2_8")
-                {
-                    img.SelectedFrame = "explosion_3_8";
-                    continue;
-                }
-
+                    if (img.SelectedFrame == "explosion_2_8")
+                    {
+                        img.SelectedFrame = "explosion_3_8";
+                        continue;
+                    }
+                }                
                 img.UnloadContent();
             }
                         

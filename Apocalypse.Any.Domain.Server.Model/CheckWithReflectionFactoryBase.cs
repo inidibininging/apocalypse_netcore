@@ -23,6 +23,50 @@ namespace Apocalypse.Any.Domain.Server.Model
             return false;
         }
 
+        protected bool CheckTypeOfWith(Type subjectType, Type toProofAgainst)
+        {
+            if (subjectType == null || toProofAgainst == null)
+                return false;
+            var tparam = subjectType;
+            var tparamInstance = toProofAgainst;
+            if (tparam == tparamInstance)
+                return true;
+            if (tparam.IsAssignableFrom(tparamInstance))
+                return true;
+            if (tparamInstance.IsAssignableFrom(tparam))
+                return true;
+            return false;
+        }
+
+        protected bool CheckTypeOfToProofAgainstWith<TParamToProofAgainst>(Type subjectType)
+        {
+            if (subjectType == null)
+                return false;
+            var tparam = subjectType;
+            var tparamInstance = typeof(TParamToProofAgainst);
+            if (tparam == tparamInstance)
+                return true;
+            if (tparam.IsAssignableFrom(tparamInstance))
+                return true;
+            if (tparamInstance.IsAssignableFrom(tparam))
+                return true;
+            return false;
+        }
+        protected bool CheckTypeOfSubjectWithType<TParamSubject>(Type toProofAgainst)
+        {
+            if (toProofAgainst == null)
+                return false;
+            var tparam = typeof(TParamSubject);
+            var tparamInstance = toProofAgainst;
+            if (tparam == tparamInstance)
+                return true;
+            if (tparam.IsAssignableFrom(tparamInstance))
+                return true;
+            if (tparamInstance.IsAssignableFrom(tparam))
+                return true;
+            return false;
+        }
+
         public T Create<TParam>(TParam parameter)
         {
             if (!CanUse(parameter))

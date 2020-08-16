@@ -37,11 +37,29 @@ namespace Apocalypse.Any.GameServer.States.Sector.Mechanics.PlayerMechanics
 
                    playerGameState.Commands.ForEach(cmd =>
                    {
-                       if (cmd == DefaultKeys.Shoot &&
-                           player.Stats.Strength > machine.SharedContext.DataLayer.Projectiles.Count(proj => proj.OwnerName == player.DisplayName))
+                       if (cmd == DefaultKeys.Shoot)
+                           // &&
+                           //player.Stats.Strength > machine.SharedContext.DataLayer.Projectailes.Count(proj => proj.OwnerName == player.DisplayName))
                        {
-                           var projectile = machine.SharedContext.Factories.ProjectileFactory[nameof(ProjectileFactory)].Create(player);
-                           machine.SharedContext.DataLayer.Projectiles.Add(projectile);
+
+                           Projectile lastProjectile = null;
+                           var projectileCount = machine.SharedContext.DataLayer.Projectiles.Count(proj => proj.OwnerName == player.DisplayName);
+                           for (var projectileCounter = 0; projectileCounter < projectileCount+1; projectileCounter++)
+                           {
+                               //laser
+                               Projectile currentProjectile = null;
+                               if (lastProjectile == null)
+                                   currentProjectile = machine.SharedContext.Factories.ProjectileFactory[nameof(ProjectileFactory)].Create(player);
+                               else
+                                   currentProjectile = machine.SharedContext.Factories.ProjectileFactory[nameof(ProjectileFactory)].Create(lastProjectile);
+                               lastProjectile = currentProjectile;
+
+                               //currentProjectile.CurrentImage.Rotation.Rotation += (projectileCounter * 2) * (Randomness.Instance.TrueOrFalse() ? 1 : -1);
+                               machine.SharedContext.DataLayer.Projectiles.Add(currentProjectile);
+                           }
+
+                           //var projectile = machine.SharedContext.Factories.ProjectileFactory[nameof(ProjectileFactory)].Create(player);
+                           //machine.SharedContext.DataLayer.Projectiles.Add(projectile);
                        }
                        if (cmd == DefaultKeys.AltShoot &&
                            player.Stats.Strength > machine.SharedContext.DataLayer.Projectiles.Count(proj => proj.OwnerName == player.DisplayName))
@@ -53,7 +71,7 @@ namespace Apocalypse.Any.GameServer.States.Sector.Mechanics.PlayerMechanics
                            {
                                if (projectileCount > maxProjectileCount)
                                    projectileCount = maxProjectileCount;
-
+                               
                                for (var projectileCounter = 0; projectileCounter < projectileCount; projectileCounter++)
                                {
                                    var currentProjectile = machine.SharedContext.Factories.ProjectileFactory[nameof(ProjectileFactory)].Create(player);
@@ -140,8 +158,8 @@ namespace Apocalypse.Any.GameServer.States.Sector.Mechanics.PlayerMechanics
             var playerStats = player.Stats.Attack * (player.Stats.Experience == 0 ? 1 : player.Stats.Experience);
             if (playerStats == 0)
                 playerStats = player.Stats.Attack;
-            
-            return gameTime.ElapsedGameTime.Add(TimeSpan.FromMilliseconds(player.Stats.Attack / playerStats));
+
+            return gameTime.ElapsedGameTime.Add(TimeSpan.FromMilliseconds(1000));//player.Stats.Attack / playerStats));
         }
 
     }
