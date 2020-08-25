@@ -17,7 +17,7 @@ namespace Apocalypse.Any.Core.Text
         IFullPositionHolder
     {
         private SpriteFont Font { get; set; }
-        private const string DefaultFontName = "Font/FFF Forward";
+        private const string DefaultFontName = "Font/FFFForward";
         public string RegisteredFontName { get; private set; }
 
         private string text;
