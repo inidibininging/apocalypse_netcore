@@ -38,7 +38,7 @@ namespace Apocalypse.Any.Infrastructure.Server.Services.Factories
 
         protected override Projectile UseConverter<TParam>(TParam parameter)
         {
-            var next = parameter as Projectile;
+            var previousProjectile = parameter as Projectile;
             var owner = parameter as ICharacterEntity;
 
             if (owner != null) 
@@ -56,12 +56,13 @@ namespace Apocalypse.Any.Infrastructure.Server.Services.Factories
                         Height = 32,
                         Width = 32,
                         Scale = new Vector2(1.5f, 1.5f),
-                        Color = (owner as PlayerSpaceship != null) ? Color.Violet : Color.GreenYellow,
+                        Color = (owner as PlayerSpaceship != null) ? Color.Red : Color.GreenYellow,
                         Position = new MovementBehaviour()
                         {
-                            X = owner.CurrentImage.Position.X,
+                            X = owner.CurrentImage.Position.X + 1,
                             Y = owner.CurrentImage.Position.Y
                         },
+                        //Rotation = owner.CurrentImage.Rotation,
                         Rotation = new RotationBehaviour()
                         {
                             Rotation = owner.CurrentImage.Rotation.Rotation
@@ -69,42 +70,45 @@ namespace Apocalypse.Any.Infrastructure.Server.Services.Factories
                         LayerDepth = DrawingPlainOrder.Entities
                     },
                     CreationTime = DateTime.Now,
-                    DecayTime = 2.Seconds()
+                    DecayTime = 0.5.Seconds()
                 };
                 ThrustMechanics.Update(projectile.CurrentImage, 3);
                 return projectile;
             }
-            if(next != null)
-            {
+            if(previousProjectile != null)
+            {                
                 var projectile = new Projectile()
-                {
-                    Damage = next.Damage,
-                    OwnerName = next.OwnerName,
+                {                    
+                    Damage = previousProjectile.Damage,
+                    OwnerName = previousProjectile.OwnerName,
                     CurrentImage = new ImageData()
                     {
                         Id = Guid.NewGuid().ToString(),
                         Alpha = new AlphaBehaviour() { Alpha = 1 },
                         Path = "Image/gamesheetExtended",
-                        SelectedFrame = $"{IdPrefix}_{Randomness.Instance.From(1,3)}_10",
+                        SelectedFrame = $"{IdPrefix}_5_10",
                         Height = 32,
                         Width = 32,
-                        Scale = new Vector2(1.5f, 1.5f),
-                        Color = Color.Violet,
+                        Scale = new Vector2(previousProjectile.CurrentImage.Scale.X, previousProjectile.CurrentImage.Scale.Y + 1),
+                        Color = previousProjectile.CurrentImage.Color,
                         Position = new MovementBehaviour()
                         {
-                            X = next.CurrentImage.Position.X,
-                            Y = next.CurrentImage.Position.Y
+                            X = previousProjectile.CurrentImage.Position.X,
+                            Y = previousProjectile.CurrentImage.Position.Y
                         },
-                        Rotation = new RotationBehaviour()
-                        {
-                            Rotation = next.CurrentImage.Rotation.Rotation
-                        },
+                        Rotation = previousProjectile.CurrentImage.Rotation,
+                        //Rotation = new RotationBehaviour()
+                        //{
+                        //    Rotation = previousProjectile.CurrentImage.Rotation.Rotation
+                        //},
                         LayerDepth = DrawingPlainOrder.Entities
                     },
                     CreationTime = DateTime.Now,
-                    DecayTime = 4.Seconds()
+                    DecayTime = 0.5.Seconds()
                 };
-                ThrustMechanics.Update(projectile.CurrentImage, 16);
+                ThrustMechanics.Update(projectile.CurrentImage, 16 * (previousProjectile.CurrentImage.Scale.Y + 1));
+                previousProjectile.CurrentImage.SelectedFrame = $"{IdPrefix}_3_10";
+                
                 return projectile;                
             }
             return null;

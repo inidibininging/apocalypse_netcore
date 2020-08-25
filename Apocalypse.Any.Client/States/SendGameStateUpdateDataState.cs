@@ -85,12 +85,15 @@ namespace Apocalypse.Any.Client.States
                 machine.SharedContext.LastMetadataBag.ClientEventName != null &&
                 cmds.Contains(DefaultKeys.Use))
                 {
-                    var selectedDialog = machine.SharedContext.LastMetadataBag.CurrentDialog?.DialogIdContent.FirstOrDefault(d => d.Item2 == machine.SharedContext.LastMetadataBag.ClientEventName);
-                    if(selectedDialog != null)
+                    if(machine.SharedContext.LastMetadataBag != null)
                     {
-                        cmds.Add($"{DefaultKeys.OpenDialog} {selectedDialog.Item1}");
-                    }
-                    machine.SharedContext.LastMetadataBag.ClientEventName = null;
+                        var selectedDialog = machine.SharedContext.LastMetadataBag.CurrentDialog?.DialogIdContent.FirstOrDefault(d => d.Item2 == machine.SharedContext.LastMetadataBag.ClientEventName);
+                        if(selectedDialog != null)
+                        {
+                            cmds.Add($"{DefaultKeys.OpenDialog} {selectedDialog.Item1}");
+                        }
+                        machine.SharedContext.LastMetadataBag.ClientEventName = null;
+                    }                    
                 }
             }
             
