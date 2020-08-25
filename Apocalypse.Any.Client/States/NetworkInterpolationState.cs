@@ -3,6 +3,7 @@ using Apocalypse.Any.Domain.Common.Model.Network;
 using Apocalypse.Any.Infrastructure.Common.Services.Data;
 using Apocalypse.Any.Infrastructure.Common.Services.Data.Interfaces;
 using Apocalypse.Any.Infrastructure.Common.Services.Interpolation;
+using Microsoft.Xna.Framework;
 using States.Core.Infrastructure.Services;
 using System;
 using System.Collections.Generic;
@@ -32,11 +33,12 @@ namespace Apocalypse.Any.Client.States
             if (machine.SharedContext.CurrentGameStateData == null)
                 return;
 
-            if (string.IsNullOrWhiteSpace(LastGameStateData.Id))
-            {
-                LastGameStateData = machine.SharedContext.CurrentGameStateData;
+            LastGameStateData = machine.SharedContext.CurrentGameStateData;
+            if (string.IsNullOrWhiteSpace(LastGameStateData?.Id))
+            {                
                 return;
-            }
+            }            
+
             LastDeltaGameStateData = DeltaGameStateDataService.GetDelta(LastGameStateData, machine.SharedContext.CurrentGameStateData);
             
             //should only happen once
@@ -44,18 +46,22 @@ namespace Apocalypse.Any.Client.States
                 ImagesInterpolation.AddRange(LastDeltaGameStateData.Images.Select(i => new DeltaImageDataInterpolated().Update(i)));
 
             //remove unneeded images
-            var idOfImagesToRemove = DeltaGameStateDataService.GetImagesToRemove(LastGameStateData.Images, LastDeltaGameStateData.Images).Select(i => i.Id);
-            ImagesInterpolation.RemoveAll(img => idOfImagesToRemove.Contains(img.Id));
-            
-            //var sharedImages = LastDeltaGameStateData.Images                 
+            if(LastGameStateData.Images.Count != ImagesInterpolation.Count)
+            {                
+                foreach(var img in LastGameStateData.Images)
+                {
+                    var interpolatedImage = ImagesInterpolation.FirstOrDefault(intImg => intImg.Id == img.Id);
+                    if (interpolatedImage == null)
+                    {
+                        ImagesInterpolation.Add(new DeltaImageDataInterpolated().Update(img));
+                    }
+                    else
+                    {
+                        interpolatedImage.Update(img);                        
+                    }
 
-
-            //add new images
-            var newImages = DeltaGameStateDataService.GetNewImagesFromDelta(LastGameStateData.Images, LastDeltaGameStateData.Images);
-            if(newImages.Any())
-                ImagesInterpolation.AddRange(newImages.Select(i => new DeltaImageDataInterpolated().Update(i)));
-
-
+                }
+            }
         }   
     }
 }

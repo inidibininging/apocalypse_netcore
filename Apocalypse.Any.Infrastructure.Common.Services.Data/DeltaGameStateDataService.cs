@@ -38,10 +38,15 @@ namespace Apocalypse.Any.Infrastructure.Common.Services.Data
                 deltaGameState.CameraY = gameStateDataAfter.Camera.Position.Y;
             if (gameStateDataBefore.Camera.Rotation != gameStateDataAfter.Camera.Rotation)
                 deltaGameState.CameraRotation = gameStateDataAfter.Camera.Rotation.Rotation;
-            if (gameStateDataBefore.Screen.ScreenHeight != gameStateDataAfter.Screen.ScreenHeight)
-                deltaGameState.ScreenHeight = gameStateDataAfter.Screen.ScreenHeight;
-            if (gameStateDataBefore.Screen.ScreenWidth != gameStateDataAfter.Screen.ScreenWidth)
-                deltaGameState.ScreenWidth = gameStateDataAfter.Screen.ScreenWidth;
+            if(gameStateDataBefore.Screen != null && gameStateDataAfter.Screen != null)
+            {
+                if (gameStateDataBefore.Screen.ScreenHeight != gameStateDataAfter.Screen.ScreenHeight)
+                    deltaGameState.ScreenHeight = gameStateDataAfter.Screen.ScreenHeight;
+                if (gameStateDataBefore.Screen.ScreenWidth != gameStateDataAfter.Screen.ScreenWidth)
+                    deltaGameState.ScreenWidth = gameStateDataAfter.Screen.ScreenWidth;
+
+            }
+
 
             return deltaGameState;
         }
@@ -146,10 +151,10 @@ namespace Apocalypse.Any.Infrastructure.Common.Services.Data
                 IEnumerable<ImageData> images,
                 IEnumerable<DeltaImageData> deltaImages
             )
-            => images.Except(images.Where(afterImageAsDelta => !GetSharedImagesWithDelta(images, deltaImages)
+            => images.Except(images.Where(afterImageAsDelta => (GetSharedImagesWithDelta(images, deltaImages)
                                                                 .Select(g => g.imageId)
                                                                 .Concat(GetNewImagesFromDelta(images, deltaImages).Select(i => i.Id))
-                                                                .Contains(afterImageAsDelta.Id)));
+                                                                .Contains(afterImageAsDelta.Id))));
         public GameStateData ApplyChangesFromDeltaToGameStateData(GameStateData gameStateDataBefore, DeltaGameStateData gameStateDataAfter)
         {
             //update shared images

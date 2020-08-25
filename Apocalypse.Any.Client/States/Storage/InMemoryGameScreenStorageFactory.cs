@@ -163,6 +163,7 @@ namespace Apocalypse.Any.Client.States.Storage
 
             }));
 
+            inMemoryStorage.Add(nameof(NetworkInterpolationState), new NetworkInterpolationState(new DeltaGameStateDataService()));
             inMemoryStorage.Add(ClientGameScreenBook.Update, new RoutineState<string, INetworkGameScreen>()
             {
                 Operations = new List<string>()
@@ -170,6 +171,7 @@ namespace Apocalypse.Any.Client.States.Storage
                     ClientGameScreenBook.UpdateCursor,
                     ClientGameScreenBook.UpdateInput,
                     ClientGameScreenBook.FetchData,
+                    
                     ClientGameScreenBook.UpdateImages,
                     ClientGameScreenBook.UpdateCharacterWindow,
                     ClientGameScreenBook.UpdateMetadataState,
@@ -182,6 +184,7 @@ namespace Apocalypse.Any.Client.States.Storage
                     nameof(UpdateDialogHoverTextState),
                     ClientGameScreenBook.UpdateInfoWindow,
                     ClientGameScreenBook.SendGameStateUpdateData,
+                    nameof(NetworkInterpolationState),
                     "UpdateBackground",
                     "UpdateLogoPosition",
                     "UpdateGameOverPosition"
