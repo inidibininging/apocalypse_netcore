@@ -358,9 +358,11 @@ namespace Apocalypse.Any.GameServer.GameInstance
                     .Get(Configuration.RunOperation)
                     //  .Get("RunInParallel")
                     .Handle(sector);
-                
+
+                sector.TimeLog.Where(t => t.Value.TotalMilliseconds > 500).ToList().ForEach(t => Console.WriteLine($"{t.Key} {t.Value.TotalSeconds}"));
             }
             Thread.Sleep(TotalGameTime);
+
         }
 
         private PlayerSpaceship CreatePlayerSpaceShip(string loginToken)

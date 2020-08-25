@@ -329,28 +329,28 @@ namespace Apocalypse.Any.GameServer.States.Sector.Storage
             {
                 Operations = new List<string>()
                  {
-                    //server internal stuff
+                    //server internal stuff                   
                     "UpdateEnemyMechanics",
                     "UpdateProps",
                     "UpdatePlayerMechanics",
                     //ServerGameSectorNewBook.UpdateAllSingularEnemyMechanicsState,
 
                     //process player input
-                    ServerGameSectorNewBook.ProcessRotationMapsForPlayerMechanicsState,
-                    ServerGameSectorNewBook.ProcessShootingForPlayerMechanicsState,
-                    ServerGameSectorNewBook.ProcessThrustForPlayerMechanicsState,
+                    nameof(ProcessRotationMapsForPlayerMechanicsState),
+                    nameof(ProcessThrustForPlayerMechanicsState),
+                    nameof(ProcessShootingForPlayerMechanicsState),
 
                      //projectiles
-                    ServerGameSectorNewBook.UpdateProjectileMechanicsState,
-                    ServerGameSectorNewBook.RemoveDestroyedProjectilesState,
+                    nameof(UpdateProjectileMechanicsState),
+                    nameof(RemoveDestroyedProjectilesState),
 
                     //send information to the client
-                    ServerGameSectorNewBook.UpdateGameStateDataState,
+                    nameof(UpdateGameStateDataState),
 
-                    //process other player input
-                    ServerGameSectorNewBook.ProcessUseInventoryForPlayerState,
-                    ServerGameSectorNewBook.ProcessCollisionMechanicState,
-                    ServerGameSectorNewBook.ProcessPlayerChooseStatState,
+                    //process other player input                    
+                    nameof(ProcessUseInventoryForPlayerState),
+                    nameof(ProcessCollisionMechanicState),
+                    nameof(ProcessPlayerChooseStatState),
 
                     //dialog related states
                     nameof(CreateOrUpdateIdentifiableCircularLocationState),
@@ -359,15 +359,15 @@ namespace Apocalypse.Any.GameServer.States.Sector.Storage
                     nameof(ProcessPlayerDialogsRequestsState),
                     nameof(AddDroppedItemsAsCurrencyToPlayersBankState),
 
-                    ServerGameSectorNewBook.ProcessInventoryLeftState,
-                    ServerGameSectorNewBook.ProcessInventoryRightState,
-                    ServerGameSectorNewBook.ProcessReleaseStatState,
+                    nameof(ProcessInventoryLeftState),
+                    nameof(ProcessInventoryRightState),
+                    nameof(ProcessReleaseStatState),                    
                     nameof(ProcessDeadPlayer),
 
                     //remove junk
-                    ServerGameSectorNewBook.DropItemsState,
-                    ServerGameSectorNewBook.RemoveImagesMechanicsState,
-                    ServerGameSectorNewBook.RemoveDeadEnemiesMechanicsState,
+                    nameof(DropItemsState),
+                    nameof(RemoveImagesMechanicsState),
+                    nameof(RemoveDeadEnemiesMechanicsState),
                     "ConsumeItemExperienceState"                    
                  }
             });

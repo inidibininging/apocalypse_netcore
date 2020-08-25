@@ -24,7 +24,7 @@ namespace Apocalypse.Any.Infrastructure.Server.Language
         {
             //Console.WriteLine(machine.SharedIdentifier);
             if(WaitTimeSpan == TimeSpan.Zero){
-                Console.WriteLine("secs " + machine.SharedContext.CurrentGameTime.ElapsedGameTime.TotalSeconds);
+                //Console.WriteLine("secs " + machine.SharedContext.CurrentGameTime.ElapsedGameTime.TotalSeconds);
                 if (Wait.Unit.Name == "Miliseconds")
                     WaitTimeSpan = TimeSpan.FromMilliseconds((machine.SharedContext.CurrentGameTime.ElapsedGameTime.TotalMilliseconds + Wait.Number.NumberValue.Value));
                 if (Wait.Unit.Name == "Seconds")
@@ -33,7 +33,7 @@ namespace Apocalypse.Any.Infrastructure.Server.Language
                     WaitTimeSpan = TimeSpan.FromMinutes((machine.SharedContext.CurrentGameTime.ElapsedGameTime.TotalMinutes + Wait.Number.NumberValue.Value));
                 if(Wait.Unit.Name == "Hours")
                     WaitTimeSpan = TimeSpan.FromHours((machine.SharedContext.CurrentGameTime.ElapsedGameTime.TotalHours + Wait.Number.NumberValue.Value));
-                Console.WriteLine("Wait timespan added");
+                //Console.WriteLine("Wait timespan added");
             }
             
             var runOperation = machine.GetService.Get(Owner.RunOperation) as RoutineState<string,IGameSectorLayerService>;
@@ -48,7 +48,7 @@ namespace Apocalypse.Any.Infrastructure.Server.Language
                     if (runOperation.Operations.Contains(Id))
                     {
                         runOperation.Operations = runOperation.Operations.Where(op => op != Id).ToList();
-                        Console.WriteLine($"{Id} deleted");
+                        //Console.WriteLine($"{Id} deleted");
                         WaitTimeSpan = TimeSpan.Zero;
                     }
                 }

@@ -23,9 +23,9 @@ namespace Apocalypse.Any.Infrastructure.Server.Language
 
             // base.Handle(machine);
 
-            Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine($"executing {Function.Name}...");
-            Console.ForegroundColor = ConsoleColor.White;
+            //Console.ForegroundColor = ConsoleColor.Green;
+            //Console.WriteLine($"executing {Function.Name}...");
+            //Console.ForegroundColor = ConsoleColor.White;
 
             machine.Run(Function.Name);
 

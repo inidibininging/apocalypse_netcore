@@ -1,6 +1,7 @@
 using Apocalypse.Any.Core.Collision;
 using Apocalypse.Any.Infrastructure.Server.Services.Mechanics.Interfaces;
 using Microsoft.Xna.Framework;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -37,14 +38,15 @@ namespace Apocalypse.Any.Infrastructure.Server.Services.Mechanics
 
         public IEnumerable<ICollidable> Update(IEnumerable<ICollidable> collidableObjects)
         {
-            var parallelAction = Parallel.ForEach(
-                    collidableObjects, new ParallelOptions() { MaxDegreeOfParallelism = 1 },
-                        c =>
-                        {
-                            HandleCollisions(c, collidableObjects);
-                        });
-            while (!parallelAction.IsCompleted)
+            //Task.Factory.StartNew(() =>
+            //{
+            //    foreach (var obj in collidableObjects)
+            //        HandleCollisions(obj, collidableObjects);
+            //});
+
+            foreach(var collidable in collidableObjects)
             {
+                Task.Factory.StartNew(() => HandleCollisions(collidable, collidableObjects));
             }
             return collidableObjects;
         }

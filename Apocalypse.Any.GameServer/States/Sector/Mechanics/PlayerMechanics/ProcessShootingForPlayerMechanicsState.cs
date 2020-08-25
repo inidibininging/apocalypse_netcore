@@ -10,6 +10,8 @@ using States.Core.Infrastructure.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Metadata.Ecma335;
+using System.Reflection.PortableExecutable;
 using System.Security.Cryptography;
 
 namespace Apocalypse.Any.GameServer.States.Sector.Mechanics.PlayerMechanics
@@ -38,28 +40,40 @@ namespace Apocalypse.Any.GameServer.States.Sector.Mechanics.PlayerMechanics
                    playerGameState.Commands.ForEach(cmd =>
                    {
                        if (cmd == DefaultKeys.Shoot)
-                           // &&
-                           //player.Stats.Strength > machine.SharedContext.DataLayer.Projectailes.Count(proj => proj.OwnerName == player.DisplayName))
                        {
+                           //Shooting part 
 
-                           Projectile lastProjectile = null;
+
+                           //Projectile lastProjectile = null;
                            var projectileCount = machine.SharedContext.DataLayer.Projectiles.Count(proj => proj.OwnerName == player.DisplayName);
-                           for (var projectileCounter = 0; projectileCounter < projectileCount+1; projectileCounter++)
+                           if(projectileCount > 1)
                            {
-                               //laser
-                               Projectile currentProjectile = null;
+
+                               var lastProjectile = machine.SharedContext.DataLayer.Projectiles.Where(p => p.OwnerName == player.DisplayName).OrderByDescending(p => p.CreationTime).LastOrDefault();
                                if (lastProjectile == null)
-                                   currentProjectile = machine.SharedContext.Factories.ProjectileFactory[nameof(ProjectileFactory)].Create(player);
-                               else
-                                   currentProjectile = machine.SharedContext.Factories.ProjectileFactory[nameof(ProjectileFactory)].Create(lastProjectile);
-                               lastProjectile = currentProjectile;
-
-                               //currentProjectile.CurrentImage.Rotation.Rotation += (projectileCounter * 2) * (Randomness.Instance.TrueOrFalse() ? 1 : -1);
-                               machine.SharedContext.DataLayer.Projectiles.Add(currentProjectile);
+                                   return;
+                               machine.SharedContext.DataLayer.Projectiles.Add(machine.SharedContext.Factories.ProjectileFactory[nameof(ProjectileFactory)].Create(lastProjectile));
                            }
+                           else
+                           {
+                               var projectile = machine.SharedContext.Factories.ProjectileFactory[nameof(ProjectileFactory)].Create(player);
+                               machine.SharedContext.DataLayer.Projectiles.Add(projectile);
+                           }
+                           //for (var projectileCounter = 0; projectileCounter < projectileCount; projectileCounter++)
+                           //{
+                           //    //laser
+                           //    Projectile currentProjectile = null;
+                           //    if (lastProjectile == null)
+                           //        currentProjectile = machine.SharedContext.Factories.ProjectileFactory[nameof(ProjectileFactory)].Create(player);
+                           //    else
+                           //        currentProjectile = machine.SharedContext.Factories.ProjectileFactory[nameof(ProjectileFactory)].Create(lastProjectile);
+                           //    lastProjectile = currentProjectile;
 
-                           //var projectile = machine.SharedContext.Factories.ProjectileFactory[nameof(ProjectileFactory)].Create(player);
-                           //machine.SharedContext.DataLayer.Projectiles.Add(projectile);
+                           //    //currentProjectile.CurrentImage.Rotation.Rotation += (projectileCounter * 2) * (Randomness.Instance.TrueOrFalse() ? 1 : -1);
+                           //    machine.SharedContext.DataLayer.Projectiles.Add(currentProjectile);
+                           //}
+
+                           
                        }
                        if (cmd == DefaultKeys.AltShoot &&
                            player.Stats.Strength > machine.SharedContext.DataLayer.Projectiles.Count(proj => proj.OwnerName == player.DisplayName))
@@ -118,34 +132,45 @@ namespace Apocalypse.Any.GameServer.States.Sector.Mechanics.PlayerMechanics
             {
 
                 //every player command has its own counter. if the player sends more than X times a command and reaches the counter (Max),
-                //the shooting should be stopped, till the game time surpassses the cooldown time                
-                //the shooting is stopped by replacing the player command with an empty string
+                //the command should be stopped, till the game time surpassses the cooldown time
+                //the command is stopped by removing the players command
                 var currentThreshold = commandThresholdUsed;
                 if (currentThreshold.MaxReached)
                 {
+                    //Console.WriteLine($"Counter: {currentThreshold.Counter}");
                     if (currentThreshold.CooldownDeadline == TimeSpan.Zero)
+                    {
+                        //Console.WriteLine($"CooldownDeadline...");
                         currentThreshold.CooldownDeadline = GetCalculatedCooldownBasedOnPlayerStatsForShooting(player, gameTime);
+                    }
                     else
                     {
                         if (gameTime.ElapsedGameTime.TotalMilliseconds > currentThreshold.CooldownDeadline.TotalMilliseconds)
                         {
+                            //Console.WriteLine($"{currentThreshold.Id}, reset ({gameTime.ElapsedGameTime.TotalMilliseconds} / {currentThreshold.CooldownDeadline.TotalMilliseconds}) ");
+                            
                             currentThreshold.CooldownDeadline = TimeSpan.Zero;
                             currentThreshold.Counter = 0;
                         }
                         else
                         {
-                            var index = playerGameState.Commands.IndexOf(currentThreshold.Id);
-                            if (index == -1)
+                            
+                            var currentCommandIndexInPlayersGameState = playerGameState.Commands.IndexOf(currentThreshold.Id);
+                            if (currentCommandIndexInPlayersGameState == -1)
+                            {
+                                //Console.WriteLine($"CooldownDeadline continue");
                                 continue;
+                            }                                
                             else
                             {
-                                playerGameState.Commands.RemoveAt(index);
+                                //Console.WriteLine($"Command removed: {currentThreshold.Id} at {currentCommandIndexInPlayersGameState}");                                
+                                playerGameState.Commands.RemoveAt(currentCommandIndexInPlayersGameState);
                             }
                         }
                     }
                 }
                 else
-                {
+                {                    
                     currentThreshold.Counter += 1;
                 }
             }
@@ -159,7 +184,7 @@ namespace Apocalypse.Any.GameServer.States.Sector.Mechanics.PlayerMechanics
             if (playerStats == 0)
                 playerStats = player.Stats.Attack;
 
-            return gameTime.ElapsedGameTime.Add(TimeSpan.FromMilliseconds(1000));//player.Stats.Attack / playerStats));
+            return gameTime.ElapsedGameTime.Add(TimeSpan.FromMilliseconds(200)); //player.Stats.Attack / playerStats));
         }
 
     }

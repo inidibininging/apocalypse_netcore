@@ -55,7 +55,7 @@ namespace Apocalypse.Any.Infrastructure.Server.Services.Factories
                         SelectedFrame = $"{IdPrefix}_4_7",
                         Height = 32,
                         Width = 32,
-                        Scale = new Vector2(0.75f, 1.5f),
+                        Scale = new Vector2(1.5f, 1.5f),
                         Color = (owner as PlayerSpaceship != null) ? Color.Violet : Color.GreenYellow,
                         Position = new MovementBehaviour()
                         {
@@ -88,7 +88,7 @@ namespace Apocalypse.Any.Infrastructure.Server.Services.Factories
                         SelectedFrame = $"{IdPrefix}_{Randomness.Instance.From(1,3)}_10",
                         Height = 32,
                         Width = 32,
-                        Scale = new Vector2(0.75f, 1.5f),
+                        Scale = new Vector2(1.5f, 1.5f),
                         Color = Color.Violet,
                         Position = new MovementBehaviour()
                         {
@@ -104,7 +104,7 @@ namespace Apocalypse.Any.Infrastructure.Server.Services.Factories
                     CreationTime = DateTime.Now,
                     DecayTime = 4.Seconds()
                 };
-                ThrustMechanics.Update(projectile.CurrentImage, 8);
+                ThrustMechanics.Update(projectile.CurrentImage, 16);
                 return projectile;                
             }
             return null;

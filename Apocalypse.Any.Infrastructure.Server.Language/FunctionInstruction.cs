@@ -11,7 +11,7 @@ namespace Apocalypse.Any.Infrastructure.Server.Language
         public int FunctionIndex { get; set; } = -1;
         public FunctionInstruction(Interpreter interpreter, FunctionExpression function, int functionIndex) : base(interpreter)
         {
-            Console.WriteLine("adding function instruction " + function.Name);
+            //Console.WriteLine("adding function instruction " + function.Name);
             Function = function;
             FunctionIndex = functionIndex;
             interpreter.Context.NewService.New(Function.Name,this);
@@ -23,17 +23,17 @@ namespace Apocalypse.Any.Infrastructure.Server.Language
                 var currentInstruction = Owner.Instructions[currentInstructionIndex];
                 currentInstructionIndex++;
                 if(currentInstruction is FunctionInstruction){
-                    Console.WriteLine("function instruction found. aborting function instruction");
+                    //Console.WriteLine("function instruction found. aborting function instruction");
                     break;
                 }
                 currentInstruction.Handle(machine);
                 if(currentInstruction is WaitInstruction)
                 {
-                    Console.WriteLine("wait instruction found. aborting function instruction");
+                    //Console.WriteLine("wait instruction found. aborting function instruction");
                     break;
                 }
             }
-            Console.WriteLine("function executed");
+            //Console.WriteLine("function executed");
         }
 
         public override string ToString()
