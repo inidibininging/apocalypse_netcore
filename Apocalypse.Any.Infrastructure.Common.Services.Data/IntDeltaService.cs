@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace Apocalypse.Any.Infrastructure.Common.Services.Data
@@ -9,6 +10,14 @@ namespace Apocalypse.Any.Infrastructure.Common.Services.Data
         protected override int GetDelta(int before, int after)
         {
             return after - before;
+        }
+
+        public override int GetMeanOfRecords()
+        {
+            if (RecordDeltas)
+                return (int)Math.Round(DeltaRecords.Average());
+            else
+                return 0;
         }
     }
 }

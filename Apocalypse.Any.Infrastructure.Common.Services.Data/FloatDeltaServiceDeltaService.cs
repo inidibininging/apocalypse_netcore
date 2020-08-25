@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace Apocalypse.Any.Infrastructure.Common.Services.Data
@@ -15,6 +16,11 @@ namespace Apocalypse.Any.Infrastructure.Common.Services.Data
         {
             FloatDeltaService.Update(before.Delta).Update(after.Delta);
             return FloatDeltaService;
+        }
+
+        public override FloatDeltaService GetMeanOfRecords()
+        {
+            throw new NotImplementedException();
         }
     }
 }
