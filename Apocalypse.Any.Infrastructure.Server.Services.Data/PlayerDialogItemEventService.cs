@@ -7,7 +7,7 @@ namespace Apocalypse.Any.Infrastructure.Server.Services.Data
 {
     public class PlayerDialogItemEventService : GenericInMemoryDataLayer<PlayerDialogEvent<string, Item>>
     {
-        public PlayerDialogItemEventService(bool onlyUniques = false) : base(onlyUniques)
+        public PlayerDialogItemEventService(bool onlyUniques = false) : base(Guid.NewGuid().ToString(),onlyUniques)
         {
 
         }

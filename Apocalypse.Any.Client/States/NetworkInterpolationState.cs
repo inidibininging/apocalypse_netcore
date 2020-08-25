@@ -47,8 +47,8 @@ namespace Apocalypse.Any.Client.States
             var idOfImagesToRemove = DeltaGameStateDataService.GetImagesToRemove(LastGameStateData.Images, LastDeltaGameStateData.Images).Select(i => i.Id);
             ImagesInterpolation.RemoveAll(img => idOfImagesToRemove.Contains(img.Id));
             
-            var sharedImages = LastDeltaGameStateData.Images
-                               
+            //var sharedImages = LastDeltaGameStateData.Images                 
+
 
             //add new images
             var newImages = DeltaGameStateDataService.GetNewImagesFromDelta(LastGameStateData.Images, LastDeltaGameStateData.Images);
