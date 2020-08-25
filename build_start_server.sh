@@ -1,0 +1,1 @@
+source build_server.sh && source start_server.sh
