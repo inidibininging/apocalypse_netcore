@@ -240,7 +240,8 @@ namespace Apocalypse.Any.GameServer.States.Sector.Storage
 
             inMemoryStorage.Add(ServerGameSectorNewBook.RemoveImagesMechanicsState, new RemoveImagesMechanicsState());
             inMemoryStorage.Add(ServerGameSectorNewBook.RemoveDeadEnemiesMechanicsState, new RemoveDeadEnemiesMechanicsState());
-
+            inMemoryStorage.Add(nameof(RemoveProjectilesCounterOfDeadEnemiesState), new RemoveProjectilesCounterOfDeadEnemiesState());
+            
             inMemoryStorage.Add("ProcessPlayerInputBeforeThread", new RoutineState<string, IGameSectorLayerService>()
             {
                 Operations = new List<string>()
@@ -366,8 +367,9 @@ namespace Apocalypse.Any.GameServer.States.Sector.Storage
 
                     //remove junk
                     nameof(DropItemsState),
-                    nameof(RemoveImagesMechanicsState),
+                    nameof(RemoveImagesMechanicsState),                    
                     nameof(RemoveDeadEnemiesMechanicsState),
+                    nameof(RemoveProjectilesCounterOfDeadEnemiesState),
                     "ConsumeItemExperienceState"                    
                  }
             });
