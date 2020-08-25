@@ -45,7 +45,7 @@ namespace Apocalypse.Any.Infrastructure.Server.Services.Factories
             {
                 var projectile = new Projectile()
                 {
-                    Damage = (owner.Stats.Attack + owner.Stats.Strength),
+                    Damage = (owner.Stats.Attack + owner.Stats.Strength) * 100,
                     OwnerName = owner.DisplayName,
                     CurrentImage = new ImageData()
                     {
@@ -97,10 +97,6 @@ namespace Apocalypse.Any.Infrastructure.Server.Services.Factories
                             Y = previousProjectile.CurrentImage.Position.Y
                         },
                         Rotation = previousProjectile.CurrentImage.Rotation,
-                        //Rotation = new RotationBehaviour()
-                        //{
-                        //    Rotation = previousProjectile.CurrentImage.Rotation.Rotation
-                        //},
                         LayerDepth = DrawingPlainOrder.Entities
                     },
                     CreationTime = DateTime.Now,
