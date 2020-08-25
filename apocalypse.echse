@@ -146,20 +146,8 @@ Mod Position .weakEnemy +32 X
 Wait +1 Seconds
 !TheRing
 
-:MakeAnnoyingEnemies
-Wait +5 Seconds
-!MakeAShip
-!CreateRandomMiniCityCommand
+:MakeAnnoyingEnemy
 !MakeAWeakEnemy
-!CreateRandomFogCommand
-!MakeAnnoyingEnemies
-!MakeAnnoyingEnemies
-
-!b
-
-:b
-Wait +200 Seconds
-!MakeAnnoyingEnemies
 
 :FroggyPlayer
 Wait +500 Miliseconds
@@ -467,6 +455,7 @@ Wait +1 Seconds
 :myLoop
 !BurstPlayer
 Wait +1 Seconds
+!MakeAnnoyingEnemy
 !myLoop
 
 
