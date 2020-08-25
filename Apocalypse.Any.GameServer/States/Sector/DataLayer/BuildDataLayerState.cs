@@ -59,7 +59,7 @@ namespace Apocalypse.Any.GameServer.States.Sector
             machine.SharedContext.DataLayer.Layers.Add(new ExampleDialogService(new RandomPortraitGeneratorFactory()));
 
             //dialog related stuff
-            machine.SharedContext.DataLayer.Layers.Add(new GenericInMemoryDataLayer<IdentifiableCircularLocation>(null));
+            machine.SharedContext.DataLayer.Layers.Add(new GenericInMemoryDataLayer<IdentifiableCircularLocation>(null));            
             machine.SharedContext.DataLayer.Layers.Add(new DynamicRelationLayer<IdentifiableCircularLocation, DialogNode>(DialogLocationRelationLayerName));
             machine.SharedContext.DataLayer.Layers.Add(new DynamicRelationLayer<Item, DialogNode>(DropPlayerItemEventName));
             machine.SharedContext.DataLayer.Layers.Add(new DynamicRelationLayer<PlayerSpaceship, IntBank>(DropPlayerItemEventName));
@@ -74,12 +74,11 @@ namespace Apocalypse.Any.GameServer.States.Sector
             eventHandlers.Add(new CreatePlayerBankOnPlayerRegistrationNotifier(PlayerRegisteredEventName,  PlayerBankLayerName, BankFactory, () => machine.SharedContext));
             
             machine.SharedContext.DataLayer.Layers.Add(eventHandlers);
-
-
             machine.SharedContext.DataLayer.Layers.Add(new EventQueue(DropPlayerItemEventName));
             machine.SharedContext.DataLayer.Layers.Add(new EventQueue(PlayerRegisteredEventName)); 
 
-
+            //counters for enemies
+            machine.SharedContext.DataLayer.Layers.Add(new GenericInMemoryDataLayer<IdentifiableShortCounterThreshold>(null));
 
         }
     }

@@ -73,6 +73,14 @@ Mod Stats .Players +4 Speed
 Wait +50 Miliseconds
 Mod Stats .Players +8 Speed
 Wait +50 Miliseconds
+Mod Stats .Players +8 Speed
+Wait +50 Miliseconds
+Mod Stats .Players +8 Speed
+Wait +50 Miliseconds
+Mod Stats .Players +8 Speed
+Wait +50 Miliseconds
+Mod Stats .Players +8 Speed
+Wait +50 Miliseconds
 Mod Stats .Players +16 Speed
 Wait +1500 Miliseconds
 Mod Stats .Players +8 Speed
@@ -146,20 +154,8 @@ Mod Position .weakEnemy +32 X
 Wait +1 Seconds
 !TheRing
 
-:MakeAnnoyingEnemies
-Wait +5 Seconds
-!MakeAShip
-!CreateRandomMiniCityCommand
+:MakeAnnoyingEnemy
 !MakeAWeakEnemy
-!CreateRandomFogCommand
-!MakeAnnoyingEnemies
-!MakeAnnoyingEnemies
-
-!b
-
-:b
-Wait +200 Seconds
-!MakeAnnoyingEnemies
 
 :FroggyPlayer
 Wait +500 Miliseconds
@@ -466,7 +462,8 @@ Wait +1 Seconds
 
 :myLoop
 !BurstPlayer
-Wait +1 Seconds
+Wait +15 Seconds
+!MakeAnnoyingEnemy
 !myLoop
 
 

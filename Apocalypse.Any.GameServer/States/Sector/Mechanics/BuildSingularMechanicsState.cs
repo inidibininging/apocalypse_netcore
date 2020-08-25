@@ -117,33 +117,74 @@ namespace Apocalypse.Any.GameServer.States.Sector.Mechanics
                                                                                 new NeverLeaveTheSectorMechanic(),
                                                                                 () => machine.SharedContext.SectorBoundaries)));
             }
+
+
+            //TODO: Should be converted to a state?
             if(!machine.SharedContext.SingularMechanics.EnemyMechanics.ContainsKey("enemy_shoot_projectile"))
             {
                 Func<EnemySpaceship,EnemySpaceship> shootMechanic = (enemy) =>
                 {
                     var minDistance = 1024;
-                    var maxProjectiles = 10;
-                    if(!machine.SharedContext.DataLayer.Players.Any(plyr => Vector2.Distance(enemy.CurrentImage.Position, plyr.CurrentImage.Position) < minDistance)){
+                    var maxProjectiles = 3;
+                    var enemyDelayInShootingBetweenSeconds = 500;
+                    if(!machine.SharedContext.DataLayer.Players.Any(plyr => Vector2.Distance(enemy.CurrentImage.Position, plyr.CurrentImage.Position) < minDistance)) {
                         return enemy;
                     }
-                    if(machine.SharedContext.DataLayer.Projectiles.Count(proj => proj.OwnerName == enemy.DisplayName) > maxProjectiles){
+                    if(machine.SharedContext.DataLayer.Projectiles.Count(proj => proj.OwnerName == enemy.DisplayName) > maxProjectiles) {
                         return enemy;
                     }
                     Task.Factory.StartNew(() => {
-                        if(machine.SharedContext.Factories.ProjectileFactory.ContainsKey(nameof(ProjectileFactory)))
-                        {
+                        var counterLayer = machine.SharedContext.DataLayer.GetLayersByType<IdentifiableShortCounterThreshold>().FirstOrDefault();
+
+                        if(counterLayer == null)
+                            throw new InvalidOperationException("Layer for storing enemy counters not available");
+                        var enemyCounter = counterLayer
+                                                .DataAsEnumerable<IdentifiableShortCounterThreshold>().Where(counter => counter.Id == enemy.Id)
+                                                .FirstOrDefault();
+                        
+                        //add enemy counter if new
+                        if(enemyCounter == null) {
+                           enemyCounter = new IdentifiableShortCounterThreshold() 
+                            {
+                                Id = enemy.Id,
+                                Counter = 0,
+                                Max = (byte)maxProjectiles,
+                                CooldownDeadline = TimeSpan.Zero
+                            };                            
+                            counterLayer.Add(enemyCounter);
+                        }
+
+                        //reset counter if reached
+                        if(enemyCounter.MaxReached && machine.SharedContext.CurrentGameTime.ElapsedGameTime > enemyCounter.CooldownDeadline) {
+                            enemyCounter.Counter = 0;
+                            enemyCounter.CooldownDeadline = TimeSpan.Zero;                            
+                        }
+
+                        if(!machine.SharedContext.Factories.ProjectileFactory.ContainsKey(nameof(ProjectileFactory)))
+                            throw new InvalidOperationException($"Cannot create a projectile for an enemy. Factory named {nameof(ProjectileFactory)} doesn't exist");
+
+                        if(!enemyCounter.MaxReached)
+                        {                            
                             var enemyProjectile = machine.SharedContext.Factories.ProjectileFactory[nameof(ProjectileFactory)].Create(enemy);
                             if(enemyProjectile != null)
-                            {
+                            {                                
                                 machine.SharedContext.DataLayer.Projectiles.Add(enemyProjectile);
-                            }
-                        }
+                                enemyCounter.Counter += 1;
+
+                                //add cool down if max reached
+                                if(enemyCounter.MaxReached){
+                                    enemyCounter.CooldownDeadline = machine.SharedContext.CurrentGameTime.ElapsedGameTime.Add(TimeSpan.FromMilliseconds(enemyDelayInShootingBetweenSeconds));
+                                }
+                            }                            
+                        }                        
                     });
                     return enemy;
                 };
                 machine.SharedContext.SingularMechanics.EnemyMechanics.Add("enemy_shoot_projectile",
                 new DelegateSingleCharacterEntityMechanic<EnemySpaceship>(shootMechanic));
             }
+
+            
             if (!machine.SharedContext.SingularMechanics.ProjectileMechanics.ContainsKey("projectile_move"))
             {
                 machine.SharedContext.SingularMechanics.ProjectileMechanics.Add("projectile_move",

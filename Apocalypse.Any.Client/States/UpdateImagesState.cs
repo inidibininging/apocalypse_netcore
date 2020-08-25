@@ -166,6 +166,12 @@ namespace Apocalypse.Any.Client.States
                         img.SelectedFrame = "explosion_3_8";
                         continue;
                     }
+
+                    if (img.SelectedFrame == "projectile_5_10")
+                    {
+                        ScreenService.Instance.Sounds.Play($"SynthBoomElectro0{Randomness.Instance.From(0, 2)}");
+                        
+                    }
                 }                
                 img.UnloadContent();
             }
