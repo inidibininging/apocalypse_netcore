@@ -60,11 +60,12 @@ namespace Apocalypse.Any.Core.Utilities
             List<string> assemblyFullnames = new List<string>();
             List<Type> types = new List<Type>();
 
+            
             if (referenced)
             {            //Check refrenced assemblies
                 foreach (AssemblyName assemblyName in currentAssembly.GetReferencedAssemblies())
                 {
-                    //Console.WriteLine("loading " + assemblyName.FullName);
+                    
                     //Load method resolve refrenced loaded assembly
                     Assembly assembly = Assembly.Load(assemblyName.FullName);
 
@@ -75,6 +76,25 @@ namespace Apocalypse.Any.Core.Utilities
                         types.Add(type);
                         assemblyFullnames.Add(assembly.FullName);
                     }
+                }
+                if(assemblyFullnames.Count == 0)
+                {
+                    Console.WriteLine($"loading {typeName} failed.");
+                    //do the hardcore search
+                    Console.WriteLine("Searching for all dll files in the executables directory...");
+                    string strExeFilePath = currentAssembly.Location;
+                    string strWorkPath = Path.GetDirectoryName(strExeFilePath);
+                    foreach (var filePath in Directory.GetFiles(strWorkPath, "*.dll"))
+                    {
+                        Console.WriteLine($"loading {filePath}...");
+                        var assembly = Assembly.LoadFile(Path.Combine(strWorkPath, filePath));
+                        var type = assembly.GetType(typeName, false, true);
+                        if (type != null && !assemblyFullnames.Contains(assembly.FullName))
+                        {
+                            types.Add(type);
+                            assemblyFullnames.Add(assembly.FullName);
+                        }
+                    }                    
                 }
             }
 

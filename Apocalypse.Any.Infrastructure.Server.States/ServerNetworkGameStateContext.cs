@@ -8,6 +8,7 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Concurrent;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Apocalypse.Any.Infrastructure.Server.States
 {
@@ -34,7 +35,8 @@ namespace Apocalypse.Any.Infrastructure.Server.States
             {
                 if (!clientHandlers.ContainsKey(clientIdentifier) && !clientHandlers.TryAdd(clientIdentifier, clientHandlers[(byte)ServerInternalGameStates.Login]))
                 {
-                    throw new InvalidOperationException("try adding a new client");
+                    //throw new InvalidOperationException("try adding a new client");
+                    Logger.LogError("try adding a new client");
                 }
 
                 return clientHandlers[clientIdentifier];
@@ -73,20 +75,38 @@ namespace Apocalypse.Any.Infrastructure.Server.States
 
         public void Update()
         {
-            CurrentNetIncomingMessageBusService
-            .FetchMessageChunk()
-            .ToList()
-            .ForEach(message =>
-            {
-                //Important note: The server will try to establish a connection externally. If the connection doesnt work it depends on a fail net connection.
-                //For example: I had huge problems connecting after recognizing that the client and server didnt connect cuz my wifi was broken. -.-
-                if (message.MessageType == NetIncomingMessageType.Data &&
-                                !string.IsNullOrWhiteSpace(message.PeekString()))
-                {
-                    var networkCommandConnection = CurrentNetworkCommandServerTranslator.Translate(message);
-                    this[networkCommandConnection.Connection.RemoteUniqueIdentifier].Handle(this, networkCommandConnection);
-                }
-            });
+
+            
+            Task.WaitAll(CurrentNetIncomingMessageBusService
+                                        .FetchMessageChunk()
+                                        .GroupBy(m => m.SenderConnection.RemoteUniqueIdentifier)
+                                        .AsParallel()
+                                        .Select(messageGroup => Task.Factory.StartNew(() =>
+                                        {
+                                            
+                                            foreach(var message in messageGroup.SkipWhile(m => m.MessageType != NetIncomingMessageType.Data))
+                                            {
+                                                if (message == null)
+                                                    return;
+                                                var networkCommandConnection = CurrentNetworkCommandServerTranslator.Translate(message);
+                                                this[networkCommandConnection.Connection.RemoteUniqueIdentifier].Handle(this, networkCommandConnection);
+                                            }
+                                            
+                                        })).ToArray());
+
+            
+            //.ToList()
+            //.ForEach(message =>
+            //{
+            //    //Important note: The server will try to establish a connection externally. If the connection doesnt work it depends on a fail net connection.
+            //    //For example: I had huge problems connecting after recognizing that the client and server didnt connect cuz my wifi was broken. -.-
+            //    if (message.MessageType == NetIncomingMessageType.Data &&
+            //                    !string.IsNullOrWhiteSpace(message.PeekString()))
+            //    {
+            //        var networkCommandConnection = CurrentNetworkCommandServerTranslator.Translate(message);
+            //        this[networkCommandConnection.Connection.RemoteUniqueIdentifier].Handle(this, networkCommandConnection);
+            //    }
+            //});
         }
 
         public void ChangeHandlerEasier(INetworkLayerState<TWorld> gameState, NetworkCommandConnection networkCommandConnection)

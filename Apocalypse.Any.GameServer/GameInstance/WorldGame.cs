@@ -17,11 +17,8 @@ using Apocalypse.Any.Infrastructure.Common.Services.Network;
 using Apocalypse.Any.Infrastructure.Common.Services.Network.Interfaces.Data;
 using Apocalypse.Any.Infrastructure.Common.Services.Network.Interfaces.Factories;
 using Apocalypse.Any.Infrastructure.Common.Services.Serializer.Interfaces;
-using Apocalypse.Any.Infrastructure.Common.Services.Serializer.YamlAdapter;
 using Apocalypse.Any.Infrastructure.Server.Adapters.Redis;
 using Apocalypse.Any.Infrastructure.Server.Language;
-using Apocalypse.Any.Infrastructure.Server.PubSub;
-using Apocalypse.Any.Infrastructure.Server.PubSub.Interfaces;
 using Apocalypse.Any.Infrastructure.Server.Services.Data.Interfaces;
 using Apocalypse.Any.Infrastructure.Server.Services.Mechanics.CLI;
 using Apocalypse.Any.Infrastructure.Server.Services.Mechanics.RoutingMechanics;
@@ -39,7 +36,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace Apocalypse.Any.GameServer.GameInstance
 {
@@ -465,41 +461,6 @@ namespace Apocalypse.Any.GameServer.GameInstance
             {
                 throw new InvalidOperationException($"Cannot use {nameof(FirePlayerRegisteredEvent)}. EventQueue PlayerRegistered doesn't exist");
             }
-
-            //get relation layer for event
-            //var playerRegisteredEventRelationLayer = GameSectorLayerServices[Configuration.StartingSector]
-            //                                        .SharedContext
-            //                                        .DataLayer
-            //                                        .Layers
-            //                                        .Where(l => l.DisplayName == PlayerRegisteredEventName &&
-            //                                                    l.GetValidTypes().Any(t => t == typeof(DynamicRelation)))
-            //                                        .FirstOrDefault();
-            //var playerRegisteredEventRelationLayer = GameSectorLayerServices[Configuration.StartingSector]
-            //                                        .SharedContext
-            //                                        .DataLayer
-            //                                        .Layers
-            //                                        .Where(l => l.DisplayName == PlayerRegisteredEventName &&
-            //                                                    l.GetValidTypes().Any(t => t == typeof(DynamicRelation)))
-            //                                        .FirstOrDefault();
-
-
-            //if (playerRegisteredEventRelationLayer == null)
-            //{
-            //    throw new InvalidOperationException($"Cannot use {nameof(FirePlayerRegisteredEvent)}. DynamicRelation layer with the name PlayerRegistered doesn't exist");
-            //}
-
-            //var playerRegisteredEventRelation = new DynamicRelation()
-            //{
-            //    Id = Guid.NewGuid().ToString(),
-            //    Entity1 = typeof(PlayerSpaceship),
-            //    Entity1Id = newPlayer.Id,
-            //    Entity2 = null,
-            //    Entity2Id = string.Empty,
-            //};
-            //playerRegisteredEventRelationLayer.Add(playerRegisteredEventRelation);
-            //if (!playerRegisteredEventRelationLayer.DataAsEnumerable<DynamicRelation>().Contains(playerRegisteredEventRelation))
-            //    throw new InvalidOperationException($"Adding the players relation for PlayerRegisteredEvent didn't work. The relation to add is not valid for {playerRegisteredEventRelationLayer.DisplayName}");
-
 
             var playerRegisteredEvent = new EventQueueArgument()
             {

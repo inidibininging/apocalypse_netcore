@@ -1,9 +1,9 @@
 using Microsoft.Xna.Framework;
 using System.Collections.Generic;
 
-namespace Apocalypse.Any.Client.Services
+namespace Apocalypse.Any.Infrastructure.Common.Services
 {
-    public class RectangularFrameGeneratorService
+    public class RectangularFrameGeneratorService : IRectangularFrameGeneratorService
     {
         public Dictionary<string, Rectangle> GenerateGameSheetAtlas
         (

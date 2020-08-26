@@ -9,15 +9,21 @@ namespace Apocalypse.Any.GameServer.States.Services
     {
         private Func<Dictionary<string, IState<string, IGameSectorLayerService>>> GetDelegate { get; set; }
 
+        public GetGameSectorNewDelegate()
+        {
+            
+        }
         public GetGameSectorNewDelegate(Func<Dictionary<string, IState<string, IGameSectorLayerService>>> getDelegate)
         {
             if (getDelegate == null)
                 throw new ArgumentNullException(nameof(getDelegate));
             GetDelegate = getDelegate;
+            
         }
 
         public IState<string, IGameSectorLayerService> Get(string identifier)
         {
+
             return GetDelegate()[identifier];
         }
 

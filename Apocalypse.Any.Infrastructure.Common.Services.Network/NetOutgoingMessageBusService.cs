@@ -29,6 +29,8 @@ namespace Apocalypse.Any.Infrastructure.Common.Services.Network
 
         public NetSendResult SendToClient<T>(string commandName, T instanceToSend, NetConnection netConnection)
         {
+            if (netConnection == null)
+                return NetSendResult.FailedNotConnected;
             return netConnection.SendMessage(
                     CreateMessage(
                         new NetworkCommand()

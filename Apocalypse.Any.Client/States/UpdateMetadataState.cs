@@ -92,28 +92,7 @@ namespace Apocalypse.Any.Client.States
             var playerImage = machine.SharedContext.Images.FirstOrDefault(img => img.ServerData.Id == machine.SharedContext.PlayerImageId);
             if (playerImage == null || machine.SharedContext.LastMetadataBag == null)
                 return;
-            //WHY IS THIS NOT WORKING????
-//            var cursorImageAsVector = machine.SharedContext.CursorImage.Position.ToVector2();
-//            if (Vector2.Distance(cursorImageAsVector, playerImage.Position.ToVector2()) < 16)
-//            {
-                
-//                machine.SharedContext.MultiplayerText.Text = $@"
-//ATK: {machine.SharedContext.LastMetadataBag.Stats.Attack}
-//DEF: {machine.SharedContext.LastMetadataBag.Stats.Defense}
-//STR: {machine.SharedContext.LastMetadataBag.Stats.Strength}
-//SPD: {machine.SharedContext.LastMetadataBag.Stats.Speed}
-//TEC: {machine.SharedContext.LastMetadataBag.Stats.Technology}
-//AUR: {machine.SharedContext.LastMetadataBag.Stats.Aura}
-//CHR: {machine.SharedContext.LastMetadataBag.Stats.Charisma}";
-//                var spacing = machine.SharedContext.MultiplayerText.Text.Split(Environment.NewLine).Length;
-//                machine.SharedContext.MultiplayerText.Alpha.Alpha = 1;
-//                machine.SharedContext.MultiplayerText.LayerDepth = DrawingPlainOrder.UIFX;
-//                machine.SharedContext.MultiplayerText.Color = Color.Purple;
-//                machine.SharedContext.MultiplayerText.Scale = new Vector2(1.5f);
-//                machine.SharedContext.MultiplayerText.Position.X = playerImage.Position.X + 16;
-//                machine.SharedContext.MultiplayerText.Position.Y = playerImage.Position.Y + spacing;
-//                machine.SharedContext.Messages.Add(machine.SharedContext.MultiplayerText.Text);
-//            }
+
         }
     }
 }

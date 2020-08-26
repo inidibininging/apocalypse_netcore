@@ -1,5 +1,6 @@
 using Apocalypse.Any.Client.Screens;
 using Apocalypse.Any.Client.Services;
+using Apocalypse.Any.Infrastructure.Common.Services;
 using States.Core.Infrastructure.Services;
 using System;
 
@@ -7,9 +8,9 @@ namespace Apocalypse.Any.Client.States
 {
     public class BuildGameSheetFramesState : IState<string, INetworkGameScreen>
     {
-        public RectangularFrameGeneratorService FrameGeneratorService { get; set; }
+        public IRectangularFrameGeneratorService FrameGeneratorService { get; set; }
 
-        public BuildGameSheetFramesState(RectangularFrameGeneratorService frameGeneratorService)
+        public BuildGameSheetFramesState(IRectangularFrameGeneratorService frameGeneratorService)
         {
             FrameGeneratorService = frameGeneratorService ?? throw new ArgumentNullException(nameof(frameGeneratorService));
         }

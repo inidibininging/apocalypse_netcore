@@ -1,5 +1,3 @@
-using Apocalypse.Any.Client.Services;
-using Apocalypse.Any.Client.States.UI.Dialog;
 using Apocalypse.Any.Core.Utilities;
 using Apocalypse.Any.Domain.Common.Model;
 using Apocalypse.Any.Domain.Common.Model.PubSub;
@@ -13,6 +11,7 @@ using Apocalypse.Any.GameServer.States.Sector.Mechanics.ItemMechanics;
 using Apocalypse.Any.GameServer.States.Sector.Mechanics.PlayerMechanics;
 using Apocalypse.Any.GameServer.States.Sector.Mechanics.ProjectileMechanics;
 using Apocalypse.Any.GameServer.States.Services;
+using Apocalypse.Any.Infrastructure.Common.Services;
 using Apocalypse.Any.Infrastructure.Common.Services.Network.Interfaces.Factories;
 using Apocalypse.Any.Infrastructure.Common.Services.Network.Interfaces.Transformations;
 using Apocalypse.Any.Infrastructure.Common.Services.Serializer.Interfaces;
@@ -56,12 +55,10 @@ namespace Apocalypse.Any.GameServer.States.Sector.Storage
             var inMemoryStorage = new Dictionary<string, IState<string, IGameSectorLayerService>>();
             var serializer = Activator.CreateInstance(gameServerConfiguration.SerializationAdapterType.LoadType(true, false)[0]) as ISerializationAdapter;
 
-            inMemoryStorage.Add(ServerGameSectorNewBook.BuildGameStateDataLayerState, new BuildGameStateDataLayerState());
-            
-
-            inMemoryStorage.Add(ServerGameSectorNewBook.BuildFactoriesState, new BuildFactoriesState());
-            inMemoryStorage.Add(ServerGameSectorNewBook.BuildSingularMechanicsState, new BuildSingularMechanicsState());
-            inMemoryStorage.Add(nameof(BuildMiniCityFactories), new BuildMiniCityFactories(new Client.Services.RectangularFrameGeneratorService(), $"Image/miniCity{ (Randomness.Instance.From(0,200) > 125 ? "2" : "") }"));
+            inMemoryStorage.Add(nameof(BuildGameStateDataLayerState), new BuildGameStateDataLayerState());            
+            inMemoryStorage.Add(nameof(BuildFactoriesState), new BuildFactoriesState());
+            inMemoryStorage.Add(nameof(BuildSingularMechanicsState), new BuildSingularMechanicsState());
+            inMemoryStorage.Add(nameof(BuildMiniCityFactories), new BuildMiniCityFactories(new RectangularFrameGeneratorService(), $"Image/miniCity{ (Randomness.Instance.From(0,200) > 125 ? "2" : "") }"));
             inMemoryStorage.Add(nameof(CreateOrUpdateIdentifiableCircularLocationState), new CreateOrUpdateIdentifiableCircularLocationState(
                                                                                         new RectangularFrameGeneratorService(),
                                                                                         new ImageToRectangleTransformationService(),
@@ -159,19 +156,19 @@ namespace Apocalypse.Any.GameServer.States.Sector.Storage
                 }
             });
 
-            inMemoryStorage.Add(ServerGameSectorNewBook.DropItemsState, new DropItemsState());
+            inMemoryStorage.Add(nameof(DropItemsState), new DropItemsState());
 
             //inMemoryStorage.Add(ServerGameSectorNewBook.CreatePlayerSpaceshipState, new CreatePlayerSpaceshipCommand());
             inMemoryStorage.Add(ServerGameSectorNewBook.CreateEnemySpaceshipState, new CreateEnemyCommand(new MockEnemyPreNameGenerator()));
             inMemoryStorage.Add(ServerGameSectorNewBook.CreateRandomPlanetState, new CreateRandomPlanetCommand());
             inMemoryStorage.Add(ServerGameSectorNewBook.CreateRandomMediumSpaceShipState, new CreateRandomMediumSpaceShipCommand());
-            inMemoryStorage.Add(ServerGameSectorNewBook.CreateRandomFogCommand, new CreateRandomFogCommand());
+            inMemoryStorage.Add(nameof(CreateRandomFogCommand), new CreateRandomFogCommand());
             inMemoryStorage.Add(nameof(CreateRandomMiniCityCommand), new CreateRandomMiniCityCommand());
 
             //update ALL!!!!
             // inMemoryStorage.Add(ServerGameSectorNewBook.UpdateAllSingularEnemyMechanicsState, new UpdateAllSingularEnemyMechanicsState());
 
-            inMemoryStorage.Add(ServerGameSectorNewBook.UpdateProjectileMechanicsState, new UpdateProjectileMechanicsState());
+            inMemoryStorage.Add(nameof(UpdateProjectileMechanicsState), new UpdateProjectileMechanicsState());
             inMemoryStorage.Add("UpdateEnemyMechanics", new CommandStateActionDelegate<string, IGameSectorLayerService>(
                     new Action<IStateMachine<string, IGameSectorLayerService>>((machine) =>
                     {
@@ -200,10 +197,6 @@ namespace Apocalypse.Any.GameServer.States.Sector.Storage
                         }
                     })));
 
-            //inMemoryStorage.Add("UpdateProps", 
-            //    new CommandStateActionDelegate<string, IGameSectorLayerService>(
-            //        new Action<IStateMachine<string, IGameSectorLayerService>>((machine) =>{ })));
-
             inMemoryStorage.Add("UpdateProps", new CommandStateActionDelegate<string, IGameSectorLayerService>(
                     new Action<IStateMachine<string, IGameSectorLayerService>>((machine) =>
                     {
@@ -231,98 +224,17 @@ namespace Apocalypse.Any.GameServer.States.Sector.Storage
             inMemoryStorage.Add(ServerGameSectorNewBook.ProcessCollisionMechanicState, new ProcessCollisionMechanicState(new RectangleCollisionMechanic(),
                                                                                             new ImageToRectangleTransformationService()));
             inMemoryStorage.Add(nameof(ProcessPlayerDialogsRequestsState), new ProcessPlayerDialogsRequestsState(DialogLocationRelationLayerName));
-            inMemoryStorage.Add(ServerGameSectorNewBook.ProcessPlayerChooseStatState, new ProcessPlayerChooseStatState());
-            inMemoryStorage.Add(ServerGameSectorNewBook.ProcessUseInventoryForPlayerState, new ProcessUseInventoryForPlayerState());
-            inMemoryStorage.Add(ServerGameSectorNewBook.ProcessInventoryLeftState, new ProcessInventoryLeftState());
-            inMemoryStorage.Add(ServerGameSectorNewBook.ProcessInventoryRightState, new ProcessInventoryRightState());
-            inMemoryStorage.Add(ServerGameSectorNewBook.ProcessReleaseStatState, new ProcessReleaseStatState());
+            inMemoryStorage.Add(nameof(ProcessPlayerChooseStatState), new ProcessPlayerChooseStatState());
+            inMemoryStorage.Add(nameof(ProcessUseInventoryForPlayerState), new ProcessUseInventoryForPlayerState());
+            inMemoryStorage.Add(nameof(ProcessInventoryLeftState), new ProcessInventoryLeftState());
+            inMemoryStorage.Add(nameof(ProcessInventoryRightState), new ProcessInventoryRightState());
+            inMemoryStorage.Add(nameof(ProcessReleaseStatState), new ProcessReleaseStatState());
             inMemoryStorage.Add(nameof(ProcessDeadPlayer), new ProcessDeadPlayer());
 
-            inMemoryStorage.Add(ServerGameSectorNewBook.RemoveImagesMechanicsState, new RemoveImagesMechanicsState());
-            inMemoryStorage.Add(ServerGameSectorNewBook.RemoveDeadEnemiesMechanicsState, new RemoveDeadEnemiesMechanicsState());
-
-            inMemoryStorage.Add("ProcessPlayerInputBeforeThread", new RoutineState<string, IGameSectorLayerService>()
-            {
-                Operations = new List<string>()
-                {
-                    //process player input
-                    ServerGameSectorNewBook.ProcessRotationMapsForPlayerMechanicsState,
-                    ServerGameSectorNewBook.ProcessShootingForPlayerMechanicsState,
-                    ServerGameSectorNewBook.ProcessThrustForPlayerMechanicsState,
-                }
-            });
-
-            inMemoryStorage.Add("ProcessPlayerInputAfterThread", new RoutineState<string, IGameSectorLayerService>()
-            {
-                Operations = new List<string>()
-                {
-                    //send information to the client
-                    ServerGameSectorNewBook.UpdateGameStateDataState,
-
-                    //process other player input
-                    ServerGameSectorNewBook.ProcessUseInventoryForPlayerState,
-                    ServerGameSectorNewBook.ProcessCollisionMechanicState,
-                    ServerGameSectorNewBook.ProcessPlayerChooseStatState,
-                    ServerGameSectorNewBook.ProcessInventoryLeftState,
-                    ServerGameSectorNewBook.ProcessInventoryRightState,
-                    ServerGameSectorNewBook.ProcessReleaseStatState,
-                }
-            });
+            inMemoryStorage.Add(nameof(RemoveImagesMechanicsState), new RemoveImagesMechanicsState());
+            inMemoryStorage.Add(nameof(RemoveDeadEnemiesMechanicsState), new RemoveDeadEnemiesMechanicsState());
 
             inMemoryStorage.Add("ConsumeItemExperienceState", new ConsumeItemExperienceState());
-
-            inMemoryStorage.Add("ServerInternalStuffThread", new RoutineState<string, IGameSectorLayerService>()
-            {
-                Operations = new List<string>()
-                {
-                    //server internal stuff
-                    "UpdateEnemyMechanics",
-                    "UpdateProps",
-                    "UpdatePlayerMechanics",
-                }
-            });
-
-            inMemoryStorage.Add("ProjectilesThread", new RoutineState<string, IGameSectorLayerService>()
-            {
-                Operations = new List<string>()
-                {
-                    //projectiles
-                    ServerGameSectorNewBook.UpdateProjectileMechanicsState,
-                    ServerGameSectorNewBook.RemoveDestroyedProjectilesState,
-                }
-            });
-
-            inMemoryStorage.Add("GarbageThread", new RoutineState<string, IGameSectorLayerService>()
-            {
-                Operations = new List<string>()
-                {
-                     //remove junk
-                    ServerGameSectorNewBook.DropItemsState,
-                    ServerGameSectorNewBook.RemoveImagesMechanicsState,
-                    ServerGameSectorNewBook.RemoveDeadEnemiesMechanicsState
-                }
-            });
-
-            inMemoryStorage.Add("RunInParallel", new CommandStateActionDelegate<string, IGameSectorLayerService>(
-                    new Action<IStateMachine<string, IGameSectorLayerService>>((machine) =>
-                    {
-
-                        var tasks = new List<string>() {
-                                    "ProcessPlayerInputAfterThread",
-                                    "ServerInternalStuffThread",
-                                    "ProcessPlayerInputBeforeThread",
-                                    "ProjectilesThread",
-                                    "ProcessPlayerInputAfterThread",
-                                    "GarbageThread",
-                                };
-
-                        var workStack = tasks.Select(taskName => new Task(() => machine.GetService.Get(taskName).Handle(machine))).ToList();
-                        workStack.ForEach(task => task.Start());
-                        while (workStack.Any(work => !work.IsCompleted))
-                        {
-                            // Console.WriteLine("Working in parallel....");
-                        }
-                    })));
 
             //main loop
             inMemoryStorage.Add(ServerGameSectorNewBook.RunAsDefaultSector, new RoutineState<string, IGameSectorLayerService>()
@@ -359,15 +271,15 @@ namespace Apocalypse.Any.GameServer.States.Sector.Storage
                     nameof(ProcessPlayerDialogsRequestsState),
                     nameof(AddDroppedItemsAsCurrencyToPlayersBankState),
 
-                    ServerGameSectorNewBook.ProcessInventoryLeftState,
-                    ServerGameSectorNewBook.ProcessInventoryRightState,
-                    ServerGameSectorNewBook.ProcessReleaseStatState,
+                    nameof(ProcessInventoryLeftState),
+                    nameof(ProcessInventoryRightState),
+                    nameof(ProcessReleaseStatState),
                     nameof(ProcessDeadPlayer),
 
                     //remove junk
-                    ServerGameSectorNewBook.DropItemsState,
-                    ServerGameSectorNewBook.RemoveImagesMechanicsState,
-                    ServerGameSectorNewBook.RemoveDeadEnemiesMechanicsState,
+                    nameof(DropItemsState),
+                    nameof(RemoveImagesMechanicsState),
+                    nameof(RemoveDeadEnemiesMechanicsState),
                     "ConsumeItemExperienceState"                    
                  }
             });

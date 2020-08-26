@@ -16,9 +16,6 @@ namespace Apocalypse.Any.GameServer
         {
            
             var yamler = new YamlSerializerAdapter();
-            var jsonler = new JsonSerializerAdapter();
-            var msgler = new MsgPackSerializerAdapter();
-
             var config = yamler.DeserializeObject<GameServerConfiguration>(File.ReadAllText(args[0]));            
 
             var world = new WorldGame(config);

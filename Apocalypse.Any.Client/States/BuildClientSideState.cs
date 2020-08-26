@@ -4,6 +4,7 @@ using Apocalypse.Any.Client.Services;
 using Apocalypse.Any.Core.Drawing;
 using Apocalypse.Any.Core.Services;
 using Apocalypse.Any.Domain.Client.Model;
+using Apocalypse.Any.Infrastructure.Common.Services;
 using Microsoft.Xna.Framework.Graphics;
 using States.Core.Infrastructure.Services;
 using System;
@@ -15,9 +16,9 @@ namespace Apocalypse.Any.Client.States
         public bool Initialized { get; private set; }
         private SpaceBackgroundElementsConfiguration SpaceBackgroundConfiguration { get; set; }
 
-        private RectangularFrameGeneratorService FrameGeneratorService { get; set; }
+        private IRectangularFrameGeneratorService FrameGeneratorService { get; set; }
 
-        public BuildClientSideState(RectangularFrameGeneratorService frameGeneratorService, SpaceBackgroundElementsConfiguration spaceBackgroundElementsConfiguration)
+        public BuildClientSideState(IRectangularFrameGeneratorService frameGeneratorService, SpaceBackgroundElementsConfiguration spaceBackgroundElementsConfiguration)
         {
             FrameGeneratorService = frameGeneratorService ?? throw new ArgumentNullException(nameof(frameGeneratorService));
             SpaceBackgroundConfiguration = spaceBackgroundElementsConfiguration ?? throw new ArgumentNullException(nameof(spaceBackgroundElementsConfiguration));

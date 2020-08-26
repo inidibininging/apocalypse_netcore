@@ -1,8 +1,8 @@
-﻿using Apocalypse.Any.Client.Services;
-using Apocalypse.Any.Core.Behaviour;
+﻿using Apocalypse.Any.Core.Behaviour;
 using Apocalypse.Any.Core.Input.Translator;
 using Apocalypse.Any.Core.Utilities;
 using Apocalypse.Any.Domain.Common.Model;
+using Apocalypse.Any.Infrastructure.Common.Services;
 using Apocalypse.Any.Infrastructure.Common.Services.Network.Interfaces.Transformations;
 using Apocalypse.Any.Infrastructure.Server.Services.Data;
 using Apocalypse.Any.Infrastructure.Server.Services.Data.Interfaces;
@@ -23,7 +23,7 @@ namespace Apocalypse.Any.GameServer.States.Sector.Mechanics
     public class CreateOrUpdateIdentifiableCircularLocationState : IState<string, IGameSectorLayerService>
     {
         public CreateOrUpdateIdentifiableCircularLocationState(
-            RectangularFrameGeneratorService frameGeneratorService,
+            IRectangularFrameGeneratorService frameGeneratorService,
             ImageToRectangleTransformationService imageToRectangleTransformationService,
             string dialogLocationRelationLayerName)
         {
@@ -32,7 +32,7 @@ namespace Apocalypse.Any.GameServer.States.Sector.Mechanics
             DialogLocationRelationLayerName = dialogLocationRelationLayerName;
         }
 
-        public RectangularFrameGeneratorService FrameGeneratorService { get; }
+        public IRectangularFrameGeneratorService FrameGeneratorService { get; }
         public ImageToRectangleTransformationService ImageToRectangleTransformationService { get; }
         public string DialogLocationRelationLayerName { get; }
 

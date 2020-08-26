@@ -24,6 +24,7 @@
     <ProjectReference Include="..\Apocalypse.Any.Infrastructure.Common.Services.Serializer.JsonAdapter\Apocalypse.Any.Infrastructure.Common.Services.Serializer.JsonAdapter.csproj" />
     <ProjectReference Include="..\Apocalypse.Any.Infrastructure.Common.Services.Serializer.MsgPackAdapter\Apocalypse.Any.Infrastructure.Common.Services.Serializer.MsgPackAdapter.csproj" />
     <ProjectReference Include="..\Apocalypse.Any.Infrastructure.Common.Services.Serializer.YamlAdapter\Apocalypse.Any.Infrastructure.Common.Services.Serializer.YamlAdapter.csproj" />
+    <ProjectReference Include="..\Apocalypse.Any.Infrastructure.Common.Services\Apocalypse.Any.Infrastructure.Common.Services.csproj" />
     <ProjectReference Include="..\States\States.Core\States.Core.csproj" />
   </ItemGroup>
 

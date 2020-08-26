@@ -9,6 +9,7 @@ using Apocalypse.Any.Infrastructure.Common.Services.Network;
 using Apocalypse.Any.Infrastructure.Common.Services.Serializer.Interfaces;
 using Lidgren.Network;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.Loader;
@@ -31,17 +32,10 @@ namespace Apocalypse.Any.Infrastructure.Server.Worker
         private NetClient Client { get; set; }
 
         private GameClientConfiguration ClientConfiguration { get; set; }
-
-        private IGameSectorDataLayer<
-            TPlayer,
-            TEnemy,
-            TItem,
-            TProjectile,
-            TEntitiesBaseType,
-            TGeneralCharacter,
-            TImageData> DataLayer
-        { get; set; }
-
+        public string Suggestion { get; set; }
+        public string Result { get; set; }
+        public GameStateDataLayer DataLayer { get; private set; }
+        public Exception LastError { get; private set; }
         private NetIncomingMessageBusService<NetClient> Input { get; set; }
         private NetOutgoingMessageBusService<NetClient> Output { get; set; } // not in use for now cause it doesnt work? WHY?
         private NetworkCommandDataConverterService NetworkCommandDataConverterService { get; set; }
@@ -89,13 +83,14 @@ namespace Apocalypse.Any.Infrastructure.Server.Worker
             Client.Start();
             Client.Connect(ClientConfiguration.ServerIp, ClientConfiguration.ServerPort);
 
-            var serializerType = GetSerializer(ClientConfiguration.SerializationAdapterType);
-            //var serializerType = ClientConfiguration.SerializationAdapterType.LoadType(true, false)?.FirstOrDefault();
+            
+            var serializerType = ClientConfiguration.SerializationAdapterType.LoadType(true, false)?.FirstOrDefault();
             SerializationAdapter = Activator.CreateInstance(serializerType) as ISerializationAdapter;
             Input = new NetIncomingMessageBusService<NetClient>(Client);
             Output = new NetOutgoingMessageBusService<NetClient>(Client, SerializationAdapter);
             NetworkCommandDataConverterService = new NetworkCommandDataConverterService(SerializationAdapter);
             NetIncomingMessageNetworkCommand = new NetIncomingMessageNetworkCommandConnectionTranslator(new NetworkCommandTranslator(SerializationAdapter));
+            DataLayer = new GameStateDataLayer();
         }
         private void LoginGate()
         {
@@ -108,6 +103,7 @@ namespace Apocalypse.Any.Infrastructure.Server.Worker
             {
                 Thread.Sleep(1000);
             }
+
         }
         private string CreateMessage<T>(string commandName, T instanceToSend)
         {
@@ -143,18 +139,20 @@ namespace Apocalypse.Any.Infrastructure.Server.Worker
                                 return null;
                             })
                             .Where(msg => msg != null) // why do I receive gamestate data?? => because a player needs to be physically bound to a game .else other mechanics depending on getting the players game state for every registered player will fail.
-                            .Where(msg => msg.CommandName == NetworkCommandConstants.ReceiveWorkCommand)
+                            .Where(msg => msg.CommandName == NetworkCommandConstants.ReceiveDataLayerCommand ||
+                                          msg.CommandName == NetworkCommandConstants.ReceiveMessagesCommand ||
+                                          msg.CommandName == NetworkCommandConstants.SuggestCommand)
                             .Select(msg =>
                             {
                                 try
                                 {
                                     var ret = NetworkCommandDataConverterService.ConvertToObject(msg);
-                                    Console.WriteLine(ret);
+                                    
                                     return ret;
                                 }
                                 catch (Exception ex)
                                 {
-                                    Console.WriteLine(ex);
+                                    LastError = ex;
                                 }
                                 return null;
                             })
@@ -162,20 +160,38 @@ namespace Apocalypse.Any.Infrastructure.Server.Worker
 
 
             //happens when data layer worker receives an "ACK" from server
-
             if (inputs.Any(msg => (msg is bool) && (bool)msg == true))
             {
-                Output.SendToClient<string>(NetworkCommandConstants.ReceiveWorkCommand, "hub", Client.ServerConnection);
-                Console.WriteLine("sent package");
+                //Output.SendToClient<string>(NetworkCommandConstants.ReceiveWorkCommand, "hub", Client.ServerConnection);
+                Output.SendToClient<string>(NetworkCommandConstants.SuggestCommand, Suggestion, Client.ServerConnection);
+                Console.WriteLine("sent suggestion package");
                 return;
             }
 
             foreach (var obj in inputs)
             {
-                //Console.WriteLine(dataLayer.Enemies.Select(enemy => enemy));
-                Console.WriteLine((obj as GameStateDataLayer).Enemies.FirstOrDefault().DisplayName);
-                Output.SendToClient<string>(NetworkCommandConstants.ReceiveWorkCommand, "hub", Client.ServerConnection);
+                if (obj == null)
+                    continue;
+                
+                if(obj as string != null)
+                {
+                    Result = obj.ToString();
+                }
+                if(obj as List<string> != null)
+                {
+                    Result = string.Join(System.Environment.NewLine, (obj as List<string>));
+                }
+                //var dataLayerType = DataLayer.GetType();
+                //obj.GetType().GetProperties().ToList().ForEach(p => {
+                //    var myProp = dataLayerType.GetProperty(p.Name);
+                //    if(myProp != null)
+                //        myProp.SetValue(DataLayer, p.GetValue(obj));
+                //}); 
+                Output.SendToClient<string>(NetworkCommandConstants.SuggestCommand, Suggestion, Client.ServerConnection);
             }
+            
+
+            //LoginGate();
         }
     }
 }

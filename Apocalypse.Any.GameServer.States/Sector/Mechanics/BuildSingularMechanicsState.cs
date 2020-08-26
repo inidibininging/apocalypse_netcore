@@ -43,17 +43,6 @@ namespace Apocalypse.Any.GameServer.States.Sector.Mechanics
             if (!machine.SharedContext.SingularMechanics.ImageDataMechanics.ContainsKey("prop_rotation"))
                 machine.SharedContext.SingularMechanics.ImageDataMechanics.Add("prop_rotation", new PropRotationMechanic());
 
-            // if(machine.SharedContext.SingularMechanics.EnemyMechanics.ContainsKey("drop_items"))
-            // {
-            //     machine.SharedContext.SingularMechanics.EnemyMechanics.Add(
-            //         "drop_items",
-            //         new CharacterEntityDelegateMechanic<EnemySpaceship>(
-            //             (c) => {
-                            
-            //             }));
-            //     );                    
-            // }
-
 
             if(!machine.SharedContext.SingularMechanics.PlayerMechanics.ContainsKey("move_players_to_the_biggest_object"))
             {

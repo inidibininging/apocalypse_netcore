@@ -34,7 +34,7 @@ namespace Apocalypse.Any.Infrastructure.Common.Services.Network
             var metaDataTyped = SerializationAdapter.DeserializeObject(command.Data, types.FirstOrDefault());
 
             if (metaDataTyped == null)
-                throw new ArgumentNullException(nameof(metaDataTyped));
+               throw new ArgumentNullException(nameof(metaDataTyped));
 
             return metaDataTyped;
         }

@@ -1,7 +1,7 @@
-﻿using Apocalypse.Any.Client.Services;
-using Apocalypse.Any.Core.Behaviour;
+﻿using Apocalypse.Any.Core.Behaviour;
 using Apocalypse.Any.Domain.Common.Model.Network;
 using Apocalypse.Any.Domain.Server.Model;
+using Apocalypse.Any.Infrastructure.Common.Services;
 using Apocalypse.Any.Infrastructure.Server.Services.Data.Interfaces;
 using Apocalypse.Any.Infrastructure.Server.Services.Factories;
 using Microsoft.Xna.Framework;
@@ -21,10 +21,10 @@ namespace Apocalypse.Any.GameServer.States.Sector.Factories
         public const string BuildingTopDataFactory = nameof(BuildingTopDataFactory);
         public const string BuildingDataFactory = nameof(BuildingDataFactory);
 
-        private RectangularFrameGeneratorService FrameGeneratorService { get; }
+        private IRectangularFrameGeneratorService FrameGeneratorService { get; }
         private string ImagePath { get; }
 
-        public BuildMiniCityFactories(RectangularFrameGeneratorService frameGeneratorService, string imagePath)
+        public BuildMiniCityFactories(IRectangularFrameGeneratorService frameGeneratorService, string imagePath)
         {
             FrameGeneratorService = frameGeneratorService;
             ImagePath = imagePath;

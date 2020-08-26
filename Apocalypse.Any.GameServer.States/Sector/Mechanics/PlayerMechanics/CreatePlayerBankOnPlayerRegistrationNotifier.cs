@@ -1,7 +1,7 @@
 ﻿using Apocalypse.Any.Domain.Common.Model;
 using Apocalypse.Any.Domain.Common.Model.PubSub;
 using Apocalypse.Any.Domain.Server.Model.Interfaces;
-using Apocalypse.Any.GameServer.Domain;
+using Apocalypse.Any.Infrastructure.Server.PubSub.Interfaces;
 using Apocalypse.Any.Infrastructure.Server.Services.Data;
 using Apocalypse.Any.Infrastructure.Server.Services.Data.Interfaces;
 using System;
