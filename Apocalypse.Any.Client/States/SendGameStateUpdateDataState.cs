@@ -104,7 +104,6 @@ namespace Apocalypse.Any.Client.States
                                             machine,
                                             NetworkCommandConstants.UpdateCommand,
                                             new GameStateUpdateData()
-
                                             {
                                                 LoginToken = machine.SharedContext.LoginToken,
                                                 Commands = cmds,
