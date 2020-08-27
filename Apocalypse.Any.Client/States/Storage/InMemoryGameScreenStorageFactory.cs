@@ -14,8 +14,8 @@ using Apocalypse.Any.Core.Services;
 using Apocalypse.Any.Core.Utilities;
 using Apocalypse.Any.Domain.Client.Model;
 using Apocalypse.Any.Domain.Common.DrawingOrder;
-using Apocalypse.Any.Domain.Common.Model.Network;
 using Apocalypse.Any.Infrastructure.Common.Services;
+using Apocalypse.Any.Infrastructure.Common.Services.Data;
 using Apocalypse.Any.Infrastructure.Common.Services.Network;
 using Apocalypse.Any.Infrastructure.Common.Services.Serializer.Interfaces;
 using Lidgren.Network;
@@ -48,7 +48,8 @@ namespace Apocalypse.Any.Client.States.Storage
                       machine.SharedContext.Messages.Add(ex.Message);
                       var identifier = machine.NewService.New(ClientGameScreenBook.FetchData, new FetchDataState(
                           new NetIncomingMessageBusService<NetClient>(machine.SharedContext.Client),
-                          serializer
+                          serializer,
+                          new DeltaGameStateDataService()
                       ));
                       return machine.GetService.Get(ClientGameScreenBook.FetchData);
                   }
@@ -162,6 +163,7 @@ namespace Apocalypse.Any.Client.States.Storage
 
             }));
 
+            inMemoryStorage.Add(nameof(NetworkInterpolationState), new NetworkInterpolationState(new DeltaGameStateDataService()));
             inMemoryStorage.Add(ClientGameScreenBook.Update, new RoutineState<string, INetworkGameScreen>()
             {
                 Operations = new List<string>()
@@ -169,6 +171,7 @@ namespace Apocalypse.Any.Client.States.Storage
                     ClientGameScreenBook.UpdateCursor,
                     ClientGameScreenBook.UpdateInput,
                     ClientGameScreenBook.FetchData,
+                    
                     ClientGameScreenBook.UpdateImages,
                     ClientGameScreenBook.UpdateCharacterWindow,
                     ClientGameScreenBook.UpdateMetadataState,
@@ -181,6 +184,7 @@ namespace Apocalypse.Any.Client.States.Storage
                     nameof(UpdateDialogHoverTextState),
                     ClientGameScreenBook.UpdateInfoWindow,
                     ClientGameScreenBook.SendGameStateUpdateData,
+                    //nameof(NetworkInterpolationState),
                     "UpdateBackground",
                     "UpdateLogoPosition",
                     "UpdateGameOverPosition"

@@ -1,12 +1,16 @@
 using Apocalypse.Any.Client.Screens;
 using Apocalypse.Any.Domain.Common.Model.Network;
+using Apocalypse.Any.Domain.Common.Network;
+using Apocalypse.Any.Infrastructure.Common.Services.Data.Interfaces;
 using Apocalypse.Any.Infrastructure.Common.Services.Network.Interfaces;
 using Apocalypse.Any.Infrastructure.Common.Services.Serializer.Interfaces;
 using Lidgren.Network;
 using Newtonsoft.Json;
 using States.Core.Infrastructure.Services;
 using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Apocalypse.Any.Client.States
 {
@@ -17,12 +21,15 @@ namespace Apocalypse.Any.Client.States
     {
         public INetIncomingMessageBusService IncomingMessageBusService { get; private set; }
         public ISerializationAdapter SerializationAdapter { get; }
-
-        public FetchDataState(INetIncomingMessageBusService incomingMessageBusService, ISerializationAdapter serializationAdapter)
+        public IDeltaGameStateDataService DeltaGameStateDataService { get; }
+        
+        public FetchDataState(INetIncomingMessageBusService incomingMessageBusService, ISerializationAdapter serializationAdapter, IDeltaGameStateDataService deltaGameStateDataService)
         {
             IncomingMessageBusService = incomingMessageBusService ?? throw new ArgumentNullException(nameof(incomingMessageBusService));
             SerializationAdapter = serializationAdapter ?? throw new ArgumentNullException(nameof(serializationAdapter));
+            DeltaGameStateDataService = deltaGameStateDataService ?? throw new ArgumentNullException(nameof(deltaGameStateDataService));
         }
+
 
         public void Handle(IStateMachine<string, INetworkGameScreen> machine)
         {
@@ -32,6 +39,7 @@ namespace Apocalypse.Any.Client.States
             var messages = IncomingMessageBusService.FetchMessageChunk();
             if (!messages.Any())
                 return;
+
 
             foreach (var currentMessage in messages)
             {
@@ -46,10 +54,10 @@ namespace Apocalypse.Any.Client.States
                 var readMsg = currentMessage.ReadString();
 
                 bool failsToUpcast = false;
-                try 
+                try
                 {
-                    var lol = SerializationAdapter.DeserializeObject<IdentifiableNetworkCommand>(readMsg);
-                    machine.SharedContext.CurrentNetworkCommand = lol;
+                    var serverMessage = SerializationAdapter.DeserializeObject<IdentifiableNetworkCommand>(readMsg);
+                    machine.SharedContext.CurrentNetworkCommand = serverMessage;
                     machine.SharedContext.Messages.Add("Added CurrentNetworkCommand as IdentifiableNetworkCommand");
                 }
                 catch (Exception ex)
@@ -62,12 +70,12 @@ namespace Apocalypse.Any.Client.States
                 {
                     try
                     {
-                        var lol = SerializationAdapter.DeserializeObject<NetworkCommand>(readMsg);
+                        var serverMessage = SerializationAdapter.DeserializeObject<NetworkCommand>(readMsg);
                         machine.SharedContext.CurrentNetworkCommand = new IdentifiableNetworkCommand()
                         {
-                            Data = lol.Data,
-                            CommandArgument = lol.CommandArgument,
-                            CommandName = lol.CommandName
+                            Data = serverMessage.Data,
+                            CommandArgument = serverMessage.CommandArgument,
+                            CommandName = serverMessage.CommandName
                         };
                         machine.SharedContext.Messages.Add("Added CurrentNetworkCommand as NetworkCommand");
                     }
@@ -80,17 +88,37 @@ namespace Apocalypse.Any.Client.States
 
                 try
                 {
-                    machine.SharedContext.CurrentGameStateData = SerializationAdapter.DeserializeObject<GameStateData>(machine.SharedContext.CurrentNetworkCommand.Data);
-                    machine.SharedContext.Messages.Add("Added CurrentNetworkCommand");
+                    if (machine.SharedContext.CurrentNetworkCommand.CommandName == NetworkCommandConstants.UpdateCommand)
+                    {
+                        var a = DateTime.Now;
+                        machine.SharedContext.CurrentGameStateData = SerializationAdapter.DeserializeObject<GameStateData>(machine.SharedContext.CurrentNetworkCommand.Data);
+                        var diff = DateTime.Now - a;
+                        machine.SharedContext.Messages.Add("Added CurrentNetworkCommand from UpdateCommand");
+                    }
 
-                    machine.SharedContext.LoginToken = machine.SharedContext.CurrentGameStateData.LoginToken;
-                    machine.SharedContext.Messages.Add("Added LoginToken");
+                    if (machine.SharedContext.CurrentNetworkCommand.CommandName == NetworkCommandConstants.UpdateCommandDelta)
+                    {
+                        var a = DateTime.Now;
+                        var delta = SerializationAdapter.DeserializeObject<DeltaGameStateData>(machine.SharedContext.CurrentNetworkCommand.Data);
+                        var gameStateData = DeltaGameStateDataService.UpdateGameStateData(machine.SharedContext.CurrentGameStateData, delta);
+                        machine.SharedContext.CurrentGameStateData = gameStateData;
+                        var diff = DateTime.Now - a;
+                        machine.SharedContext.Messages.Add("Added CurrentNetworkCommand from UpdateCommandDelta");
+                    }
+
+                    if (machine.SharedContext.CurrentGameStateData != null)
+                    {
+                        machine.SharedContext.LoginToken = machine.SharedContext.CurrentGameStateData.LoginToken;
+                        machine.SharedContext.Messages.Add("Added LoginToken");
+                    }
                 }
                 catch (Exception ex)
                 {
+                    machine.SharedContext.CurrentGameStateData = null;
                     machine.SharedContext.Messages.Add(ex.Message);
                 }
             }
+           
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using Apocalypse.Any.Infrastructure.Common.Services.Network;
+﻿using Apocalypse.Any.Infrastructure.Common.Services.Data;
+using Apocalypse.Any.Infrastructure.Common.Services.Network;
 using Apocalypse.Any.Infrastructure.Common.Services.Serializer.Interfaces;
 using Apocalypse.Any.Infrastructure.Server.Services.Data.Interfaces;
 using Apocalypse.Any.Infrastructure.Server.States;
@@ -44,6 +45,9 @@ namespace Apocalypse.Any.GameServer.Services
             InternalGameStates.GetOrAdd((byte)ServerInternalGameStates.CLIPassthrough, new CLIPassthroughGameState<TWorld>());
             InternalGameStates.GetOrAdd((byte)ServerInternalGameStates.Update, new UpdateNetworkGameState<TWorld>(new NetworkCommandToUpdateGameState(WorldGameStateDataLayer, SerializationAdapter),
                                                                                                           SerializationAdapter));
+            InternalGameStates.GetOrAdd((byte)ServerInternalGameStates.UpdateDelta, new UpdateDeltaNetworkGameState<TWorld>(new NetworkCommandToUpdateGameState(WorldGameStateDataLayer, SerializationAdapter),
+                                                                                                          SerializationAdapter,
+                                                                                                          new DeltaGameStateDataService()));
             InternalGameStates.GetOrAdd((byte)ServerInternalGameStates.Undefined, new ErrorNetworkGameState<TWorld>());
             InternalGameStates.GetOrAdd((byte)ServerInternalGameStates.ReceiveWork, new ReceiveWorkNetworkGameState<TWorld>(new NetworkCommandDataConverterService(SerializationAdapter)));
             InternalGameStates.GetOrAdd((byte)ServerInternalGameStates.UserRoleGateWay, new UserRoleGateWayNetworkGameState<TWorld>(RoleService, new NetworkCommandDataConverterService(SerializationAdapter)));

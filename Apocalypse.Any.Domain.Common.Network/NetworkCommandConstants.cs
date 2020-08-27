@@ -12,6 +12,8 @@
         public const string ReceiveDataLayerCommand = "w";
         public const string ReceiveMessagesCommand = "m";
         public const string SuggestCommand = "s";
+        public const string UpdateCommandDelta = "d";
+        public const string ReceiveWorkCommand = "w";
         public const string ExeceuteCommand = "x";
     }
 }
