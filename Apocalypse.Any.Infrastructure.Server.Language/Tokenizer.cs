@@ -45,57 +45,80 @@ namespace Apocalypse.Any.Infrastructure.Server.Language
                 var rawCharacter = TokenStreamReader.Read();
                 var convertedCharacter = Convert.ToChar(rawCharacter);
                 CurrentTokenBuffer.Add(convertedCharacter);
-
                 var nextSymbol = LanguageTokens.FindLexiconSymbol(CurrentTokenBuffer);
 
-                //Console.ForegroundColor = ConsoleColor.Magenta;
-                //Console.WriteLine(Enum.GetName(typeof(LexiconSymbol), nextSymbol));
-                //Console.ForegroundColor = ConsoleColor.Yellow;
+                //Identifiers (for variables)
+                if (char.IsLetter(convertedCharacter) &&
+                    nextSymbol == LexiconSymbol.NotFound)
+                {
+                    nextSymbol = LexiconSymbol.Letter;
+                }
 
+                if (convertedCharacter == '=' &&
+                    nextSymbol == LexiconSymbol.NotFound)
+                {
+                    nextSymbol = LexiconSymbol.Assign;
+                    if(CurrentTokenBuffer.Count > 0)
+                        CurrentTokenBuffer.RemoveAt(CurrentTokenBuffer.Count - 1);
+                }
+
+                if (CurrentSymbol == LexiconSymbol.Letter &&
+                    nextSymbol == LexiconSymbol.NotFound &&
+                    char.IsLetter(convertedCharacter))
+                {
+                    nextSymbol = LexiconSymbol.Identifier;
+                }
+                
                 //Function stuff
                 if (CurrentSymbol == LexiconSymbol.FunctionIdentifier &&
-                    nextSymbol == LexiconSymbol.NotFound &&
+                    nextSymbol == LexiconSymbol.Letter &&
                     char.IsLetter(convertedCharacter))
                 {
                     nextSymbol = LexiconSymbol.FunctionLetter;
                 }
                 if (CurrentSymbol == LexiconSymbol.Execute &&
-                    nextSymbol == LexiconSymbol.NotFound &&
+                    nextSymbol == LexiconSymbol.Letter &&
                     char.IsLetter(convertedCharacter))
                 {
-                    nextSymbol = LexiconSymbol.FunctionLetter;
+                    nextSymbol = LexiconSymbol.ExecuteLetter;
+                }
+                if (CurrentSymbol == LexiconSymbol.ExecuteLetter &&
+                    nextSymbol == LexiconSymbol.Letter &&
+                    char.IsLetter(convertedCharacter))
+                {
+                    nextSymbol = LexiconSymbol.ExecuteLetter;
                 }
                 if (CurrentSymbol == LexiconSymbol.FunctionLetter &&
-                    nextSymbol == LexiconSymbol.NotFound &&
+                    nextSymbol == LexiconSymbol.Letter &&
                     char.IsLetter(convertedCharacter))
                 {
                     nextSymbol = LexiconSymbol.FunctionLetter;
                 }
 
                 //Factions
-                if (CurrentSymbol == LexiconSymbol.FactionIdentifier &&
-                    nextSymbol == LexiconSymbol.NotFound &&
+                if (CurrentSymbol == LexiconSymbol.TagIdentifier &&
+                    nextSymbol == LexiconSymbol.Letter &&
                     char.IsLetter(convertedCharacter))
                 {
-                    nextSymbol = LexiconSymbol.FactionLetter;
+                    nextSymbol = LexiconSymbol.TagLetter;
                 }
 
-                if (CurrentSymbol == LexiconSymbol.FactionLetter &&
-                    nextSymbol == LexiconSymbol.NotFound &&
+                if (CurrentSymbol == LexiconSymbol.TagLetter &&
+                    nextSymbol == LexiconSymbol.Letter &&
                     char.IsLetter(convertedCharacter))
                 {
-                    nextSymbol = LexiconSymbol.FactionLetter;
+                    nextSymbol = LexiconSymbol.TagLetter;
                 }
 
                 //Entities
                 if (CurrentSymbol == LexiconSymbol.EntityIdentifier &&
-                    nextSymbol == LexiconSymbol.NotFound &&
+                    nextSymbol == LexiconSymbol.Letter &&
                     char.IsLetterOrDigit(convertedCharacter))
                 {
                     nextSymbol = LexiconSymbol.EntityLetter;
                 }
                 if (CurrentSymbol == LexiconSymbol.EntityLetter &&
-                    nextSymbol == LexiconSymbol.NotFound &&
+                    nextSymbol == LexiconSymbol.Letter &&
                     char.IsLetterOrDigit(convertedCharacter))
                 {
                     nextSymbol = LexiconSymbol.EntityLetter;
@@ -103,48 +126,18 @@ namespace Apocalypse.Any.Infrastructure.Server.Language
 
                 //Create
                 if (CurrentSymbol == LexiconSymbol.Create &&
-                    nextSymbol == LexiconSymbol.NotFound &&
+                    nextSymbol == LexiconSymbol.Letter &&
                     char.IsLetterOrDigit(convertedCharacter))
                 {
                     nextSymbol = LexiconSymbol.CreatorLetter;
                 }
 
                 if (CurrentSymbol == LexiconSymbol.CreatorLetter &&
-                    nextSymbol == LexiconSymbol.NotFound &&
+                    nextSymbol == LexiconSymbol.Letter &&
                     char.IsLetterOrDigit(convertedCharacter))
                 {
                     nextSymbol = LexiconSymbol.CreatorLetter;
                 }
-
-                //Destroy
-                //if (CurrentSymbol == LexiconSymbol.Destroy &&
-                //    nextSymbol == LexiconSymbol.NotFound &&
-                //    char.IsLetterOrDigit(convertedCharacter))
-                //{
-                //    nextSymbol = LexiconSymbol.DestroyerLetter;
-                //}
-
-                //if (CurrentSymbol == LexiconSymbol.DestroyerLetter &&
-                //    nextSymbol == LexiconSymbol.NotFound &&
-                //    char.IsLetterOrDigit(convertedCharacter))
-                //{
-                //    nextSymbol = LexiconSymbol.DestroyerLetter;
-                //}
-
-                //End Entity
-                // if (CurrentSymbol == LexiconSymbol.EntityLetter &&
-                //     nextSymbol == LexiconSymbol.NotFound &&
-                //     !char.IsLetterOrDigit(convertedCharacter))
-                // {
-                //     nextSymbol = LexiconSymbol.Entity;
-                // }
-                //  //End Function
-                // if (CurrentSymbol == LexiconSymbol.EntityLetter &&
-                //     nextSymbol == LexiconSymbol.NotFound &&
-                //     !char.IsLetter(convertedCharacter))
-                // {
-                //     nextSymbol = LexiconSymbol.Function;
-                // }
 
                 if (CurrentSymbol == LexiconSymbol.Number &&
                     nextSymbol == LexiconSymbol.NotFound &&
@@ -168,13 +161,6 @@ namespace Apocalypse.Any.Infrastructure.Server.Language
                 {
                     CurrentSymbol = mayStopSymbol;
                 }
-
-                // if(CurrentSymbol != LexiconSymbol.NotFound)
-                // {
-                //     Console.ForegroundColor = ConsoleColor.Green;
-                //     CurrentTokenBuffer.ToList().ForEach(c => Console.WriteLine(c));
-                //     Console.ForegroundColor = ConsoleColor.White;
-                // }
 
                 if(CurrentSymbol != LexiconSymbol.NA)
                 {

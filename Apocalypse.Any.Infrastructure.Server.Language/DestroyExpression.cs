@@ -18,8 +18,8 @@ namespace Apocalypse.Any.Infrastructure.Server.Language
                 LexiconSymbol.Destroy,
                 LexiconSymbol.Destroyer,
                 //LexiconSymbol.DestroyerLetter,
-                LexiconSymbol.FactionIdentifier,
-                LexiconSymbol.FactionLetter,
+                LexiconSymbol.TagIdentifier,
+                LexiconSymbol.TagLetter,
                 LexiconSymbol.EntityIdentifier,
                 LexiconSymbol.EntityLetter
         };
@@ -42,7 +42,7 @@ namespace Apocalypse.Any.Infrastructure.Server.Language
                 //    Identifier = new DestroyerExpression();
                 //    Identifier.Handle(machine);
                 //}
-                if (machine.SharedContext.Current == LexiconSymbol.FactionIdentifier)
+                if (machine.SharedContext.Current == LexiconSymbol.TagIdentifier)
                 {
                     Console.WriteLine($"adding {nameof(FactionExpression)}");
                     Identifier = new FactionExpression();

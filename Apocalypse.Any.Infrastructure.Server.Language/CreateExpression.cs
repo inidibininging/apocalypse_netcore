@@ -14,11 +14,11 @@ namespace Apocalypse.Any.Infrastructure.Server.Language
         public VariableExpression Identifier { get; set; }
         public CreatorExpression Creator { get; set; }
 
-        public List<LexiconSymbol> ValidLexemes { get; set; } = new List<LexiconSymbol>() {
+        private List<LexiconSymbol> ValidLexemes { get; set; } = new List<LexiconSymbol>() {
                 LexiconSymbol.CreatorIdentifier,
                 LexiconSymbol.CreatorLetter,
-                LexiconSymbol.FactionIdentifier,
-                LexiconSymbol.FactionLetter,
+                LexiconSymbol.TagIdentifier,
+                LexiconSymbol.TagLetter,
                 LexiconSymbol.EntityIdentifier,
                 LexiconSymbol.EntityLetter
         };
@@ -41,7 +41,7 @@ namespace Apocalypse.Any.Infrastructure.Server.Language
                     Creator.Handle(machine);
                 }
 
-                if (machine.SharedContext.Current == LexiconSymbol.FactionIdentifier)
+                if (machine.SharedContext.Current == LexiconSymbol.TagIdentifier)
                 {
                     Console.WriteLine($"adding {nameof(FactionExpression)}");
                     Identifier = new FactionExpression();

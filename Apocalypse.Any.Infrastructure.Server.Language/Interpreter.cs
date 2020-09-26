@@ -48,115 +48,35 @@ namespace Apocalypse.Any.Infrastructure.Server.Language
                         if(SharedContext.Current == LexiconSymbol.NotFound)
                             continue;
 
-                        HandleExecute();
-                        HandleFunction();
-                        HandleWait();
-                        HandleCreate();
-                        HandleDestroy();
-                        HandleMod();
+                        HandleInstruction<CreateExpression, CreateInstruction>((s) => s == LexiconSymbol.Create);
+                        HandleInstruction<DestroyExpression, DestroyInstruction>((s) => s == LexiconSymbol.Destroy);
+                        HandleInstruction<ExecuteExpression, ExecuteInstruction>((s) => s == LexiconSymbol.ExecuteLetter); //TODO: Fix this 
+                        HandleInstruction<FunctionExpression, FunctionInstruction>((s) => s == LexiconSymbol.FunctionIdentifier); //TODO: Fix this
+                        HandleInstruction<AssignExpression, AssignInstruction>((s) => s == LexiconSymbol.Set);
+                        HandleInstruction<WaitExpression, WaitInstruction>((s) => s == LexiconSymbol.Wait);
+                        HandleInstruction<ModifyAttributeExpression, ModifyInstruction>((s) => s == LexiconSymbol.Modify);
                     }
                 }
             }
         }
 
-        private void HandleCreate()
+        private void HandleInstruction<TExpr, TInstr>(Func<LexiconSymbol, bool> symbolPredicate)
+            where TExpr : AbstractLanguageExpression, new()
+            where TInstr : AbstractInterpreterInstruction<TExpr>
         {
-            if (SharedContext.Current == LexiconSymbol.Create)
-            {
-                // Console.WriteLine("Function found");
-                var create = new CreateExpression();
-                create.Handle(this);
-                lock (Instructions)
-                {
-                    Instructions.Add(
-                        new CreateInstruction(this, create)
-                    );
-                }
-            }
+            if (!symbolPredicate(SharedContext.Current)) 
+                return;
+            var expr = new TExpr();
+            expr.Handle(this);
+            //TODO: switch argument ordering here!!!!
+            Activator.CreateInstance(typeof(TInstr), this, expr, Instructions.Count);
         }
-
-        private void HandleDestroy()
-        {
-            if (SharedContext.Current == LexiconSymbol.Destroy)
-            {
-                // Console.WriteLine("Function found");
-                var destroy = new DestroyExpression();
-                destroy.Handle(this);
-                lock (Instructions)
-                {
-                    Instructions.Add(
-                        new DestroyInstruction(this, destroy)
-                    );
-                }
-            }
-        }
+        
+    
 
 
-        public List<AbstractInterpreterInstruction> Instructions { get; set; } = new List<AbstractInterpreterInstruction>();
+        public List<IAbstractInterpreterInstruction<IAbstractLanguageExpression>> Instructions { get; set; } = new List<IAbstractInterpreterInstruction<IAbstractLanguageExpression>>();
 
         public IReadOnlyDictionary<string, TimeSpan> TimeLog => throw new NotImplementedException();
-
-        private void HandleFunction()
-        {
-            if(SharedContext.Current == LexiconSymbol.FunctionIdentifier)
-            {
-                // Console.WriteLine("Function found");
-                var function = new FunctionExpression();
-                function.Handle(this);
-                lock(Instructions)
-                {
-                    Instructions.Add(
-                        new FunctionInstruction(this, function, Instructions.Count)
-                    );
-                }
-            }
-        }
-
-        private void HandleExecute()
-        {
-            if(SharedContext.Current == LexiconSymbol.Execute)
-            {
-                // Console.WriteLine("execute found");
-                var execute = new ExecuteExpression();
-                execute.Handle(this);
-                lock(Instructions)
-                {
-                    Instructions.Add(
-                        new ExecuteInstruction(this, execute, Instructions.Count)
-                    );
-                }
-            }
-        }
-
-        private void HandleWait()
-        {
-            if(SharedContext.Current == LexiconSymbol.Wait)
-            {
-                // Console.WriteLine("Wait found");
-                var wait = new WaitExpression();
-                wait.Handle(this);
-                lock(Instructions)
-                {
-                    Instructions.Add(
-                        new WaitInstruction(this, wait, Instructions.Count)
-                    );
-                }
-            }
-        }
-        private void HandleMod()
-        {
-            if(SharedContext.Current == LexiconSymbol.Modify)
-            {
-                // Console.WriteLine("Mod found");
-                var mod = new ModifyAttributeExpression();
-                mod.Handle(this);
-                // Console.WriteLine(mod.Identifier.Name);
-                // Console.WriteLine(mod.Attribute.Name);
-                // Console.WriteLine(mod.SignConverter.Polarity);
-                // Console.WriteLine(mod.Number.NumberValue);
-
-                Instructions.Add(new ModifyInstruction(this,mod));
-            }
-        }
     }
 }

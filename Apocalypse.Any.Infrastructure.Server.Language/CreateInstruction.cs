@@ -8,36 +8,32 @@ using System.Text;
 
 namespace Apocalypse.Any.Infrastructure.Server.Language
 {
-    public class CreateInstruction : AbstractInterpreterInstruction
+    public class CreateInstruction : AbstractInterpreterInstruction<CreateExpression>
     {
-        public CreateInstruction(Interpreter interpreter, CreateExpression createExpression) : base(interpreter)
+        public CreateInstruction(Interpreter interpreter, CreateExpression createExpression, int functionIndex) : base(interpreter, functionIndex, createExpression)
         {
             Console.WriteLine("adding create instruction");
-            CreateExpression = createExpression;
         }
-        private CreateExpression CreateExpression { get; set; }
 
         public override void Handle(IStateMachine<string, IGameSectorLayerService> machine)
         {
-            if (CreateExpression == null)
-                throw new ArgumentNullException(nameof(CreateExpression));
 
-            var creatorName = CreateExpression.Creator.Name;
-            if (machine.SharedContext.Factories.EnemyFactory.ContainsKey(CreateExpression.Creator.Name))
+            var creatorName = Expression.Creator.Name;
+            if (machine.SharedContext.Factories.EnemyFactory.ContainsKey(Expression.Creator.Name))
             {
-                var entity = machine.SharedContext.Factories.EnemyFactory[creatorName].Create(CreateExpression.Identifier.Name);
+                var entity = machine.SharedContext.Factories.EnemyFactory[creatorName].Create(Expression.Identifier.Name);
                 machine.SharedContext.DataLayer.Enemies.Add(entity);
                 return;
             }
-            if (machine.SharedContext.Factories.GeneralCharacterFactory.ContainsKey(CreateExpression.Creator.Name))
+            if (machine.SharedContext.Factories.GeneralCharacterFactory.ContainsKey(Expression.Creator.Name))
             {
-                var entity = machine.SharedContext.Factories.GeneralCharacterFactory[creatorName].Create(CreateExpression.Identifier.Name);
+                var entity = machine.SharedContext.Factories.GeneralCharacterFactory[creatorName].Create(Expression.Identifier.Name);
                 machine.SharedContext.DataLayer.GeneralCharacter.Add(entity);
                 return;
             }
-            if(machine.SharedContext.Factories.ItemFactory.ContainsKey(CreateExpression.Creator.Name))
+            if(machine.SharedContext.Factories.ItemFactory.ContainsKey(Expression.Creator.Name))
             {
-                var entity = machine.SharedContext.Factories.ItemFactory[creatorName].Create(CreateExpression.Identifier.Name);
+                var entity = machine.SharedContext.Factories.ItemFactory[creatorName].Create(Expression.Identifier.Name);
                 machine.SharedContext.DataLayer.Items.Add(entity);
                 return;
             }
