@@ -84,10 +84,10 @@ You can create functions with the ":" symbol and call it via "!".
 
 Example:
 ```
-:myfunction
-!CallSomeFunctionAsynchronously
+:myfunction ( someArg )
+!CallSomeFunction ( someTagArg )
 
-:CallSomeFunctionAsynchronously
+:CallSomeFunction ( someTagArg )
 Wait +666 Seconds
 ```
 
@@ -96,12 +96,12 @@ the "@>" calls a factory and creates an instance. the entity made with the the f
 
 
 ```
-:MakeAWeakEnemy
+:MakeAWeakEnemy ( someTag )
 @>AliasOfEntityFactoryOnlyInAlphaNumeric .weakEnemy
-Mod Stats .weakEnemy +123 Health
-Mod Stats .weakEnemy +10 Speed
-Mod Scale .weakEnemy +1 X
-Mod Scale .weakEnemy +1 Y
+Mod Stats someTag +123 Health
+Mod Stats someTag +10 Speed
+Mod Scale someTag +1 X
+Mod Scale someTag +1 Y
 ```
 
 the "<@" deletes the assignment
@@ -110,7 +110,7 @@ You CAN delete the assignment if you want or you can leave it and use the assign
 
 
 ```
-:MakeAWeakEnemy
+:MakeAWeakEnemy ( args )
 @>AliasOfEntityFactoryOnlyInAlphaNumeric .weakEnemy
 Mod Stats .weakEnemy +123 Health
 Mod Stats .weakEnemy +10 Speed
@@ -118,14 +118,14 @@ Mod Scale .weakEnemy +1 X
 Mod Scale .weakEnemy +1 Y
 <@ .weakEnemy
 
-:UseWeakEnemyLater
+:UseWeakEnemyLater ( args )
 @>AliasOfEntityFactoryOnlyInAlphaCharacter .weakEnemy
 Mod Stats .weakEnemy +123 Health
 Mod Stats .weakEnemy +10 Speed
 Mod Scale .weakEnemy +1 X
 Mod Scale .weakEnemy +1 Y
 
-:IAmUsingWeakEnemyAndRemovingItLater
+:IAmUsingWeakEnemyAndRemovingItLater ( args )
 Mod Stats .weakEnemy +1 Health
 <@ .weakEnemy
 ```
@@ -134,45 +134,60 @@ Mod Stats .weakEnemy +1 Health
 You can wait for a specific amount of time. It can be Seconds, Miliseconds or Minutes. 
 
 ```
-:DoALittleDance
+:DoALittleDance ( args )
 Wait +2 Minutes
 
-:DoAnotherDance
+:DoAnotherDance ( args )
 Wait +10 Seconds
 
-:Salsa
+:Salsa ( args )
 Wait +1 Miliseconds
 ```
-
-Waiting is the only way for now to pause an async function. So this would be a way to make a loop without breaking the game:
 
 The code below puts the play in position 
 x: 512, y: 512 
 every 5 seconds.
 
 ```
-:Start
+:Start ( args )
 Wait +5 Seconds
 !CenterPlayers
 
-:CenterPlayers
+:CenterPlayers ( args )
 Mod Position .Players +512 X
 Mod Position .Players +512 Y
 !Start
 
 ```
-
-So if you dont wait, you will likely get a StackOverflowException or OutOfMemoryException
-
 ### Mod
 
 Mod modifies a value of a game entity (specifically a CharacterEntity)
 
 For more examples you can look into "apocalypse.echse"
 
+### Variables
+
+For now, tags can be assigned to a variable and later passed on through a function to a "Mod" instruction.
+I'm trying to implement more capabilities in the future.
+If you are looking for an example, see below.
+
+### Arguments
+
+For now it's only possible to pass variables to functions (The ones starting with ":" ex. ":myFunction"), execution (The ones starting with "!" ex. "!executeThis") and "Mod"  instructions.
+
+```
+:almostKillEnemy ( myTag )
+Mod Stats myTag +1 Health
+
+:Main ( args )
+Set characterEntitiesToKill = .weakEnemy
+!almostKillEnemy ( characterEntitiesToKill )
+
+```
+
 #### Scripting Language Limitations
 
-- there is no possibility now for writing comments or calling functions synchronously
+- there is no possibility now for writing comments
 - names are only limited to letters WithoutSpaceInBetween
 - some stuff is broken
 - numbers must be written, either with a "+" or "-" prefix.
