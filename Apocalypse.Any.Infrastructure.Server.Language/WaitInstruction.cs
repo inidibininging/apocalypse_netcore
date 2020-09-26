@@ -6,18 +6,15 @@ using States.Core.Infrastructure.Services;
 
 namespace Apocalypse.Any.Infrastructure.Server.Language
 {
-    public class WaitInstruction : AbstractInterpreterInstruction
+    public class WaitInstruction : AbstractInterpreterInstruction<WaitExpression>
     {
         private WaitExpression Wait { get; }
         private TimeSpan WaitTimeSpan { get; set; } = TimeSpan.Zero;
-        public int FunctionIndex { get; }
         public bool TimeReached { get; private set;}
         private string Id { get; set; } = $"{nameof(WaitInstruction)}_{Guid.NewGuid().ToString()}";
-        public WaitInstruction(Interpreter interpreter, WaitExpression wait, int functionIndex) : base(interpreter)
+        public WaitInstruction(Interpreter interpreter, WaitExpression wait, int functionIndex) : base(interpreter, functionIndex, wait)
         {
             Wait = wait;
-            FunctionIndex = functionIndex;
-
         }
 
         public override void Handle(IStateMachine<string, IGameSectorLayerService> machine)

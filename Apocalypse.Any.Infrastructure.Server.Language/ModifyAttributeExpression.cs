@@ -15,10 +15,11 @@ namespace Apocalypse.Any.Infrastructure.Server.Language
         public NumberExpression Number { get; set; }
         public List<LexiconSymbol> ValidLexemes { get; set; } = new List<LexiconSymbol>() {
                 LexiconSymbol.Entity,
+                LexiconSymbol.Letter,
                 LexiconSymbol.EntityIdentifier,
                 LexiconSymbol.EntityLetter,
-                LexiconSymbol.FactionIdentifier,
-                LexiconSymbol.FactionLetter,
+                LexiconSymbol.TagIdentifier,
+                LexiconSymbol.TagLetter,
                 LexiconSymbol.Attribute,
                 LexiconSymbol.Stats,
                 LexiconSymbol.NegativeSign,
@@ -50,18 +51,23 @@ namespace Apocalypse.Any.Infrastructure.Server.Language
                     continue;
 
                 // Console.WriteLine(machine.SharedContext.CurrentBuffer);
-                if (machine.SharedContext.Current == LexiconSymbol.EntityIdentifier)
+                if (machine.SharedContext.Current == LexiconSymbol.EntityIdentifier && Identifier == null &&
+                    Section != null &&
+                    Attribute != null)
                 {
                     Console.WriteLine($"adding {nameof(EntityExpression)}");
                     Identifier = new EntityExpression();
                     Identifier.Handle(machine);
                 }
-                if (machine.SharedContext.Current == LexiconSymbol.FactionIdentifier)
+                if (machine.SharedContext.Current == LexiconSymbol.TagIdentifier && Identifier == null &&
+                    Section != null &&
+                    Attribute != null)
                 {
                     Console.WriteLine($"adding {nameof(FactionExpression)}");
                     Identifier = new FactionExpression();
                     Identifier.Handle(machine);
                 }
+
                 if (machine.SharedContext.Current == LexiconSymbol.Attribute)
                 {
                     Console.WriteLine($"adding {nameof(AttributeExpression)}");
@@ -78,6 +84,17 @@ namespace Apocalypse.Any.Infrastructure.Server.Language
                     Section = new AttributeExpression();
                     Section.Handle(machine);
                 }
+                
+                if (machine.SharedContext.Current == LexiconSymbol.Letter && 
+                    Identifier == null &&
+                    Section != null &&
+                    Attribute != null)
+                {
+                    Console.WriteLine($"adding {nameof(IdentifierExpression)}");
+                    Identifier = new IdentifierExpression();
+                    Identifier.Handle(machine);
+                }
+                
                 if (machine.SharedContext.Current == LexiconSymbol.PositiveSign ||
                    machine.SharedContext.Current == LexiconSymbol.NegativeSign)
                 {

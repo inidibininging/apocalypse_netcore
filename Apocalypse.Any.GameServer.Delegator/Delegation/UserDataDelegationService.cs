@@ -77,7 +77,7 @@ namespace Apocalypse.Any.GameServer.Delegator.Delegation
                 dynamic serialized = SerializationAdapter.DeserializeObject<object>(package);
                 dynamic data = serialized.Data;
 
-                dynamic dataSerialized = SerializationAdapter.DeserializeObject(data.Value);
+                dynamic dataSerialized = SerializationAdapter.DeserializeObject<object>(data.Value);
                 foreach(var prop in dataSerialized.Properties())
                     if(prop.Name == "LoginToken")
                         Token = prop.Value;

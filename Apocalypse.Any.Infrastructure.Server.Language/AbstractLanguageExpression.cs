@@ -4,7 +4,7 @@ using States.Core.Infrastructure.Services;
 
 namespace Apocalypse.Any.Infrastructure.Server.Language
 {
-    public abstract class AbstractLanguageExpression : IState<string, Tokenizer>
+    public abstract class AbstractLanguageExpression : IAbstractLanguageExpression
     {
         public abstract void Handle(IStateMachine<string, Tokenizer> machine);
     }

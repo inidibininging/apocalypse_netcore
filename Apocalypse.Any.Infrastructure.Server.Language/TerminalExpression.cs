@@ -6,6 +6,6 @@ namespace Apocalypse.Any.Infrastructure.Server.Language
 {
     public abstract class TerminalExpression : AbstractLanguageExpression
     {
-        public string Symbol { get; set; }
+        public string Name { get; protected set; }
     }
 }

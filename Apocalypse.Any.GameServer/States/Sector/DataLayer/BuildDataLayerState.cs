@@ -14,6 +14,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics.Tracing;
+using Apocalypse.Any.Domain.Common.Model.Language;
 
 namespace Apocalypse.Any.GameServer.States.Sector
 {
@@ -58,6 +59,10 @@ namespace Apocalypse.Any.GameServer.States.Sector
             machine.SharedContext.DataLayer = Activator.CreateInstance<TDataLayer>();
             machine.SharedContext.DataLayer.Layers.Add(new ExampleDialogService(new RandomPortraitGeneratorFactory()));
 
+            //language related stuff
+            machine.SharedContext.DataLayer.Layers.Add(new GenericInMemoryDataLayer<TagVariable>(null));
+            machine.SharedContext.DataLayer.Layers.Add(new GenericInMemoryDataLayer<ReferenceVariable>(null));
+            
             //dialog related stuff
             machine.SharedContext.DataLayer.Layers.Add(new GenericInMemoryDataLayer<IdentifiableCircularLocation>(null));
             machine.SharedContext.DataLayer.Layers.Add(new DynamicRelationLayer<IdentifiableCircularLocation, DialogNode>(DialogLocationRelationLayerName));
