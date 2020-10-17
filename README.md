@@ -184,6 +184,28 @@ Set characterEntitiesToKill = .weakEnemy
 !almostKillEnemy ( characterEntitiesToKill )
 
 ```
+### If Clause
+
+There is now a possibility to make If clauses and compare via "Is". For now it's very limited, but it will change in the future
+
+```
+:Main ( args )
+    Set Tag something = .something
+    Set Tag somethingElse = .somethingLolA
+    If something Is .something
+        Set Tag something = .lolCHANGED
+        If somethingElse Is .somethingLol
+            Set Tag somethingElse = .abcd
+            If somethingElse Is .somethingLolA
+                Set Tag something = .hahaha
+            EndIf
+
+            If somethingElse Is .somethingLolA
+                Set Tag something = .hiohiohio
+            EndIf            
+        EndIf
+    EndIf
+```
 
 #### Scripting Language Limitations
 
