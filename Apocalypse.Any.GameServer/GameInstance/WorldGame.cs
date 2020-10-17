@@ -160,28 +160,28 @@ namespace Apocalypse.Any.GameServer.GameInstance
 
 
 
-            var sectorList = new List<string>();
-            for (int sectorIndex = 0; sectorIndex < 1; sectorIndex++)
-            {
-                var sectorId = Guid.NewGuid().ToString();
+            //var sectorList = new List<string>();
+            //for (int sectorIndex = 0; sectorIndex < 1; sectorIndex++)
+            //{
+            //    var sectorId = Guid.NewGuid().ToString();
 
-                var sectorDown = Configuration.StartingSector;
-                var sectorUp = Configuration.StartingSector;
-                var sectorLeft = Configuration.StartingSector;
-                var sectorRight = Configuration.StartingSector;
+            //    var sectorDown = Configuration.StartingSector;
+            //    var sectorUp = Configuration.StartingSector;
+            //    var sectorLeft = Configuration.StartingSector;
+            //    var sectorRight = Configuration.StartingSector;
 
-                if (sectorIndex - 4 > 0)
-                    sectorDown = sectorList[sectorIndex - 4];
-                if (sectorIndex - 3 > 0)
-                    sectorUp = sectorList[sectorIndex - 3];
-                if (sectorIndex - 2 > 0)
-                    sectorLeft = sectorList[sectorIndex - 2];
-                if (sectorIndex - 1 > 0)
-                    sectorRight = sectorList[sectorIndex - 1];
+            //    if (sectorIndex - 4 > 0)
+            //        sectorDown = sectorList[sectorIndex - 4];
+            //    if (sectorIndex - 3 > 0)
+            //        sectorUp = sectorList[sectorIndex - 3];
+            //    if (sectorIndex - 2 > 0)
+            //        sectorLeft = sectorList[sectorIndex - 2];
+            //    if (sectorIndex - 1 > 0)
+            //        sectorRight = sectorList[sectorIndex - 1];
 
-                sectorList.Add(sectorId);
-                BuildSector(sectorId, sectorUp, sectorLeft, sectorRight, sectorDown);
-            }
+            //    sectorList.Add(sectorId);
+            //    BuildSector(sectorId, sectorUp, sectorLeft, sectorRight, sectorDown);
+            //}
 
 
 

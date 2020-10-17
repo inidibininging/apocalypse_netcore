@@ -5,6 +5,6 @@ namespace Apocalypse.Any.Infrastructure.Server.Language
 {
     public abstract class VariableExpression : TerminalExpression
     {
-        
+
     }
 }

@@ -1,9 +1,10 @@
 using System;
 
-namespace Apocalypse.Any.Infrastructure.Server.Language
+namespace Apocalypse.Any.Domain.Common.Model.Language
 {
     public enum LexiconSymbol
     {
+        _0,
         NA,
         SkipMaterial,
         Separator,
@@ -19,6 +20,8 @@ namespace Apocalypse.Any.Infrastructure.Server.Language
         Identifier,
         X,
         Y,
+        If,
+        EndIf,
         Equal,
         Assign,
         NotEqual,
@@ -37,6 +40,8 @@ namespace Apocalypse.Any.Infrastructure.Server.Language
         Destroy,
         EntityIdentifier,
         Set,
+        TagDataType,
+        NumberDataType,
         TagIdentifier,
         TagLetter,
         EntityLetter,
@@ -48,6 +53,9 @@ namespace Apocalypse.Any.Infrastructure.Server.Language
         Function,
         Execute,
         ExecuteLetter,
+        StringScope,
+        StringCharacter,
+        Digit,
         Number,
         Milliseconds,
         Seconds,
@@ -56,5 +64,6 @@ namespace Apocalypse.Any.Infrastructure.Server.Language
         Wait,
         Every,
         NotFound,
+
     }
 }

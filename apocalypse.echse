@@ -1,12 +1,35 @@
+
 :firstFn ( firstArg )
-!secondFn ( firstArg )
+    !secondFn ( firstArg )
 
 :secondFn ( secondArg )
-!thirdFn ( secondArg )
+    !thirdFn ( secondArg )
 
 :thirdFn ( thirdArg )
-Mod Position X +200 thirdArg
+    @>UnconfiguredEnemyFactory thirdArg
+    Mod Stats +123 Health      thirdArg
+    Mod Stats +10  Speed       thirdArg
+    Mod Scale +1   X           thirdArg
+    Mod Scale +1   Y           thirdArg
+
+:fourthFn ( fourthArg )
+    Set Tag a = .a
 
 :Main ( args )
-Set something = .lol
-!firstFn ( something )
+    Set Tag something = .something
+    Set Tag somethingElse = .somethingLolA
+    If something Is .something
+        Set Tag something = .lolCHANGED
+        If somethingElse Is .somethingLol
+            Set Tag somethingElse = .abcd
+            If somethingElse Is .somethingLolA
+                Set Tag something = .hahaha
+            EndIf
+
+            If somethingElse Is .somethingLolA
+                Set Tag something = .hiohiohio
+            EndIf            
+        EndIf
+    EndIf
+
+    

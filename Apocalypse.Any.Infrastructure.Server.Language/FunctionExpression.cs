@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Apocalypse.Any.Domain.Common.Model.Language;
 using States.Core.Infrastructure.Services;
 
 namespace Apocalypse.Any.Infrastructure.Server.Language
@@ -25,6 +26,11 @@ namespace Apocalypse.Any.Infrastructure.Server.Language
             Arguments = new GroupArgumentExpression<IdentifierExpression>();
             Console.WriteLine($"group expression found");
             Arguments.Handle(machine);
+
+            if (string.IsNullOrWhiteSpace(Name))
+                throw new InvalidOperationException($"Syntax error: ${nameof(Name)} side is not implemented near {machine.SharedContext.CurrentBuffer}");
+            if (Arguments == null)
+                throw new InvalidOperationException($"Syntax error: ${nameof(Arguments)} side is not implemented near {machine.SharedContext.CurrentBuffer}");
         }
     }
 }
