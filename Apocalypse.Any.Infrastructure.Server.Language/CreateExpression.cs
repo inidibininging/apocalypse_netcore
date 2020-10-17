@@ -1,4 +1,5 @@
-﻿using States.Core.Infrastructure.Services;
+﻿using Apocalypse.Any.Domain.Common.Model.Language;
+using States.Core.Infrastructure.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,7 +21,8 @@ namespace Apocalypse.Any.Infrastructure.Server.Language
                 LexiconSymbol.TagIdentifier,
                 LexiconSymbol.TagLetter,
                 LexiconSymbol.EntityIdentifier,
-                LexiconSymbol.EntityLetter
+                LexiconSymbol.EntityLetter,
+                LexiconSymbol.Letter
         };
 
         public override void Handle(IStateMachine<string, Tokenizer> machine)
@@ -43,11 +45,22 @@ namespace Apocalypse.Any.Infrastructure.Server.Language
 
                 if (machine.SharedContext.Current == LexiconSymbol.TagIdentifier)
                 {
-                    Console.WriteLine($"adding {nameof(FactionExpression)}");
-                    Identifier = new FactionExpression();
+                    Console.WriteLine($"adding {nameof(TagExpression)}");
+                    Identifier = new TagExpression();
+                    Identifier.Handle(machine);
+                }
+
+                if (machine.SharedContext.Current == LexiconSymbol.Letter)
+                {
+                    Console.WriteLine($"adding {nameof(IdentifierExpression)}");
+                    Identifier = new IdentifierExpression();
                     Identifier.Handle(machine);
                 }
             }
+            if (Creator == null)
+                throw new InvalidOperationException($"Syntax error: ${nameof(Creator)} side is not implemented near {machine.SharedContext.CurrentBuffer}");
+            if (Identifier == null)
+                throw new InvalidOperationException($"Syntax error: ${nameof(Identifier)} side is not implemented near {machine.SharedContext.CurrentBuffer}");            
         }
     }
 }

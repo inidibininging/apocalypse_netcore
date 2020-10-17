@@ -12,7 +12,8 @@ namespace Apocalypse.Any.Infrastructure.Server.Language
 {
     public class ModifyInstruction : AbstractInterpreterInstruction<ModifyAttributeExpression>
     {
-        public ModifyInstruction(Interpreter interpreter, ModifyAttributeExpression modifyExpression, int functionIndex) : base(interpreter, functionIndex, modifyExpression)
+        public ModifyInstruction(Interpreter interpreter, ModifyAttributeExpression modifyExpression, int functionIndex) 
+            : base(interpreter, modifyExpression, functionIndex)
         {
             Console.WriteLine("adding mod instruction");
         }
@@ -24,7 +25,7 @@ namespace Apocalypse.Any.Infrastructure.Server.Language
                 HandleIdentifier(machine);
             if (Expression.Identifier is EntityExpression)
                 HandleEntity(machine);
-            if (Expression.Identifier is FactionExpression)
+            if (Expression.Identifier is TagExpression)
                 HandleFaction(machine, Expression.Identifier.Name);
         }
 
@@ -44,7 +45,7 @@ namespace Apocalypse.Any.Infrastructure.Server.Language
             var identifierName = Expression.Identifier.Name;
             while (variable == null)
             {
-                var argumentIndex = lastFn.GetVariableIndex(identifierName);
+                var argumentIndex = lastFn.GetFunctionArgumentIndex(identifierName);
                 variable = lastFn
                             .LastCaller
                             .GetVariableOfFunction(machine, argumentIndex);
@@ -60,6 +61,8 @@ namespace Apocalypse.Any.Infrastructure.Server.Language
                 lastFn = lastFn.LastCaller.Scope;
                 
             }
+            if (variable.DataTypeSymbol != LexiconSymbol.TagDataType)
+                throw new InvalidOperationException($"Syntax error. Cannot execute a modify instruction. Data type of variable is not a tag.");
 
             HandleFaction(machine, variable.Value);
         }
@@ -178,7 +181,7 @@ namespace Apocalypse.Any.Infrastructure.Server.Language
         
         private void HandleFaction(IStateMachine<string, IGameSectorLayerService> machine, string tag)
         {
-            var characters = GetAllValidCharacters(machine).Where(c => CharacterWithCertainTag(c,tag));
+            var characters = GetAllValidCharacters(machine).Where(c => CharacterWithCertainTag(c, tag));
             var characterEntities = characters as CharacterEntity[] ?? characters.ToArray();
             if (characterEntities.Count() != 0)
             {

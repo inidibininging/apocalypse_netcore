@@ -11,13 +11,14 @@ namespace Apocalypse.Any.Infrastructure.Server.Language
     {
         public ExecuteInstruction LastCaller { get; set; }
         
-        public FunctionInstruction(Interpreter interpreter, FunctionExpression function, int functionIndex) : base(interpreter, functionIndex, function)
+        public FunctionInstruction(Interpreter interpreter, FunctionExpression function, int functionIndex) 
+            : base(interpreter, function, functionIndex)
         {
             Console.WriteLine("adding function instruction " + function.Name);
             interpreter.Context.NewService.New(Expression.Name,this);
         }
 
-        public int GetVariableIndex(string identifierName)
+        public int GetFunctionArgumentIndex(string identifierName)
         {
             //look up for the function index in the function                
             return
@@ -34,14 +35,21 @@ namespace Apocalypse.Any.Infrastructure.Server.Language
             var currentInstructionIndex = FunctionIndex+1;
             while(currentInstructionIndex < Owner.Instructions.Count) {
                 var currentInstruction = Owner.Instructions[currentInstructionIndex];
-                currentInstructionIndex++;
+                Console.WriteLine(currentInstruction);
+                currentInstructionIndex++;                
 
-                if(currentInstruction is FunctionInstruction){
+                if (currentInstruction is FunctionInstruction){
                     Console.WriteLine("function instruction found. aborting function instruction");
                     break;
                 }
+                
                 currentInstruction.Handle(machine);
-                if(currentInstruction is WaitInstruction)
+                if (currentInstruction is IfInstruction)
+                {
+                    currentInstructionIndex = (currentInstruction as IfInstruction).EndIfIndex;
+                }
+
+                if (currentInstruction is WaitInstruction)
                 {
                     Console.WriteLine("wait instruction found. aborting function instruction");
                     break;

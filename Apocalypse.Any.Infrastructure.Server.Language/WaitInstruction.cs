@@ -12,7 +12,7 @@ namespace Apocalypse.Any.Infrastructure.Server.Language
         private TimeSpan WaitTimeSpan { get; set; } = TimeSpan.Zero;
         public bool TimeReached { get; private set;}
         private string Id { get; set; } = $"{nameof(WaitInstruction)}_{Guid.NewGuid().ToString()}";
-        public WaitInstruction(Interpreter interpreter, WaitExpression wait, int functionIndex) : base(interpreter, functionIndex, wait)
+        public WaitInstruction(Interpreter interpreter, WaitExpression wait, int functionIndex) : base(interpreter, wait, functionIndex)
         {
             Wait = wait;
         }

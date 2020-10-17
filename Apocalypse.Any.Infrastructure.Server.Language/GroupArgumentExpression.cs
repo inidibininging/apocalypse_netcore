@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Apocalypse.Any.Domain.Common.Model.Language;
 using States.Core.Infrastructure.Services;
 
 namespace Apocalypse.Any.Infrastructure.Server.Language
@@ -16,7 +17,9 @@ namespace Apocalypse.Any.Infrastructure.Server.Language
                   machine.SharedContext.Current == LexiconSymbol.Letter ||
                   machine.SharedContext.Current == LexiconSymbol.Identifier ||
                   machine.SharedContext.Current == LexiconSymbol.ArgumentSeparator || 
-                  machine.SharedContext.Current == LexiconSymbol.SkipMaterial){
+                  machine.SharedContext.Current == LexiconSymbol.SkipMaterial ||
+                  machine.SharedContext.Current == LexiconSymbol.NotFound)
+            {
                 
                 if (machine.SharedContext.Current == LexiconSymbol.Letter)
                 {
@@ -31,6 +34,8 @@ namespace Apocalypse.Any.Infrastructure.Server.Language
                 if(!machine.SharedContext.MoveNext())
                     break;
             }
+            if (Arguments.Count() == 0)
+                throw new InvalidOperationException($"Syntax error: ${nameof(Arguments)} side near {machine.SharedContext.CurrentBuffer}. No arguments provided");
         }
     }
 }

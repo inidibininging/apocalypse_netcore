@@ -12,7 +12,7 @@ namespace Apocalypse.Any.Infrastructure.Server.Services.Factories
     /// For now, a hard-coded variant of the enemy space ship factory.
     /// I made this because of the language feature (create, delete)
     /// </summary>
-    public class UncofiguredEnemyFactory : RandomEnemySpaceshipFactory
+    public class UnconfiguredEnemyFactory : RandomEnemySpaceshipFactory
     {
         public override bool CanUse<TParam>(TParam instance) => CanUseByTType<TParam, string>();
         public override List<Type> GetValidParameterTypes()

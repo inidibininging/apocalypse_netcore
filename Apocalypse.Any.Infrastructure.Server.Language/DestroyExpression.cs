@@ -1,4 +1,5 @@
-﻿using States.Core.Infrastructure.Services;
+﻿using Apocalypse.Any.Domain.Common.Model.Language;
+using States.Core.Infrastructure.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -44,11 +45,13 @@ namespace Apocalypse.Any.Infrastructure.Server.Language
                 //}
                 if (machine.SharedContext.Current == LexiconSymbol.TagIdentifier)
                 {
-                    Console.WriteLine($"adding {nameof(FactionExpression)}");
-                    Identifier = new FactionExpression();
+                    Console.WriteLine($"adding {nameof(TagExpression)}");
+                    Identifier = new TagExpression();
                     Identifier.Handle(machine);
                 }
             }
+            if (Identifier == null)
+                throw new InvalidOperationException($"Syntax error: ${nameof(Identifier)} side is not implemented near {machine.SharedContext.CurrentBuffer}");
         }
     }
 }

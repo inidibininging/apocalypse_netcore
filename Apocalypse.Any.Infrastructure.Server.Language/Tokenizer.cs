@@ -8,6 +8,7 @@ using System.IO;
 using System.Text;
 using System.Collections;
 using System.Collections.ObjectModel;
+using Apocalypse.Any.Domain.Common.Model.Language;
 
 namespace Apocalypse.Any.Infrastructure.Server.Language
 {
@@ -33,6 +34,141 @@ namespace Apocalypse.Any.Infrastructure.Server.Language
             if(CurrentTokenBuffer == null)
                 CurrentTokenBuffer = new List<char>();
         }
+
+        private List<Func<LexiconSymbol, 
+            LexiconSymbol, 
+            LexiconSymbol,
+            LexiconSymbol>> _rules = new List<Func<LexiconSymbol, LexiconSymbol, LexiconSymbol, LexiconSymbol>>()
+        {
+            (singleToken, nowToken, beforeToken) => nowToken == LexiconSymbol.Set ?
+                                                    LexiconSymbol.Set :
+                                                    nowToken,
+
+            (singleToken, nowToken, beforeToken) => singleToken == LexiconSymbol.Equal ?
+                                                    LexiconSymbol.Equal :
+                                                    nowToken,
+
+            (singleToken, nowToken, beforeToken) => singleToken == LexiconSymbol.Letter &&
+                                                    nowToken == LexiconSymbol.StringScope ? 
+                                                    LexiconSymbol.StringCharacter :
+                                                    nowToken,
+
+            (singleToken, nowToken, beforeToken) => singleToken == LexiconSymbol.StringScope &&
+                                                        nowToken == LexiconSymbol.StringCharacter ? 
+                                                    LexiconSymbol.StringScope :
+                                                    nowToken,
+
+
+
+            (singleToken, nowToken, beforeToken) => singleToken == LexiconSymbol.Letter &&
+                                                    (nowToken == LexiconSymbol.NotFound || nowToken == LexiconSymbol.NA)?
+                                                    LexiconSymbol.Letter :
+                                                    nowToken,
+
+            (singleToken, nowToken, beforeToken) => singleToken == LexiconSymbol.Letter &&
+                                                    nowToken == LexiconSymbol.NotFound ? 
+                                                    LexiconSymbol.Letter :
+                                                    nowToken,
+
+            (singleToken, nowToken, beforeToken) => singleToken == LexiconSymbol.Equal &&
+                                                    nowToken == LexiconSymbol.NotFound ? 
+                                                    LexiconSymbol.Assign :
+                                                    nowToken,
+
+            (singleToken, nowToken, beforeToken) => beforeToken == LexiconSymbol.Letter &&
+                                                    singleToken == LexiconSymbol.Letter &&
+                                                    nowToken == LexiconSymbol.NotFound ? 
+                                                    LexiconSymbol.Identifier :
+                                                    nowToken,
+
+            (singleToken, nowToken, beforeToken) => beforeToken == LexiconSymbol.FunctionIdentifier &&
+                                                    nowToken == LexiconSymbol.Letter &&
+                                                    singleToken == LexiconSymbol.Letter ?
+                                                    LexiconSymbol.FunctionLetter :
+                                                    nowToken,
+
+            (singleToken, nowToken, beforeToken) => beforeToken == LexiconSymbol.Execute &&
+                                                    //(nowToken == LexiconSymbol.Letter || nowToken == LexiconSymbol.NotFound) &&
+                                                    singleToken == LexiconSymbol.Letter ?
+                                                    LexiconSymbol.ExecuteLetter :
+                                                    nowToken,
+
+            (singleToken, nowToken, beforeToken) => beforeToken == LexiconSymbol.ExecuteLetter &&
+                                                    //(nowToken == LexiconSymbol.Letter || nowToken == LexiconSymbol.NotFound) &&
+                                                    singleToken == LexiconSymbol.Letter ?
+                                                    LexiconSymbol.ExecuteLetter :
+                                                    nowToken,
+
+            (singleToken, nowToken, beforeToken) => beforeToken == LexiconSymbol.FunctionIdentifier &&
+                                                    (nowToken == LexiconSymbol.Letter || nowToken == LexiconSymbol.NA) &&
+                                                    singleToken == LexiconSymbol.Letter ?
+                                                    LexiconSymbol.FunctionLetter :
+                                                    nowToken,
+
+            (singleToken, nowToken, beforeToken) => beforeToken == LexiconSymbol.FunctionLetter &&
+                                                    (nowToken == LexiconSymbol.Letter || nowToken == LexiconSymbol.NA) &&
+                                                    singleToken == LexiconSymbol.Letter ?
+                                                    LexiconSymbol.FunctionLetter :
+                                                    nowToken,
+
+            (singleToken, nowToken, beforeToken) => beforeToken == LexiconSymbol.TagIdentifier &&
+                                                    nowToken == LexiconSymbol.Letter &&
+                                                    singleToken == LexiconSymbol.Letter ?
+                                                    LexiconSymbol.TagLetter :
+                                                    nowToken,
+
+            (singleToken, nowToken, beforeToken) => beforeToken == LexiconSymbol.TagLetter &&
+                                                    nowToken == LexiconSymbol.Letter &&
+                                                    singleToken == LexiconSymbol.Letter ?
+                                                    LexiconSymbol.TagLetter :
+                                                    nowToken,
+
+            (singleToken, nowToken, beforeToken) => beforeToken == LexiconSymbol.EntityIdentifier &&
+                                                    nowToken == LexiconSymbol.Letter &&
+                                                    (singleToken == LexiconSymbol.Letter || singleToken == LexiconSymbol.Digit) ? 
+                                                    LexiconSymbol.EntityLetter :
+                                                    nowToken,
+            
+            (singleToken, nowToken, beforeToken) => beforeToken == LexiconSymbol.EntityLetter &&
+                                                    nowToken == LexiconSymbol.Letter &&
+                                                    (singleToken == LexiconSymbol.Letter || singleToken == LexiconSymbol.Digit) ?
+                                                    LexiconSymbol.EntityLetter :
+                                                    nowToken,
+
+            (singleToken, nowToken, beforeToken) => beforeToken == LexiconSymbol.Create &&
+                                                    nowToken == LexiconSymbol.Letter &&
+                                                    (singleToken == LexiconSymbol.Letter || singleToken == LexiconSymbol.Digit) ?
+                                                    LexiconSymbol.CreatorLetter :
+                                                    nowToken,
+
+            (singleToken, nowToken, beforeToken) => beforeToken == LexiconSymbol.CreatorLetter &&
+                                                    nowToken == LexiconSymbol.Letter &&
+                                                    (singleToken == LexiconSymbol.Letter || singleToken == LexiconSymbol.Digit) ?
+                                                    LexiconSymbol.CreatorLetter :
+                                                    nowToken,            
+
+            (singleToken, nowToken, beforeToken) => beforeToken == LexiconSymbol.Number &&
+                                                    nowToken == LexiconSymbol.NotFound &&
+                                                    singleToken == LexiconSymbol.Digit ?
+                                                    LexiconSymbol.Number :
+                                                    nowToken,
+
+            (singleToken, nowToken, beforeToken) => (beforeToken == LexiconSymbol.PositiveSign || beforeToken == LexiconSymbol.NegativeSign) &&
+                                                    nowToken == LexiconSymbol.NotFound &&
+                                                    singleToken == LexiconSymbol.Digit ?
+                                                    LexiconSymbol.Number :
+                                                    nowToken
+
+
+        };
+        private List<Func<LexiconSymbol, LexiconSymbol, LexiconSymbol, LexiconSymbol>> Rules
+        {
+            get
+            {
+                return _rules;
+            }
+        }
+
         public bool MoveNext()
         {
             InitlializeTokenBufferIfEmpty();
@@ -44,117 +180,30 @@ namespace Apocalypse.Any.Infrastructure.Server.Language
             while(!TokenStreamReader.EndOfStream){
                 var rawCharacter = TokenStreamReader.Read();
                 var convertedCharacter = Convert.ToChar(rawCharacter);
+                var singleToken = LanguageTokens.FindLexiconSymbol(convertedCharacter);
+
                 CurrentTokenBuffer.Add(convertedCharacter);
-                var nextSymbol = LanguageTokens.FindLexiconSymbol(CurrentTokenBuffer);
+                
+                var validTokenBuffer = LanguageTokens.FindLexiconSymbol(CurrentTokenBuffer);
 
-                //Identifiers (for variables)
-                if (char.IsLetter(convertedCharacter) &&
-                    nextSymbol == LexiconSymbol.NotFound)
+                var tempValidTokenBuffer = validTokenBuffer;
+                var rulesToApply = validTokenBuffer;
+                rulesToApply = Rules.Select(appliedRule => rulesToApply = appliedRule(singleToken, rulesToApply, CurrentSymbol))
+                        .Where(ls => ls != LexiconSymbol.NA)
+                        .LastOrDefault();
+                if (rulesToApply != tempValidTokenBuffer)
                 {
-                    nextSymbol = LexiconSymbol.Letter;
-                }
-
-                if (convertedCharacter == '=' &&
-                    nextSymbol == LexiconSymbol.NotFound)
-                {
-                    nextSymbol = LexiconSymbol.Assign;
-                    if(CurrentTokenBuffer.Count > 0)
-                        CurrentTokenBuffer.RemoveAt(CurrentTokenBuffer.Count - 1);
-                }
-
-                if (CurrentSymbol == LexiconSymbol.Letter &&
-                    nextSymbol == LexiconSymbol.NotFound &&
-                    char.IsLetter(convertedCharacter))
-                {
-                    nextSymbol = LexiconSymbol.Identifier;
+                    validTokenBuffer = rulesToApply;
                 }
                 
-                //Function stuff
-                if (CurrentSymbol == LexiconSymbol.FunctionIdentifier &&
-                    nextSymbol == LexiconSymbol.Letter &&
-                    char.IsLetter(convertedCharacter))
-                {
-                    nextSymbol = LexiconSymbol.FunctionLetter;
-                }
-                if (CurrentSymbol == LexiconSymbol.Execute &&
-                    nextSymbol == LexiconSymbol.Letter &&
-                    char.IsLetter(convertedCharacter))
-                {
-                    nextSymbol = LexiconSymbol.ExecuteLetter;
-                }
-                if (CurrentSymbol == LexiconSymbol.ExecuteLetter &&
-                    nextSymbol == LexiconSymbol.Letter &&
-                    char.IsLetter(convertedCharacter))
-                {
-                    nextSymbol = LexiconSymbol.ExecuteLetter;
-                }
-                if (CurrentSymbol == LexiconSymbol.FunctionLetter &&
-                    nextSymbol == LexiconSymbol.Letter &&
-                    char.IsLetter(convertedCharacter))
-                {
-                    nextSymbol = LexiconSymbol.FunctionLetter;
-                }
+                
 
-                //Factions
-                if (CurrentSymbol == LexiconSymbol.TagIdentifier &&
-                    nextSymbol == LexiconSymbol.Letter &&
-                    char.IsLetter(convertedCharacter))
-                {
-                    nextSymbol = LexiconSymbol.TagLetter;
-                }
+                if (CurrentTokenBuffer.Count > 0 && validTokenBuffer == LexiconSymbol.Assign)
+                    CurrentTokenBuffer.RemoveAt(CurrentTokenBuffer.Count - 1);
 
-                if (CurrentSymbol == LexiconSymbol.TagLetter &&
-                    nextSymbol == LexiconSymbol.Letter &&
-                    char.IsLetter(convertedCharacter))
-                {
-                    nextSymbol = LexiconSymbol.TagLetter;
-                }
+                
 
-                //Entities
-                if (CurrentSymbol == LexiconSymbol.EntityIdentifier &&
-                    nextSymbol == LexiconSymbol.Letter &&
-                    char.IsLetterOrDigit(convertedCharacter))
-                {
-                    nextSymbol = LexiconSymbol.EntityLetter;
-                }
-                if (CurrentSymbol == LexiconSymbol.EntityLetter &&
-                    nextSymbol == LexiconSymbol.Letter &&
-                    char.IsLetterOrDigit(convertedCharacter))
-                {
-                    nextSymbol = LexiconSymbol.EntityLetter;
-                }
-
-                //Create
-                if (CurrentSymbol == LexiconSymbol.Create &&
-                    nextSymbol == LexiconSymbol.Letter &&
-                    char.IsLetterOrDigit(convertedCharacter))
-                {
-                    nextSymbol = LexiconSymbol.CreatorLetter;
-                }
-
-                if (CurrentSymbol == LexiconSymbol.CreatorLetter &&
-                    nextSymbol == LexiconSymbol.Letter &&
-                    char.IsLetterOrDigit(convertedCharacter))
-                {
-                    nextSymbol = LexiconSymbol.CreatorLetter;
-                }
-
-                if (CurrentSymbol == LexiconSymbol.Number &&
-                    nextSymbol == LexiconSymbol.NotFound &&
-                    char.IsDigit(convertedCharacter))
-                {
-                    nextSymbol = LexiconSymbol.Number;
-                }
-
-                if ((CurrentSymbol == LexiconSymbol.PositiveSign ||
-                    CurrentSymbol == LexiconSymbol.NegativeSign) &&
-                    nextSymbol == LexiconSymbol.NotFound &&
-                    char.IsDigit(convertedCharacter))
-                {
-                    nextSymbol = LexiconSymbol.Number;
-                }
-
-                CurrentSymbol = nextSymbol;
+                CurrentSymbol = validTokenBuffer;
 
                 var mayStopSymbol = LanguageTokens.FindLexiconSymbol(new List<char>() { convertedCharacter });
                 if(mayStopSymbol == LexiconSymbol.SkipMaterial)

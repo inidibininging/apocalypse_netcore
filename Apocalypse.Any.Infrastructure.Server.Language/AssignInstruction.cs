@@ -9,7 +9,8 @@ namespace Apocalypse.Any.Infrastructure.Server.Language
 {
     public class AssignInstruction : AbstractInterpreterInstruction<AssignExpression>
     {
-        public AssignInstruction(Interpreter interpreter, AssignExpression assignExpression, int functionIndex) : base(interpreter, functionIndex, assignExpression)
+        public AssignInstruction(Interpreter interpreter, AssignExpression assignExpression, int functionIndex) 
+            : base(interpreter, assignExpression, functionIndex)
         {
         
         }
@@ -26,8 +27,9 @@ namespace Apocalypse.Any.Infrastructure.Server.Language
                 if (assignmentIndex < 0)
                     throw new InvalidOperationException("Function instruction cannot be found. Assignment must be in a function scope. Are you making an assignment inside a function?");
                 assignmentIndex--;
-            }
+            }            
             var scopeOfAssignment = (Owner.Instructions[assignmentIndex] as FunctionInstruction)?.Expression.Name;
+            
 
             var tagLayer = machine
                 .SharedContext
@@ -51,7 +53,8 @@ namespace Apocalypse.Any.Infrastructure.Server.Language
                 {
                     Name = Expression.Left.Name,
                     Value = Expression.Right.Name,
-                    Scope = scopeOfAssignment
+                    Scope = scopeOfAssignment,
+                    DataTypeSymbol = Expression.DataType.DataType
                 });
                 variable = tagLayer.DataAsEnumerable<TagVariable>().FirstOrDefault(t => t.Name == Expression.Left.Name &&
                                                                       t.Scope == scopeOfAssignment);

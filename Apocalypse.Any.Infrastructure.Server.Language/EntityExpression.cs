@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using System.Text;
+using Apocalypse.Any.Domain.Common.Model.Language;
 using States.Core.Infrastructure.Services;
 
 namespace Apocalypse.Any.Infrastructure.Server.Language
@@ -21,6 +22,8 @@ namespace Apocalypse.Any.Infrastructure.Server.Language
             }
             Name = string.Join("",entityName.ToString().Skip(1));
             Console.WriteLine($"Identifier set to {Name}");
+            if (string.IsNullOrWhiteSpace(Name))
+                throw new InvalidOperationException($"Syntax error: ${nameof(Name)} side is not implemented near {machine.SharedContext.CurrentBuffer}");
         }
     }
 }

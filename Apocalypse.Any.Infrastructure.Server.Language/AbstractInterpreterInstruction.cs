@@ -17,7 +17,7 @@ namespace Apocalypse.Any.Infrastructure.Server.Language
         // public int ScopeIndex { get; protected set; }
 
         public TExpr Expression { get; private set; }
-        protected AbstractInterpreterInstruction(Interpreter interpreter, int functionIndex, TExpr expression) {
+        protected AbstractInterpreterInstruction(Interpreter interpreter, TExpr expression, int functionIndex) {
             Owner = interpreter;
             FunctionIndex = functionIndex > -1
                 ? functionIndex

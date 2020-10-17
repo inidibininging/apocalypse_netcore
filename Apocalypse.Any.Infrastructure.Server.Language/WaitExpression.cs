@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Apocalypse.Any.Domain.Common.Model.Language;
 using States.Core.Infrastructure.Services;
 
 namespace Apocalypse.Any.Infrastructure.Server.Language
@@ -59,6 +60,12 @@ namespace Apocalypse.Any.Infrastructure.Server.Language
                           Number.Handle(machine);
                       }
                   }
+            if (Number == null)
+                throw new InvalidOperationException($"Syntax error: ${nameof(Number)} side is not implemented near {machine.SharedContext.CurrentBuffer}");
+            if (SignConverter == null)
+                throw new InvalidOperationException($"Syntax error: ${nameof(SignConverter)} side is not implemented near {machine.SharedContext.CurrentBuffer}");
+            if (Unit == null)
+                throw new InvalidOperationException($"Syntax error: ${nameof(Unit)} side is not implemented near {machine.SharedContext.CurrentBuffer}");
         }
     }
 }

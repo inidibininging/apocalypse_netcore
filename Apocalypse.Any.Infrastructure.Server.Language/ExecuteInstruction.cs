@@ -8,14 +8,14 @@ namespace Apocalypse.Any.Infrastructure.Server.Language
 {
     public class ExecuteInstruction : AbstractInterpreterInstruction<ExecuteExpression>
     {
-        public ExecuteInstruction(Interpreter interpreter, ExecuteExpression function, int functionIndex) : base(interpreter, functionIndex, function)
+        public ExecuteInstruction(Interpreter interpreter, ExecuteExpression function, int functionIndex) 
+            : base(interpreter, function, functionIndex)
         {
-         
+
         }
 
         public TagVariable GetVariableOfFunction(IStateMachine<string, IGameSectorLayerService> machine, int argumentIndex)
         {
-            TagVariable variable;
             //look up for the variable inside the execution instruction
             var callerArgument =
                 Expression

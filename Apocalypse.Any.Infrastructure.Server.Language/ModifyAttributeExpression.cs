@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Apocalypse.Any.Domain.Common.Model.Language;
 using Apocalypse.Any.Infrastructure.Server.Services.Data.Interfaces;
 using States.Core.Infrastructure.Services;
 
@@ -63,8 +64,8 @@ namespace Apocalypse.Any.Infrastructure.Server.Language
                     Section != null &&
                     Attribute != null)
                 {
-                    Console.WriteLine($"adding {nameof(FactionExpression)}");
-                    Identifier = new FactionExpression();
+                    Console.WriteLine($"adding {nameof(TagExpression)}");
+                    Identifier = new TagExpression();
                     Identifier.Handle(machine);
                 }
 
@@ -85,6 +86,7 @@ namespace Apocalypse.Any.Infrastructure.Server.Language
                     Section.Handle(machine);
                 }
                 
+                //this part sets the order of the  
                 if (machine.SharedContext.Current == LexiconSymbol.Letter && 
                     Identifier == null &&
                     Section != null &&
@@ -109,7 +111,19 @@ namespace Apocalypse.Any.Infrastructure.Server.Language
                     Number.Handle(machine);
                 }
             }
-        }
 
+            if (Identifier == null)
+            {
+                throw new ArgumentNullException($"{nameof(Identifier)} not found. Maybe a syntax error? Ex. Mod Stats Health +123 myVar or Mod Stats Health +123 .myTag");
+            }
+            if (Section == null)
+            {
+                throw new ArgumentNullException($"{nameof(Section)} not found. Maybe a syntax error? Ex. Mod Stats Health +123 myVar or Mod Stats Health +123 .myTag");
+            }
+            if (Number == null)
+            {
+                throw new ArgumentNullException($"{nameof(Number)} not found. Maybe a syntax error? Ex. Mod Stats Health +123 myVar or Mod Stats Health +123 .myTag");
+            }
+        }
     }
 }

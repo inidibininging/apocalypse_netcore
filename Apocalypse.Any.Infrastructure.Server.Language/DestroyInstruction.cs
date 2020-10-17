@@ -10,7 +10,8 @@ namespace Apocalypse.Any.Infrastructure.Server.Language
 {
     public class DestroyInstruction : AbstractInterpreterInstruction<DestroyExpression>
     {
-        public DestroyInstruction(Interpreter interpreter, DestroyExpression createExpression, int functionIndex) : base(interpreter, functionIndex, createExpression)
+        public DestroyInstruction(Interpreter interpreter, DestroyExpression createExpression, int functionIndex) 
+            : base(interpreter, createExpression, functionIndex)
         {
         }
 

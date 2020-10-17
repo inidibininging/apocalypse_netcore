@@ -13,12 +13,12 @@
 
 #---------------------------------- Content ---------------------------------#
 
-#begin Font/New Time Nerd.spritefont
+#begin Font/FFFForward.spritefont
 /importer:FontDescriptionImporter
 /processor:FontDescriptionProcessor
 /processorParam:PremultiplyAlpha=True
 /processorParam:TextureFormat=Compressed
-/build:Font/New Time Nerd.spritefont
+/build:Font/FFFForward.spritefont
 
 #begin Image/ambient_light.png
 /importer:TextureImporter

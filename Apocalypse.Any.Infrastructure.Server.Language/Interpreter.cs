@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using Apocalypse.Any.Domain.Common.Model.Language;
 using Apocalypse.Any.Infrastructure.Server.Services.Data.Interfaces;
 using States.Core.Common;
 using States.Core.Infrastructure.Services;
@@ -48,9 +49,11 @@ namespace Apocalypse.Any.Infrastructure.Server.Language
                         if(SharedContext.Current == LexiconSymbol.NotFound)
                             continue;
 
+                        HandleInstruction<IfExpression, IfInstruction>((s) => s == LexiconSymbol.If);
+                        HandleInstruction<EndIfExpression, EndIfInstruction>((s) => s == LexiconSymbol.EndIf);
                         HandleInstruction<CreateExpression, CreateInstruction>((s) => s == LexiconSymbol.Create);
                         HandleInstruction<DestroyExpression, DestroyInstruction>((s) => s == LexiconSymbol.Destroy);
-                        HandleInstruction<ExecuteExpression, ExecuteInstruction>((s) => s == LexiconSymbol.ExecuteLetter); //TODO: Fix this 
+                        HandleInstruction<ExecuteExpression, ExecuteInstruction>((s) => s == LexiconSymbol.Execute); //TODO: Fix this 
                         HandleInstruction<FunctionExpression, FunctionInstruction>((s) => s == LexiconSymbol.FunctionIdentifier); //TODO: Fix this
                         HandleInstruction<AssignExpression, AssignInstruction>((s) => s == LexiconSymbol.Set);
                         HandleInstruction<WaitExpression, WaitInstruction>((s) => s == LexiconSymbol.Wait);
