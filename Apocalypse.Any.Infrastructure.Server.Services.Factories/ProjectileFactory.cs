@@ -39,7 +39,7 @@ namespace Apocalypse.Any.Infrastructure.Common.Services.Network.Interfaces.Facto
                 new Projectile()
                 {
                     Damage = (owner.Stats.Attack + owner.Stats.Strength),
-                    OwnerName = owner.Name,
+                    OwnerName = owner.DisplayName,
                     CurrentImage = new ImageData()
                     {
                         Id = Guid.NewGuid().ToString(),

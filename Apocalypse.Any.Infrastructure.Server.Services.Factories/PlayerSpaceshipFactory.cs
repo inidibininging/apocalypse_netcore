@@ -29,7 +29,7 @@ namespace Apocalypse.Any.Infrastructure.Common.Services.Network.Interfaces.Facto
             
             return new PlayerSpaceship()
             {
-                Name = loginToken,
+                DisplayName = loginToken,
                 LoginToken = loginToken,
                 Stats = new CharacterSheet()
                 {

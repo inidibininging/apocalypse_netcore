@@ -16,10 +16,10 @@ namespace Apocalypse.Any.Infrastructure.Server.Services.Mechanics.CLI
         public bool Active { get; set; } = true;
         private readonly IUserAuthenticationService UserAuthenticationService;
         private readonly Interpreter CommandInterpreter;
-        public CLIPassthroughMechanic(IUserAuthenticationService userAuthenticationService)
+        public CLIPassthroughMechanic(IUserAuthenticationService userAuthenticationService, string runOperation)
         {
             UserAuthenticationService = userAuthenticationService ?? throw new ArgumentNullException(nameof(userAuthenticationService));
-            CommandInterpreter = new Interpreter();
+            CommandInterpreter = new Interpreter(runOperation);
         }
 
         public IGameSectorsOwner Update(IGameSectorsOwner entity)

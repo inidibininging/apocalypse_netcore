@@ -1,9 +1,10 @@
 using System;
 
-namespace Apocalypse.Any.Infrastructure.Server.Language
+namespace Apocalypse.Any.Domain.Common.Model.Language
 {
     public enum LexiconSymbol
     {
+        _0,
         NA,
         SkipMaterial,
         Separator,
@@ -15,8 +16,22 @@ namespace Apocalypse.Any.Infrastructure.Server.Language
         Color,
         Alpha,
         Rotation,
+        Letter,
+        Identifier,
         X,
         Y,
+        If,
+        EndIf,
+        Equal,
+        Assign,
+        NotEqual,
+        LessThan,
+        LessEqualThan,
+        GreaterThan,
+        GreaterEqualThan,
+        GroupBegin,
+        GroupEnd,
+        ArgumentSeparator,
         Create,
         CreatorIdentifier,
         CreatorLetter,
@@ -24,8 +39,11 @@ namespace Apocalypse.Any.Infrastructure.Server.Language
         DestroyerLetter,
         Destroy,
         EntityIdentifier,
-        FactionIdentifier,
-        FactionLetter,
+        Set,
+        TagDataType,
+        NumberDataType,
+        TagIdentifier,
+        TagLetter,
         EntityLetter,
         Entity,
         Stats,
@@ -34,13 +52,18 @@ namespace Apocalypse.Any.Infrastructure.Server.Language
         FunctionLetter,
         Function,
         Execute,
+        ExecuteLetter,
+        StringScope,
+        StringCharacter,
+        Digit,
         Number,
-        Miliseconds,
+        Milliseconds,
         Seconds,
         Minutes,
         Hours,
         Wait,
         Every,
         NotFound,
+
     }
 }

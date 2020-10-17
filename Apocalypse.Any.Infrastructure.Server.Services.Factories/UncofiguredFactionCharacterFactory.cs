@@ -24,10 +24,9 @@ namespace Apocalypse.Any.Infrastructure.Server.Services.Factories
         protected override TCharacter UseConverter<TParam>(TParam parameter)
             => new TCharacter()
             {
-                Name = $"{typeof(TCharacter).Name}{ Guid.NewGuid()}",
+                DisplayName = $"{typeof(TCharacter).Name}{ Guid.NewGuid()}",
                 Tags = new List<string>() { parameter as string },
                 CurrentImage = new ImageData(),
-                IconImage = new ImageData(),
                 Stats = new CharacterSheet()
             };
     }

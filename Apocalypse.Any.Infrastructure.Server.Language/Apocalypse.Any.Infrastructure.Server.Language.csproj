@@ -1,6 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
+    <ProjectReference Include="..\Apocalypse.Any.Domain.Common.Model.Language\Apocalypse.Any.Domain.Common.Model.Language.csproj" />
     <ProjectReference Include="..\Apocalypse.Any.Infrastructure.Server.Services.Data.Interfaces\Apocalypse.Any.Infrastructure.Server.Services.Data.Interfaces.csproj" />
     <ProjectReference Include="..\States\States.Core\States.Core.csproj" />
     <ProjectReference Include="..\Apocalypse.Any.Domain.Common.Model\Apocalypse.Any.Domain.Common.Model.csproj" />

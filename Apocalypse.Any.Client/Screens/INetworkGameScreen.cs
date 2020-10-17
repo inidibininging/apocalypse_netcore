@@ -24,6 +24,7 @@ namespace Apocalypse.Any.Client.Screens
         SpriteSheet HealthImage { get; set; }
         SpriteSheet SpeedImage { get; set; }
         SpriteSheet StrenghImage { get; set; }
+        SpriteSheet DialogImage { get; set; }
         SpriteSheet CursorImage { get; set; }
         // SpriteSheet LerpMouseImage { get; set; }
 
@@ -50,6 +51,8 @@ namespace Apocalypse.Any.Client.Screens
         IdentifiableNetworkCommand CurrentNetworkCommand { get; set; }
         GameStateData CurrentGameStateData { get; set; }
         PlayerMetadataBag LastMetadataBag { get; set; }
+
+        VisualText MoneyCount { get; set; }
 
         IWindow InfoWindow { get; set; }
         IWindow InventoryWindow { get; set; }

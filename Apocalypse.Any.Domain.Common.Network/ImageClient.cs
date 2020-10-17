@@ -60,7 +60,7 @@ namespace Apocalypse.Any.Domain.Common.Network
             //this is a point where a synchronization method can be introduced
             if (ServerData?.Id == null)
             {
-                Console.WriteLine($"First registration {ServerData.SelectedFrame}");
+                //Console.WriteLine($"First registration {ServerData.SelectedFrame}");
                 //first registration
                 data.Alpha = currentImageData.Alpha;
                 data.Color = currentImageData.Color;
@@ -75,7 +75,7 @@ namespace Apocalypse.Any.Domain.Common.Network
             }
             else
             {
-                Console.WriteLine($"Already registered {ServerData.SelectedFrame}");
+                //Console.WriteLine($"Already registered {ServerData.SelectedFrame}");
                 Alpha = ServerData.Alpha;
                 Color = ServerData.Color;
                 LayerDepth = ServerData.LayerDepth;

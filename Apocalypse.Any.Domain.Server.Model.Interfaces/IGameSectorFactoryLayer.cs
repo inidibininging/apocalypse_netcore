@@ -4,6 +4,22 @@ using System.Collections.Generic;
 
 namespace Apocalypse.Any.Domain.Server.Model.Interfaces
 {
+    /// <summary>
+    /// Provides a interface to all factories in a game sector
+    /// </summary>
+    /// <typeparam name="TPlayer"></typeparam>
+    /// <typeparam name="TEnemy"></typeparam>
+    /// <typeparam name="TItem"></typeparam>
+    /// <typeparam name="TProjectile"></typeparam>
+    /// <typeparam name="TEntitiesBaseType"></typeparam>
+    /// <typeparam name="TGeneralCharacter"></typeparam>
+    /// <typeparam name="TImageData"></typeparam>
+    /// <typeparam name="TPlayerKey"></typeparam>
+    /// <typeparam name="TEnemyKey"></typeparam>
+    /// <typeparam name="TItemKey"></typeparam>
+    /// <typeparam name="TProjectileKey"></typeparam>
+    /// <typeparam name="TGeneralCharacterKey"></typeparam>
+    /// <typeparam name="TImageDataKey"></typeparam>
     public interface IGameSectorFactoryLayer<TPlayer,
                                              TEnemy,
                                              TItem,
@@ -18,13 +34,6 @@ namespace Apocalypse.Any.Domain.Server.Model.Interfaces
                                              TProjectileKey,
                                              TGeneralCharacterKey,
                                              TImageDataKey>
-
-        //TPlayerParam,
-        //TEnemyParam,
-        //TItemParam,
-        //TProjectileParam,
-        //TGeneralCharacterParam,
-        //TImageDataParam>
         where TPlayer : TEntitiesBaseType, new()
         where TEnemy : TEntitiesBaseType, new()
         where TItem : TEntitiesBaseType, new()
@@ -39,5 +48,6 @@ namespace Apocalypse.Any.Domain.Server.Model.Interfaces
         IDictionary<TProjectileKey, IGenericTypeFactory<TProjectile>> ProjectileFactory { get; set; }
         IDictionary<TGeneralCharacterKey, IGenericTypeFactory<TGeneralCharacter>> GeneralCharacterFactory { get; set; }
         IDictionary<TImageDataKey, IGenericTypeFactory<TImageData>> ImageDataFactory { get; set; }
+        
     }
 }

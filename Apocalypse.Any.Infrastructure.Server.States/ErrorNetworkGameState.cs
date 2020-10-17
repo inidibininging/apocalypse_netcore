@@ -17,7 +17,7 @@ namespace Apocalypse.Any.Infrastructure.Server.States
             }
             catch (Exception ex)
             {
-                gameStateContext.Logger.Log(LogLevel.Error, ex.Message + Environment.NewLine + ex.InnerException.Message);
+                gameStateContext.Logger.Log(LogLevel.Error, ex.Message + Environment.NewLine + ex.InnerException?.Message);
             }
 
             gameStateContext.ChangeHandlerEasier(gameStateContext.GameStateRegistrar.GetNeworkLayerState((byte)ServerInternalGameStates.Login), networkCommandConnectionToHandle);

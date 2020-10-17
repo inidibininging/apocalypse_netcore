@@ -22,7 +22,7 @@ namespace Apocalypse.Any.GameServer.States.Sector.Mechanics.PlayerMechanics
                                                  .SharedContext
                                                  .DataLayer
                                                  .PlayerItems
-                                                 .FirstOrDefault(pItem => pItem.OwnerName == player.Name && pItem.Selected);
+                                                 .FirstOrDefault(pItem => pItem.OwnerName == player.DisplayName && pItem.Selected);
                      machine
                     .SharedContext
                     .IODataLayer
@@ -33,7 +33,7 @@ namespace Apocalypse.Any.GameServer.States.Sector.Mechanics.PlayerMechanics
                             && machine
                                 .SharedContext
                                 .DataLayer
-                                .PlayerItems.Count(pItem => pItem.OwnerName == player.Name) != 1)
+                                .PlayerItems.Count(pItem => pItem.OwnerName == player.DisplayName) != 1)
                         {
                             //all these can generate a bug. what if there is only one item for the playeR?
                             previousSelectedItem.Selected = false;
@@ -41,7 +41,7 @@ namespace Apocalypse.Any.GameServer.States.Sector.Mechanics.PlayerMechanics
                                             .SharedContext
                                             .DataLayer
                                             .PlayerItems
-                                                .Where(pItem => pItem.OwnerName == player.Name)
+                                                .Where(pItem => pItem.OwnerName == player.DisplayName)
                                                 .OrderByDescending(pItem => pItem.Order)
                                                 .FirstOrDefault();
 
@@ -52,7 +52,7 @@ namespace Apocalypse.Any.GameServer.States.Sector.Mechanics.PlayerMechanics
                                             .SharedContext
                                             .DataLayer
                                             .PlayerItems
-                                                .FirstOrDefault(pItem => pItem.OwnerName == player.Name &&
+                                                .FirstOrDefault(pItem => pItem.OwnerName == player.DisplayName &&
                                                                 pItem.Order == previousSelectedItem.Order + 1);
 
                             if (previousSelectedItem == lastItem
@@ -62,7 +62,7 @@ namespace Apocalypse.Any.GameServer.States.Sector.Mechanics.PlayerMechanics
                                             .SharedContext
                                             .DataLayer
                                             .PlayerItems
-                                                .Where(pItem => pItem.OwnerName == player.Name && pItem.Order == 1)
+                                                .Where(pItem => pItem.OwnerName == player.DisplayName && pItem.Order == 1)
                                                 .FirstOrDefault();
                             if (nextItem != null)
                                 nextItem.Selected = true;

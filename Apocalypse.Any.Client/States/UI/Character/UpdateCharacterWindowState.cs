@@ -56,23 +56,32 @@ namespace Apocalypse.Any.Client.States.UI.Character
                 FadeTo.Update(machine.SharedContext.HealthImage.Alpha, 1, 0.1f);
                 FadeTo.Update(machine.SharedContext.SpeedImage.Alpha, 1, 0.1f);
                 FadeTo.Update(machine.SharedContext.StrenghImage.Alpha, 1, 0.1f);
+                FadeTo.Update(machine.SharedContext.DialogImage.Alpha, 1, 0.1f);
             }
             else
             {
                 FadeTo.Update(machine.SharedContext.HealthImage.Alpha, 0, 0.1f);
                 FadeTo.Update(machine.SharedContext.SpeedImage.Alpha, 0, 0.1f);
                 FadeTo.Update(machine.SharedContext.StrenghImage.Alpha, 0, 0.1f);
+                FadeTo.Update(machine.SharedContext.DialogImage.Alpha, 0, 0.1f);
             }
 
             machine.SharedContext.CharacterWindow.Position.X = MathHelper.Lerp(machine.SharedContext.CharacterWindow.Position.X, machine.SharedContext.CursorImage.Position.X - 128, 0.1f);
             machine.SharedContext.CharacterWindow.Position.Y = MathHelper.Lerp(machine.SharedContext.CharacterWindow.Position.Y, machine.SharedContext.CursorImage.Position.Y - 128, 0.1f);
 
+            var money = machine.SharedContext.LastMetadataBag?.MoneyCount.ToString();
+            machine.SharedContext.MoneyCount = money;
+
+            machine.SharedContext.MoneyCount.Position.X = machine.SharedContext.CharacterWindow.Position.X + 64;
+            machine.SharedContext.MoneyCount.Position.Y = machine.SharedContext.CharacterWindow.Position.Y - 64;
             machine.SharedContext.HealthImage.Position.X = machine.SharedContext.CharacterWindow.Position.X + 32;
             machine.SharedContext.HealthImage.Position.Y = machine.SharedContext.CharacterWindow.Position.Y + 32;
             machine.SharedContext.SpeedImage.Position.X = machine.SharedContext.CharacterWindow.Position.X + (32 + 64);
             machine.SharedContext.SpeedImage.Position.Y = machine.SharedContext.CharacterWindow.Position.Y + 32;
             machine.SharedContext.StrenghImage.Position.X = machine.SharedContext.CharacterWindow.Position.X + 64;
             machine.SharedContext.StrenghImage.Position.Y = machine.SharedContext.CharacterWindow.Position.Y + 32;
+            machine.SharedContext.DialogImage.Position.X = machine.SharedContext.CharacterWindow.Position.X + 64 + 64;
+            machine.SharedContext.DialogImage.Position.Y = machine.SharedContext.CharacterWindow.Position.Y + 32;
 
             if (machine.SharedContext.CurrentSheetSnapshot == null ||
                 machine.SharedContext.FirstSheetSnapshot == null)
@@ -99,6 +108,23 @@ namespace Apocalypse.Any.Client.States.UI.Character
             machine.SharedContext.HealthImage.Alpha.Alpha = 0.5f;
             machine.SharedContext.StrenghImage.Alpha.Alpha = 0.5f;
             machine.SharedContext.SpeedImage.Alpha.Alpha = 0.5f;
+            machine.SharedContext.DialogImage.Alpha.Alpha = 1.0f;
+
+            if (!string.IsNullOrWhiteSpace(machine.SharedContext.LastMetadataBag?.ServerEventName))
+            {
+                if (machine.SharedContext.LastMetadataBag?.ServerEventName == "Dialog")
+                {
+                    machine.SharedContext.DialogImage.SelectedFrame = "hud_misc_edit_8_8";
+                }
+                if (machine.SharedContext.LastMetadataBag?.ServerEventName == "Enemies")
+                {
+                    machine.SharedContext.DialogImage.SelectedFrame = "hud_misc_edit_7_8";
+                }
+            }                
+            else
+            {
+                machine.SharedContext.DialogImage.SelectedFrame = "hud_misc_edit_0_1";
+            }
 
             //health
             if (healthPercentage >= 0.9f)

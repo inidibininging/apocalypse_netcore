@@ -11,9 +11,9 @@ namespace Apocalypse.Any.Infrastructure.Server.Services.Data
     public class ExamplePlayerDialogService : IPlayerDialogService
     {
         private Dictionary<string, string> OpenedPlayerDialogs { get; set; } = new Dictionary<string, string>();
-        public IDialogService DialogService { get; }
+        private Func<IDialogService> DialogService { get; }
 
-        public ExamplePlayerDialogService(IDialogService dialogService)
+        public ExamplePlayerDialogService(Func<IDialogService> dialogService)
         {
             DialogService = dialogService ?? throw new ArgumentNullException(nameof(dialogService));
         }
@@ -23,11 +23,10 @@ namespace Apocalypse.Any.Infrastructure.Server.Services.Data
             if (!OpenedPlayerDialogs.ContainsKey(loginToken))
                 return null;
             var currentDialogId = OpenedPlayerDialogs[loginToken];
-            return DialogService.GetDialogNode(currentDialogId);
+            return DialogService().GetDialogNode(currentDialogId);
         }
 
         public void SwitchDialogNodeByLoginToken(string loginToken, string id) => OpenedPlayerDialogs[loginToken] = id;
-
 
 
     }

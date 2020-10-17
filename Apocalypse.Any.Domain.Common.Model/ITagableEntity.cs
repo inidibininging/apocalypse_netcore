@@ -10,7 +10,7 @@ namespace Apocalypse.Any.Domain.Common.Model
     /// - dividing entities into factions
     /// - events
     /// </summary>
-    public interface IFactionableEntity
+    public interface ITagableEntity
     {
         List<string> Tags { get; set; }
     }

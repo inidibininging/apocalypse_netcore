@@ -23,7 +23,7 @@ namespace Apocalypse.Any.Client.States.UI.Dialog
             machine.SharedContext.DialogWindow.Position = new MovementBehaviour();
             machine.SharedContext.DialogWindow.Rotation = new RotationBehaviour();
             machine.SharedContext.DialogWindow.Color = Color.BlueViolet;
-            machine.SharedContext.DialogWindow.Scale = new Vector2(640, 448);
+            machine.SharedContext.DialogWindow.Scale = new Vector2(640, 448 + 64);
             machine.SharedContext.DialogWindow.Alpha.Alpha = 0.5f;
             machine.SharedContext.DialogWindow.LayerDepth = DrawingPlainOrder.UI;
 

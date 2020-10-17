@@ -166,14 +166,14 @@ namespace Apocalypse.Any.Infrastructure.Common.Services.Network.Interfaces.Facto
 
             var foundProp = props.Where(prop => prop.Name.Replace(propSuffix, "") == selectedStat.Item1);
             if (foundProp == null || !foundProp.Any())
-                return item.Name;
+                return item.DisplayName;
             else
             {
                 var foundListMaybeNull = foundProp.FirstOrDefault();
 
                 var foundList = ((List<string>)foundListMaybeNull.GetValue(this));
 
-                return $"{item.Name} of {foundList.ElementAt(Randomness.Instance.From(0, foundList.Count))}";
+                return $"{item.DisplayName} of {foundList.ElementAt(Randomness.Instance.From(0, foundList.Count))}";
             }
         }
     }

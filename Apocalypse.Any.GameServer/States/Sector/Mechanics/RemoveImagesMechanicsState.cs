@@ -1,4 +1,5 @@
-﻿using Apocalypse.Any.Infrastructure.Server.Services.Data.Interfaces;
+﻿using Apocalypse.Any.Domain.Common.Model.Network;
+using Apocalypse.Any.Infrastructure.Server.Services.Data.Interfaces;
 using States.Core.Infrastructure.Services;
 using System;
 using System.Collections.Concurrent;
@@ -16,9 +17,9 @@ namespace Apocalypse.Any.GameServer.States.Sector.Mechanics
         };
         public void Handle(IStateMachine<string, IGameSectorLayerService> machine)
         {
-            machine.SharedContext.DataLayer.ImageData = new ConcurrentBag<Domain.Common.Model.Network.ImageData>(
+            machine.SharedContext.DataLayer.ImageData = new ConcurrentBag<ImageData>(
                                                          machine.SharedContext.DataLayer.ImageData.Except(
-                                                            machine.SharedContext.DataLayer.ImageData.Where(img => Remove.Contains(img.SelectedFrame))).ToList());
+                                                         machine.SharedContext.DataLayer.ImageData.Where(img => Remove.Contains(img.SelectedFrame))).ToList());
         }
     }
 }

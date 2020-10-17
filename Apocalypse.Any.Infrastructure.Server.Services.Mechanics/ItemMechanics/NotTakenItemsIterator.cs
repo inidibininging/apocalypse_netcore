@@ -9,6 +9,6 @@ namespace Apocalypse.Any.Infrastructure.Server.Services.Mechanics.EnemyMechanics
 {
     public class NotTakenItemsIterator: IEnumerableCharacterEntityMechanic<Item>
     {
-        public IEnumerable<Item> Update(IEnumerable<Item> enumerables) => enumerables.Where(item => !item.Taken);
+        public IEnumerable<Item> Update(IEnumerable<Item> enumerables) => enumerables.Where(item => !item.InInventory);
     }
 }

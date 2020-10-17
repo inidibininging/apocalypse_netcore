@@ -173,7 +173,7 @@ namespace Apocalypse.Any.Infrastructure.Server.Worker
             foreach (var obj in inputs)
             {
                 //Console.WriteLine(dataLayer.Enemies.Select(enemy => enemy));
-                Console.WriteLine((obj as GameStateDataLayer).Enemies.FirstOrDefault().Name);
+                Console.WriteLine((obj as GameStateDataLayer).Enemies.FirstOrDefault().DisplayName);
                 Output.SendToClient<string>(NetworkCommandConstants.ReceiveWorkCommand, "hub", Client.ServerConnection);
             }
         }

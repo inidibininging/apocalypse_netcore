@@ -23,12 +23,12 @@ namespace Apocalypse.Any.Client.States.UI.Dialog
             if (hoveredText == null)
                 return;
 
-            var dialog = machine.SharedContext.LastMetadataBag?.CurrentDialog.DialogIdContent.FirstOrDefault(dlg => dlg.Item2 == hoveredText.Text);
+            var dialog = machine.SharedContext.LastMetadataBag?.CurrentDialog.DialogIdContent?.FirstOrDefault(dlg => dlg.Item2 == hoveredText.Text);
             if(dialog == null)
             {
                 
             }
-            machine.SharedContext.LastMetadataBag.EventName = hoveredText.Text;
+            machine.SharedContext.LastMetadataBag.ClientEventName = hoveredText.Text;
             hoveredText.Scale = new Vector2(hoveredText.Scale.X + 0.25f, hoveredText.Scale.Y + 0.25f);
         }
     }

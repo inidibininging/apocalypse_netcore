@@ -11,9 +11,10 @@ namespace Apocalypse.Any.Domain.Common.Model
     {
         public string Id { get; set; }
         public string Content { get; set; }
-        public int FontSize { get; set; }
+        //public int FontSize { get; set; }
         public List<Tuple<string,string>> DialogIdContent { get; set; }
         public CharacterSheet Requirement { get; set; }
         public ImageData Portrait { get; set; }
+        public string DynamicRelationId { get; set; }
     }
 }

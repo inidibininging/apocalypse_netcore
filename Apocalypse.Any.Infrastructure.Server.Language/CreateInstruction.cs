@@ -1,4 +1,5 @@
 ﻿using Apocalypse.Any.Domain.Common.Model;
+using Apocalypse.Any.Domain.Common.Model.Language;
 using Apocalypse.Any.Infrastructure.Server.Services.Data.Interfaces;
 using States.Core.Infrastructure.Services;
 using System;
@@ -8,45 +9,79 @@ using System.Text;
 
 namespace Apocalypse.Any.Infrastructure.Server.Language
 {
-    public class CreateInstruction : AbstractInterpreterInstruction
+    public class CreateInstruction : AbstractInterpreterInstruction<CreateExpression>
     {
-        public CreateInstruction(Interpreter interpreter, CreateExpression createExpression) : base(interpreter)
+        public CreateInstruction(Interpreter interpreter, CreateExpression createExpression, int functionIndex)
+            : base(interpreter, createExpression, functionIndex)
         {
             Console.WriteLine("adding create instruction");
-            CreateExpression = createExpression;
         }
-        private CreateExpression CreateExpression { get; set; }
+        
 
         public override void Handle(IStateMachine<string, IGameSectorLayerService> machine)
         {
-            if (CreateExpression == null)
-                throw new ArgumentNullException(nameof(CreateExpression));
 
-            var creatorName = CreateExpression.Creator.Name;
-            if (machine.SharedContext.Factories.EnemyFactory.ContainsKey(CreateExpression.Creator.Name))
+            var argumentAsVariable = Expression.Identifier.Name;
+            if (Expression.Identifier is IdentifierExpression)
+            {                
+                argumentAsVariable = GetVariable(machine).Value;
+            }
+
+            if (machine.SharedContext.Factories.EnemyFactory.ContainsKey(Expression.Creator.Name))
             {
-                var entity = machine.SharedContext.Factories.EnemyFactory[creatorName].Create(CreateExpression.Identifier.Name);
+                var entity = machine.SharedContext.Factories.EnemyFactory[Expression.Creator.Name].Create(argumentAsVariable);
                 machine.SharedContext.DataLayer.Enemies.Add(entity);
                 return;
             }
-            if (machine.SharedContext.Factories.GeneralCharacterFactory.ContainsKey(CreateExpression.Creator.Name))
+            if (machine.SharedContext.Factories.GeneralCharacterFactory.ContainsKey(Expression.Creator.Name))
             {
-                var entity = machine.SharedContext.Factories.GeneralCharacterFactory[creatorName].Create(CreateExpression.Identifier.Name);
+                var entity = machine.SharedContext.Factories.GeneralCharacterFactory[Expression.Creator.Name].Create(argumentAsVariable);
                 machine.SharedContext.DataLayer.GeneralCharacter.Add(entity);
                 return;
             }
-            if(machine.SharedContext.Factories.ItemFactory.ContainsKey(CreateExpression.Creator.Name))
+            if (machine.SharedContext.Factories.ItemFactory.ContainsKey(Expression.Creator.Name))
             {
-                var entity = machine.SharedContext.Factories.ItemFactory[creatorName].Create(CreateExpression.Identifier.Name);
+                var entity = machine.SharedContext.Factories.ItemFactory[Expression.Creator.Name].Create(argumentAsVariable);
                 machine.SharedContext.DataLayer.Items.Add(entity);
                 return;
             }
-            //commented out for now. users should not be created through script for now.            
-            //if (machine.SharedContext.Factories.PlayerFactory.ContainsKey(CreateExpression.Creator.Name))
-            //{
-            //    return;
-            //}
         }
 
+        private TagVariable GetVariable(IStateMachine<string, IGameSectorLayerService> machine)
+        {
+            //get the variable out of the function scope 
+            var variable = machine
+                .SharedContext
+                .DataLayer
+                .GetLayersByType<TagVariable>()
+                .FirstOrDefault()
+                ?.DataAsEnumerable<TagVariable>()
+                .FirstOrDefault(t => t.Name == Expression.Identifier.Name &&
+                                     t.Scope == Scope?.Expression.Name);
+
+            var lastFn = Scope;
+            var identifierName = Expression.Identifier.Name;
+            while (variable == null)
+            {
+                var argumentIndex = lastFn.GetFunctionArgumentIndex(identifierName);
+                variable = lastFn
+                            .LastCaller
+                            .GetVariableOfFunction(machine, argumentIndex);
+                if (variable != null)
+                    continue;
+                identifierName = lastFn
+                    .LastCaller
+                    .Expression
+                    .Arguments
+                    .Arguments
+                    .ElementAt(argumentIndex)
+                    .Name;
+                lastFn = lastFn.LastCaller.Scope;
+
+            }
+            if(variable.DataTypeSymbol != LexiconSymbol.TagDataType)
+                throw new InvalidOperationException($"Syntax error. Cannot execute a modify instruction. Data type of variable is not a tag.");
+            return variable;
+        }
     }
 }

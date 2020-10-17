@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Apocalypse.Any.Domain.Common.Model.Language;
 using States.Core.Infrastructure.Services;
 
 namespace Apocalypse.Any.Infrastructure.Server.Language
@@ -11,7 +12,7 @@ namespace Apocalypse.Any.Infrastructure.Server.Language
         public TimeUnitExpression Unit { get; set; }
 
         public List<LexiconSymbol> ValidLexemes { get; set; } = new List<LexiconSymbol>() {
-                LexiconSymbol.Miliseconds,
+                LexiconSymbol.Milliseconds,
                 LexiconSymbol.Seconds,
                 LexiconSymbol.Hours,
                 LexiconSymbol.Minutes,
@@ -35,7 +36,7 @@ namespace Apocalypse.Any.Infrastructure.Server.Language
 
                       // Console.WriteLine(machine.SharedContext.CurrentBuffer);
                       if(
-                        machine.SharedContext.Current == LexiconSymbol.Miliseconds ||
+                        machine.SharedContext.Current == LexiconSymbol.Milliseconds ||
                         machine.SharedContext.Current == LexiconSymbol.Seconds ||
                         machine.SharedContext.Current == LexiconSymbol.Minutes ||
                         machine.SharedContext.Current == LexiconSymbol.Hours)
@@ -59,6 +60,12 @@ namespace Apocalypse.Any.Infrastructure.Server.Language
                           Number.Handle(machine);
                       }
                   }
+            if (Number == null)
+                throw new InvalidOperationException($"Syntax error: ${nameof(Number)} side is not implemented near {machine.SharedContext.CurrentBuffer}");
+            if (SignConverter == null)
+                throw new InvalidOperationException($"Syntax error: ${nameof(SignConverter)} side is not implemented near {machine.SharedContext.CurrentBuffer}");
+            if (Unit == null)
+                throw new InvalidOperationException($"Syntax error: ${nameof(Unit)} side is not implemented near {machine.SharedContext.CurrentBuffer}");
         }
     }
 }

@@ -115,7 +115,7 @@ namespace Apocalypse.Any.Client.States.UI.Inventory
                     foreach(var item in machine.SharedContext.LastMetadataBag.Items)
                     {
                         
-                        machine.SharedContext.Messages.Add(item.Name);
+                        machine.SharedContext.Messages.Add(item.DisplayName);
                     }
                 }
                 //machine.SharedContext.Messages.Add("no inventory images found to update");

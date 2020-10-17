@@ -14,6 +14,7 @@
     <ProjectReference Include="..\Apocalypse.Any.Infrastructure.Server.Sector.Interfaces\Apocalypse.Any.Infrastructure.Server.Sector.Interfaces.csproj" />
     <ProjectReference Include="..\Apocalypse.Any.Infrastructure.Server.Services.Data.Interfaces\Apocalypse.Any.Infrastructure.Server.Services.Data.Interfaces.csproj" />
     <ProjectReference Include="..\Apocalypse.Any.Infrastructure.Server.Services.Mechanics.Interfaces\Apocalypse.Any.Infrastructure.Server.Services.Mechanics.Interfaces.csproj" />
+    <ProjectReference Include="..\Apocalypse.Any.Infrastructure.Server.Services.Transformations\Apocalypse.Any.Infrastructure.Server.Services.Transformations.csproj" />
   </ItemGroup>
 
 </Project>

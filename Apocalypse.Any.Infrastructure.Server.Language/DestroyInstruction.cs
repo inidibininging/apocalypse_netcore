@@ -8,21 +8,19 @@ using System.Text;
 
 namespace Apocalypse.Any.Infrastructure.Server.Language
 {
-    public class DestroyInstruction : AbstractInterpreterInstruction
+    public class DestroyInstruction : AbstractInterpreterInstruction<DestroyExpression>
     {
-        public DestroyInstruction(Interpreter interpreter, DestroyExpression createExpression) : base(interpreter)
+        public DestroyInstruction(Interpreter interpreter, DestroyExpression createExpression, int functionIndex) 
+            : base(interpreter, createExpression, functionIndex)
         {
-            Console.WriteLine("adding destroy instruction");
-            DestroyExpression = createExpression;
         }
-        private DestroyExpression DestroyExpression { get; set; }
 
         public override void Handle(IStateMachine<string, IGameSectorLayerService> machine)
         {
-            if (DestroyExpression == null)
+            if (Expression == null)
                 throw new ArgumentNullException(nameof(DestroyExpression));
 
-            var factionToDestroy = DestroyExpression.Identifier.Name;
+            var factionToDestroy = Expression.Identifier.Name;
             GetAllValidCharacters(machine)
                 .Where(character => character.Tags.Contains(factionToDestroy))
                 .ToList()

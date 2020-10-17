@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Apocalypse.Any.Domain.Common.Model;
+using Apocalypse.Any.Domain.Common.Model.Language;
 using Apocalypse.Any.Domain.Common.Model.Network;
 using Apocalypse.Any.Domain.Common.Model.RPG;
 using Apocalypse.Any.Infrastructure.Server.Services.Data.Interfaces;
@@ -9,43 +10,83 @@ using States.Core.Infrastructure.Services;
 
 namespace Apocalypse.Any.Infrastructure.Server.Language
 {
-    public class ModifyInstruction : AbstractInterpreterInstruction
+    public class ModifyInstruction : AbstractInterpreterInstruction<ModifyAttributeExpression>
     {
-        public ModifyInstruction(Interpreter interpreter, ModifyAttributeExpression modifyExpression) : base(interpreter)
+        public ModifyInstruction(Interpreter interpreter, ModifyAttributeExpression modifyExpression, int functionIndex) 
+            : base(interpreter, modifyExpression, functionIndex)
         {
             Console.WriteLine("adding mod instruction");
-            ModifyExpression = modifyExpression;
         }
-        private ModifyAttributeExpression ModifyExpression { get; set; }
 
+        
         public override void Handle(IStateMachine<string, IGameSectorLayerService> machine)
         {
-            if (ModifyExpression.Identifier is EntityExpression)
+            if (Expression.Identifier is IdentifierExpression)
+                HandleIdentifier(machine);
+            if (Expression.Identifier is EntityExpression)
                 HandleEntity(machine);
-            if (ModifyExpression.Identifier is FactionExpression)
-                HandleFaction(machine);
+            if (Expression.Identifier is TagExpression)
+                HandleFaction(machine, Expression.Identifier.Name);
+        }
+
+        private void HandleIdentifier(IStateMachine<string, IGameSectorLayerService> machine)
+        {
+            //get the variable out of the function scope 
+            var variable = machine
+                .SharedContext
+                .DataLayer
+                .GetLayersByType<TagVariable>()
+                .FirstOrDefault()
+                ?.DataAsEnumerable<TagVariable>()
+                .FirstOrDefault(t => t.Name == Expression.Identifier.Name &&
+                                     t.Scope == Scope?.Expression.Name);
+
+            var lastFn = Scope;
+            var identifierName = Expression.Identifier.Name;
+            while (variable == null)
+            {
+                var argumentIndex = lastFn.GetFunctionArgumentIndex(identifierName);
+                variable = lastFn
+                            .LastCaller
+                            .GetVariableOfFunction(machine, argumentIndex);
+                if (variable != null) 
+                    continue;
+                identifierName = lastFn
+                    .LastCaller
+                    .Expression
+                    .Arguments
+                    .Arguments
+                    .ElementAt(argumentIndex)
+                    .Name;
+                lastFn = lastFn.LastCaller.Scope;
+                
+            }
+            if (variable.DataTypeSymbol != LexiconSymbol.TagDataType)
+                throw new InvalidOperationException($"Syntax error. Cannot execute a modify instruction. Data type of variable is not a tag.");
+
+            HandleFaction(machine, variable.Value);
         }
         
         private void HandleCharacter(CharacterEntity character)
         {
-            if (ModifyExpression.Section.Name == "Position" ||
-               ModifyExpression.Section.Name == "Alpha") // heap values
+            if (Expression.Section.Name == "Position" ||
+                Expression.Section.Name == "Alpha") // heap values
             {
                 SetPropertyForImageData(character.CurrentImage);
                 return;
             }
-            if (ModifyExpression.Section.Name == "Color")
+            if (Expression.Section.Name == "Color")
             {
                 ColorStrategy(character);
                 return;
             }
-            if (ModifyExpression.Section.Name == "Scale")
+            if (Expression.Section.Name == "Scale")
             {
                 ScaleStrategy(character);
                 return;
             }
 
-            if (ModifyExpression.Section.Name == "Stats")
+            if (Expression.Section.Name == "Stats")
             {
                 SetStatsCharacterProperty(character.Stats);
                 return;
@@ -53,22 +94,26 @@ namespace Apocalypse.Any.Infrastructure.Server.Language
         }
         private void HandleEntity(IStateMachine<string, IGameSectorLayerService> machine)
         {
-            var getByName = new Func<CharacterEntity, bool>((entity) => entity.Name == ModifyExpression.Identifier.Name);
+            var getByName = new Func<CharacterEntity, bool>((entity) => entity.DisplayName == Expression.Identifier.Name);
             var selectedCharacter = GetAllValidCharacters(machine).FirstOrDefault(getByName);
             HandleCharacter(selectedCharacter);
         }
         private void SetPropertyForImageData(ImageData imageData) 
         {
-            var propertyInfo = imageData.GetType().GetProperty(ModifyExpression.Section.Name);
+            var propertyInfo = imageData.GetType().GetProperty(Expression.Section.Name);
+            if (propertyInfo is null) return;
             var property = propertyInfo.GetValue(imageData);
-            var attribute = property.GetType().GetProperty(ModifyExpression.Attribute.Name);
-            attribute.SetValue(property, ModifyExpression.Number.NumberValue * ModifyExpression.SignConverter.Polarity);
+            var attribute = property.GetType().GetProperty(Expression.Attribute.Name);
+            attribute?.SetValue(property, Expression.Number.NumberValue * Expression.SignConverter.Polarity);
         }
         private void SetStatsCharacterProperty(CharacterSheet sheet)
         {
-            var propertyInfo = sheet.GetType().GetProperty(ModifyExpression.Attribute.Name);
-            var property = propertyInfo.GetValue(sheet);
-            propertyInfo.SetValue(sheet, ModifyExpression.Number.NumberValue * ModifyExpression.SignConverter.Polarity);
+            var propertyInfo = sheet.GetType().GetProperty(Expression.Attribute.Name);
+            if (!(propertyInfo is null))
+            {
+                var property = propertyInfo.GetValue(sheet);
+                propertyInfo.SetValue(sheet, Expression.Number.NumberValue * Expression.SignConverter.Polarity);
+            }
         }
 
         //private void PositionStrategy(CharacterEntity character)
@@ -81,40 +126,40 @@ namespace Apocalypse.Any.Infrastructure.Server.Language
         private void ScaleStrategy(CharacterEntity character)
         {
             // I have to do this due to the value type.
-            var valueToPass = ModifyExpression.Number.NumberValue * ModifyExpression.SignConverter.Polarity;
+            var valueToPass = Expression.Number.NumberValue * Expression.SignConverter.Polarity;
             if (!valueToPass.HasValue)
                 return;
-            if (ModifyExpression.Attribute.Name == "X")
+            if (Expression.Attribute.Name == "X")
                 character.CurrentImage.Scale = new Microsoft.Xna.Framework.Vector2(valueToPass.Value, character.CurrentImage.Scale.Y);
-            if (ModifyExpression.Attribute.Name == "Y")
+            if (Expression.Attribute.Name == "Y")
                 character.CurrentImage.Scale = new Microsoft.Xna.Framework.Vector2(character.CurrentImage.Scale.X, valueToPass.Value);
         }
 
         private void ColorStrategy(CharacterEntity character)        
         {
-            var valueToPass = ModifyExpression.Number.NumberValue * ModifyExpression.SignConverter.Polarity;
+            var valueToPass = Expression.Number.NumberValue * Expression.SignConverter.Polarity;
             if (!valueToPass.HasValue)
                 return;
 
-            if (ModifyExpression.Attribute.Name == "R")
+            if (Expression.Attribute.Name == "R")
                 character.CurrentImage.Color = new  Microsoft.Xna.Framework.Color(
                                                     (int)valueToPass,
                                                     character.CurrentImage.Color.G,
                                                     character.CurrentImage.Color.B,
                                                     character.CurrentImage.Color.A);
-            if (ModifyExpression.Attribute.Name == "G")
+            if (Expression.Attribute.Name == "G")
                 character.CurrentImage.Color = new Microsoft.Xna.Framework.Color(
                                                     character.CurrentImage.Color.R,
                                                      (int)valueToPass,
                                                     character.CurrentImage.Color.B,
                                                     character.CurrentImage.Color.A);
-            if (ModifyExpression.Attribute.Name == "B")
+            if (Expression.Attribute.Name == "B")
                 character.CurrentImage.Color = new Microsoft.Xna.Framework.Color(
                                                     character.CurrentImage.Color.R,
                                                     character.CurrentImage.Color.G,
                                                      (int)valueToPass,
                                                     character.CurrentImage.Color.A);
-            if (ModifyExpression.Attribute.Name == "A")
+            if (Expression.Attribute.Name == "A")
                 character.CurrentImage.Color = new Microsoft.Xna.Framework.Color(
                                                     character.CurrentImage.Color.R,
                                                     character.CurrentImage.Color.G,
@@ -126,23 +171,24 @@ namespace Apocalypse.Any.Infrastructure.Server.Language
         {
             obj
             .GetType()
-            .GetProperty(ModifyExpression.Attribute.Name)
-            .SetValue(obj, ModifyExpression.Number.NumberValue.Value);
+            .GetProperty(Expression.Attribute.Name)
+            ?.SetValue(obj, Expression.Number.NumberValue.Value);
         }
-        private void HandleFaction(IStateMachine<string, IGameSectorLayerService> machine)
+
+        private Func<CharacterEntity, string, bool> CharacterWithCertainTag => new Func<CharacterEntity, string, bool>(
+            (entity, tag) =>
+            entity.Tags != null && entity.Tags.Any(factionName => factionName == tag));
+        
+        private void HandleFaction(IStateMachine<string, IGameSectorLayerService> machine, string tag)
         {
-            var belongsToFaction = new Func<CharacterEntity, bool>(entity => entity.Tags != null && entity.Tags.Any(factionName => factionName == ModifyExpression.Identifier.Name));
-            var characters = GetAllValidCharacters(machine).Where(belongsToFaction);
-            if (characters.Count() != 0)
+            var characters = GetAllValidCharacters(machine).Where(c => CharacterWithCertainTag(c, tag));
+            var characterEntities = characters as CharacterEntity[] ?? characters.ToArray();
+            if (characterEntities.Count() != 0)
             {
-                for (var index = 0; index < characters.Count(); index++)
+                for (var index = 0; index < characterEntities.Count(); index++)
                 {
-                    var someEntity = characters.ElementAt(index);
+                    var someEntity = characterEntities.ElementAt(index);
                     HandleCharacter(someEntity);
-                    //positions
-                    //.GetType()
-                    //.GetProperty(ModifyExpression.Attribute.Name)
-                    //.SetValue(someEntity, ModifyExpression.Number.NumberValue.Value);
                 }
             }
         }

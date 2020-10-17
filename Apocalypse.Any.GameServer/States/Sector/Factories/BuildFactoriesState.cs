@@ -47,8 +47,12 @@ namespace Apocalypse.Any.GameServer.States.Sector.Factories
                                                                             };
 
             machine.SharedContext.Factories.ItemFactory.Add(nameof(DropProxyMechanic<CharacterEntity>), dropMechanics);
+            machine.SharedContext.Factories.ItemFactory.Add(nameof(MockItemFactory), new MockItemFactory(
+                                                                                new CharacterSheetFactory(),
+                                                                                new SectorRandomPositionFactory(),
+                                                                                new MockItemPostNameDecoratorGenerator()));
             machine.SharedContext.Factories.EnemyFactory.Add(nameof(RandomEnemySpaceshipFactory), new RandomEnemySpaceshipFactory());
-            machine.SharedContext.Factories.EnemyFactory.Add(nameof(UncofiguredEnemyFactory), new UncofiguredEnemyFactory());
+            machine.SharedContext.Factories.EnemyFactory.Add(nameof(UnconfiguredEnemyFactory), new UnconfiguredEnemyFactory());
             machine.SharedContext.Factories.ImageDataFactory.Add(nameof(RandomPlanetFactory), new RandomPlanetFactory());
             machine.SharedContext.Factories.ImageDataFactory.Add(nameof(RandomMediumSpaceshipFactory), new RandomMediumSpaceshipFactory());
             machine.SharedContext.Factories.ImageDataFactory.Add(nameof(RandomFogFactory),new RandomFogFactory());            

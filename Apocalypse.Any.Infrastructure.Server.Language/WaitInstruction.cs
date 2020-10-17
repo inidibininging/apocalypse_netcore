@@ -6,18 +6,15 @@ using States.Core.Infrastructure.Services;
 
 namespace Apocalypse.Any.Infrastructure.Server.Language
 {
-    public class WaitInstruction : AbstractInterpreterInstruction
+    public class WaitInstruction : AbstractInterpreterInstruction<WaitExpression>
     {
         private WaitExpression Wait { get; }
         private TimeSpan WaitTimeSpan { get; set; } = TimeSpan.Zero;
-        public int FunctionIndex { get; }
         public bool TimeReached { get; private set;}
         private string Id { get; set; } = $"{nameof(WaitInstruction)}_{Guid.NewGuid().ToString()}";
-        public WaitInstruction(Interpreter interpreter, WaitExpression wait, int functionIndex) : base(interpreter)
+        public WaitInstruction(Interpreter interpreter, WaitExpression wait, int functionIndex) : base(interpreter, wait, functionIndex)
         {
             Wait = wait;
-            FunctionIndex = functionIndex;
-
         }
 
         public override void Handle(IStateMachine<string, IGameSectorLayerService> machine)
@@ -35,9 +32,23 @@ namespace Apocalypse.Any.Infrastructure.Server.Language
                     WaitTimeSpan = TimeSpan.FromHours((machine.SharedContext.CurrentGameTime.ElapsedGameTime.TotalHours + Wait.Number.NumberValue.Value));
                 Console.WriteLine("Wait timespan added");
             }
-            var mainLoop = machine.GetService.Get("RunAsDefaultSector") as RoutineState<string,IGameSectorLayerService>;
+            
+            var runOperation = machine.GetService.Get(Owner.RunOperation) as RoutineState<string,IGameSectorLayerService>;
             if(WaitTimeSpan < machine.SharedContext.CurrentGameTime.ElapsedGameTime)
             {
+                if (runOperation == null)
+                {
+                    Console.WriteLine($"Run operation {Owner.RunOperation} not found. Cannot continue with execution");
+                }
+                else
+                {
+                    if (runOperation.Operations.Contains(Id))
+                    {
+                        runOperation.Operations = runOperation.Operations.Where(op => op != Id).ToList();
+                        Console.WriteLine($"{Id} deleted");
+                        WaitTimeSpan = TimeSpan.Zero;
+                    }
+                }
                 //Console.WriteLine("Wait timespan reached");
                 //make a loop hole to an internal stack that is looped everytime the engine calls the cli passthrough
                 //if the this wait timespan is reached. a "pointer" will be made 
@@ -51,7 +62,7 @@ namespace Apocalypse.Any.Infrastructure.Server.Language
                     {
                         //Console.WriteLine("function instruction found. aborting wait instruction");
                         break;
-                    }
+                    }                    
                     currentInstruction.Handle(machine);
                     if(currentInstruction is WaitInstruction)
                     {
@@ -62,27 +73,17 @@ namespace Apocalypse.Any.Infrastructure.Server.Language
                 //Console.WriteLine("operations after wait were executed");
                 //TODO: this is the behaviour needed for nested functions or IF ELSE Statements right???
 
-                if(mainLoop == null){
-                    Console.WriteLine("Mainloop not found. Cannot continue with execution");
-                }
-                else
-                {
-                    if(mainLoop.Operations.Contains(Id)){
-                        mainLoop.Operations = mainLoop.Operations.Where(op => op != Id).ToList();
-                        Console.WriteLine($"{Id} deleted");
-                        WaitTimeSpan = TimeSpan.Zero;
-                    }
-                }
+                
             }
             else
             {
-                if(mainLoop == null){
+                if(runOperation == null){
                     Console.WriteLine("Mainloop not found. Cannot continue with execution");
                 }
                 //loop again till it reaches the max
                 //machine.GetService.Get(machine.SharedIdentifier).Handle(machine);
-                if(!mainLoop.Operations.Contains(Id)){
-                    mainLoop.Operations = mainLoop.Operations.Append(Id).ToList();
+                if(!runOperation.Operations.Contains(Id)){
+                    runOperation.Operations = runOperation.Operations.Append(Id).ToList();
 
                     try
                     {                        

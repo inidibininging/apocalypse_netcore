@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Apocalypse.Any.Domain.Common.Model.Language;
 using Apocalypse.Any.Infrastructure.Server.Services.Data.Interfaces;
 using States.Core.Infrastructure.Services;
 
@@ -15,10 +16,11 @@ namespace Apocalypse.Any.Infrastructure.Server.Language
         public NumberExpression Number { get; set; }
         public List<LexiconSymbol> ValidLexemes { get; set; } = new List<LexiconSymbol>() {
                 LexiconSymbol.Entity,
+                LexiconSymbol.Letter,
                 LexiconSymbol.EntityIdentifier,
                 LexiconSymbol.EntityLetter,
-                LexiconSymbol.FactionIdentifier,
-                LexiconSymbol.FactionLetter,
+                LexiconSymbol.TagIdentifier,
+                LexiconSymbol.TagLetter,
                 LexiconSymbol.Attribute,
                 LexiconSymbol.Stats,
                 LexiconSymbol.NegativeSign,
@@ -50,18 +52,23 @@ namespace Apocalypse.Any.Infrastructure.Server.Language
                     continue;
 
                 // Console.WriteLine(machine.SharedContext.CurrentBuffer);
-                if (machine.SharedContext.Current == LexiconSymbol.EntityIdentifier)
+                if (machine.SharedContext.Current == LexiconSymbol.EntityIdentifier && Identifier == null &&
+                    Section != null &&
+                    Attribute != null)
                 {
                     Console.WriteLine($"adding {nameof(EntityExpression)}");
                     Identifier = new EntityExpression();
                     Identifier.Handle(machine);
                 }
-                if (machine.SharedContext.Current == LexiconSymbol.FactionIdentifier)
+                if (machine.SharedContext.Current == LexiconSymbol.TagIdentifier && Identifier == null &&
+                    Section != null &&
+                    Attribute != null)
                 {
-                    Console.WriteLine($"adding {nameof(FactionExpression)}");
-                    Identifier = new FactionExpression();
+                    Console.WriteLine($"adding {nameof(TagExpression)}");
+                    Identifier = new TagExpression();
                     Identifier.Handle(machine);
                 }
+
                 if (machine.SharedContext.Current == LexiconSymbol.Attribute)
                 {
                     Console.WriteLine($"adding {nameof(AttributeExpression)}");
@@ -78,6 +85,18 @@ namespace Apocalypse.Any.Infrastructure.Server.Language
                     Section = new AttributeExpression();
                     Section.Handle(machine);
                 }
+                
+                //this part sets the order of the  
+                if (machine.SharedContext.Current == LexiconSymbol.Letter && 
+                    Identifier == null &&
+                    Section != null &&
+                    Attribute != null)
+                {
+                    Console.WriteLine($"adding {nameof(IdentifierExpression)}");
+                    Identifier = new IdentifierExpression();
+                    Identifier.Handle(machine);
+                }
+                
                 if (machine.SharedContext.Current == LexiconSymbol.PositiveSign ||
                    machine.SharedContext.Current == LexiconSymbol.NegativeSign)
                 {
@@ -92,7 +111,19 @@ namespace Apocalypse.Any.Infrastructure.Server.Language
                     Number.Handle(machine);
                 }
             }
-        }
 
+            if (Identifier == null)
+            {
+                throw new ArgumentNullException($"{nameof(Identifier)} not found. Maybe a syntax error? Ex. Mod Stats Health +123 myVar or Mod Stats Health +123 .myTag");
+            }
+            if (Section == null)
+            {
+                throw new ArgumentNullException($"{nameof(Section)} not found. Maybe a syntax error? Ex. Mod Stats Health +123 myVar or Mod Stats Health +123 .myTag");
+            }
+            if (Number == null)
+            {
+                throw new ArgumentNullException($"{nameof(Number)} not found. Maybe a syntax error? Ex. Mod Stats Health +123 myVar or Mod Stats Health +123 .myTag");
+            }
+        }
     }
 }

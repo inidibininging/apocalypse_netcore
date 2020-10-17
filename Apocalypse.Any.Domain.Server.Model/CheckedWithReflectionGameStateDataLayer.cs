@@ -8,7 +8,12 @@ namespace Apocalypse.Any.Domain.Server.Model
 {
     public abstract class CheckedWithReflectionGameStateDataLayer : IGenericTypeDataLayer
     {
-        
+        public string DisplayName { get; }
+
+        public CheckedWithReflectionGameStateDataLayer(string name)
+        {
+            DisplayName = name;
+        }
         public abstract bool CanUse<T>(T instance);
         public abstract List<Type> GetValidTypes();
 
@@ -27,6 +32,8 @@ namespace Apocalypse.Any.Domain.Server.Model
 
         protected bool CheckTypeOfWith(Type subjectType, Type toProofAgainst)
         {
+            if (subjectType == null || toProofAgainst == null)
+                return false;
             var tparam = subjectType;
             var tparamInstance = toProofAgainst;
             if (tparam == tparamInstance)
@@ -40,6 +47,8 @@ namespace Apocalypse.Any.Domain.Server.Model
 
         protected bool CheckTypeOfToProofAgainstWith<TParamToProofAgainst>(Type subjectType)
         {
+            if (subjectType == null)
+                return false;
             var tparam = subjectType;
             var tparamInstance = typeof(TParamToProofAgainst);
             if (tparam == tparamInstance)
@@ -52,6 +61,8 @@ namespace Apocalypse.Any.Domain.Server.Model
         }
         protected bool CheckTypeOfSubjectWithType<TParamSubject>(Type toProofAgainst)
         {
+            if (toProofAgainst == null)
+                return false;
             var tparam = typeof(TParamSubject);
             var tparamInstance = toProofAgainst;
             if (tparam == tparamInstance)
@@ -79,6 +90,18 @@ namespace Apocalypse.Any.Domain.Server.Model
             AddSafe(item);
         }
 
+        public bool Remove<T>(Func<T, bool> predicate)
+        {
+            var items = DataAsEnumerable<T>();
+            if (!items.Any())
+                return false; // hmmm really?
+            var foundItems = items.Where(predicate);
+            if (!foundItems.Any())
+                return false;
+            return UpdateEnumerable<T>(items.Except(foundItems));
+        }
+
+        protected abstract bool UpdateEnumerable<T>(IEnumerable<T> items);
         protected abstract void AddSafe<T>(T item);
         protected abstract IEnumerable<T> AsEnumerableSafe<T>();
     }

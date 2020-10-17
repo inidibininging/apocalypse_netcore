@@ -98,10 +98,10 @@ namespace Apocalypse.Any.GameServer.States.Sector.Mechanics
             // }
 
             if (!machine.SharedContext.SingularMechanics.PlayerMechanics.ContainsKey("thrust_players"))
-                machine.SharedContext.SingularMechanics.PlayerMechanics.Add("thrust_players", CreateThrustCommand<PlayerSpaceship>(1.0f));
+                machine.SharedContext.SingularMechanics.PlayerMechanics.Add("thrust_players", CreateThrustCommand<PlayerSpaceship>(1.25f));
 
             if (!machine.SharedContext.SingularMechanics.EnemyMechanics.ContainsKey("thrust_enemies"))
-                machine.SharedContext.SingularMechanics.EnemyMechanics.Add("thrust_enemies", CreateThrustCommand<EnemySpaceship>(1.5f));
+                machine.SharedContext.SingularMechanics.EnemyMechanics.Add("thrust_enemies", CreateThrustCommand<EnemySpaceship>(1.0f));
 
             if (!machine.SharedContext.SingularMechanics.EnemyMechanics.ContainsKey("make_enemies_move_randomly"))
             {
@@ -126,7 +126,7 @@ namespace Apocalypse.Any.GameServer.States.Sector.Mechanics
                     if(!machine.SharedContext.DataLayer.Players.Any(plyr => Vector2.Distance(enemy.CurrentImage.Position, plyr.CurrentImage.Position) < minDistance)){
                         return enemy;
                     }
-                    if(machine.SharedContext.DataLayer.Projectiles.Count(proj => proj.OwnerName == enemy.Name) > maxProjectiles){
+                    if(machine.SharedContext.DataLayer.Projectiles.Count(proj => proj.OwnerName == enemy.DisplayName) > maxProjectiles){
                         return enemy;
                     }
                     Task.Factory.StartNew(() => {
@@ -167,7 +167,7 @@ namespace Apocalypse.Any.GameServer.States.Sector.Mechanics
                                 {
                                     var upcastSubject = machine.SharedContext.DataLayer.Projectiles.FirstOrDefault(projectile => projectile.CurrentImage.Id == (subject as ImageData)?.Id);
 
-                                    var playerOwner = machine.SharedContext.DataLayer.Players.FirstOrDefault(plyr => plyr.Name == upcastSubject.OwnerName);
+                                    var playerOwner = machine.SharedContext.DataLayer.Players.FirstOrDefault(plyr => plyr.DisplayName == upcastSubject.OwnerName);
                                     if (playerOwner == null)
                                         return null;
                                     return machine.SharedContext.DataLayer.Enemies.FirstOrDefault(enemy => Vector2.Distance(enemy.CurrentImage.Position,playerOwner.CurrentImage.Position) < 512)?.CurrentImage;
@@ -201,7 +201,7 @@ namespace Apocalypse.Any.GameServer.States.Sector.Mechanics
                                 });
             }
 
-            if (!machine.SharedContext.SingularMechanics.ImageDataMechanics.ContainsKey("strecth_prop"))
+            if (!machine.SharedContext.SingularMechanics.ImageDataMechanics.ContainsKey("stretch_fog"))
             {
                 var morph = new Func<ImageData,ImageData>((entity)=>
                 {
@@ -223,7 +223,7 @@ namespace Apocalypse.Any.GameServer.States.Sector.Mechanics
                     return entity;
                 });
 
-                machine.SharedContext.SingularMechanics.ImageDataMechanics.Add("strecth_prop",new DelegateFullPositionHolderMechanic<ImageData>(morph));
+                machine.SharedContext.SingularMechanics.ImageDataMechanics.Add("stretch_fog", new DelegateFullPositionHolderMechanic<ImageData>(morph));
             }
         }
 
