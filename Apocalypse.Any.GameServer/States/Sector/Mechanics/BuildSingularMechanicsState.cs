@@ -36,7 +36,8 @@ namespace Apocalypse.Any.GameServer.States.Sector.Mechanics
                     EnemyMechanics = new Dictionary<string, ISingleCharacterEntityMechanic<EnemySpaceship>>(),
                     ProjectileMechanics = new Dictionary<string, ISingleEntityWithImageMechanic<Projectile>>(),
                     ItemMechanics = new Dictionary<string, ISingleCharacterEntityMechanic<Item>>(),
-                    ImageDataMechanics = new Dictionary<string, ISingleFullPositionHolderMechanic<ImageData>>()
+                    ImageDataMechanics = new Dictionary<string, ISingleFullPositionHolderMechanic<ImageData>>(),
+                    PropsMechanics = new Dictionary<string, ISingleCharacterEntityMechanic<CharacterEntity>>(),
                 };
             }
 
@@ -97,8 +98,8 @@ namespace Apocalypse.Any.GameServer.States.Sector.Mechanics
             //                 () => 8)));
             // }
 
-            if (!machine.SharedContext.SingularMechanics.PlayerMechanics.ContainsKey("thrust_players"))
-                machine.SharedContext.SingularMechanics.PlayerMechanics.Add("thrust_players", CreateThrustCommand<PlayerSpaceship>(1.25f));
+            if (!machine.SharedContext.SingularMechanics.PlayerMechanics.ContainsKey("thrustplayers"))
+                machine.SharedContext.SingularMechanics.PlayerMechanics.Add("thrustplayers", CreateThrustCommand<PlayerSpaceship>(1.25f));
 
             if (!machine.SharedContext.SingularMechanics.EnemyMechanics.ContainsKey("thrust_enemies"))
                 machine.SharedContext.SingularMechanics.EnemyMechanics.Add("thrust_enemies", CreateThrustCommand<EnemySpaceship>(1.0f));

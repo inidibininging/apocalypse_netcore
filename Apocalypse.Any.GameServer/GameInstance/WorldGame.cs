@@ -185,7 +185,7 @@ namespace Apocalypse.Any.GameServer.GameInstance
 
 
 
-            //datalayer to gather data out of the game world
+            //datalayer for gathering data out of the game world
             var serverStateDataLayer = new ServerGameStateService<WorldGame>(
                                                 AuthenticationService,
                                                 AuthenticationService,

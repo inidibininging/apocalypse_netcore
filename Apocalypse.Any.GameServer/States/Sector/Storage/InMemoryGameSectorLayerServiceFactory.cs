@@ -191,7 +191,7 @@ namespace Apocalypse.Any.GameServer.States.Sector.Storage
                             foreach (var entity in machine.SharedContext.DataLayer.Players)
                             {
                                 //Fix for skipping players that are in a dialog
-                                if (mech.Key == "thrust_players" && entity.Tags.Contains(ProcessPlayerDialogsRequestsState.PlayerOnDialogEvent))
+                                if (mech.Key == "thrustplayers" && entity.Tags.Contains(ProcessPlayerDialogsRequestsState.PlayerOnDialogEvent))
                                 {
                                     continue;
                                 }

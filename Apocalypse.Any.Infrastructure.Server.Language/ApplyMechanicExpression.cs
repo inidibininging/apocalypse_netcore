@@ -2,22 +2,18 @@
 using States.Core.Infrastructure.Services;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 
 namespace Apocalypse.Any.Infrastructure.Server.Language
 {
-    /// <summary>
-    /// Used for creating stuff and appending a unique id to 
-    /// </summary>
-    public class CreateExpression : AbstractLanguageExpression
+    public class ApplyMechanicExpression : AbstractLanguageExpression
     {
         public VariableExpression Identifier { get; set; }
-        public CreatorExpression Creator { get; set; }
+        public MechanicExpression Mechanic { get; set; }
 
         private List<LexiconSymbol> ValidLexemes { get; set; } = new List<LexiconSymbol>() {
-                LexiconSymbol.CreatorIdentifier,
-                LexiconSymbol.CreatorLetter,
+                LexiconSymbol.ApplyMechanic,
+                LexiconSymbol.MechanicLetter,
                 LexiconSymbol.TagIdentifier,
                 LexiconSymbol.TagLetter,
                 LexiconSymbol.EntityIdentifier,
@@ -27,20 +23,20 @@ namespace Apocalypse.Any.Infrastructure.Server.Language
 
         public override void Handle(IStateMachine<string, Tokenizer> machine)
         {
-            if (machine.SharedContext.Current != LexiconSymbol.CreateWithFactory)
+            if (machine.SharedContext.Current != LexiconSymbol.ApplyMechanic)
                 return;
-            while (Identifier == null || Creator == null)
+            while (Identifier == null || Mechanic == null)
             {
                 if (!machine.SharedContext.MoveNext())
                     break;
                 if (!ValidLexemes.Contains(machine.SharedContext.Current))
                     continue;
 
-                if (machine.SharedContext.Current == LexiconSymbol.CreatorLetter)
+                if (machine.SharedContext.Current == LexiconSymbol.MechanicLetter)
                 {
                     Console.WriteLine($"adding {nameof(CreatorExpression)}");
-                    Creator = new CreatorExpression();
-                    Creator.Handle(machine);
+                    Mechanic = new MechanicExpression();
+                    Mechanic.Handle(machine);
                 }
 
                 if (machine.SharedContext.Current == LexiconSymbol.TagIdentifier)
@@ -57,10 +53,10 @@ namespace Apocalypse.Any.Infrastructure.Server.Language
                     Identifier.Handle(machine);
                 }
             }
-            if (Creator == null)
-                throw new InvalidOperationException($"Syntax error: ${nameof(Creator)} side is not implemented near {machine.SharedContext.CurrentBuffer}");
+            if (Mechanic == null)
+                throw new InvalidOperationException($"Syntax error: ${nameof(Mechanic)} side is not implemented near {machine.SharedContext.CurrentBuffer}");
             if (Identifier == null)
-                throw new InvalidOperationException($"Syntax error: ${nameof(Identifier)} side is not implemented near {machine.SharedContext.CurrentBuffer}");            
+                throw new InvalidOperationException($"Syntax error: ${nameof(Identifier)} side is not implemented near {machine.SharedContext.CurrentBuffer}");
         }
     }
 }

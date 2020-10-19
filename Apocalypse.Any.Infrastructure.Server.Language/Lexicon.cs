@@ -31,8 +31,10 @@ namespace Apocalypse.Any.Infrastructure.Server.Language
         public readonly List<char> Alpha = "Alpha".ToList();
         public readonly List<char> Color = "Color".ToList();
         public readonly List<char> ExecuteAttribute = "!".ToList();
-        public readonly List<char> CreateAttribute = "@>".ToList();
-        public readonly List<char> DestroyAttribute = "<@".ToList();
+        public readonly List<char> ApplyMechanic = "$>".ToList();
+        public readonly List<char> RemoveMechanicForTag = "<$".ToList();
+        public readonly List<char> CreateWithFactory = "@>".ToList();
+        public readonly List<char> DestroyTag = "<@".ToList();
         public readonly List<char> ClassNameForAttributes = typeof(CharacterSheet).FullName.ToList();
         public readonly List<char> EntityIdentifier = "#".ToList();
         public readonly List<char> TagIdentifier = ".".ToList();
@@ -84,8 +86,11 @@ namespace Apocalypse.Any.Infrastructure.Server.Language
             SymbolTable.Add(Color,LexiconSymbol.Color);
             SymbolTable.Add(Stats, LexiconSymbol.Stats);
 
-            SymbolTable.Add(CreateAttribute, LexiconSymbol.Create);
-            SymbolTable.Add(DestroyAttribute,LexiconSymbol.Destroy);
+            SymbolTable.Add(CreateWithFactory, LexiconSymbol.CreateWithFactory);
+            SymbolTable.Add(DestroyTag,LexiconSymbol.DestroyTag);
+            SymbolTable.Add(ApplyMechanic, LexiconSymbol.ApplyMechanic);
+            SymbolTable.Add(RemoveMechanicForTag, LexiconSymbol.RemoveMechanicForTag);
+
 
             SymbolTable.Add(ClassNameForAttributes,LexiconSymbol.Entity);
             SymbolTable.Add(EntityIdentifier,LexiconSymbol.EntityIdentifier);

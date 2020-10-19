@@ -51,8 +51,9 @@ namespace Apocalypse.Any.Infrastructure.Server.Language
 
                         HandleInstruction<IfExpression, IfInstruction>((s) => s == LexiconSymbol.If);
                         HandleInstruction<EndIfExpression, EndIfInstruction>((s) => s == LexiconSymbol.EndIf);
-                        HandleInstruction<CreateExpression, CreateInstruction>((s) => s == LexiconSymbol.Create);
-                        HandleInstruction<DestroyExpression, DestroyInstruction>((s) => s == LexiconSymbol.Destroy);
+                        HandleInstruction<CreateExpression, CreateInstruction>((s) => s == LexiconSymbol.CreateWithFactory);
+                        HandleInstruction<ApplyMechanicExpression, ApplyMechanicInstruction>((s) => s == LexiconSymbol.ApplyMechanic);
+                        HandleInstruction<DestroyExpression, DestroyInstruction>((s) => s == LexiconSymbol.DestroyTag);
                         HandleInstruction<ExecuteExpression, ExecuteInstruction>((s) => s == LexiconSymbol.Execute); //TODO: Fix this 
                         HandleInstruction<FunctionExpression, FunctionInstruction>((s) => s == LexiconSymbol.FunctionIdentifier); //TODO: Fix this
                         HandleInstruction<AssignExpression, AssignInstruction>((s) => s == LexiconSymbol.Set);

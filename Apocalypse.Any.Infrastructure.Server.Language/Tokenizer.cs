@@ -135,7 +135,7 @@ namespace Apocalypse.Any.Infrastructure.Server.Language
                                                     LexiconSymbol.EntityLetter :
                                                     nowToken,
 
-            (singleToken, nowToken, beforeToken) => beforeToken == LexiconSymbol.Create &&
+            (singleToken, nowToken, beforeToken) => beforeToken == LexiconSymbol.CreateWithFactory &&
                                                     nowToken == LexiconSymbol.Letter &&
                                                     (singleToken == LexiconSymbol.Letter || singleToken == LexiconSymbol.Digit) ?
                                                     LexiconSymbol.CreatorLetter :
@@ -145,7 +145,19 @@ namespace Apocalypse.Any.Infrastructure.Server.Language
                                                     nowToken == LexiconSymbol.Letter &&
                                                     (singleToken == LexiconSymbol.Letter || singleToken == LexiconSymbol.Digit) ?
                                                     LexiconSymbol.CreatorLetter :
-                                                    nowToken,            
+                                                    nowToken,
+
+            (singleToken, nowToken, beforeToken) => beforeToken == LexiconSymbol.ApplyMechanic &&
+                                                    nowToken == LexiconSymbol.Letter &&
+                                                    (singleToken == LexiconSymbol.Letter || singleToken == LexiconSymbol.Digit) ?
+                                                    LexiconSymbol.MechanicLetter :
+                                                    nowToken,
+
+            (singleToken, nowToken, beforeToken) => beforeToken == LexiconSymbol.MechanicLetter &&
+                                                    nowToken == LexiconSymbol.Letter &&
+                                                    (singleToken == LexiconSymbol.Letter || singleToken == LexiconSymbol.Digit) ?
+                                                    LexiconSymbol.MechanicLetter :
+                                                    nowToken,
 
             (singleToken, nowToken, beforeToken) => beforeToken == LexiconSymbol.Number &&
                                                     nowToken == LexiconSymbol.NotFound &&
@@ -201,7 +213,10 @@ namespace Apocalypse.Any.Infrastructure.Server.Language
                 if (CurrentTokenBuffer.Count > 0 && validTokenBuffer == LexiconSymbol.Assign)
                     CurrentTokenBuffer.RemoveAt(CurrentTokenBuffer.Count - 1);
 
-                
+                if (CurrentSymbol == LexiconSymbol.MechanicLetter)
+                {
+                    Console.WriteLine("LOL");
+                }
 
                 CurrentSymbol = validTokenBuffer;
 

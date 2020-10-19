@@ -16,7 +16,7 @@ namespace Apocalypse.Any.Infrastructure.Server.Language
         //public DestroyerExpression Destroyer { get; set; }
 
         public List<LexiconSymbol> ValidLexemes { get; set; } = new List<LexiconSymbol>() {
-                LexiconSymbol.Destroy,
+                LexiconSymbol.DestroyTag,
                 LexiconSymbol.Destroyer,
                 //LexiconSymbol.DestroyerLetter,
                 LexiconSymbol.TagIdentifier,
@@ -27,7 +27,7 @@ namespace Apocalypse.Any.Infrastructure.Server.Language
 
         public override void Handle(IStateMachine<string, Tokenizer> machine)
         {
-            if (machine.SharedContext.Current != LexiconSymbol.Destroy)
+            if (machine.SharedContext.Current != LexiconSymbol.DestroyTag)
                 return;
             while (Identifier == null)
             {

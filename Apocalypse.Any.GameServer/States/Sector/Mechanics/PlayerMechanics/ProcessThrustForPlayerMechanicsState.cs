@@ -81,7 +81,7 @@ namespace Apocalypse.Any.GameServer.States.Sector.Mechanics.PlayerMechanics
 
                         for (int currentSpeedTime = 0; currentSpeedTime < player.Stats.Speed*2; currentSpeedTime++)
                         {
-                            machine.SharedContext.SingularMechanics.PlayerMechanics["thrust_players"].Update(player);
+                            machine.SharedContext.SingularMechanics.PlayerMechanics["thrustplayers"].Update(player);
                         }
 
                         //if (LerpIt)
