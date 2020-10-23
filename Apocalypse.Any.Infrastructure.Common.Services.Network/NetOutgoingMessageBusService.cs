@@ -3,6 +3,7 @@ using Apocalypse.Any.Infrastructure.Common.Services.Serializer.Interfaces;
 using Lidgren.Network;
 using Newtonsoft.Json;
 using System;
+using System.Net.Security;
 
 namespace Apocalypse.Any.Infrastructure.Common.Services.Network
 {
@@ -27,7 +28,7 @@ namespace Apocalypse.Any.Infrastructure.Common.Services.Network
             return Peer.CreateMessage(SerializationAdapter.SerializeObject(instanceToSend));
         }
 
-        public NetSendResult SendToClient<T>(string commandName, T instanceToSend, NetConnection netConnection)
+        public NetSendResult SendToClient<T>(int commandName, T instanceToSend, NetConnection netConnection)
         {
             return netConnection.SendMessage(
                     CreateMessage(

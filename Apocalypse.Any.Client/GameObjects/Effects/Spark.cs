@@ -3,6 +3,7 @@ using Apocalypse.Any.Core.Drawing;
 using Apocalypse.Any.Core.Utilities;
 using Microsoft.Xna.Framework;
 using System;
+using Apocalypse.Any.Constants;
 
 namespace Apocalypse.Any.Client.GameObjects.Effects
 {
@@ -14,7 +15,7 @@ namespace Apocalypse.Any.Client.GameObjects.Effects
 
         public Spark() : base()
         {
-            Path = "Image/Scene/Star256x256";
+            Path = ImagePaths.stars;
             float scale = 1 / Randomness.Instance.From(1, 1000);
             float randomScale = Convert.ToSingle(Randomness.Instance.From(10, 50)) / 100f;
             scale = randomScale;

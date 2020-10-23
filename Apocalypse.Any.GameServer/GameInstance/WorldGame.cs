@@ -156,10 +156,7 @@ namespace Apocalypse.Any.GameServer.GameInstance
                 .GetService
                 .Get(Configuration.BuildOperation)
                 .Handle(inGameSectorStateMachine);
-
-
-
-
+            
             //var sectorList = new List<string>();
             //for (int sectorIndex = 0; sectorIndex < 1; sectorIndex++)
             //{

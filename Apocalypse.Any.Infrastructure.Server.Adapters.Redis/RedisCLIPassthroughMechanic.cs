@@ -37,6 +37,15 @@ namespace Apocalypse.Any.Infrastructure.Server.Adapters.Redis
                         await conn.GetDatabase().StringSetAsync("World.CLI",JsonConvert.SerializeObject(new List<string>()));
                     }
                 }
+                //mycroft commands ^^
+                var mycroftCommand = await conn.GetDatabase().StringGetAsync("Mycroft.Command");
+                if (!string.IsNullOrWhiteSpace(mycroftCommand))
+                {
+                    foreach (var sectorStateMachine in entity.GameSectorLayerServices)
+                    {
+                        sectorStateMachine.Value.Run(mycroftCommand);
+                    }
+                }
             }
         }
 

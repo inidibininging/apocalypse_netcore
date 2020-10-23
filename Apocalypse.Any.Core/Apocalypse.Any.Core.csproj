@@ -21,6 +21,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Apocalypse.Any.Collections\Apocalypse.Any.Core.Collections.csproj" />
+    <ProjectReference Include="..\Apocalypse.Any.Constants\Apocalypse.Any.Constants.csproj" />
   </ItemGroup>
 
 </Project>

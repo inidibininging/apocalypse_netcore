@@ -6,6 +6,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
 using System.Linq;
+using Apocalypse.Any.Constants;
 
 namespace Apocalypse.Any.Client.GameObjects.Scene
 {
@@ -25,14 +26,14 @@ namespace Apocalypse.Any.Client.GameObjects.Scene
 
         public override void Initialize()
         {
-            var frames = new Dictionary<string, Rectangle>();
+            var frames = new Dictionary<(int asteroidNr, int dummyA, int dummyB), Rectangle>();
             for (int i = 0; i < DebrisCount; i++)
             {
                 var randomDebris = new RandomDebris();
                 RandomDebris.Add(randomDebris);
-                frames.Add(i.ToString(), new Rectangle(randomDebris.FramePosition.ToPoint(), new Point(32)));
+                frames.Add((i, 0 ,0 ), new Rectangle(randomDebris.FramePosition.ToPoint(), new Point(32)));
             }
-            Sheet = new SpriteSheet(frames) { Path = "Image/debris" };
+            Sheet = new SpriteSheet(frames) { Path = ImagePaths.debris };
             Add(new AsteroidScreenBehaviour(Sheet));
             base.Initialize();
         }
@@ -42,7 +43,7 @@ namespace Apocalypse.Any.Client.GameObjects.Scene
             var i = 0;
             RandomDebris.ForEach(randomDebris =>
             {
-                Sheet.SelectedFrame = i.ToString();
+                Sheet.SelectedFrame = (i, 0 ,0 );
                 Sheet.Position.X = randomDebris.Position.X;
                 Sheet.Position.Y = randomDebris.Position.Y;
                 Sheet.Rotation.Rotation = randomDebris.Rotation.Rotation;
@@ -63,7 +64,7 @@ namespace Apocalypse.Any.Client.GameObjects.Scene
             droppedJunk.Color = color;
             droppedJunk.ChangeDebrisFrame(100);
             RandomDebris.Add(droppedJunk);
-            Sheet.SpriteSheetRectangle.Add(RandomDebris.Count.ToString(), new Rectangle(droppedJunk.FramePosition.ToPoint(), new Point(32)));
+            Sheet.SpriteSheetRectangle.Add((RandomDebris.Count, 0, 0), new Rectangle(droppedJunk.FramePosition.ToPoint(), new Point(32)));
         }
         public override void Update(GameTime time)
         {

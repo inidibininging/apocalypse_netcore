@@ -11,6 +11,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Apocalypse.Any.Constants;
 
 namespace Apocalypse.Any.Infrastructure.Server.Services.Transformations
 {
@@ -46,7 +47,6 @@ namespace Apocalypse.Any.Infrastructure.Server.Services.Transformations
         private GameStateData ToGameState(IGameSectorLayerService gameSector,
                                     string loginToken)
         {
-            
             var player = gameSector
                 .DataLayer
                 .Players
@@ -60,24 +60,24 @@ namespace Apocalypse.Any.Infrastructure.Server.Services.Transformations
             var playerCanUseDialog = gameSector
                                     .DataLayer
                                     .Layers
-                                    .Where(l => l.DataAsEnumerable<IdentifiableCircularLocation>().Any(
+                                    .Any(l => l.DataAsEnumerable<IdentifiableCircularLocation>().Any(
                                             location =>
                                             {
                                                 var radiusAsVector2 = location.Radius.ToVector2();
-                                                var locationRectangle =  ImageToRectangleTransformationService.Transform(location.Position,
+                                                var locationRectangle = ImageToRectangleTransformationService.Transform(location.Position,
                                                                                                 1f.ToVector2(),
                                                                                                 (int)MathF.Round(radiusAsVector2.X),
                                                                                                 (int)MathF.Round(radiusAsVector2.Y));
                                                 return locationRectangle.Intersects(playerRectangle);
                                             }))
-                                    .Any();
+;
 
             var playerNearEnemies = gameSector
                                     .DataLayer
                                     .Enemies
-                                    .Where(enemy => ImageToRectangleTransformationService.Transform(enemy.CurrentImage)
+                                    .Any(enemy => ImageToRectangleTransformationService.Transform(enemy.CurrentImage)
                                                     .Intersects(playerRectangleWithAura))
-                                    .Any();
+;
 
             var bankAccountSum = gameSector
                         .DataLayer
@@ -101,16 +101,15 @@ namespace Apocalypse.Any.Infrastructure.Server.Services.Transformations
             var cache = new GameStateData
             {
                 Commands = new List<string>(),
-                LoginToken = player.LoginToken
-            };
+                LoginToken = player.LoginToken,
+                //pass camera data
+                Screen = gameSector.IODataLayer.GetGameStateByLoginToken(loginToken)?.Screen,
 
-            //pass camera data
-            cache.Screen = gameSector.IODataLayer.GetGameStateByLoginToken(loginToken)?.Screen;
-            
-            cache.Camera = new CameraData
-            {
-                Position = player.CurrentImage.Position,
-                Rotation = player.CurrentImage.Rotation
+                Camera = new CameraData
+                {
+                    Position = player.CurrentImage.Position,
+                    Rotation = player.CurrentImage.Rotation
+                }
             };
 
             //convert entities to images ( this is poor data, means only data needed )
@@ -162,7 +161,8 @@ namespace Apocalypse.Any.Infrastructure.Server.Services.Transformations
                 .ImageData
                 .Where(e => Vector2.Distance(
                                 e.Position.ToVector2(),
-                                player.CurrentImage.Position.ToVector2()) <= DrawingDistance + 1024 || e.SelectedFrame.Contains("fog"))
+                                player.CurrentImage.Position.ToVector2()) <= DrawingDistance + 1024 || 
+                            e.SelectedFrame.frame == ImagePaths.FogFrame)
                 .ToList());
 
             //get selected item of player (just in case) / for now...
@@ -178,7 +178,7 @@ namespace Apocalypse.Any.Infrastructure.Server.Services.Transformations
             cache.Metadata = new IdentifiableNetworkCommand()
             {
                 Id = player.CurrentImage.Id,
-                CommandName = gameSector.Tag,
+                CommandName = 0,
                 CommandArgument = unserializedPlayerMetadata.GetType().FullName,
                 Data = SerializationAdapter.SerializeObject(unserializedPlayerMetadata)
             };

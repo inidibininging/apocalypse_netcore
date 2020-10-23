@@ -15,9 +15,14 @@
 :fourthFn ( fourthArg )
     Set Tag a = .a
 
-:Main ( args )
+:buildCity ( void )
+    !CreateRandomMiniCityCommand ( void )
+
+:Main ( args )    
     Set Tag something = .something
     Set Tag somethingElse = .somethingLolA
+    Set Tag void = .void
+    
     If something Is .something
         Set Tag something = .lolCHANGED
         If somethingElse Is .somethingLol

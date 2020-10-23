@@ -69,6 +69,7 @@ namespace Apocalypse.Any.Infrastructure.Server.States
             clientHandlers.TryAdd((byte)ServerInternalGameStates.Undefined, GameStateRegistrar.GetNeworkLayerState((byte)ServerInternalGameStates.Undefined));
             clientHandlers.TryAdd((byte)ServerInternalGameStates.Error, GameStateRegistrar.GetNeworkLayerState((byte)ServerInternalGameStates.Error));
             clientHandlers.TryAdd((byte)ServerInternalGameStates.Update, GameStateRegistrar.GetNeworkLayerState((byte)ServerInternalGameStates.Update));
+            clientHandlers.TryAdd((byte)ServerInternalGameStates.UpdateDelta, GameStateRegistrar.GetNeworkLayerState((byte)ServerInternalGameStates.UpdateDelta));
         }
 
         public void Update()
@@ -91,7 +92,7 @@ namespace Apocalypse.Any.Infrastructure.Server.States
 
         public void ChangeHandlerEasier(INetworkLayerState<TWorld> gameState, NetworkCommandConnection networkCommandConnection)
         {
-            Logger.LogDebug(networkCommandConnection.CommandName);
+            Logger.LogDebug(networkCommandConnection.CommandName.ToString());
             this[networkCommandConnection.Connection.RemoteUniqueIdentifier] = gameState;
         }
 

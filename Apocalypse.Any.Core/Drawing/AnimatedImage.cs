@@ -33,7 +33,7 @@ namespace Apocalypse.Any.Core.Drawing
             SecondsBetweenImage = 5;
         }
 
-        public void Add(string imagePath)
+        public void Add(int imagePath)
         {
             ImagePaths.Add(imagePath);
         }
@@ -43,7 +43,7 @@ namespace Apocalypse.Any.Core.Drawing
             ImagePaths.RemoveAt(index);
         }
 
-        protected CircularQueue<string> ImagePaths { get; set; } = new CircularQueue<string>();
+        protected CircularQueue<int> ImagePaths { get; set; } = new CircularQueue<int>();
 
         private int NextIndex { get; set; } = 0;
 

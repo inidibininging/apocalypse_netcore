@@ -24,8 +24,7 @@ namespace Apocalypse.Any.Client.GameObjects.Scene
         public Vector2 FramePosition { get; set; } = new Vector2(
                     Randomness.Instance.From(0, 6) * 32,
                     6 * 32);
-
-        public string Path { get; private set; } = "Image/hud_misc_edit";
+        
 
         public bool RotateRight = false;
 

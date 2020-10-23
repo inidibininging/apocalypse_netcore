@@ -30,5 +30,7 @@ namespace Apocalypse.Any.Core.Screen
         {
             ForEach(obj => obj.Update(time));
         }
+
+        public IImage CursorImage { get; set; }
     }
 }

@@ -1,13 +1,15 @@
 using Microsoft.Xna.Framework;
 using System.Collections.Generic;
+using Apocalypse.Any.Constants;
 
 namespace Apocalypse.Any.Client.Services
 {
+    
     public class RectangularFrameGeneratorService
     {
-        public Dictionary<string, Rectangle> GenerateGameSheetAtlas
+        public Dictionary<(int frame,int x, int y), Rectangle> GenerateGameSheetAtlas
         (
-            string prefixName = "frame",
+            int prefixName = ImagePaths.DefaultFrame,
             int frameSizeX = 32,
             int frameSizeY = 32,
             int startRangeX = 0,
@@ -15,17 +17,19 @@ namespace Apocalypse.Any.Client.Services
             int startRangeY = 0,
             int endRangeY = 1)
         {
-            Dictionary<string, Rectangle> finalAtlas = new Dictionary<string, Rectangle>();
+            Dictionary<(int frame,int x, int y), Rectangle> finalAtlas = new Dictionary<(int frame,int x, int y), Rectangle>();
             for (var currentX = startRangeX; currentX <= endRangeX; currentX++)
             {
                 for (int currentY = startRangeY; currentY <= endRangeY; currentY++)
                 {
-                    finalAtlas.Add($"{prefixName}_{currentX}_{currentY}", new Rectangle(currentX * frameSizeX,
+                    finalAtlas.Add((prefixName, currentX, currentY), new Rectangle(currentX * frameSizeX,
                                                                                 currentY * frameSizeY,
                                                                                 frameSizeX,
                                                                                 frameSizeY));
                 }
             }
+            
+            
             return finalAtlas;
         }
     }

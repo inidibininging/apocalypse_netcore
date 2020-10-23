@@ -109,7 +109,7 @@ namespace Apocalypse.Any.Infrastructure.Server.Worker
                 Thread.Sleep(1000);
             }
         }
-        private string CreateMessage<T>(string commandName, T instanceToSend)
+        private string CreateMessage<T>(int commandName, T instanceToSend)
         {
             var content = SerializationAdapter.SerializeObject
                     (

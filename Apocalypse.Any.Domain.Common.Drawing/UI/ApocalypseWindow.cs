@@ -5,20 +5,24 @@ using Apocalypse.Any.Core.Drawing.UI;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
+using System.Linq;
+using Apocalypse.Any.Constants;
+using Apocalypse.Any.Core.Behaviour;
 
 namespace Apocalypse.Any.Domain.Common.Drawing.UI
 {
-    public class ApocalypseWindow : Image, IWindow
+    public class ApocalypseWindow : Image, IWindow, IUIEvents
     {
-        // public MovementBehaviour Position { get; set; }
-        // public RotationBehaviour Rotation { get; set; }
 
         public bool Colliding { get; private set; }
         public bool IsVisible { get; set; }
 
         public ApocalypseWindow()
         {
-            Path = "Image/blank";
+            Path = ImagePaths.blank; //TODO: CHECK IT
+            
+            Scale = new Vector2(320, 256);
+            Color = Color.Purple;
         }
 
         #region Window Interface
@@ -37,22 +41,22 @@ namespace Apocalypse.Any.Domain.Common.Drawing.UI
         {
         }
 
-        public virtual void OnClick(IGameObject sender, EventArgs args)
-        {
-        }
-
-        public virtual void OnHover(IGameObject sender, EventArgs args)
-        {
-        }
-
         #endregion Window Interface
 
-        public override void Draw(SpriteBatch spriteBatch)
+        public override void Update(GameTime time)
         {
-            base.Draw(spriteBatch);
+            AllOfType<IChildUIElement>()
+                .ToList()
+                .ForEach(child =>
+                {
+                    child.ParentPosition = child.ParentPosition ?? new MovementBehaviour();
+                    child.ParentPosition.X = this.Position.X;
+                    child.ParentPosition.Y = this.Position.Y;
+                });
+            base.Update(time);
         }
 
-        #region Collision Inteface
+        #region Collision Interface
 
         public virtual void OnCollision(ICollidable collidable)
         {
@@ -63,6 +67,21 @@ namespace Apocalypse.Any.Domain.Common.Drawing.UI
             return SourceRect;
         }
 
-        #endregion Collision Inteface
+        #endregion Collision Interface
+        
+        public virtual void OnClick(object sender, EventArgs args)
+        {
+            Console.WriteLine("Click on window!");
+        }
+
+        public virtual void OnMouseEnter(object sender, EventArgs args)
+        {
+            Console.WriteLine("Hover over window!");
+        }
+
+        public void OnMouseLeave(object sender, EventArgs args)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

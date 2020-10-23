@@ -6,6 +6,7 @@ using Microsoft.Xna.Framework;
 using States.Core.Infrastructure.Services;
 using System;
 using System.Linq;
+using Apocalypse.Any.Constants;
 
 namespace Apocalypse.Any.Client.States.UI.Character
 {
@@ -114,92 +115,92 @@ namespace Apocalypse.Any.Client.States.UI.Character
             {
                 if (machine.SharedContext.LastMetadataBag?.ServerEventName == "Dialog")
                 {
-                    machine.SharedContext.DialogImage.SelectedFrame = "hud_misc_edit_8_8";
+                    machine.SharedContext.DialogImage.SelectedFrame = (ImagePaths.HUDFrame, 8, 8);
                 }
                 if (machine.SharedContext.LastMetadataBag?.ServerEventName == "Enemies")
                 {
-                    machine.SharedContext.DialogImage.SelectedFrame = "hud_misc_edit_7_8";
+                    machine.SharedContext.DialogImage.SelectedFrame = (ImagePaths.HUDFrame, 7, 8);
                 }
             }                
             else
             {
-                machine.SharedContext.DialogImage.SelectedFrame = "hud_misc_edit_0_1";
+                machine.SharedContext.DialogImage.SelectedFrame = (ImagePaths.HUDFrame, 0, 1);
             }
 
             //health
             if (healthPercentage >= 0.9f)
-                machine.SharedContext.HealthImage.SelectedFrame = "hud_misc_edit_7_0";
+                machine.SharedContext.HealthImage.SelectedFrame = (ImagePaths.HUDFrame, 7, 0);
 
             if (healthPercentage <= 0.7f)
-                machine.SharedContext.HealthImage.SelectedFrame = "hud_misc_edit_4_5";
+                machine.SharedContext.HealthImage.SelectedFrame = (ImagePaths.HUDFrame, 4, 5);
 
             if (healthPercentage <= 0.6f)
-                machine.SharedContext.HealthImage.SelectedFrame = "hud_misc_edit_3_5";
+                machine.SharedContext.HealthImage.SelectedFrame = (ImagePaths.HUDFrame, 3, 5);
 
             if (healthPercentage <= 0.5f)
-                machine.SharedContext.HealthImage.SelectedFrame = "hud_misc_edit_2_5";
+                machine.SharedContext.HealthImage.SelectedFrame = (ImagePaths.HUDFrame, 2, 5);
 
             if (healthPercentage <= 0.4f)
-                machine.SharedContext.HealthImage.SelectedFrame = "hud_misc_edit_1_5";
+                machine.SharedContext.HealthImage.SelectedFrame = (ImagePaths.HUDFrame, 1, 5);
 
             if (healthPercentage <= 0.3f)
-                machine.SharedContext.HealthImage.SelectedFrame = "hud_misc_edit_0_5";
+                machine.SharedContext.HealthImage.SelectedFrame = (ImagePaths.HUDFrame, 0, 5);
 
             if (healthPercentage <= 0.2f)
-                machine.SharedContext.HealthImage.SelectedFrame = "hud_misc_edit_8_4";
+                machine.SharedContext.HealthImage.SelectedFrame = (ImagePaths.HUDFrame, 8, 4);
 
             if (healthPercentage <= 0.1f)
-                machine.SharedContext.HealthImage.SelectedFrame = "hud_misc_edit_7_4";
+                machine.SharedContext.HealthImage.SelectedFrame = (ImagePaths.HUDFrame, 7, 4);
 
             //speed
             if (speedPercentage >= 0.9f)
-                machine.SharedContext.SpeedImage.SelectedFrame = "hud_misc_edit_1_1";
+                machine.SharedContext.SpeedImage.SelectedFrame = (ImagePaths.HUDFrame, 1, 1);
 
             if (speedPercentage <= 0.7f)
-                machine.SharedContext.SpeedImage.SelectedFrame = "hud_misc_edit_4_5";
+                machine.SharedContext.SpeedImage.SelectedFrame = (ImagePaths.HUDFrame, 4, 5);
 
             if (speedPercentage <= 0.6f)
-                machine.SharedContext.SpeedImage.SelectedFrame = "hud_misc_edit_3_5";
+                machine.SharedContext.SpeedImage.SelectedFrame = (ImagePaths.HUDFrame, 3, 5);
 
             if (speedPercentage <= 0.5f)
-                machine.SharedContext.SpeedImage.SelectedFrame = "hud_misc_edit_2_5";
+                machine.SharedContext.SpeedImage.SelectedFrame = (ImagePaths.HUDFrame, 2, 5);
 
             if (speedPercentage <= 0.4f)
-                machine.SharedContext.SpeedImage.SelectedFrame = "hud_misc_edit_1_5";
+                machine.SharedContext.SpeedImage.SelectedFrame = (ImagePaths.HUDFrame, 1, 5);
 
             if (speedPercentage <= 0.3f)
-                machine.SharedContext.SpeedImage.SelectedFrame = "hud_misc_edit_0_5";
+                machine.SharedContext.SpeedImage.SelectedFrame = (ImagePaths.HUDFrame, 0, 5);
 
             if (speedPercentage <= 0.2f)
-                machine.SharedContext.SpeedImage.SelectedFrame = "hud_misc_edit_8_4";
+                machine.SharedContext.SpeedImage.SelectedFrame = (ImagePaths.HUDFrame, 8, 4);
 
             if (speedPercentage <= 0.1f)
-                machine.SharedContext.SpeedImage.SelectedFrame = "hud_misc_edit_7_4";
+                machine.SharedContext.SpeedImage.SelectedFrame = (ImagePaths.HUDFrame, 7, 4);
 
             //strength
             if (strengthPercentage >= 0.9f)
-                machine.SharedContext.StrenghImage.SelectedFrame = "hud_misc_edit_4_0";
+                machine.SharedContext.StrenghImage.SelectedFrame = (ImagePaths.HUDFrame, 4, 0);
 
             if (strengthPercentage <= 0.7f)
-                machine.SharedContext.StrenghImage.SelectedFrame = "hud_misc_edit_4_5";
+                machine.SharedContext.StrenghImage.SelectedFrame = (ImagePaths.HUDFrame, 4, 5);
 
             if (strengthPercentage <= 0.6f)
-                machine.SharedContext.StrenghImage.SelectedFrame = "hud_misc_edit_3_5";
+                machine.SharedContext.StrenghImage.SelectedFrame = (ImagePaths.HUDFrame, 3, 5);
 
             if (strengthPercentage <= 0.5f)
-                machine.SharedContext.StrenghImage.SelectedFrame = "hud_misc_edit_2_5";
+                machine.SharedContext.StrenghImage.SelectedFrame = (ImagePaths.HUDFrame, 2, 5);
 
             if (strengthPercentage <= 0.4f)
-                machine.SharedContext.StrenghImage.SelectedFrame = "hud_misc_edit_1_5";
+                machine.SharedContext.StrenghImage.SelectedFrame = (ImagePaths.HUDFrame, 1, 5);
 
             if (strengthPercentage <= 0.3f)
-                machine.SharedContext.StrenghImage.SelectedFrame = "hud_misc_edit_0_5";
+                machine.SharedContext.StrenghImage.SelectedFrame = (ImagePaths.HUDFrame, 0, 5);
 
             if (strengthPercentage <= 0.2f)
-                machine.SharedContext.StrenghImage.SelectedFrame = "hud_misc_edit_8_4";
+                machine.SharedContext.StrenghImage.SelectedFrame = (ImagePaths.HUDFrame, 8, 4);
 
             if (strengthPercentage <= 0.1f)
-                machine.SharedContext.StrenghImage.SelectedFrame = "hud_misc_edit_7_4";
+                machine.SharedContext.StrenghImage.SelectedFrame = (ImagePaths.HUDFrame, 7, 4);
         }
     }
 }

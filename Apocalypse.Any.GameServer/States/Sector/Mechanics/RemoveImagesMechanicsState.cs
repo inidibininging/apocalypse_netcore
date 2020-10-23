@@ -6,14 +6,15 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Apocalypse.Any.Constants;
 
 namespace Apocalypse.Any.GameServer.States.Sector.Mechanics
 {
     public class RemoveImagesMechanicsState : IState<string, IGameSectorLayerService>
     {
-        private IEnumerable<string> Remove { get; } = new List<string>()
+        private IEnumerable<(int frame, int x, int y)> Remove { get; } = new List<(int frame, int x, int y)>()
         {
-            "thrust_6_8"
+            (ImagePaths.ThrustFrame, 6, 8)
         };
         public void Handle(IStateMachine<string, IGameSectorLayerService> machine)
         {

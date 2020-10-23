@@ -4,6 +4,7 @@ using Apocalypse.Any.Domain.Common.DrawingOrder;
 using Apocalypse.Any.Domain.Common.Model;
 using Apocalypse.Any.Domain.Common.Model.Network;
 using Apocalypse.Any.Domain.Server.Model;
+using Apocalypse.Any.Constants;
 using Apocalypse.Any.Infrastructure.Server.Services.Mechanics.Interfaces;
 using Microsoft.Xna.Framework;
 using System;
@@ -13,9 +14,9 @@ namespace Apocalypse.Any.Infrastructure.Common.Services.Network.Interfaces.Facto
 {
     public class ProjectileFactory : CheckWithReflectionFactoryBase<Projectile>
     {
-        public string IdPrefix { get; set; } = "projectile";
+        public int IdPrefix { get; set; } = ImagePaths.gamesheetExtended;
         private IThrustMechanic ThrustMechanics { get; set; }
-
+        
         public ProjectileFactory(IThrustMechanic thrustMechanics)
         {
             if (thrustMechanics == null)
@@ -44,8 +45,8 @@ namespace Apocalypse.Any.Infrastructure.Common.Services.Network.Interfaces.Facto
                     {
                         Id = Guid.NewGuid().ToString(),
                         Alpha = new AlphaBehaviour() { Alpha = 1 },
-                        Path = "Image/gamesheetExtended",
-                        SelectedFrame = $"{IdPrefix}_4_7",
+                        Path = ImagePaths.gamesheetExtended,
+                        SelectedFrame = (ImagePaths.ProjectileFrame, 4, 7),
                         Height = 32,
                         Width = 32,
                         Scale = new Vector2(0.75f, 1.5f),

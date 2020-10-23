@@ -7,6 +7,7 @@ using Apocalypse.Any.Domain.Client.Model;
 using Microsoft.Xna.Framework.Graphics;
 using States.Core.Infrastructure.Services;
 using System;
+using Apocalypse.Any.Constants;
 
 namespace Apocalypse.Any.Client.States
 {
@@ -49,7 +50,7 @@ namespace Apocalypse.Any.Client.States
         {
             if (machine.SharedContext.ContainsKey("logo"))
                 return;
-            var logo = new Image() { Path = "Image/SplashScreen/apocalypse_logo" };            
+            var logo = new Image() { Path = ImagePaths.apocalypse_logo };            
             machine.SharedContext.Add("logo",logo);
         }
 
@@ -57,7 +58,7 @@ namespace Apocalypse.Any.Client.States
         {
             if (machine.SharedContext.ContainsKey("game_over"))
                 return;
-            var gameOver = new Image() { Path = "Image/SplashScreen/game_over_glitch" };
+            var gameOver = new Image() { Path = ImagePaths.game_over_glitch };
             gameOver.Alpha.Alpha = 0;
             machine.SharedContext.Add("game_over", gameOver);
         }

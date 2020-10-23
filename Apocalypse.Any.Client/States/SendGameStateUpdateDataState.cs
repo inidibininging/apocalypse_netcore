@@ -25,7 +25,7 @@ namespace Apocalypse.Any.Client.States
         {
             SerializationAdapter = serializationAdapter ?? throw new ArgumentNullException(nameof(serializationAdapter));
         }
-        private NetOutgoingMessage CreateMessage<T>(IStateMachine<string, INetworkGameScreen> machine, string commandName, T instanceToSend)
+        private NetOutgoingMessage CreateMessage<T>(IStateMachine<string, INetworkGameScreen> machine, int commandName, T instanceToSend)
         {
             return machine.SharedContext.Client.CreateMessage(
 
@@ -94,29 +94,53 @@ namespace Apocalypse.Any.Client.States
                 }
             }
             
-            if(cmds.Count(cmd => cmd.Contains(DefaultKeys.OpenDialog)) > 1)
+
+            if(machine.SharedContext.CurrentGameStateData == null || 
+                    cmds.Contains("Exit") || 
+                    cmds.Contains(DefaultKeys.Use) ||
+                    cmds.Contains(DefaultKeys.CloseDialog))
             {
-                Console.WriteLine("SendGameStateUpdateDataState, OpenDialog > 1");
+                var sendResult = machine.SharedContext.Client.SendMessage(
+                                        CreateMessage(
+                                            machine,
+                                            NetworkCommandConstants.UpdateCommand,
+                                            new GameStateUpdateData()
+                                            {
+                                                LoginToken = machine.SharedContext.LoginToken,
+                                                Commands = cmds,
+                                                Screen = new ScreenData()
+                                                {
+                                                    ScreenWidth = (int)MathF.Round(ScreenService.Instance.Resolution.X),
+                                                    ScreenHeight = (int)MathF.Round(ScreenService.Instance.Resolution.Y)
+                                                }
+                                            }),
+                                        NetDeliveryMethod.UnreliableSequenced);
+                if (sendResult == NetSendResult.FailedNotConnected)
+                    machine.GetService.Get(ClientGameScreenBook.Connect).Handle(machine);
+            }
+            else
+            {
+                var sendResult = machine.SharedContext.Client.SendMessage(
+                                        CreateMessage(
+                                            machine,
+                                            NetworkCommandConstants.UpdateCommandDelta,
+                                            new GameStateUpdateData()
+                                            {
+                                                LoginToken = machine.SharedContext.LoginToken,
+                                                Commands = cmds,
+                                                Screen = new ScreenData()
+                                                {
+                                                    ScreenWidth = (int)MathF.Round(ScreenService.Instance.Resolution.X),
+                                                    ScreenHeight = (int)MathF.Round(ScreenService.Instance.Resolution.Y)
+                                                }
+                                            }),
+                                        NetDeliveryMethod.UnreliableSequenced);
+                if (sendResult == NetSendResult.FailedNotConnected)
+                    machine.GetService.Get(ClientGameScreenBook.Connect).Handle(machine);
             }
 
-            var sendResult = machine.SharedContext.Client.SendMessage(
-                                    CreateMessage(
-                                        machine,
-                                        NetworkCommandConstants.UpdateCommand,
-                                        new GameStateUpdateData()
-                                        {
-                                            LoginToken = machine.SharedContext.LoginToken,
-                                            Commands = cmds,
-                                            Screen = new ScreenData()
-                                            {
-                                                ScreenWidth = (int)MathF.Round(ScreenService.Instance.Resolution.X),
-                                                ScreenHeight = (int)MathF.Round(ScreenService.Instance.Resolution.Y)
-                                            }
-                                        }),
-                                    NetDeliveryMethod.UnreliableSequenced);
 
-            if (sendResult == NetSendResult.FailedNotConnected)
-                machine.GetService.Get(ClientGameScreenBook.Connect).Handle(machine);
+            
         }
     }
 }

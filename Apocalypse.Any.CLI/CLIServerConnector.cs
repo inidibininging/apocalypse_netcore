@@ -26,7 +26,7 @@ namespace Apocalypse.Any.CLI
         {
             SerializationAdapter = serializationAdapter ?? throw new ArgumentNullException(nameof(serializationAdapter));
         }
-        private NetOutgoingMessage CreateMessage<T>(string commandName, T instanceToSend)
+        private NetOutgoingMessage CreateMessage<T>(int commandName, T instanceToSend)
         {
             return Client.CreateMessage(
 

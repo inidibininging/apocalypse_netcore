@@ -31,6 +31,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Apocalypse.Any.Constants;
 
 namespace Apocalypse.Any.GameServer.States.Sector.Storage
 {
@@ -61,7 +62,7 @@ namespace Apocalypse.Any.GameServer.States.Sector.Storage
 
             inMemoryStorage.Add(ServerGameSectorNewBook.BuildFactoriesState, new BuildFactoriesState());
             inMemoryStorage.Add(ServerGameSectorNewBook.BuildSingularMechanicsState, new BuildSingularMechanicsState());
-            inMemoryStorage.Add(nameof(BuildMiniCityFactories), new BuildMiniCityFactories(new Client.Services.RectangularFrameGeneratorService(), $"Image/miniCity{ (Randomness.Instance.From(0,200) > 125 ? "2" : "") }"));
+            inMemoryStorage.Add(nameof(BuildMiniCityFactories), new BuildMiniCityFactories(new Client.Services.RectangularFrameGeneratorService(), (Randomness.Instance.From(0,200) > 125 ? ImagePaths.miniCity : ImagePaths.miniCity2)));
             inMemoryStorage.Add(nameof(CreateOrUpdateIdentifiableCircularLocationState), new CreateOrUpdateIdentifiableCircularLocationState(
                                                                                         new RectangularFrameGeneratorService(),
                                                                                         new ImageToRectangleTransformationService(),
@@ -211,8 +212,13 @@ namespace Apocalypse.Any.GameServer.States.Sector.Storage
                         {
                             foreach (var imageData in machine.SharedContext.DataLayer.ImageData)
                             {
-                                if ( (imageData.SelectedFrame.Contains("planet", StringComparison.OrdinalIgnoreCase) ||
-                                     imageData.SelectedFrame.Contains("miniCity", StringComparison.OrdinalIgnoreCase)) &&
+                                if ( (imageData.SelectedFrame.frame == ImagePaths.PlanetFrame ||
+                                      imageData.SelectedFrame.frame == ImagePaths.RandomPlanetFrame0 ||
+                                      imageData.SelectedFrame.frame == ImagePaths.RandomPlanetFrame1 ||
+                                      imageData.SelectedFrame.frame == ImagePaths.RandomPlanetFrame2 ||
+                                      imageData.SelectedFrame.frame == ImagePaths.RandomPlanetFrame3
+                                      ||
+                                     imageData.SelectedFrame.frame == ImagePaths.MiniCityImagePath) &&
                                      mech.Key == "move_props_around")
                                 {
                                     continue;

@@ -7,6 +7,7 @@ using Apocalypse.Any.Domain.Server.Model.Interfaces;
 using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
+using Apocalypse.Any.Constants;
 
 namespace Apocalypse.Any.Infrastructure.Server.Services.Factories
 {
@@ -25,6 +26,7 @@ namespace Apocalypse.Any.Infrastructure.Server.Services.Factories
             return new List<Type>() { typeof(IGameSectorBoundaries) };
         }
 
+        (int frame, int x, int y) RandomAsteroidFrame() => (ImagePaths.AsteroidFrame, Randomness.Instance.From(0, 7), Randomness.Instance.From(4, 6));
         protected override ImageData UseConverter<TParam>(TParam parameter)
         {
             var sectorBoundaries = parameter as IGameSectorBoundaries;
@@ -33,7 +35,7 @@ namespace Apocalypse.Any.Infrastructure.Server.Services.Factories
             return new ImageData()
             {
                 Alpha = new AlphaBehaviour() { Alpha = 1.00f },
-                SelectedFrame = $"{IdPrefix}_{Randomness.Instance.From(0, 7)}_{(Randomness.Instance.From(4, 6))}",
+                SelectedFrame = RandomAsteroidFrame(),
                 Color = Color.White,
                 Scale = new Vector2((float)(Randomness.Instance.From(0, 200) / 100)),
                 Position = new MovementBehaviour()

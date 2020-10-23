@@ -19,6 +19,8 @@
     <ProjectReference Include="..\Apocalypse.Any.Domain.Common.Model.Network\Apocalypse.Any.Domain.Common.Model.Network.csproj" />
     <ProjectReference Include="..\Apocalypse.Any.Domain.Common.Model\Apocalypse.Any.Domain.Common.Model.csproj" />
     <ProjectReference Include="..\Apocalypse.Any.Domain.Common.Network\Apocalypse.Any.Domain.Common.Network.csproj" />
+    <ProjectReference Include="..\Apocalypse.Any.Infrastructure.Common.Services.Data.Interfaces\Apocalypse.Any.Infrastructure.Common.Services.Data.Interfaces.csproj" />
+    <ProjectReference Include="..\Apocalypse.Any.Infrastructure.Common.Services.Data\Apocalypse.Any.Infrastructure.Common.Services.Data.csproj" />
     <ProjectReference Include="..\Apocalypse.Any.Infrastructure.Common.Services.Network.Interfaces\Apocalypse.Any.Infrastructure.Common.Services.Network.Interfaces.csproj" />
     <ProjectReference Include="..\Apocalypse.Any.Infrastructure.Common.Services.Network\Apocalypse.Any.Infrastructure.Common.Services.Network.csproj" />
     <ProjectReference Include="..\Apocalypse.Any.Infrastructure.Common.Services.Serializer.JsonAdapter\Apocalypse.Any.Infrastructure.Common.Services.Serializer.JsonAdapter.csproj" />

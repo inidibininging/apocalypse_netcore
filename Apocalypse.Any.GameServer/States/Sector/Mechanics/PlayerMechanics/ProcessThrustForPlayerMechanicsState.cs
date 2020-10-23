@@ -11,6 +11,7 @@ using States.Core.Infrastructure.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Apocalypse.Any.Constants;
 
 namespace Apocalypse.Any.GameServer.States.Sector.Mechanics.PlayerMechanics
 {
@@ -101,8 +102,8 @@ namespace Apocalypse.Any.GameServer.States.Sector.Mechanics.PlayerMechanics
                         {
                             Id = Guid.NewGuid().ToString(),
                             Alpha = new AlphaBehaviour() { Alpha = 1.0f },
-                            Path = "Image/gamesheetExtended",
-                            SelectedFrame = $"thrust_6_8", //TODO: make a burst image
+                            Path = ImagePaths.gamesheetExtended,
+                            SelectedFrame = (ImagePaths.ThrustFrame, 6, 8), //TODO: make a burst image
                             Height = 32,
                             Width = 32,
                             Scale = new Vector2(2.5f, 2.5f),

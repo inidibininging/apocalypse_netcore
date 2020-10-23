@@ -13,11 +13,11 @@ namespace Apocalypse.Any.Infrastructure.Server.Services.Factories
 {
     public class RandomTilesetPartFactory : CheckWithReflectionFactoryBase<ImageData>
     {
-        private string Path { get; }
-        public List<string> Frames { get; set; }
+        private int Path { get; }
+        public List<(int frame, int x, int y)> Frames { get; set; }
 
-        public RandomTilesetPartFactory(string path,                                        
-                                        List<string> frames)
+        public RandomTilesetPartFactory(int path,                                        
+                                        List<(int frame, int x, int y)> frames)
         {            
             Path = path;
             Frames = frames;
@@ -34,7 +34,7 @@ namespace Apocalypse.Any.Infrastructure.Server.Services.Factories
             {
                 Id = Guid.NewGuid().ToString(),
                 Alpha = new AlphaBehaviour() { Alpha = 1.00f },
-                Path = Path,
+                Path = this.Path,
                 //SelectedFrame = $"{IdPrefix}_{Randomness.Instance.From(StartX, EndX)}_{(Randomness.Instance.From(StartY, EndY))}",
                 SelectedFrame = Frames.ElementAt(Randomness.Instance.From(0, Frames.Count - 1)),
                 Color = Color.White,

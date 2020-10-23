@@ -5,11 +5,13 @@
     /// </summary>
     public static class NetworkCommandConstants
     {
-        public const string ErrorCommand = "e";
-        public const string InitializeCommand = "i";
-        public const string LoginCommand = "l";
-        public const string UpdateCommand = "u";
-        public const string ReceiveWorkCommand = "w";
-        public const string ExeceuteCommand = "x";
+        public const int ErrorCommand = 6;
+        public const int InitializeCommand = 0;
+        public const int LoginCommand = 1;
+        public const int UpdateCommand = 2;
+        public const int UpdateCommandDelta = 3;
+        public const int ReceiveWorkCommand = 4;
+        public const int ExeceuteCommand = 5;
+        public const int GetGameStateByLoginToken = 6;
     }
 }

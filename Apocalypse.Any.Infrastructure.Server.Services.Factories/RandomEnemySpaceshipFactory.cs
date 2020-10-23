@@ -8,6 +8,7 @@ using Apocalypse.Any.Domain.Server.Model;
 using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
+using Apocalypse.Any.Constants;
 
 namespace Apocalypse.Any.Infrastructure.Server.Services.Factories
 {
@@ -23,6 +24,9 @@ namespace Apocalypse.Any.Infrastructure.Server.Services.Factories
         }
 
         private static CharacterSheetFactory RandomSheet {get;set;} = new CharacterSheetFactory();
+        
+        (int frame, int x, int y) RandomEnemyFrame() => (ImagePaths.EnemyFrame, Randomness.Instance.From(0, 8), Randomness.Instance.From(0, 1));
+        
         protected override EnemySpaceship UseConverter<TParam>(TParam parameter)
         {
             var enemyName = parameter as string;
@@ -43,8 +47,8 @@ namespace Apocalypse.Any.Infrastructure.Server.Services.Factories
                 {
                     Id = Guid.NewGuid().ToString(),
                     Alpha = new AlphaBehaviour() { Alpha = 1 },
-                    Path = "Image/gamesheetExtended", //TODO: look for Image/gamesheetExtended when replacing it with an atlas
-                    SelectedFrame = $"{IdPrefix}_{Randomness.Instance.From(0, 8)}_{Randomness.Instance.From(0, 1)}",
+                    Path = ImagePaths.gamesheetExtended, //TODO: look for Image/gamesheetExtended when replacing it with an atlas
+                    SelectedFrame = RandomEnemyFrame(),
                     Height = 32,
                     Width = 32,
                     Scale = new Vector2(1.5f, 1.5f),

@@ -12,11 +12,14 @@ using Lidgren.Network;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
+using Apocalypse.Any.Constants;
+using Apocalypse.Any.Domain.Common.Drawing.UI;
 
 namespace Apocalypse.Any.Client.Screens
 {
-    public class NetworkGameSceen : GameScreen, INetworkGameScreen
+    public class NetworkGameScreen : GameScreen, INetworkGameScreen
     {
         public VisualText MultiplayerText { get; set; } = new VisualText();
         public List<ImageClient> Images { get; set; } = new List<ImageClient>();
@@ -30,11 +33,11 @@ namespace Apocalypse.Any.Client.Screens
 
         #region UI
 
-        public SpriteSheet HealthImage { get; set; } = new SpriteSheet(null) { Path = "Image/hud_misc_edit" };
-        public SpriteSheet SpeedImage { get; set; } = new SpriteSheet(null) { Path = "Image/hud_misc_edit" };
-        public SpriteSheet StrenghImage { get; set; } = new SpriteSheet(null) { Path = "Image/hud_misc_edit" };       
-        public SpriteSheet DialogImage { get; set; } = new SpriteSheet(null) { Path = "Image/hud_misc_edit" };
-        public SpriteSheet CursorImage { get; set; } = new SpriteSheet(null) { Path = "Image/hud_misc_edit" };
+        public SpriteSheet HealthImage { get; set; } = new SpriteSheet(null) { Path = ImagePaths.hud_misc_edit };
+        public SpriteSheet SpeedImage { get; set; } = new SpriteSheet(null) { Path = ImagePaths.hud_misc_edit };
+        public SpriteSheet StrenghImage { get; set; } = new SpriteSheet(null) { Path = ImagePaths.hud_misc_edit };       
+        public SpriteSheet DialogImage { get; set; } = new SpriteSheet(null) { Path = ImagePaths.hud_misc_edit };
+         
 
         //public SpriteSheet LerpMouseImage { get; set; } = new SpriteSheet(null) { Path = "Image/hud_misc" };
 
@@ -56,8 +59,8 @@ namespace Apocalypse.Any.Client.Screens
         public GameClientConfiguration Configuration { get; set; }
         public Atlas GameSheet { get; set; } = new Atlas()
         {
-            Name = "gamesheet",
-            Frames = new Dictionary<string, Rectangle>()
+            Name = "gamesheetExtended",
+            Frames = new Dictionary<(int frame,int x, int y), Rectangle>()
         };
 
         //public string ServerIp { get; set; }
@@ -73,8 +76,15 @@ namespace Apocalypse.Any.Client.Screens
 
         #endregion Atlas Stuff
 
-        public NetworkGameSceen()
+        public NetworkGameScreen()
         {
+            CursorImage = new SpriteSheet(null) { Path = ImagePaths.hud_misc_edit  };
+        }
+
+        public override void Initialize()
+        {
+            
+            base.Initialize();
         }
 
         public override void Draw(SpriteBatch spriteBatch)
@@ -143,7 +153,8 @@ namespace Apocalypse.Any.Client.Screens
             Messages.Add("Updated time");
             InputService.Update(time);
             //MultiplayerText.Text = string.Join(System.Environment.NewLine,Messages);
-
+            
+            
             base.Update(time);
         }
     }

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Apocalypse.Any.Domain.Common.Model.Language;
 using Apocalypse.Any.Infrastructure.Server.Services.Data.Interfaces;
@@ -39,8 +40,11 @@ namespace Apocalypse.Any.Infrastructure.Server.Language
         
         public override void Handle(IStateMachine<string, IGameSectorLayerService> machine)
         {
-            var fn = machine.GetService.Get(Expression.Name) as FunctionInstruction;
-            fn.LastCaller = this;
+            var fn = machine.GetService.Get(Expression.Name);
+            if(fn == null)
+                throw new KeyNotFoundException(Expression.Name + " not found");
+            if((fn as FunctionInstruction) != null)
+                (fn as FunctionInstruction).LastCaller = this;
             machine.Run(Expression.Name);
         }
     }

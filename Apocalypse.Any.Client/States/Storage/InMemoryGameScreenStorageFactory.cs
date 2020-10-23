@@ -15,6 +15,7 @@ using Apocalypse.Any.Core.Utilities;
 using Apocalypse.Any.Domain.Client.Model;
 using Apocalypse.Any.Domain.Common.DrawingOrder;
 using Apocalypse.Any.Domain.Common.Model.Network;
+using Apocalypse.Any.Infrastructure.Common.Services.Data;
 using Apocalypse.Any.Infrastructure.Common.Services.Network;
 using Apocalypse.Any.Infrastructure.Common.Services.Serializer.Interfaces;
 using Lidgren.Network;
@@ -24,6 +25,8 @@ using States.Core.Infrastructure.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Apocalypse.Any.Constants;
+using Apocalypse.Any.Domain.Common.Drawing.UI;
 
 namespace Apocalypse.Any.Client.States.Storage
 {
@@ -47,7 +50,8 @@ namespace Apocalypse.Any.Client.States.Storage
                       machine.SharedContext.Messages.Add(ex.Message);
                       var identifier = machine.NewService.New(ClientGameScreenBook.FetchData, new FetchDataState(
                           new NetIncomingMessageBusService<NetClient>(machine.SharedContext.Client),
-                          serializer
+                          serializer,
+                          new DeltaGameStateDataService()
                       ));
                       return machine.GetService.Get(ClientGameScreenBook.FetchData);
                   }
@@ -167,6 +171,7 @@ namespace Apocalypse.Any.Client.States.Storage
                 {
                     ClientGameScreenBook.UpdateCursor,
                     ClientGameScreenBook.UpdateInput,
+                    nameof(MouseEventEmitterService<INetworkGameScreen>),
                     ClientGameScreenBook.FetchData,
                     ClientGameScreenBook.UpdateImages,
                     ClientGameScreenBook.UpdateCharacterWindow,
@@ -206,12 +211,16 @@ namespace Apocalypse.Any.Client.States.Storage
                    serializer));
 
             //TODO: Dummy sheet dictionary for adding the only image needed . duh. definitely a
-            var dummyHudSheetToChangeInTheFuture = new Dictionary<string, Rectangle>();
-            dummyHudSheetToChangeInTheFuture.Add("hud_misc_edit_0_0", new Rectangle(0, 0, 32, 32));
+            var dummyHudSheetToChangeInTheFuture = new Dictionary<(int frame,int x, int y), Rectangle>();
+            dummyHudSheetToChangeInTheFuture.Add((ImagePaths.HUDFrame, 0, 0), new Rectangle(0, 0, 32, 32));
 
             inMemoryStorage.Add(ClientGameScreenBook.BuildInventoryWindow, new BuildInventoryWindowState(dummyHudSheetToChangeInTheFuture));
             inMemoryStorage.Add(ClientGameScreenBook.UpdateInventoryWindow, new UpdateInventoryWindowState());
             inMemoryStorage.Add(ClientGameScreenBook.UpdateInventoryImages, new UpdateInventoryImagesState(new PlayerInventoryDrawingFactory()));
+
+            inMemoryStorage.Add(nameof(MouseEventEmitterService<INetworkGameScreen>),
+                new MouseEventEmitterService<INetworkGameScreen>());
+            
             inMemoryStorage.Add(nameof(UpdateDialogHoverTextState), new UpdateDialogHoverTextState());
             inMemoryStorage.Add(ClientGameScreenBook.BuildChatWindow, new BuildChatWindowState());
             

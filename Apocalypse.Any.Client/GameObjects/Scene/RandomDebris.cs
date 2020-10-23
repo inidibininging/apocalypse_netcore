@@ -39,7 +39,7 @@ namespace Apocalypse.Any.Client.GameObjects.Scene
         {
             Position.X = Randomness.Instance.From(0, (int)ScreenService.Instance.Resolution.X * 10);
             Position.Y = Randomness.Instance.From(0, (int)ScreenService.Instance.Resolution.Y * 10);
-            RotationDirection = Randomness.Instance.TrueOrFalse() ? 1 : -1;
+            RotationDirection = (Randomness.Instance.TrueOrFalse() ? 1 : -1);//* Randomness.Instance.From(80, 100)/100;
             Destination.X = Randomness.Instance.From(0, (int)ScreenService.Instance.Resolution.X * 20);
             Destination.Y = Randomness.Instance.From(0, (int)ScreenService.Instance.Resolution.Y * 20);
             Color = Color.White;
@@ -47,7 +47,7 @@ namespace Apocalypse.Any.Client.GameObjects.Scene
         }
         public void ChangeDebrisFrame(int rolls = 1){
             FramePosition = GenerateRandomFrame(rolls);
-            Console.WriteLine($"{FramePosition.X},{FramePosition.Y}");
+            // Console.WriteLine($"{FramePosition.X},{FramePosition.Y}");
         }
 
         public void Update(GameTime gameTime)

@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Apocalypse.Any.Constants;
 
 namespace Apocalypse.Any.GameServer.States.Sector.Mechanics
 {
@@ -80,7 +81,7 @@ namespace Apocalypse.Any.GameServer.States.Sector.Mechanics
 
                                         projectile.Destroyed = true;
                                         projectile.CurrentImage.Color = Color.Yellow;
-                                        projectile.CurrentImage.SelectedFrame = "projectile_5_7";
+                                        projectile.CurrentImage.SelectedFrame = (ImagePaths.ProjectileFrame, 6, 8);
                                     }
                                 }, ImageToRectangleService))
                 .Concat

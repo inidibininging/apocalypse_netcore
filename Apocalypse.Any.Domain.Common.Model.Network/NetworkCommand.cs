@@ -2,7 +2,7 @@
 {
     public class NetworkCommand
     {
-        public string CommandName { get; set; }
+        public int CommandName { get; set; }
         public string CommandArgument { get; set; }
         public string Data { get; set; }
     }

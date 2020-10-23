@@ -8,7 +8,7 @@ namespace Apocalypse.Any.Domain.Common.Model.Network
 
         public ErrorNetworkCommand()
         {
-            this.CommandName = "Error";
+            this.CommandName = 6;
             this.CommandArgument = typeof(Exception).FullName;
         }
     }

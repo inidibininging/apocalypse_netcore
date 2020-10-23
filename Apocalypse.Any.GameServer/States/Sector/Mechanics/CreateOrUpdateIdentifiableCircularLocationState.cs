@@ -14,6 +14,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
+using Apocalypse.Any.Constants;
 
 namespace Apocalypse.Any.GameServer.States.Sector.Mechanics
 {
@@ -37,11 +38,11 @@ namespace Apocalypse.Any.GameServer.States.Sector.Mechanics
         public string DialogLocationRelationLayerName { get; }
 
         private const string MiniCityImagePath = "miniCity";
-        private Dictionary<string, Rectangle> FramesWithCircularLocation() => 
-                FrameGeneratorService.GenerateGameSheetAtlas(MiniCityImagePath, 32, 32, 3, 6, 2, 2)
-                                    .Union(FrameGeneratorService.GenerateGameSheetAtlas(MiniCityImagePath, 32, 32, 0, 6, 3, 4).Select(kv => kv))
-                                    .Union(FrameGeneratorService.GenerateGameSheetAtlas(MiniCityImagePath, 32, 32, 0, 5, 4, 0).Select(kv => kv))
-                                    .Union(FrameGeneratorService.GenerateGameSheetAtlas(MiniCityImagePath, 32, 32, 0, 0, 5, 5).Select(kv => kv))
+        private Dictionary<(int frame,int x, int y), Rectangle> FramesWithCircularLocation() => 
+                FrameGeneratorService.GenerateGameSheetAtlas(ImagePaths.MiniCityImagePath, 32, 32, 3, 6, 2, 2)
+                                    .Union(FrameGeneratorService.GenerateGameSheetAtlas(ImagePaths.MiniCityImagePath, 32, 32, 0, 6, 3, 4).Select(kv => kv))
+                                    .Union(FrameGeneratorService.GenerateGameSheetAtlas(ImagePaths.MiniCityImagePath, 32, 32, 0, 5, 4, 0).Select(kv => kv))
+                                    .Union(FrameGeneratorService.GenerateGameSheetAtlas(ImagePaths.MiniCityImagePath, 32, 32, 0, 0, 5, 5).Select(kv => kv))
                                     .ToDictionary(kv => kv.Key, kv => kv.Value);
         
         private IEnumerable<DialogNode> GetDialogNodesWithBuildingLocations(IStateMachine<string, IGameSectorLayerService> machine)

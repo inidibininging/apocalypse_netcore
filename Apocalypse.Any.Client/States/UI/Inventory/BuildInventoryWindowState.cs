@@ -1,3 +1,4 @@
+using System;
 using Apocalypse.Any.Client.Screens;
 using Apocalypse.Any.Core.Drawing;
 using Apocalypse.Any.Domain.Common.Drawing.UI;
@@ -6,14 +7,16 @@ using Microsoft.Xna.Framework;
 using States.Core.Infrastructure.Services;
 using System.Collections.Generic;
 using System.Linq;
+using Apocalypse.Any.Constants;
+using Apocalypse.Any.Core.Utilities;
 
 namespace Apocalypse.Any.Client.States.UI.Inventory
 {
     public class BuildInventoryWindowState : IState<string, INetworkGameScreen>
     {
-        private static Dictionary<string, Rectangle> InventoryHudSheet { get; set; }
+        private static Dictionary<(int frame, int x, int y), Rectangle> InventoryHudSheet { get; set; }
 
-        public BuildInventoryWindowState(Dictionary<string, Rectangle> gameSheet)
+        public BuildInventoryWindowState(Dictionary<(int frame, int x, int y), Rectangle> gameSheet)
         {
             InventoryHudSheet = gameSheet;
         }
@@ -50,8 +53,8 @@ namespace Apocalypse.Any.Client.States.UI.Inventory
                     var itemPosY = (indexY * 32);
                     var currentItemSprite = new SpriteSheet(InventoryHudSheet)
                     {
-                        Path = "Image/hud_misc_edit",
-                        SelectedFrame = "hud_misc_edit_0_0",
+                        Path = ImagePaths.hud_misc_edit,
+                        SelectedFrame = (ImagePaths.HUDFrame, 0, 0),
                         LayerDepth = DrawingPlainOrder.UI,
                         ForceDraw = true,
                         Position = new Core.Behaviour.MovementBehaviour()
@@ -72,8 +75,23 @@ namespace Apocalypse.Any.Client.States.UI.Inventory
                         $"{indexX}_{indexY}_slot",
                         currentItemSprite
                     );
+                    
+                    
                 }
             }
+            var billGates = new ApocalypseWindow();
+
+            for (int i = 0; i < Randomness.Instance.From(6,14); i++)
+            {
+                billGates.Add("lol"+i.ToString(),new ApocalypseButton<string>(InventoryHudSheet));
+                billGates.As<ApocalypseButton<string>>("lol" + i.ToString()).Position.X = Randomness.Instance.From(16, 320);
+                billGates.As<ApocalypseButton<string>>("lol" + i.ToString()).Position.Y = Randomness.Instance.From(16,256);
+                billGates.As<ApocalypseButton<string>>("lol" + i.ToString()).Text = "OK CANCEL YEAH";
+                billGates.As<ApocalypseButton<string>>("lol" + i.ToString()).Scale = new Vector2(Randomness.Instance.From(1, 5));
+            }
+            
+            
+            machine.SharedContext.Add(nameof(billGates),billGates);
         }
     }
 }

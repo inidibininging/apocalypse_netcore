@@ -8,7 +8,7 @@ namespace Apocalypse.Any.Core.Map.Flat
     {
         public int SizeX { get; set; }
         public int SizeY { get; set; }
-        public Dictionary<int, string> MappedUsedImages { get; set; }
+        public Dictionary<int, int> MappedUsedImages { get; set; }
         public List<LayerFile> Layers { get; set; }
     }
 }

@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Apocalypse.Any.Constants;
 
 namespace Apocalypse.Any.GameServer.States.Sector.Factories
 {
@@ -22,9 +23,9 @@ namespace Apocalypse.Any.GameServer.States.Sector.Factories
         public const string BuildingDataFactory = nameof(BuildingDataFactory);
 
         private RectangularFrameGeneratorService FrameGeneratorService { get; }
-        private string ImagePath { get; }
+        private int ImagePath { get; }
 
-        public BuildMiniCityFactories(RectangularFrameGeneratorService frameGeneratorService, string imagePath)
+        public BuildMiniCityFactories(RectangularFrameGeneratorService frameGeneratorService, int imagePath)
         {
             FrameGeneratorService = frameGeneratorService;
             ImagePath = imagePath;
@@ -38,20 +39,20 @@ namespace Apocalypse.Any.GameServer.States.Sector.Factories
             }
 
 
-            var centerFrames = FrameGeneratorService.GenerateGameSheetAtlas("miniCity", 32, 32, 1, 6, 5, 5);
-            var horizontalFramesChunkA = FrameGeneratorService.GenerateGameSheetAtlas("miniCity", 32, 32, 0, 5, 0, 0);
+            var centerFrames = FrameGeneratorService.GenerateGameSheetAtlas(ImagePaths.MiniCityImagePath, 32, 32, 1, 6, 5, 5);
+            var horizontalFramesChunkA = FrameGeneratorService.GenerateGameSheetAtlas(ImagePaths.MiniCityImagePath, 32, 32, 0, 5, 0, 0);
             
-            var verticalFramesChunkA = FrameGeneratorService.GenerateGameSheetAtlas("miniCity", 32, 32, 0, 6, 1, 1);
-            var verticalFramesChunkB = FrameGeneratorService.GenerateGameSheetAtlas("miniCity", 32, 32, 0, 2, 2, 2);
+            var verticalFramesChunkA = FrameGeneratorService.GenerateGameSheetAtlas(ImagePaths.MiniCityImagePath, 32, 32, 0, 6, 1, 1);
+            var verticalFramesChunkB = FrameGeneratorService.GenerateGameSheetAtlas(ImagePaths.MiniCityImagePath, 32, 32, 0, 2, 2, 2);
             
             var finalVerticalFramesChunk = verticalFramesChunkA
                                             .Union(verticalFramesChunkB.Select(kv => kv))
                                             .ToDictionary(kv => kv.Key, kv => kv.Value);
             
-            var buildingTops = FrameGeneratorService.GenerateGameSheetAtlas("miniCity", 32, 32, 3, 6, 2, 2);            
-            var buildingDownsA = FrameGeneratorService.GenerateGameSheetAtlas("miniCity", 32, 32, 0, 6, 3, 4);
-            var buildingDownsB = FrameGeneratorService.GenerateGameSheetAtlas("miniCity", 32, 32, 0, 5, 4, 0);
-            var buildingDownsC = FrameGeneratorService.GenerateGameSheetAtlas("miniCity", 32, 32, 0, 0, 5, 5);
+            var buildingTops = FrameGeneratorService.GenerateGameSheetAtlas(ImagePaths.MiniCityImagePath, 32, 32, 3, 6, 2, 2);            
+            var buildingDownsA = FrameGeneratorService.GenerateGameSheetAtlas(ImagePaths.MiniCityImagePath, 32, 32, 0, 6, 3, 4);
+            var buildingDownsB = FrameGeneratorService.GenerateGameSheetAtlas(ImagePaths.MiniCityImagePath, 32, 32, 0, 5, 4, 0);
+            var buildingDownsC = FrameGeneratorService.GenerateGameSheetAtlas(ImagePaths.MiniCityImagePath, 32, 32, 0, 0, 5, 5);
 
             var finalBuildingDowns = buildingDownsA
                                             .Union(buildingDownsB.Select(kv => kv))

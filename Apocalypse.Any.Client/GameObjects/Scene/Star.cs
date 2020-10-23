@@ -13,6 +13,7 @@ using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Apocalypse.Any.Constants;
 
 namespace Apocalypse.Any.Client.GameObjects.Scene
 {
@@ -27,7 +28,7 @@ namespace Apocalypse.Any.Client.GameObjects.Scene
         //private static int sechs = 5;
         public Star(float x = 0, float y = 0)
         {
-            Path = "Image/Scene/Star256x256";
+            Path = ImagePaths.stars;
             Scale = new Vector2((float)Randomness.Instance.From(1, 2) / 10);
             LayerDepth = DrawingPlainOrder.Background;
             var position = Position;

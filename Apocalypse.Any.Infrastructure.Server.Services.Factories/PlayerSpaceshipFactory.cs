@@ -8,6 +8,7 @@ using Apocalypse.Any.Domain.Server.Model;
 using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
+using Apocalypse.Any.Constants;
 
 namespace Apocalypse.Any.Infrastructure.Common.Services.Network.Interfaces.Factories
 {
@@ -45,8 +46,8 @@ namespace Apocalypse.Any.Infrastructure.Common.Services.Network.Interfaces.Facto
                 {
                     Id = Guid.NewGuid().ToString(),
                     Alpha = new AlphaBehaviour() { Alpha = 1 },
-                    Path = "Image/ships",
-                    SelectedFrame = $"{IdPrefix}_{xFrame}_{yFrame}",
+                    Path = ImagePaths.ships,
+                    SelectedFrame = (ImagePaths.PlayerFrame, xFrame, yFrame),
                     Height = 32,
                     Width = 32,
                     Scale = new Vector2(1.5f, 1.5f),

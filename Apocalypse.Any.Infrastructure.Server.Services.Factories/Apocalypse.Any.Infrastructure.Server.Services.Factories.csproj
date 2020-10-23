@@ -5,6 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Apocalypse.Any.Constants\Apocalypse.Any.Constants.csproj" />
     <ProjectReference Include="..\Apocalypse.Any.Domain.Common.DrawingOrder\Apocalypse.Any.Domain.Common.DrawingOrder.csproj" />
     <ProjectReference Include="..\Apocalypse.Any.Domain.Common.Model.Network\Apocalypse.Any.Domain.Common.Model.Network.csproj" />
     <ProjectReference Include="..\Apocalypse.Any.Domain.Common.Model\Apocalypse.Any.Domain.Common.Model.csproj" />

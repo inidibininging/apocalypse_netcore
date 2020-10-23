@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Apocalypse.Any.Constants;
 
 namespace Apocalypse.Any.Client.GameObjects.Scene
 {
@@ -27,15 +28,15 @@ namespace Apocalypse.Any.Client.GameObjects.Scene
 
         public override void Initialize()
         {
-            var frames = new Dictionary<string, Rectangle>();
+            var frames = new Dictionary<(int asteroidNr, int dummyA, int dummyB), Rectangle>();
             for (int i = 0; i < AsteroidCount; i++)
             {
                 var randomAsteroid = new RandomAsteroid();
                 RandomAsteroids.Add(randomAsteroid);
 
-                frames.Add(i.ToString(), new Rectangle(randomAsteroid.FramePosition.ToPoint(), new Point(32)));
+                frames.Add((i, 0, 0), new Rectangle(randomAsteroid.FramePosition.ToPoint(), new Point(32)));
             }
-            Sheet = new SpriteSheet(frames) { Path = "Image/gamesheetExtended" };
+            Sheet = new SpriteSheet(frames) { Path = ImagePaths.gamesheetExtended};
 
             //Add(new AsteroidScreenBehaviour(Sheet));
             base.Initialize();
@@ -46,7 +47,7 @@ namespace Apocalypse.Any.Client.GameObjects.Scene
             var i = 0;
             RandomAsteroids.ForEach(randomAsteroid =>
             {
-                Sheet.SelectedFrame = i.ToString();
+                Sheet.SelectedFrame = (i, 0, 0);
                 Sheet.Position.X = randomAsteroid.Position.X;
                 Sheet.Position.Y = randomAsteroid.Position.Y;
                 Sheet.Rotation.Rotation = randomAsteroid.Rotation.Rotation;

@@ -12,6 +12,7 @@ using Newtonsoft.Json.Linq;
 using States.Core.Infrastructure.Services;
 using System;
 using System.Linq;
+using Apocalypse.Any.Domain.Common.Drawing.UI;
 
 namespace Apocalypse.Any.Client.States.UI.Inventory
 {
@@ -46,6 +47,8 @@ namespace Apocalypse.Any.Client.States.UI.Inventory
                 return;
             }
 
+            machine.SharedContext.As<ApocalypseWindow>("billGates").Position = machine.SharedContext.CharacterWindow.Position;
+            
             var inventoryWindow = machine.SharedContext.InventoryWindow;
             UpdateInventoryWindow(machine, inventoryWindow);
             UpdateInventorySlot(machine, inventoryWindow);

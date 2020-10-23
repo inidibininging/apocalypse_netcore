@@ -7,6 +7,9 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
+using System.Numerics;
+using Apocalypse.Any.Constants;
+using Vector2 = Microsoft.Xna.Framework.Vector2;
 
 namespace Apocalypse.Any.Core.Drawing
 {
@@ -16,28 +19,22 @@ namespace Apocalypse.Any.Core.Drawing
     /// </summary>
     public class Image : GameObject, IImage, IDisposable, IImageData
     {
-        #region static
-
-        private static Image _emptyImage;
         
-        public static Image EmptyImage // the image should be "empty"
-        {
-            get
-            {
-                return _emptyImage ?? (_emptyImage = new Image()
-                {
-                    Path = "Image/dummytile.png"
-                });
-            }
-        }
-
-        #endregion static
-
-        private Vector2 _origin;
+        /// <summary>
+        /// This is the anchor of the image (ehem.. texture) drawn
+        /// </summary>
+        protected Vector2 Origin;
+        
         private RenderTarget2D _renderTarget;
-        private string _path;
         
-        public string Path
+
+        private int _path;
+        private System.Numerics.Vector2 _scale;
+
+        /// <summary>
+        /// Path to texture used. For more see Apocalypse.Any.Constants.ImagePaths
+        /// </summary>
+        public int Path
         {
             get
             {
@@ -50,19 +47,31 @@ namespace Apocalypse.Any.Core.Drawing
                     _path = value;
                     //
                 }
-                if (!string.IsNullOrWhiteSpace(Path))
+                if (Path != ImagePaths.empty)
                     LoadContent(ScreenService.Instance.Content); // PORTS HERE
             }
         }
 
         private int TimesContentLoaded { get; set; }
 
+        /// <summary>
+        /// This is the "Z"
+        /// </summary>
         public float LayerDepth { get; set; }
-
+        
         public Vector2 Scale { get; set; }
+        
+        
         public Rectangle SourceRect { get; set; }
+        
+        /// <summary>
+        /// Monogame Texture
+        /// </summary>
         public Texture2D Texture { get; set; }
 
+        /// <summary>
+        /// Used to forward if the Texture and so on is disposed. Will return false if disposed was never called.
+        /// </summary>
         public bool Disposed { get; private set; }
 
         public MovementBehaviour Position
@@ -101,7 +110,7 @@ namespace Apocalypse.Any.Core.Drawing
             }
         }
 
-        public string SelectedFrame { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public (int frame,int x, int y) SelectedFrame { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
         public bool ForceDraw {get;set;}
         public Image()
@@ -110,7 +119,7 @@ namespace Apocalypse.Any.Core.Drawing
             Rotation = new RotationBehaviour();
             Alpha = new AlphaBehaviour();
 
-            _path = string.Empty;
+            _path = ImagePaths.empty;
             Scale = Vector2.One;
             SourceRect = Rectangle.Empty;
             Color = Color.White;
@@ -134,9 +143,15 @@ namespace Apocalypse.Any.Core.Drawing
             {
                 Texture = Texture2D.FromStream(ScreenService.Instance.GraphicsDevice,imgStream);
             }
-#else            
-            Texture = manager.Load<Texture2D>(Path);
+#else
+            var lePath = ImagePaths.ConvertToString(Path);
+            Texture = manager.Load<Texture2D>(lePath);
 #endif
+            if (Texture == null)
+            {
+                throw new InvalidCastException();
+            }
+
 
             var dimensions = Vector2.Zero;
 
@@ -193,11 +208,11 @@ namespace Apocalypse.Any.Core.Drawing
             if (Disposed)
                 return;
 
-            if (string.IsNullOrEmpty(Path))
+            if (Path == ImagePaths.empty)
                 return;
 
-            if(_origin == Vector2.Zero)
-                _origin = new Vector2(SourceRect.Width / 2, SourceRect.Height / 2);
+            if(Origin == Vector2.Zero)
+                Origin = new Vector2(SourceRect.Width / 2, SourceRect.Height / 2);
 
             //only draw texture if it lies within the camera bounds
             if(CannotDraw())
@@ -211,7 +226,7 @@ namespace Apocalypse.Any.Core.Drawing
                 SourceRect,
                 Color * Alpha,
                 Rotation,
-                _origin,
+                Origin,
                 Scale * ScreenService.Instance.Ratio,
                 SpriteEffects.None,
                 (LayerDepth > 1 && LayerDepth > 0 ? LayerDepth / 100f : LayerDepth));
@@ -224,5 +239,6 @@ namespace Apocalypse.Any.Core.Drawing
         }
 
         public override void Update(GameTime time) => ForEach(obj => obj.Update(time));
+        
     }
 }

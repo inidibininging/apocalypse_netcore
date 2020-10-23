@@ -9,6 +9,7 @@ using Apocalypse.Any.Infrastructure.Server.Services.Factories;
 using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
+using Apocalypse.Any.Constants;
 
 namespace Apocalypse.Any.Infrastructure.Common.Services.Network.Interfaces.Factories
 {
@@ -57,8 +58,8 @@ namespace Apocalypse.Any.Infrastructure.Common.Services.Network.Interfaces.Facto
                 {
                     Id = $"itm_{Guid.NewGuid().ToString()}",
                     Alpha = new AlphaBehaviour() { Alpha = 1.0f },
-                    Path = "Image/faces",
-                    SelectedFrame = $"{IdPrefix}_{xFrame}_{yFrame}",
+                    Path = ImagePaths.faces,
+                    SelectedFrame = (ImagePaths.FaceFrame, xFrame, yFrame),
                     Height = 32,
                     Width = 32,
                     Scale = new Vector2(1),
@@ -79,6 +80,8 @@ namespace Apocalypse.Any.Infrastructure.Common.Services.Network.Interfaces.Facto
             };
         }
 
+        (int frame, int x, int y) RandomItemFrame() => (ImagePaths.ItemFrame, Randomness.Instance.From(0, 7), Randomness.Instance.From(2, 3));
+        
         private Item GenerateExperienceChunkItem(int exp, Vector2 generatedPosition) => new Item()
         {
             DisplayName = "MockItem of Great EXP", // needs a ItemNameGenerator, based on stats
@@ -92,8 +95,8 @@ namespace Apocalypse.Any.Infrastructure.Common.Services.Network.Interfaces.Facto
             {
                 Id = $"{Guid.NewGuid().ToString()}",
                 Alpha = new AlphaBehaviour() { Alpha = 1.0f },
-                Path = "Image/gamesheetExtended",
-                SelectedFrame = $"{IdPrefix}_{Randomness.Instance.From(0, 7)}_{Randomness.Instance.From(2, 3)}",
+                Path = ImagePaths.gamesheetExtended,
+                SelectedFrame = RandomItemFrame(),
                 Height = 32,
                 Width = 32,
                 Scale = new Vector2(1),

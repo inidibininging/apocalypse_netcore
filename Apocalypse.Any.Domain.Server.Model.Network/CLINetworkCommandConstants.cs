@@ -2,10 +2,10 @@
 {
     public class CLINetworkCommandConstants
     {
-        public const string ExecuteStateCommand = "x";
-        public const string CreateCommand = "c";
-        public const string DestroyCommand = "d";
-        public const string ModCommand = "m";
-        public const string WaitForSignalCommand = "wfs";
+        public const int ExecuteStateCommand = 10;
+        public const int CreateCommand = 11;
+        public const int DestroyCommand = 12;
+        public const int ModCommand = 13;
+        public const int WaitForSignalCommand = 14;
     }
 }

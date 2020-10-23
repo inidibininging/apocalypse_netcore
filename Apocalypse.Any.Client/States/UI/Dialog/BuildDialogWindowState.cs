@@ -9,6 +9,7 @@ using States.Core.Infrastructure.Services;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Apocalypse.Any.Constants;
 
 namespace Apocalypse.Any.Client.States.UI.Dialog
 {
@@ -30,8 +31,8 @@ namespace Apocalypse.Any.Client.States.UI.Dialog
             //TODO: Draw the background
             var upperCornerLeft = new SpriteSheet(machine.SharedContext.GameSheet.Frames)
             {
-                Path = "Image/dialogue",
-                SelectedFrame = "dialogue_0_0",
+                Path = ImagePaths.dialogue,
+                SelectedFrame = (ImagePaths.DialogueFrame, 0 ,0),
                 LayerDepth = DrawingPlainOrder.UI,
                 ForceDraw = true,
                 Position = new Core.Behaviour.MovementBehaviour()
@@ -44,8 +45,8 @@ namespace Apocalypse.Any.Client.States.UI.Dialog
             };
             var upperCornerRight = new SpriteSheet(machine.SharedContext.GameSheet.Frames)
             {
-                Path = "Image/dialogue",
-                SelectedFrame = "dialogue_0_1",
+                Path = ImagePaths.dialogue,
+                SelectedFrame = (ImagePaths.DialogueFrame, 0 ,1),
                 LayerDepth = DrawingPlainOrder.UI,
                 ForceDraw = true,
                 Position = new Core.Behaviour.MovementBehaviour()
@@ -59,8 +60,8 @@ namespace Apocalypse.Any.Client.States.UI.Dialog
 
             var lowerCornerLeft = new SpriteSheet(machine.SharedContext.GameSheet.Frames)
             {
-                Path = "Image/dialogue",
-                SelectedFrame = "dialogue_0_2",
+                Path = ImagePaths.dialogue,
+                SelectedFrame = (ImagePaths.DialogueFrame, 0 ,2),
                 LayerDepth = DrawingPlainOrder.UI,
                 ForceDraw = true,
                 Position = new Core.Behaviour.MovementBehaviour()
@@ -73,8 +74,8 @@ namespace Apocalypse.Any.Client.States.UI.Dialog
             };
             var lowerCornerRight = new SpriteSheet(machine.SharedContext.GameSheet.Frames)
             {
-                Path = "Image/dialogue",
-                SelectedFrame = "dialogue_0_3",
+                Path = ImagePaths.dialogue,
+                SelectedFrame = (ImagePaths.DialogueFrame, 0 ,3),
                 LayerDepth = DrawingPlainOrder.UI,
                 ForceDraw = true,
                 Position = new Core.Behaviour.MovementBehaviour()
@@ -91,8 +92,8 @@ namespace Apocalypse.Any.Client.States.UI.Dialog
             {
                 var upperWall = new SpriteSheet(machine.SharedContext.GameSheet.Frames)
                 {
-                    Path = "Image/dialogue",
-                    SelectedFrame = "dialogue_0_4",
+                    Path = ImagePaths.dialogue,
+                    SelectedFrame = (ImagePaths.DialogueFrame, 0 ,4),
                     LayerDepth = DrawingPlainOrder.UI + DrawingPlainOrder.PlainStep,
                     ForceDraw = true,
                     Position = new Core.Behaviour.MovementBehaviour()
@@ -111,8 +112,8 @@ namespace Apocalypse.Any.Client.States.UI.Dialog
             {
                 var lowerWall = new SpriteSheet(machine.SharedContext.GameSheet.Frames)
                 {
-                    Path = "Image/dialogue",
-                    SelectedFrame = "dialogue_0_4",
+                    Path = ImagePaths.dialogue,
+                    SelectedFrame = (ImagePaths.DialogueFrame, 0 ,4),
                     LayerDepth = DrawingPlainOrder.UI + DrawingPlainOrder.PlainStep,
                     ForceDraw = true,
                     Position = new Core.Behaviour.MovementBehaviour()
@@ -133,8 +134,8 @@ namespace Apocalypse.Any.Client.States.UI.Dialog
             {
                 var leftWall = new SpriteSheet(machine.SharedContext.GameSheet.Frames)
                 {
-                    Path = "Image/dialogue",
-                    SelectedFrame = "dialogue_0_4",
+                    Path = ImagePaths.dialogue,
+                    SelectedFrame = (ImagePaths.DialogueFrame, 0 ,4),
                     LayerDepth = DrawingPlainOrder.UI + DrawingPlainOrder.PlainStep,
                     ForceDraw = true,
                     Position = new Core.Behaviour.MovementBehaviour()
@@ -154,8 +155,8 @@ namespace Apocalypse.Any.Client.States.UI.Dialog
             {
                 var rightWall = new SpriteSheet(machine.SharedContext.GameSheet.Frames)
                 {
-                    Path = "Image/dialogue",
-                    SelectedFrame = "dialogue_0_4",
+                    Path = ImagePaths.dialogue,
+                    SelectedFrame = (ImagePaths.DialogueFrame, 0, 4),
                     LayerDepth = DrawingPlainOrder.UI + DrawingPlainOrder.PlainStep,
                     ForceDraw = true,
                     Position = new Core.Behaviour.MovementBehaviour()

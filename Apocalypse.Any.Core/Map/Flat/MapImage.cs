@@ -28,19 +28,19 @@ namespace Apocalypse.Any.Core.Map.Flat
 
         #endregion properties
 
-        public MapImage(int x, int y, params string[] image) : this(x, y, image[0])
+        public MapImage(int x, int y, params int[] image) : this(x, y, image[0])
         {
             image.ToList().ForEach(imgPath =>
             {
-                ((AnimatedImage)CurrentImage).Add(Path.Combine(BasePath, imgPath));
+                ((AnimatedImage)CurrentImage).Add(imgPath);
             });
             ((AnimatedImage)CurrentImage).SecondsBetweenImage = 2;
         }
 
-        internal MapImage(int x, int y, string image)
+        internal MapImage(int x, int y, int image)
         {
             LocationUnit = new Vector2(x, y);
-            CurrentImage = new AnimatedImage() { Path = Path.Combine(BasePath, image) };
+            CurrentImage = new AnimatedImage() { Path = image };
         }
     }
 }

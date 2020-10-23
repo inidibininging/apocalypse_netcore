@@ -21,6 +21,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Apocalypse.Any.Constants;
 
 namespace Apocalypse.Any.GameServer.States.Sector.Mechanics
 {
@@ -61,7 +62,7 @@ namespace Apocalypse.Any.GameServer.States.Sector.Mechanics
                     new SingleCharacterEntityFullPositionHolderAdapterMechanic<PlayerSpaceship>(
                         new AttractionProxyMechanic<IFullPositionHolder>(
                             new AttractionMechanic(),
-                            (subject) => machine.SharedContext.DataLayer.ImageData.OrderByDescending(img => img.Scale.X*img.Width).FirstOrDefault(img => img.Path.Contains("planet", StringComparison.CurrentCultureIgnoreCase)),
+                            (subject) => machine.SharedContext.DataLayer.ImageData.OrderByDescending(img => img.Scale.X*img.Width).FirstOrDefault(img => img.Path >= ImagePaths.planetsRandom0_edit && img.Path <= ImagePaths.planetsRandom4_edit),
                             (subject) => 0.0000005f)));
             }
 
@@ -205,7 +206,7 @@ namespace Apocalypse.Any.GameServer.States.Sector.Mechanics
             {
                 var morph = new Func<ImageData,ImageData>((entity)=>
                 {
-                    if(entity.SelectedFrame.Contains("fog"))
+                    if(entity.SelectedFrame.frame == ImagePaths.FogFrame)
                     {
                         if(entity.Scale.X < 4)
                         {

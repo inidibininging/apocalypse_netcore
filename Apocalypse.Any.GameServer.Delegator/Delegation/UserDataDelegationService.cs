@@ -25,7 +25,7 @@ namespace Apocalypse.Any.GameServer.Delegator.Delegation
             SerializationAdapter = serializationAdapter ?? throw new ArgumentNullException(nameof(serializationAdapter));
         }
 
-        private NetOutgoingMessage CreateMessage<T>(string commandName, T instanceToSend)
+        private NetOutgoingMessage CreateMessage<T>(int commandName, T instanceToSend)
         {
             return Client.CreateMessage(
                     SerializationAdapter.SerializeObject

@@ -7,6 +7,8 @@ using Apocalypse.Any.Domain.Server.Model.Interfaces;
 using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
+using System.Net.Http.Headers;
+using Apocalypse.Any.Constants;
 
 namespace Apocalypse.Any.Infrastructure.Server.Services.Factories
 {
@@ -19,6 +21,29 @@ namespace Apocalypse.Any.Infrastructure.Server.Services.Factories
         {
             return new List<Type>() { typeof(IGameSectorBoundaries) };
         }
+
+        private (int frame, int x, int y) RandomPlanetFrame()
+        {
+            var randomPlanetId = Randomness.Instance.From(0, 2);
+            switch (randomPlanetId)
+            {
+                case 0:
+                    randomPlanetId = ImagePaths.RandomPlanetFrame0;
+                    break;
+                case 1:
+                    randomPlanetId = ImagePaths.RandomPlanetFrame1;
+                    break;
+                case 2:
+                    randomPlanetId = ImagePaths.RandomPlanetFrame2;
+                    break;
+                default:
+                    randomPlanetId = ImagePaths.RandomPlanetFrame0;
+                    break;
+            }
+
+            return (randomPlanetId, Randomness.Instance.From(0, 7), Randomness.Instance.From(0, 7));
+
+        }
         protected override ImageData UseConverter<TParam>(TParam parameter)
         {
             var sectorBoundaries = parameter as IGameSectorBoundaries;
@@ -26,8 +51,8 @@ namespace Apocalypse.Any.Infrastructure.Server.Services.Factories
             {
                 Id = $"{IdPrefix}{Guid.NewGuid().ToString()}",
                 Alpha = new AlphaBehaviour() { Alpha = 1.0f },
-                Path = $"Image/{IdPrefix}{Randomness.Instance.From(0, 2)}_edit",
-                SelectedFrame = $"{IdPrefix}{Randomness.Instance.From(0, 2)}_{Randomness.Instance.From(0, 7)}_{Randomness.Instance.From(0, 7)}",
+                Path = Randomness.Instance.From(ImagePaths.planetsRandom0_edit, ImagePaths.planetsRandom2_edit),
+                SelectedFrame = RandomPlanetFrame(),
                 Height = 128,
                 Width = 128,
                 Scale = new Vector2(Randomness.Instance.From(1, 4)),

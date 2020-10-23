@@ -59,7 +59,7 @@ namespace Apocalypse.Any.Client
             base.Initialize();
 
 
-            GameContext.SharedContext = new NetworkGameSceen();
+            GameContext.SharedContext = new NetworkGameScreen();
             GameContext.SharedContext.Initialize();
             GameContext.GetService.Get(ClientGameScreenBook.Init).Handle(GameContext);
             ScreenService.Instance.Initialize(GameContext.SharedContext);

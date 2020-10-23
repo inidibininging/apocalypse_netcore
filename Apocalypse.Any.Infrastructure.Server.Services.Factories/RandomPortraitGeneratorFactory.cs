@@ -8,12 +8,13 @@ using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Apocalypse.Any.Constants;
 
 namespace Apocalypse.Any.Infrastructure.Server.Services.Factories
 {
     public class RandomPortraitGeneratorFactory : CheckWithReflectionFactoryBase<ImageData>
     {
-        private string IdPrefix { get; set; } = "faces";
+        private int IdPrefix { get; set; } = ImagePaths.faces;
 
         public override bool CanUse<TParam>(TParam instance)
         {
@@ -35,8 +36,8 @@ namespace Apocalypse.Any.Infrastructure.Server.Services.Factories
             {
                 Id = $"itm_{Guid.NewGuid().ToString()}",
                 Alpha = new AlphaBehaviour() { Alpha = 1.0f },
-                Path = "Image/faces",
-                SelectedFrame = $"{IdPrefix}_{xFrame}_{yFrame}",
+                Path = IdPrefix,
+                SelectedFrame = (ImagePaths.FaceFrame, xFrame, yFrame),
                 Height = 32 * size,
                 Width = 32 * size,
                 Scale = new Vector2(size),

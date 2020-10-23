@@ -14,7 +14,7 @@ namespace Apocalypse.Any.Domain.Common.Network
 
         public ImageClient(
             ImageData data,
-            Dictionary<string, Rectangle> stringToRectangles) : base(stringToRectangles) //for now there is no implementation for inserting a dictionary of rectangles tied to a frame names
+            Dictionary<(int frame,int x, int y), Rectangle> stringToRectangles) : base(stringToRectangles) //for now there is no implementation for inserting a dictionary of rectangles tied to a frame names
         {
             ServerData = data;
 
