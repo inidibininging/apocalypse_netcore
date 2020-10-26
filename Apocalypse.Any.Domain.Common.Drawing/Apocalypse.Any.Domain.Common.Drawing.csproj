@@ -7,6 +7,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Apocalypse.Any.Core\Apocalypse.Any.Core.csproj" />
     <ProjectReference Include="..\Apocalypse.Any.Domain.Common.DrawingOrder\Apocalypse.Any.Domain.Common.DrawingOrder.csproj" />
+    <ProjectReference Include="..\Apocalypse.Any.Domain.Common.Model\Apocalypse.Any.Domain.Common.Model.csproj" />
     <ProjectReference Include="..\States\States.Core\States.Core.csproj" />
   </ItemGroup>
 

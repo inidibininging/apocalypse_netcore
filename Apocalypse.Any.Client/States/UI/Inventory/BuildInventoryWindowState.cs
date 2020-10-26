@@ -79,19 +79,6 @@ namespace Apocalypse.Any.Client.States.UI.Inventory
                     
                 }
             }
-            var billGates = new ApocalypseWindow();
-
-            for (int i = 0; i < Randomness.Instance.From(6,14); i++)
-            {
-                billGates.Add("lol"+i.ToString(),new ApocalypseButton<string>(InventoryHudSheet));
-                billGates.As<ApocalypseButton<string>>("lol" + i.ToString()).Position.X = Randomness.Instance.From(16, 320);
-                billGates.As<ApocalypseButton<string>>("lol" + i.ToString()).Position.Y = Randomness.Instance.From(16,256);
-                billGates.As<ApocalypseButton<string>>("lol" + i.ToString()).Text = "OK CANCEL YEAH";
-                billGates.As<ApocalypseButton<string>>("lol" + i.ToString()).Scale = new Vector2(Randomness.Instance.From(1, 5));
-            }
-            
-            
-            machine.SharedContext.Add(nameof(billGates),billGates);
         }
     }
 }

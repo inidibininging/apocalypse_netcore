@@ -28,9 +28,11 @@ namespace Apocalypse.Any.Core.Screen
 
         public override void Update(GameTime time)
         {
+            UpdateGameTime = time;
             ForEach(obj => obj.Update(time));
         }
 
         public IImage CursorImage { get; set; }
+        public GameTime UpdateGameTime { get; private set; }
     }
 }

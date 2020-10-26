@@ -71,12 +71,12 @@ namespace Apocalypse.Any.Domain.Common.Drawing.UI
         
         public virtual void OnClick(object sender, EventArgs args)
         {
-            Console.WriteLine("Click on window!");
+            
         }
 
         public virtual void OnMouseEnter(object sender, EventArgs args)
         {
-            Console.WriteLine("Hover over window!");
+            
         }
 
         public void OnMouseLeave(object sender, EventArgs args)

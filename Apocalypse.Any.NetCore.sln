@@ -123,22 +123,17 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Apocalypse.Any.Infrastructu
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Apocalypse.Any.Infrastructure.Client.Services.UI.Factories", "Apocalypse.Any.Infrastructure.Client.Services.UI.Factories\Apocalypse.Any.Infrastructure.Client.Services.UI.Factories.csproj", "{E84741EC-3B6F-4268-9134-A321BF7427FC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Apocalypse.Any.Infrastructure.Server.PubSub", "Apocalypse.Any.Infrastructure.Server.PubSub\Apocalypse.Any.Infrastructure.Server.PubSub.csproj", "{ED420EF1-3535-4937-BB22-2FE1392838EA}"
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Apocalypse.Any.Infrastructure.Common.Services.Data", "Apocalypse.Any.Infrastructure.Common.Services.Data\Apocalypse.Any.Infrastructure.Common.Services.Data.csproj", "{22C0DB69-D73D-4D1F-A6AD-02AF05D1FD02}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Apocalypse.Any.Infrastructure.Server.PubSub", "Apocalypse.Any.Infrastructure.Server.PubSub\Apocalypse.Any.Infrastructure.Server.PubSub.csproj", "{ED420EF1-3535-4937-BB22-2FE1392838EA}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Apocalypse.Any.Infrastructure.Common.Services.Data", "Apocalypse.Any.Infrastructure.Common.Services.Data\Apocalypse.Any.Infrastructure.Common.Services.Data.csproj", "{22C0DB69-D73D-4D1F-A6AD-02AF05D1FD02}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Apocalypse.Any.Infrastructure.Common.Services.Data.Interfaces", "Apocalypse.Any.Infrastructure.Common.Services.Data.Interfaces\Apocalypse.Any.Infrastructure.Common.Services.Data.Interfaces.csproj", "{05E4898C-34E0-400C-A4AD-1AE95933AE32}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Apocalypse.Any.Infrastructure.Common.Services.Interpolation", "Apocalypse.Any.Infrastructure.Common.Services.Interpolation\Apocalypse.Any.Infrastructure.Common.Services.Interpolation.csproj", "{94740DA4-1FE8-4630-8F07-E717E5759056}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Apocalypse.Any.Infrastructure.Common.Services.Interpolation", "Apocalypse.Any.Infrastructure.Common.Services.Interpolation\Apocalypse.Any.Infrastructure.Common.Services.Interpolation.csproj", "{94740DA4-1FE8-4630-8F07-E717E5759056}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Apocalypse.Any.Domain.Common.Model.Language", "Apocalypse.Any.Domain.Common.Model.Language\Apocalypse.Any.Domain.Common.Model.Language.csproj", "{3435688C-21AC-4936-A8D9-C692420C2C23}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Apocalypse.Any.Domain.Common.Model.Language", "Apocalypse.Any.Domain.Common.Model.Language\Apocalypse.Any.Domain.Common.Model.Language.csproj", "{3435688C-21AC-4936-A8D9-C692420C2C23}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Apocalypse.Any.Infrastructure.Common.Services.Data", "Apocalypse.Any.Infrastructure.Common.Services.Data\Apocalypse.Any.Infrastructure.Common.Services.Data.csproj", "{22C0DB69-D73D-4D1F-A6AD-02AF05D1FD02}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Apocalypse.Any.Infrastructure.Common.Services.Data.Interfaces", "Apocalypse.Any.Infrastructure.Common.Services.Data.Interfaces\Apocalypse.Any.Infrastructure.Common.Services.Data.Interfaces.csproj", "{05E4898C-34E0-400C-A4AD-1AE95933AE32}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Apocalypse.Any.Infrastructure.Common.Services.Interpolation", "Apocalypse.Any.Infrastructure.Common.Services.Interpolation\Apocalypse.Any.Infrastructure.Common.Services.Interpolation.csproj", "{94740DA4-1FE8-4630-8F07-E717E5759056}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Apocalypse.Any.Constants", "Apocalypse.Any.Constants\Apocalypse.Any.Constants.csproj", "{06D54597-A735-44A4-9C01-DBBE6EA4FB21}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Apocalypse.Any.Constants", "Apocalypse.Any.Constants\Apocalypse.Any.Constants.csproj", "{06D54597-A735-44A4-9C01-DBBE6EA4FB21}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -354,14 +349,22 @@ Global
 		{ED420EF1-3535-4937-BB22-2FE1392838EA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{ED420EF1-3535-4937-BB22-2FE1392838EA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{ED420EF1-3535-4937-BB22-2FE1392838EA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{22C0DB69-D73D-4D1F-A6AD-02AF05D1FD02}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{22C0DB69-D73D-4D1F-A6AD-02AF05D1FD02}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{22C0DB69-D73D-4D1F-A6AD-02AF05D1FD02}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{22C0DB69-D73D-4D1F-A6AD-02AF05D1FD02}.Release|Any CPU.Build.0 = Release|Any CPU
+		{05E4898C-34E0-400C-A4AD-1AE95933AE32}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{05E4898C-34E0-400C-A4AD-1AE95933AE32}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{05E4898C-34E0-400C-A4AD-1AE95933AE32}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{05E4898C-34E0-400C-A4AD-1AE95933AE32}.Release|Any CPU.Build.0 = Release|Any CPU
+		{94740DA4-1FE8-4630-8F07-E717E5759056}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{94740DA4-1FE8-4630-8F07-E717E5759056}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{94740DA4-1FE8-4630-8F07-E717E5759056}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{94740DA4-1FE8-4630-8F07-E717E5759056}.Release|Any CPU.Build.0 = Release|Any CPU
 		{3435688C-21AC-4936-A8D9-C692420C2C23}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{3435688C-21AC-4936-A8D9-C692420C2C23}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3435688C-21AC-4936-A8D9-C692420C2C23}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3435688C-21AC-4936-A8D9-C692420C2C23}.Release|Any CPU.Build.0 = Release|Any CPU
-		{22C0DB69-D73D-4D1F-A6AD-02AF05D1FD02}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{22C0DB69-D73D-4D1F-A6AD-02AF05D1FD02}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{05E4898C-34E0-400C-A4AD-1AE95933AE32}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{05E4898C-34E0-400C-A4AD-1AE95933AE32}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{06D54597-A735-44A4-9C01-DBBE6EA4FB21}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{06D54597-A735-44A4-9C01-DBBE6EA4FB21}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{06D54597-A735-44A4-9C01-DBBE6EA4FB21}.Release|Any CPU.ActiveCfg = Release|Any CPU

@@ -49,12 +49,19 @@ namespace Apocalypse.Any.Domain.Common.Drawing.UI
 
         public override void Update(GameTime time)
         {
-           
+            UpdateUnderlyingText(time);
+
+            base.Update(time);
+        }
+
+        private void UpdateUnderlyingText(GameTime time)
+        {
             //Now the text position depends on where the position of the cell is
             var textLength = UnderlyingText.TextLength();
             const float margin = 48f;
-            
-            var adjustedScale = (X: (Width * Scale.X) / (textLength.X + margin), Y: (Height * Scale.Y) / (textLength.Y + margin + 16f));
+
+            var adjustedScale = (X: (Width * Scale.X) / (textLength.X + margin),
+                Y: (Height * Scale.Y) / (textLength.Y + margin + 16f));
 
             //set the text position to the underlying image center
             if (ParentPosition == null)
@@ -67,26 +74,25 @@ namespace Apocalypse.Any.Domain.Common.Drawing.UI
                 UnderlyingText.Position.X = Position.X + ((textLength.X * adjustedScale.X) / 2) + ParentPosition.X;
                 UnderlyingText.Position.Y = Position.Y + ((textLength.Y * adjustedScale.Y) / 2) + ParentPosition.Y;
             }
-            
+
             UnderlyingText.Text = Text;
-            
+
             //adjust underlying text scale to the box size
             UnderlyingText.Scale = new Vector2(adjustedScale.X, adjustedScale.Y);
             UnderlyingText.LayerDepth = LayerDepth + DrawingPlainOrder.PlainStep;
             UnderlyingText.Update(time);
-            
-            base.Update(time);
         }
+
         #endregion
 
         public virtual void OnClick(object sender, EventArgs args)
         {
-            this.Color = Color.DarkViolet;
+            Console.WriteLine("button pressed");
+            
         }
 
         public virtual void OnMouseEnter(object sender, EventArgs args)
         {
-            this.Color = Color.Gray;
         }
 
         public void OnMouseLeave(object sender, EventArgs args)

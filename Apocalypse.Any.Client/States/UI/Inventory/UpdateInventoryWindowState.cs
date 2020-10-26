@@ -47,8 +47,6 @@ namespace Apocalypse.Any.Client.States.UI.Inventory
                 return;
             }
 
-            machine.SharedContext.As<ApocalypseWindow>("billGates").Position = machine.SharedContext.CharacterWindow.Position;
-            
             var inventoryWindow = machine.SharedContext.InventoryWindow;
             UpdateInventoryWindow(machine, inventoryWindow);
             UpdateInventorySlot(machine, inventoryWindow);
