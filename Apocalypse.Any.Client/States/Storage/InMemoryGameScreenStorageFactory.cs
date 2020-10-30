@@ -216,7 +216,7 @@ namespace Apocalypse.Any.Client.States.Storage
             //TODO: Dummy sheet dictionary for adding the only image needed . duh. definitely a
             var dummyHudSheetToChangeInTheFuture = new Dictionary<(int frame,int x, int y), Rectangle>();
             dummyHudSheetToChangeInTheFuture.Add((ImagePaths.HUDFrame, 0, 0), new Rectangle(0, 0, 32, 32));
-
+            
             inMemoryStorage.Add(ClientGameScreenBook.BuildInventoryWindow, new BuildInventoryWindowState(dummyHudSheetToChangeInTheFuture));
             inMemoryStorage.Add(ClientGameScreenBook.UpdateInventoryWindow, new UpdateInventoryWindowState());
             inMemoryStorage.Add(ClientGameScreenBook.UpdateInventoryImages, new UpdateInventoryImagesState(new PlayerInventoryDrawingFactory()));

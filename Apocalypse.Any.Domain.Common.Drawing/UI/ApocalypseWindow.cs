@@ -21,7 +21,7 @@ namespace Apocalypse.Any.Domain.Common.Drawing.UI
         {
             Path = ImagePaths.blank; //TODO: CHECK IT
             
-            Scale = new Vector2(320, 256);
+            Scale = new Vector2(320, 256); //this is the default size of a window if none given
             Color = Color.Purple;
         }
 
@@ -52,6 +52,9 @@ namespace Apocalypse.Any.Domain.Common.Drawing.UI
                     child.ParentPosition = child.ParentPosition ?? new MovementBehaviour();
                     child.ParentPosition.X = this.Position.X;
                     child.ParentPosition.Y = this.Position.Y;
+                    child.ParentScale = new Vector2(Scale.X,Scale.Y);
+                    child.ParentWidth = Width;
+                    child.ParentHeight = Height;
                 });
             base.Update(time);
         }

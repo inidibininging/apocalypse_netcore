@@ -15,12 +15,20 @@ namespace Apocalypse.Any.Infrastructure.Server.Adapters.Redis
 
         private async Task WriteAsync(IGameSectorsOwner entity)
         {            
-            foreach (var sector in entity.GameSectorLayerServices)
-            {
-                Write(sector.Value.SharedContext);
-            }
+            // foreach (var sector in entity.GameSectorLayerServices)
+            // {
+            //     Write(sector.Value.SharedContext);
+            // }
             using (var conn = await ConnectionMultiplexer.ConnectAsync($"{RedisHost}:{RedisPort}"))
-            {                
+            {
+                var sub = conn.GetSubscriber();
+                await sub.PublishAsync("State.Metrics", 
+                    JsonConvert.SerializeObject(
+                                entity
+                                .GameSectorLayerServices
+                                .Values
+                                .Select(m => m.TimeLog)), 
+                    CommandFlags.FireAndForget);
                 await conn.GetDatabase().StringSetAsync($"World.Sectors",
                     JsonConvert.SerializeObject(
                     entity.GameSectorLayerServices.Keys.ToList()

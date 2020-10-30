@@ -6,10 +6,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using System;
-using System.Collections.Generic;
-using System.Numerics;
 using Apocalypse.Any.Constants;
-using Vector2 = Microsoft.Xna.Framework.Vector2;
 
 namespace Apocalypse.Any.Core.Drawing
 {
@@ -21,15 +18,20 @@ namespace Apocalypse.Any.Core.Drawing
     {
         
         /// <summary>
-        /// This is the anchor of the image (ehem.. texture) drawn
+        /// This is the anchor/origin of the image (ehem.. texture) drawn.
+        /// This will be the position you get from the image 
         /// </summary>
-        protected Vector2 Origin;
-        
+        public Vector2 Origin
+        {
+            get;
+            protected set;
+        }
+
+
         private RenderTarget2D _renderTarget;
-        
 
         private int _path;
-        private System.Numerics.Vector2 _scale;
+        private Vector2 _scale;
 
         /// <summary>
         /// Path to texture used. For more see Apocalypse.Any.Constants.ImagePaths
@@ -61,7 +63,9 @@ namespace Apocalypse.Any.Core.Drawing
         
         public Vector2 Scale { get; set; }
         
-        
+        /// <summary>
+        /// The rect to be displayed of an image
+        /// </summary>
         public Rectangle SourceRect { get; set; }
         
         /// <summary>
@@ -74,6 +78,9 @@ namespace Apocalypse.Any.Core.Drawing
         /// </summary>
         public bool Disposed { get; private set; }
 
+        /// <summary>
+        /// Current Position of Image in respect to the anchor
+        /// </summary>
         public MovementBehaviour Position
         {
             get;
@@ -203,6 +210,7 @@ namespace Apocalypse.Any.Core.Drawing
                ScreenService.Instance.DefaultScreenCamera.Position.X + ScreenService.Instance.Resolution.X/2 < Position.X ||
                ScreenService.Instance.DefaultScreenCamera.Position.Y - ScreenService.Instance.Resolution.Y/2 > Position.Y ||
                ScreenService.Instance.DefaultScreenCamera.Position.Y + ScreenService.Instance.Resolution.Y/2 < Position.Y) && Alpha.Alpha <= 0 && !ForceDraw;
+        
         public virtual void Draw(SpriteBatch spriteBatch)
         {
             if (Disposed)
@@ -222,7 +230,7 @@ namespace Apocalypse.Any.Core.Drawing
             
             spriteBatch.Draw(
                 Texture,
-                Position,
+                Position + Origin,
                 SourceRect,
                 Color * Alpha,
                 Rotation,

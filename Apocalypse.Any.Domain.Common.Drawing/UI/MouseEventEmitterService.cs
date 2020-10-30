@@ -8,6 +8,7 @@ using Apocalypse.Any.Core.Input;
 using Apocalypse.Any.Core.Input.Translator;
 using Apocalypse.Any.Core.Screen;
 using Apocalypse.Any.Core.Services;
+using Apocalypse.Any.Core.Utilities;
 using Apocalypse.Any.Domain.Common.Model;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
@@ -47,18 +48,20 @@ namespace Apocalypse.Any.Domain.Common.Drawing.UI
                     {
                         var isGameObject = childUIElement.Value is IGameObject;
                         var isVisualGameObject = childUIElement.Value is IVisualGameObject;
-                        // var isUIElement = childUIElement.Value is IUIElement;
                         var hasEvents = childUIElement.Value is IUIEvents;
                         var isMovableGameObject = childUIElement.Value is IMovableGameObject;
                         var isScaleHolder = childUIElement.Value is IScaleHolder;
                         var isSizeHolder = childUIElement.Value is ISizeHolder;
+
                         return isGameObject &&
                                isVisualGameObject &&
                                hasEvents &&
                                isMovableGameObject &&
                                isScaleHolder &&
                                isSizeHolder
+                               
                                &&
+                               
                                cursor.Position.X > (childUIElement.Value as IMovableGameObject).Position.X &&
                                cursor.Position.X < (childUIElement.Value as IMovableGameObject).Position.X +
                                ((childUIElement.Value as IScaleHolder).Scale.X *

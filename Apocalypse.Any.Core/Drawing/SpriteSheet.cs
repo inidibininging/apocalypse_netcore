@@ -27,7 +27,6 @@ namespace Apocalypse.Any.Core.Drawing
                 //Console.WriteLine(value);
                 if (value.frame != ImagePaths.UndefinedFrame && SpriteSheetRectangle.ContainsKey(value))
                 {
-                    
                     selectedFrame = value;
                     Origin = Vector2.Zero;
                 }

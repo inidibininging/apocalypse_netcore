@@ -8,7 +8,7 @@ namespace Apocalypse.Any.Core.Drawing
     /// </summary>
 	public interface IImage
         : IVisualGameObject,
-        IUpdateableLite,
+            IUpdateableLite,
         IFullPositionHolder,
         IColorChannelHolder,
         IScaleHolder,
@@ -32,7 +32,7 @@ namespace Apocalypse.Any.Core.Drawing
             get;
             set;
         }
-        
+
         /// <summary>
         /// Represents the image path. Warning! The image should be in the pipe line. Otherwise the whole game will stop working
         /// </summary>
@@ -41,6 +41,6 @@ namespace Apocalypse.Any.Core.Drawing
             get;
             set;
         }
-
+        
     }
 }

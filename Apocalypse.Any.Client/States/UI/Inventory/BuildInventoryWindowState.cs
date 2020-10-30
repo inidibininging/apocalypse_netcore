@@ -75,10 +75,8 @@ namespace Apocalypse.Any.Client.States.UI.Inventory
                         $"{indexX}_{indexY}_slot",
                         currentItemSprite
                     );
-                    
-                    
                 }
             }
-        }
+       }
     }
 }

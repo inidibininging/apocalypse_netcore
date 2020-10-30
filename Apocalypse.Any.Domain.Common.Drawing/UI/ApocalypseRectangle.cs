@@ -46,14 +46,17 @@ namespace Apocalypse.Any.Domain.Common.Drawing.UI
             base.Update(time);
             
             //set positions to underlying image
+            //TODO: Look for unnecessary parenthesis in the project.
             if (ParentPosition == null) return;
-            base.Position.X = Position.X + ParentPosition.X;
-            base.Position.Y = Position.Y + ParentPosition.Y;
+            base.Position.X = ParentPosition.X + (Position.X - SourceRect.X);
+            base.Position.Y = ParentPosition.Y + (Position.Y - SourceRect.Y);
 
         }
         #endregion
 
         public MovementBehaviour ParentPosition { get; set; }
-        
+        public Vector2 ParentScale { get; set; }
+        public float ParentWidth { get; set; }
+        public float ParentHeight { get; set; }
     }
 }

@@ -60,6 +60,7 @@ namespace Apocalypse.Any.Domain.Common.Drawing.UI
             var textLength = UnderlyingText.TextLength();
             const float margin = 48f;
 
+            
             var adjustedScale = (X: (Width * Scale.X) / (textLength.X + margin),
                 Y: (Height * Scale.Y) / (textLength.Y + margin + 16f));
 
