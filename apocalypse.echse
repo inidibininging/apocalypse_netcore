@@ -17,24 +17,28 @@
 
 :buildCity ( void )
     !CreateRandomMiniCityCommand ( void )
+    !CreateRandomPlanetCommand ( void )
+    !CreateRandomPlanetCommand ( void )
+    !CreateRandomPlanetCommand ( void )
+    !CreateRandomPlanetCommand ( void )
+    !CreateRandomPlanetCommand ( void )
+    !CreateRandomPlanetCommand ( void )
+    !CreateRandomPlanetCommand ( void )
+    !CreateRandomPlanetCommand ( void )
+    !CreateRandomPlanetCommand ( void )
+    !CreateRandomPlanetCommand ( void )
+    !CreateRandomPlanetCommand ( void )
+    !CreateRandomPlanetCommand ( void )
+    !CreateRandomPlanetCommand ( void )
+    !CreateRandomPlanetCommand ( void )
+    !CreateRandomPlanetCommand ( void )
+    !CreateRandomPlanetCommand ( void )
+    !CreateRandomPlanetCommand ( void )
+    !CreateRandomPlanetCommand ( void )
+
 
 :Main ( args )    
-    Set Tag something = .something
-    Set Tag somethingElse = .somethingLolA
-    Set Tag void = .void
-    
-    If something Is .something
-        Set Tag something = .lolCHANGED
-        If somethingElse Is .somethingLol
-            Set Tag somethingElse = .abcd
-            If somethingElse Is .somethingLolA
-                Set Tag something = .hahaha
-            EndIf
-
-            If somethingElse Is .somethingLolA
-                Set Tag something = .hiohiohio
-            EndIf            
-        EndIf
-    EndIf
+   Set Tag void = .void
+   !buildCity ( void ) 
 
     

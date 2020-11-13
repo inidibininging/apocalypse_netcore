@@ -13,15 +13,12 @@ namespace Apocalypse.Any.Infrastructure.Server.Services.Factories
         {
             return CanUseByTType<TParam, IGameSectorBoundaries>();
         }
-        public override List<Type> GetValidParameterTypes()
-        {
-            return new List<Type>() { typeof(IGameSectorBoundaries) };
-        }
+        public override List<Type> GetValidParameterTypes() =>  new List<Type>() { typeof(IGameSectorBoundaries) };
         protected override Vector2 UseConverter<TParam>(TParam parameter)
         {            
-            var sectorBoundaries = parameter as IGameSectorBoundaries;
+            var sectorBoundaries = parameter as IGameSectorBoundaries ?? throw new ArgumentNullException(nameof(parameter));
 
-            //TODO: ITS A BUUUUG .... fucker
+            //TODO: Possible bug. Needs investigation
             if(sectorBoundaries.MinSectorX > sectorBoundaries.MaxSectorX)
             {
                 var minX = sectorBoundaries.MaxSectorX;

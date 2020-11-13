@@ -19,15 +19,15 @@ namespace Apocalypse.Any.Infrastructure.Server.Services.Factories
         {
             return new List<Type>() { typeof(IGameSectorBoundaries) };
         }
-        private int MaxR {get;set;}
-        private int MaxG {get;set;}
-        private int MaxB {get;set;}
-        (int frame, int x, int y) RandomFogFrame() => (ImagePaths.FogFrame, Randomness.Instance.From(0, 2), Randomness.Instance.From(0, 3));
+        private int MaxR { get; set; }
+        private int MaxG { get; set; }
+        private int MaxB { get; set; }
+        static (int frame, int x, int y) RandomFogFrame() => (ImagePaths.FogFrame, Randomness.Instance.From(0, 2), Randomness.Instance.From(0, 3));
         protected override ImageData UseConverter<TParam>(TParam parameter)
         {
-            var sectorBoundaries = parameter as IGameSectorBoundaries;
-
+            var sectorBoundaries = parameter as IGameSectorBoundaries ?? throw new ArgumentNullException(nameof(parameter));
             var scale = new Vector2(Randomness.Instance.From(1, 8));
+            
             return new ImageData()
             {
                 Id = $"{IdPrefix}_{Guid.NewGuid()}",
@@ -39,7 +39,7 @@ namespace Apocalypse.Any.Infrastructure.Server.Services.Factories
                 Scale = scale,
                 Color = 
                     Randomness.Instance.RollTheDice(25) ? Color.DarkViolet :
-                    Randomness.Instance.RollTheDice(25) ? Color.Pink :
+                    Randomness.Instance.RollTheDice(25) ? Color.DeepPink :
                     Randomness.Instance.RollTheDice(25) ? Color.LightSkyBlue :
                     Color.WhiteSmoke,
                 Position = new MovementBehaviour()
@@ -48,7 +48,7 @@ namespace Apocalypse.Any.Infrastructure.Server.Services.Factories
                     Y = Randomness.Instance.From(sectorBoundaries.MinSectorY, sectorBoundaries.MaxSectorY)
                 },
                 Rotation = new RotationBehaviour() { Rotation = Randomness.Instance.From(0, 360) },
-                LayerDepth = Randomness.Instance.RollTheDice(25) ? DrawingPlainOrder.Background+DrawingPlainOrder.MicroPlainStep : DrawingPlainOrder.Entities+(DrawingPlainOrder.MicroPlainStep*2)
+                LayerDepth = Randomness.Instance.RollTheDice(25) ? DrawingPlainOrder.Background + DrawingPlainOrder.MicroPlainStep : DrawingPlainOrder.Entities+(DrawingPlainOrder.MicroPlainStep * 2)
             };
         }
     }

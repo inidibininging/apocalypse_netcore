@@ -40,6 +40,7 @@ using System.Linq;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
+using Apocalypse.Any.Infrastructure.Server.Services.Factories;
 
 namespace Apocalypse.Any.GameServer.GameInstance
 {
@@ -150,36 +151,13 @@ namespace Apocalypse.Any.GameServer.GameInstance
             {
                 Tag = Configuration.StartingSector
             };
-
-            //inGameSectorStateMachine.SharedContext.CurrentStatus = GameSectorStatus.Running;
+            
             inGameSectorStateMachine
                 .GetService
                 .Get(Configuration.BuildOperation)
                 .Handle(inGameSectorStateMachine);
             
-            //var sectorList = new List<string>();
-            //for (int sectorIndex = 0; sectorIndex < 1; sectorIndex++)
-            //{
-            //    var sectorId = Guid.NewGuid().ToString();
-
-            //    var sectorDown = Configuration.StartingSector;
-            //    var sectorUp = Configuration.StartingSector;
-            //    var sectorLeft = Configuration.StartingSector;
-            //    var sectorRight = Configuration.StartingSector;
-
-            //    if (sectorIndex - 4 > 0)
-            //        sectorDown = sectorList[sectorIndex - 4];
-            //    if (sectorIndex - 3 > 0)
-            //        sectorUp = sectorList[sectorIndex - 3];
-            //    if (sectorIndex - 2 > 0)
-            //        sectorLeft = sectorList[sectorIndex - 2];
-            //    if (sectorIndex - 1 > 0)
-            //        sectorRight = sectorList[sectorIndex - 1];
-
-            //    sectorList.Add(sectorId);
-            //    BuildSector(sectorId, sectorUp, sectorLeft, sectorRight, sectorDown);
-            //}
-
+            // AddOtherSectors();
 
 
             //datalayer to gather data out of the game world
@@ -216,6 +194,33 @@ namespace Apocalypse.Any.GameServer.GameInstance
                 sector.Run(Configuration.StartupFunction);
             }
         }
+
+        private void AddOtherSectors()
+        {
+            var sectorList = new List<string>();
+            for (int sectorIndex = 0; sectorIndex < 1; sectorIndex++)
+            {
+                var sectorId = Guid.NewGuid().ToString();
+
+                var sectorDown = Configuration.StartingSector;
+                var sectorUp = Configuration.StartingSector;
+                var sectorLeft = Configuration.StartingSector;
+                var sectorRight = Configuration.StartingSector;
+
+                if (sectorIndex - 4 > 0)
+                    sectorDown = sectorList[sectorIndex - 4];
+                if (sectorIndex - 3 > 0)
+                    sectorUp = sectorList[sectorIndex - 3];
+                if (sectorIndex - 2 > 0)
+                    sectorLeft = sectorList[sectorIndex - 2];
+                if (sectorIndex - 1 > 0)
+                    sectorRight = sectorList[sectorIndex - 1];
+
+                sectorList.Add(sectorId);
+                BuildSector(sectorId, sectorUp, sectorLeft, sectorRight, sectorDown);
+            }
+        }
+
         private void BuildSector(string sectorName,
                                 string sectorUp,
                                 string sectorLeft,
@@ -223,46 +228,25 @@ namespace Apocalypse.Any.GameServer.GameInstance
                                 string sectorDown)
         {
             //Factory has to build this
-            var anotherSector = sectorName;
-            AddSectorStateMachine(anotherSector);
-            var anotherSectorStateMachine = GameSectorLayerServices[anotherSector];
-            anotherSectorStateMachine.SharedContext = new GameSectorLayerService
+            AddSectorStateMachine(sectorName);
+            var sourceSector = GameSectorLayerServices[sectorName];
+            sourceSector.SharedContext = new GameSectorLayerService
             {
-                Tag = anotherSector
+                Tag = sectorName
             };
 
-            anotherSectorStateMachine
+            sourceSector
                 .GetService
                 .Get(ServerGameSectorNewBook.BuildDefaultSectorState)
-                .Handle(anotherSectorStateMachine);
+                .Handle(sourceSector);
 
             var playerShifter = new RouterPlayerShifterMechanic(
                 new RouteDualMediator(null, null),
                 new List<GameSectorRoutePair>() {
-                    new GameSectorRoutePair()
-                    {
-                        Trespassing = GameSectorTrespassingDirection.Down,
-                        GameSectorTag = anotherSector,
-                        GameSectorDestinationTag = sectorDown,
-                    },
-                    new GameSectorRoutePair()
-                    {
-                        Trespassing = GameSectorTrespassingDirection.Left,
-                        GameSectorTag = anotherSector,
-                        GameSectorDestinationTag = sectorLeft,
-                    },
-                    new GameSectorRoutePair()
-                    {
-                        Trespassing = GameSectorTrespassingDirection.Right,
-                        GameSectorTag = anotherSector,
-                        GameSectorDestinationTag = sectorRight
-                    },
-                    new GameSectorRoutePair()
-                    {
-                        Trespassing = GameSectorTrespassingDirection.Up,
-                        GameSectorTag = anotherSector,
-                        GameSectorDestinationTag = sectorUp
-                    },
+                    CreateRoutePair(GameSectorTrespassingDirection.Down,sectorName, sectorDown),
+                    CreateRoutePair(GameSectorTrespassingDirection.Left,sectorName, sectorLeft),
+                    CreateRoutePair(GameSectorTrespassingDirection.Right,sectorName, sectorRight),
+                    CreateRoutePair(GameSectorTrespassingDirection.Up,sectorName, sectorUp),
                 });
             var routeTrespassingMarker = new RouteTrespassingMarkerMechanic(new RouteDualMediator(null, null), 100);
             var mediator = new RouteDualMediator(routeTrespassingMarker, playerShifter);
@@ -271,8 +255,18 @@ namespace Apocalypse.Any.GameServer.GameInstance
 
             SectorsOwnerMechanics.Add(routeTrespassingMarker);
             SectorsOwnerMechanics.Add(playerShifter);
-
         }
+
+        private static GameSectorRoutePair CreateRoutePair(GameSectorTrespassingDirection trespassingDirection, string sourceSector, string destinationSector)
+        {
+            return new GameSectorRoutePair()
+            {
+                Trespassing = trespassingDirection,
+                GameSectorTag = sourceSector,
+                GameSectorDestinationTag = destinationSector,
+            };
+        }
+
         /// <summary>
         /// Creates a server object ( NetServer ) for interacting with clients
         /// </summary>
@@ -336,7 +330,6 @@ namespace Apocalypse.Any.GameServer.GameInstance
         public void Update(GameTime gameTime)
         {
             CreateGameTimeIfNotExists(gameTime);
-
             UpdateGameTime(CurrentGameTime);
             GameStateContext.Update();
 
@@ -452,12 +445,11 @@ namespace Apocalypse.Any.GameServer.GameInstance
         {
             const string PlayerRegisteredEventName = "PlayerRegisteredEvent";
             var playerRegisteredEventLayer = GameSectorLayerServices[Configuration.StartingSector]
-                                                        .SharedContext
-                                                        .DataLayer
-                                                        .Layers
-                                                        .Where(l => l.DisplayName == PlayerRegisteredEventName &&
-                                                                    l.GetValidTypes().Any(t => t == typeof(EventQueueArgument)))
-                                                        .FirstOrDefault();
+                .SharedContext
+                .DataLayer
+                .Layers
+                .FirstOrDefault(l => l.DisplayName == PlayerRegisteredEventName &&
+                                     l.GetValidTypes().Any(t => t == typeof(EventQueueArgument)));
             if(playerRegisteredEventLayer == null)
             {
                 throw new InvalidOperationException($"Cannot use {nameof(FirePlayerRegisteredEvent)}. EventQueue PlayerRegistered doesn't exist");
@@ -501,7 +493,7 @@ namespace Apocalypse.Any.GameServer.GameInstance
             var playerRegisteredEvent = new EventQueueArgument()
             {
                 Id = Guid.NewGuid().ToString(),
-                EventName = PlayerRegisteredEventName, // changed this
+                EventName = PlayerRegisteredEventName,
                 ReferenceId = newPlayer.Id, //playerRegisteredEventRelation.Id
                 ReferenceType = typeof(PlayerSpaceship)
             };

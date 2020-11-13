@@ -11,7 +11,7 @@ namespace Apocalypse.Any.GameServer.States.Sector.Mechanics.ItemMechanics
 {
     public class ConsumeItemExperienceState : IState<string, IGameSectorLayerService>
     {
-        public int ItemBagSize { get; set; } = 36;
+        private int ItemBagSize { get; set; } = 36;
         public void Handle(IStateMachine<string, IGameSectorLayerService> machine)
         {
             //consume all 36 items (the player slot size is 36) and push one level up

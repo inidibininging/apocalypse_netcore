@@ -230,7 +230,7 @@ namespace Apocalypse.Any.Client.States.Storage
             inMemoryStorage.Add(nameof(BuildDialogWindowState), new BuildDialogWindowState());
             inMemoryStorage.Add(nameof(UpdateDialogWindowState), new UpdateDialogWindowState());
 
-            inMemoryStorage.Add(ClientGameScreenBook.BuildInfoWindow, new BuildInfoWindowState());
+            inMemoryStorage.Add(ClientGameScreenBook.BuildInfoWindow, new BuildInfoWindowState(dummyHudSheetToChangeInTheFuture));
             inMemoryStorage.Add(ClientGameScreenBook.UpdateInfoWindow, new UpdateInfoWindowState());
 
             inMemoryStorage.Add(ClientGameScreenBook.BuildCharacterWindow, new BuildCharacterWindowState());

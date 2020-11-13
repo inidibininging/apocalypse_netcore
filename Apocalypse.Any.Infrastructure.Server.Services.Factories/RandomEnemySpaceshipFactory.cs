@@ -18,14 +18,11 @@ namespace Apocalypse.Any.Infrastructure.Server.Services.Factories
 
         public override bool CanUse<TParam>(TParam instance) => CanUseByTType<TParam, string>();
 
-        public override List<Type> GetValidParameterTypes()
-        {
-            return new List<Type>() { typeof(string) };
-        }
+        public override List<Type> GetValidParameterTypes() => new List<Type>() { typeof(string) };
 
-        private static CharacterSheetFactory RandomSheet {get;set;} = new CharacterSheetFactory();
-        
-        (int frame, int x, int y) RandomEnemyFrame() => (ImagePaths.EnemyFrame, Randomness.Instance.From(0, 8), Randomness.Instance.From(0, 1));
+        private static CharacterSheetFactory RandomSheet { get; set; } = new CharacterSheetFactory();
+
+        static (int frame, int x, int y) RandomEnemyFrame() => (ImagePaths.EnemyFrame, Randomness.Instance.From(0, 8), Randomness.Instance.From(0, 1));
         
         protected override EnemySpaceship UseConverter<TParam>(TParam parameter)
         {
@@ -57,8 +54,10 @@ namespace Apocalypse.Any.Infrastructure.Server.Services.Factories
                     Rotation = new RotationBehaviour() { Rotation = 180 },
                     LayerDepth = DrawingPlainOrder.Entities
                 },
-                Tags = new List<string>() { "Enemies","Generated" }
+                Tags = GetTags
             };
         }
+
+        private static List<string> GetTags => new List<string>() { "Enemies","Generated" };
     }
 }

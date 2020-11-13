@@ -7,7 +7,7 @@ using States.Core.Infrastructure.Services;
 
 namespace Apocalypse.Any.GameServer.States.Sector
 {
-    public class CreateRandomMediumSpaceShipCommand: ICommand<IGameSectorLayerService>, IState<string, IGameSectorLayerService>
+    public class CreateRandomMediumSpaceShipState: ICommand<IGameSectorLayerService>, IState<string, IGameSectorLayerService>
     {
         // private RandomMediumSpaceshipFactory RandomMediumSpaceshipFactory { get; set; }
 
@@ -22,7 +22,7 @@ namespace Apocalypse.Any.GameServer.States.Sector
             return true;
         }
 
-        public CreateRandomMediumSpaceShipCommand()
+        public CreateRandomMediumSpaceShipState()
         {
         }
 

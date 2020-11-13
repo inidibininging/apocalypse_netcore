@@ -1,9 +1,9 @@
-using Apocalypse.Any.Infrastructure.Server.Services.Data.Interfaces;
-using States.Core.Infrastructure.Services;
 using System;
 using System.Collections.Generic;
+using Apocalypse.Any.Infrastructure.Server.Services.Data.Interfaces;
+using States.Core.Infrastructure.Services;
 
-namespace Apocalypse.Any.GameServer.States.Services
+namespace Apocalypse.Any.GameServer.States.Sector.Services
 {
     public class GetGameSectorNewDelegate : IStateGetService<string, IGameSectorLayerService>
     {

@@ -11,6 +11,9 @@ using Apocalypse.Any.Constants;
 
 namespace Apocalypse.Any.Client.States
 {
+    /// <summary>
+    /// Builds only client side effects and game objects (background etc..)
+    /// </summary>
     public class BuildClientSideState : IState<string, INetworkGameScreen>
     {
         public bool Initialized { get; private set; }
@@ -37,8 +40,7 @@ namespace Apocalypse.Any.Client.States
             machine.SharedContext.Messages.Add($"added DefaultScreenCamera");
 
             BuildBackground(machine);
-            machine.SharedContext.Messages.Add($"Built background");
-
+            BuildSparkField(machine);
             BuildLogo(machine);
             BuildGameOver(machine);
 
@@ -76,6 +78,17 @@ namespace Apocalypse.Any.Client.States
             var starField = new StarField(SpaceBackgroundConfiguration.StarsFieldCount);
             starField.Initialize();
             machine.SharedContext.Add(nameof(StarField), starField);
+            machine.SharedContext.Messages.Add($"Built background");
+        }
+
+        /// <summary>
+        /// Adds a spark field generator for the game. This is used for the projectiles in the game
+        /// </summary>
+        private void BuildSparkField(IStateMachine<string, INetworkGameScreen> machine)
+        {
+            var sparkField = new RandomSparkField(SpaceBackgroundConfiguration.StarsFieldCount);
+            sparkField.Initialize();
+            machine.SharedContext.Add(nameof(RandomSparkField), sparkField);
         }
     }
 }

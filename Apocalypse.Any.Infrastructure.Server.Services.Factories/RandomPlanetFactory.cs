@@ -17,10 +17,7 @@ namespace Apocalypse.Any.Infrastructure.Server.Services.Factories
         public string IdPrefix { get; set; } = "planetsRandom";
 
         public override bool CanUse<TParam>(TParam instance) => CanUseByTType<TParam, IGameSectorBoundaries>();
-        public override List<Type> GetValidParameterTypes()
-        {
-            return new List<Type>() { typeof(IGameSectorBoundaries) };
-        }
+        public override List<Type> GetValidParameterTypes() => new List<Type>() { typeof(IGameSectorBoundaries) };
 
         private (int frame, int x, int y) RandomPlanetFrame()
         {
@@ -56,12 +53,7 @@ namespace Apocalypse.Any.Infrastructure.Server.Services.Factories
                 Height = 128,
                 Width = 128,
                 Scale = new Vector2(Randomness.Instance.From(1, 4)),
-                Color = new Color
-                            (
-                                                Randomness.Instance.From(100, 255),
-                                                Randomness.Instance.From(100, 255),
-                                                Randomness.Instance.From(100, 255)
-                            ),
+                Color = GetRandomColor<TParam>(),
                 Position = new MovementBehaviour()
                 {
                     X = Randomness.Instance.RollTheDice(5) ? Randomness.Instance.From(sectorBoundaries.MinSectorX, sectorBoundaries.MaxSectorX) : Randomness.Instance.From(sectorBoundaries.MinSectorX, sectorBoundaries.MaxSectorX),
@@ -70,6 +62,16 @@ namespace Apocalypse.Any.Infrastructure.Server.Services.Factories
                 Rotation = new RotationBehaviour() { Rotation = Randomness.Instance.From(0, 360) },
                 LayerDepth = DrawingPlainOrder.Background + DrawingPlainOrder.MicroPlainStep
             };
+        }
+
+        private static Color GetRandomColor<TParam>()
+        {
+            return new Color
+            (
+                Randomness.Instance.From(100, 255),
+                Randomness.Instance.From(100, 255),
+                Randomness.Instance.From(100, 255)
+            );
         }
     }
 }

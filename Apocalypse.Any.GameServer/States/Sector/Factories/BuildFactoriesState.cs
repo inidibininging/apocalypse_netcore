@@ -12,27 +12,33 @@ using Apocalypse.Any.Infrastructure.Server.Services.Mechanics.EnemyMechanics;
 using Apocalypse.Any.Infrastructure.Server.Services.Mechanics.Proxy;
 using States.Core.Infrastructure.Services;
 using System.Collections.Generic;
+using Apocalypse.Any.Infrastructure.Server.Services.Mechanics.ItemMechanics;
 
 namespace Apocalypse.Any.GameServer.States.Sector.Factories
 {
+    /// <summary>
+    /// Creates all factories needed in the game
+    /// </summary>
     public class BuildFactoriesState : IState<string, IGameSectorLayerService>
     {
         public void Handle(IStateMachine<string, IGameSectorLayerService> machine)
         {
             if (machine.SharedContext == null)
             {
-                machine.SharedContext.Messages.Add("game sector is not available");
+                machine.SharedContext?.Messages.Add("game sector is not available");
                 return;
             }
 
-            machine.SharedContext.Factories = new InMemoryGameSectorFactoryLayer();
+            machine.SharedContext.Factories = new InMemoryGameSectorFactoryLayer
+            {
+                PlayerFactory = new Dictionary<string, IGenericTypeFactory<PlayerSpaceship>>(),
+                EnemyFactory = new Dictionary<string, IGenericTypeFactory<EnemySpaceship>>(),
+                ProjectileFactory = new Dictionary<string, IGenericTypeFactory<Projectile>>(),
+                ItemFactory = new Dictionary<string, IGenericTypeFactory<Item>>(),
+                ImageDataFactory = new Dictionary<string, IGenericTypeFactory<ImageData>>(),
+                GeneralCharacterFactory = new Dictionary<string, IGenericTypeFactory<CharacterEntity>>()
+            };
 
-            machine.SharedContext.Factories.PlayerFactory = new Dictionary<string, IGenericTypeFactory<PlayerSpaceship>>();
-            machine.SharedContext.Factories.EnemyFactory = new Dictionary<string, IGenericTypeFactory<EnemySpaceship>>();
-            machine.SharedContext.Factories.ProjectileFactory = new Dictionary<string, IGenericTypeFactory<Projectile>>();
-            machine.SharedContext.Factories.ItemFactory = new Dictionary<string, IGenericTypeFactory<Item>>();
-            machine.SharedContext.Factories.ImageDataFactory = new Dictionary<string, IGenericTypeFactory<ImageData>>();
-            machine.SharedContext.Factories.GeneralCharacterFactory = new Dictionary<string, IGenericTypeFactory<CharacterEntity>>();
 
             machine.SharedContext.Factories.PlayerFactory.Add(nameof(PlayerSpaceshipFactory), new PlayerSpaceshipFactory());
 

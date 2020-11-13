@@ -31,8 +31,7 @@ namespace Apocalypse.Any.Client.States.UI.Inventory
 
             //build nventory slots
             var rowCount = 6;
-            var columnCount = 6;           
-
+            var columnCount = 6;
             var magicInventoryStringForNow = "inventory";
 
             var inventory = machine.SharedContext.Images.Where(img => img.ServerData.Id.Contains(magicInventoryStringForNow));

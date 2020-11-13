@@ -14,10 +14,10 @@ namespace Apocalypse.Any.Client.Services.Creation
     /// </summary>
     public class PlayerInventoryDrawingFactory
     {
-        private static List<ImageClient> EmptyList = new List<ImageClient>();
+        private static List<ImageClient> _emptyList = new List<ImageClient>();
         public string IdPrefix { get; set; } = "inventory";
 
-        public IEnumerable<ImageClient> CreateInventoryGrid
+        public static IEnumerable<ImageClient> CreateInventoryGrid
         (
             IImage currentPositionHolder,
             IEnumerable<ImageClient> inventory
@@ -43,36 +43,38 @@ namespace Apocalypse.Any.Client.Services.Creation
                             .Select(i => i.Height)
                             .Max();
 
-            var offsetX = 32;
-            var offsetY = 32;
+            var offsetX = 16;
+            var offsetY = 16;
             var startingGridPosX = posHolderPosX + offsetX;
             var startingGridPosY = posHolderPosY + offsetY;
 
             //this only works with same size inventory
-            var itemEnumerator = inventory.GetEnumerator();
-
-            for (var indexX = 0; indexX < rowCount; indexX++)
+            using (var itemEnumerator = inventory.GetEnumerator())
             {
-                for (var indexY = 0; indexY < columnCount; indexY++)
+                for (var indexX = 0; indexX < rowCount; indexX++)
                 {
-                    var isFinal = !itemEnumerator.MoveNext();
-                    if (isFinal)
-                        continue;
-
-                    var item = itemEnumerator.Current;
-
-                    var itemPosX = (indexX * maxWidth) + startingGridPosX;
-                    var itemPosY = (indexY * maxHeight) + startingGridPosY;
-
-                    //copy image data with proper grid position
-                    //add to draw list
-                    item.Position = new MovementBehaviour()
+                    for (var indexY = 0; indexY < columnCount; indexY++)
                     {
-                        X = itemPosX,
-                        Y = itemPosY,
-                    };
-                    item.LayerDepth = DrawingPlainOrder.UI + (DrawingPlainOrder.PlainStep * 2);
-                    yield return item;
+                        var isFinal = !itemEnumerator.MoveNext();
+                        if (isFinal)
+                            continue;
+
+                        var item = itemEnumerator.Current;
+
+                        var itemPosX = (indexX * maxWidth) + startingGridPosX;
+                        var itemPosY = (indexY * maxHeight) + startingGridPosY;
+
+                        //copy image data with proper grid position
+                        //add to draw list
+                        if (item == null) continue;
+                        item.Position = new MovementBehaviour()
+                        {
+                            X = itemPosX,
+                            Y = itemPosY,
+                        };
+                        item.LayerDepth = DrawingPlainOrder.UI + (DrawingPlainOrder.PlainStep * 2);
+                        yield return item;
+                    }
                 }
             }
         }

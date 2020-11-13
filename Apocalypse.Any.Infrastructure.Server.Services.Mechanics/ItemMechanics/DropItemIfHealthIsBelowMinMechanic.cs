@@ -1,11 +1,11 @@
+using System;
 using Apocalypse.Any.Core.Drawing;
 using Apocalypse.Any.Domain.Common.Model;
 using Apocalypse.Any.Domain.Server.Model.Interfaces;
 using Apocalypse.Any.Infrastructure.Common.Services.Network.Interfaces.Transformations;
 using Apocalypse.Any.Infrastructure.Server.Services.Mechanics.Interfaces;
-using System;
 
-namespace Apocalypse.Any.Infrastructure.Server.Services.Mechanics.EnemyMechanics
+namespace Apocalypse.Any.Infrastructure.Server.Services.Mechanics.ItemMechanics
 {
     public class DropItemIfHealthIsBelowMinMechanic : IDropMechanic
     {

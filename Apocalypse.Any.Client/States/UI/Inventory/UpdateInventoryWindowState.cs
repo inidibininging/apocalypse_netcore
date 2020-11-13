@@ -27,8 +27,8 @@ namespace Apocalypse.Any.Client.States.UI.Inventory
         {
             return machine.SharedContext.Images.Where(oldImg => oldImg.ServerData.Id == machine.SharedContext.PlayerImageId).FirstOrDefault();
         }
-        public int Margin { get; set; } = 32;
-        public int Offset { get; set; } = 64;
+        public int Margin { get; set; } = 16;
+        public int Offset { get; set; } = 32;
         public void Handle(IStateMachine<string, INetworkGameScreen> machine)
         {
             machine.SharedContext.Messages.Add(nameof(UpdateInventoryWindowState));
@@ -97,7 +97,7 @@ namespace Apocalypse.Any.Client.States.UI.Inventory
 
             foreach (var kv in inventoryWindow.Where(kv => kv.Key.Contains(InventorySlot)))
             {
-                //validate gameobjectas a spritesheet
+                //validate gameobject as a spritesheet
                 var currentSlot = (kv.Value as SpriteSheet);
                 if (currentSlot == null)
                     continue;

@@ -6,6 +6,7 @@ using Apocalypse.Any.Infrastructure.Server.Services.Data.Interfaces;
 using Microsoft.Xna.Framework;
 using States.Core.Infrastructure.Services;
 using System.Collections.Generic;
+using Apocalypse.Any.Infrastructure.Server.Services.Factories;
 
 namespace Apocalypse.Any.GameServer.GameInstance
 {

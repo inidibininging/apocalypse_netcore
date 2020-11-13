@@ -19,47 +19,18 @@ namespace Apocalypse.Any.Infrastructure.Server.Services.Factories
         {
             return new List<Type>() { typeof(IGameSectorBoundaries) };
         }
-        private int MaxR {get;set;}
-        private int MaxG {get;set;}
-        private int MaxB {get;set;}
+        private int MaxR { get; set; }
+        private int MaxG { get; set; }
+        private int MaxB { get; set; }
         (int frame, int x, int y) RandomSpaceshipFrame() => (ImagePaths.MediumShipFrame, Randomness.Instance.From(0, 4), Randomness.Instance.From(0, 4));
         protected override ImageData UseConverter<TParam>(TParam parameter)
         {
-            var sectorBoundaries = parameter as IGameSectorBoundaries;
+            var sectorBoundaries = parameter as IGameSectorBoundaries ?? throw new ArgumentNullException(nameof(parameter));
 
             var scale = new Vector2(Randomness.Instance.From(1, 15));
-            var color = new Color
-                            (
-                                                Randomness.Instance.From(100, 255),
-                                                Randomness.Instance.From(100, 255),
-                                                Randomness.Instance.From(100, 255)
-                            );
+            var color = GerRandomColor<TParam>();
 
-            if(MaxR < color.R)
-                MaxR = color.R;
-            if(MaxG < color.G)
-                MaxG = color.G;
-            if(MaxB < color.B)
-                MaxB = color.B;
-            
-            if(scale.X > 1 && scale.X < 3)
-            {
-                color.R -= 155;
-                color.G -= 155;
-                color.B += 25;
-            }
-            if(scale.X > 3 && scale.X < 5)
-            {
-                color.R -= 105;
-                color.G -= 105;
-                 color.B += 55;
-            }   
-            if(scale.X > 5 && scale.X < 6)
-            {
-                color.R -= 75;
-                color.G -= 75;
-                color.B += 75;
-            } 
+            ModifyColorBasedOnScale<TParam>(color, scale);
 
             return new ImageData()
             {
@@ -77,8 +48,49 @@ namespace Apocalypse.Any.Infrastructure.Server.Services.Factories
                     Y = Randomness.Instance.From(sectorBoundaries.MinSectorY, sectorBoundaries.MaxSectorY)
                 },
                 Rotation = new RotationBehaviour() { Rotation = Randomness.Instance.From(0, 360) },
-                LayerDepth = DrawingPlainOrder.Background + (DrawingPlainOrder.MicroPlainStep*2)
+                LayerDepth = DrawingPlainOrder.Background + (DrawingPlainOrder.MicroPlainStep * 2)
             };
+        }
+
+        private void ModifyColorBasedOnScale<TParam>(Color color, Vector2 scale)
+        {
+            if (MaxR < color.R)
+                MaxR = color.R;
+            if (MaxG < color.G)
+                MaxG = color.G;
+            if (MaxB < color.B)
+                MaxB = color.B;
+
+            if (scale.X > 1 && scale.X < 3)
+            {
+                color.R -= 155;
+                color.G -= 155;
+                color.B += 25;
+            }
+
+            if (scale.X > 3 && scale.X < 5)
+            {
+                color.R -= 105;
+                color.G -= 105;
+                color.B += 55;
+            }
+
+            if (scale.X > 5 && scale.X < 6)
+            {
+                color.R -= 75;
+                color.G -= 75;
+                color.B += 75;
+            }
+        }
+
+        private static Color GerRandomColor<TParam>()
+        {
+            return new Color
+            (
+                Randomness.Instance.From(100, 255),
+                Randomness.Instance.From(100, 255),
+                Randomness.Instance.From(100, 255)
+            );
         }
     }
 }

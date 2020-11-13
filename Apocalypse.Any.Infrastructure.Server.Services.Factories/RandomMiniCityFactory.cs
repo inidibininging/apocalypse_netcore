@@ -11,7 +11,7 @@ using Microsoft.Xna.Framework;
 
 namespace Apocalypse.Any.Infrastructure.Server.Services.Factories {
     public class RandomMiniCityFactory : CheckWithReflectionFactoryBase<IEnumerable<ImageData>> {
-        private static float CityLayer;
+        private static float _cityLayer;
         private const int Up = 0;
         private const int Down = 1;
         private const int Left = 2;
@@ -33,7 +33,6 @@ namespace Apocalypse.Any.Infrastructure.Server.Services.Factories {
             this.StreetVerticalMaker = streetVerticalMaker;
             this.BuildingMaker = buildingMaker;
             this.BuildingTopMaker = buildingTopMaker;
-            this.ChancePercentageToRecall = chancePercentageToRecall;
             this.ChanceOfHorizontalOrVertical = chanceOfHorizontalOrVertical;
             this.ChancePercentageOfLeftRight = chancePercentageOfLeftRight;
             this.ChancePercentageOfUpDown = chancePercentageOfUpDown;
@@ -45,7 +44,6 @@ namespace Apocalypse.Any.Infrastructure.Server.Services.Factories {
         private IGenericTypeFactory<ImageData> BuildingMaker { get; set; }
         private IGenericTypeFactory<ImageData> BuildingTopMaker { get; set; }
 
-        public int ChancePercentageToRecall { get; set; } = 50;
         public int ChanceOfHorizontalOrVertical { get; set; } = 50;
         public int ChancePercentageOfLeftRight { get; set; } = 50;
         public int ChancePercentageOfUpDown { get; set; } = 50;
@@ -83,7 +81,7 @@ namespace Apocalypse.Any.Infrastructure.Server.Services.Factories {
                         X = x,
                         Y = y
                     });
-                    streetCenter.LayerDepth -= CityLayer;
+                    streetCenter.LayerDepth -= _cityLayer;
                     CenterNodes.Add(streetCenter.Position);
                     tileSize = (int)MathF.Round(streetCenter.Width);
                     centers--;
@@ -118,7 +116,7 @@ namespace Apocalypse.Any.Infrastructure.Server.Services.Factories {
                         continue;
                     }
                     streetCenter = StreetCenterMaker.Create(nextPosition);
-                    streetCenter.LayerDepth -= CityLayer;
+                    streetCenter.LayerDepth -= _cityLayer;
                     CenterNodes.Add(streetCenter.Position);
                     centers--;
                     yield return streetCenter;
@@ -145,7 +143,7 @@ namespace Apocalypse.Any.Infrastructure.Server.Services.Factories {
                                 break;
                             lastStreetUp++;
                             var streetUpImageData = StreetVerticalMaker.Create(streetUp);
-                            streetUpImageData.LayerDepth -= CityLayer;
+                            streetUpImageData.LayerDepth -= _cityLayer;
                             Nodes.Add(new Tuple<int, Vector2>(Up, streetUp));
                             yield return streetUpImageData;
                             break;
@@ -159,7 +157,7 @@ namespace Apocalypse.Any.Infrastructure.Server.Services.Factories {
                                 break;
                             lastStreetDown++;
                             var streetDownImageData = StreetVerticalMaker.Create(streetDown);
-                            streetDownImageData.LayerDepth -= CityLayer;
+                            streetDownImageData.LayerDepth -= _cityLayer;
                             Nodes.Add(new Tuple<int, Vector2>(Down, streetDown));
                             yield return streetDownImageData;
                             break;
@@ -173,7 +171,7 @@ namespace Apocalypse.Any.Infrastructure.Server.Services.Factories {
                                 break;
                             lastStreetLeft++;
                             var streeLeftImageData = StreetHorizontalMaker.Create(streetLeft);
-                            streeLeftImageData.LayerDepth -= CityLayer;
+                            streeLeftImageData.LayerDepth -= _cityLayer;
                             Nodes.Add(new Tuple<int, Vector2>(Left, streetLeft));
                             yield return streeLeftImageData;
                             break;
@@ -188,7 +186,7 @@ namespace Apocalypse.Any.Infrastructure.Server.Services.Factories {
                                 break;
                             lastStreetRight++;
                             var streetRightImageData = StreetHorizontalMaker.Create(streetRight);
-                            streetRightImageData.LayerDepth -= CityLayer;
+                            streetRightImageData.LayerDepth -= _cityLayer;
                             Nodes.Add(new Tuple<int, Vector2>(Right, streetRight));
                             yield return streetRightImageData;
                             break;
@@ -267,7 +265,7 @@ namespace Apocalypse.Any.Infrastructure.Server.Services.Factories {
                     yield return nextBuildingChunk;
                 }
             }
-            CityLayer -= DrawingPlainOrder.MicroPlainStep;
+            _cityLayer -= DrawingPlainOrder.MicroPlainStep;
         }
 
         //private Tuple<int, Vector2> GetStreetFreeForBuilding()

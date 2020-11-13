@@ -2,6 +2,8 @@ using Apocalypse.Any.Client.Screens;
 using Apocalypse.Any.Core.Text;
 using Apocalypse.Any.Domain.Common.DrawingOrder;
 using Apocalypse.Any.Domain.Common.Network;
+using Apocalypse.Any.Domain.Common.Drawing;
+using Apocalypse.Any.Domain.Common.Drawing.UI;
 using Microsoft.Xna.Framework;
 using States.Core.Infrastructure.Services;
 using System.Linq;
@@ -22,8 +24,6 @@ namespace Apocalypse.Any.Client.States.UI.Info
 
             //machine.SharedContext.Messages.Add(nameof(UpdateInfoWindowState));
             var moneyCount = machine.SharedContext.LastMetadataBag?.MoneyCount.ToString();
-
-            if (!string.IsNullOrWhiteSpace(moneyCount))
                 machine.SharedContext.Messages.Add(moneyCount);
 
             //TODO: put the money count in the "character window"
@@ -57,6 +57,15 @@ namespace Apocalypse.Any.Client.States.UI.Info
             infoText.LayerDepth = machine.SharedContext.InfoWindow.LayerDepth + (DrawingPlainOrder.PlainStep);
 
             machine.SharedContext.InfoWindow.Update(machine.SharedContext.UpdateGameTime);
+/*	    
+	    machine.SharedContext.As<ApocalypseWindow>("win")
+		    .AllOfType<ApocalypseButton<byte>>()
+		    .FirstOrDefault() 
+		    .Text = string.Join(System.Environment.NewLine, machine.SharedContext.Messages);
+	    machine.SharedContext.As<ApocalypseWindow>("win").Position.X = machine.SharedContext.InfoWindow.Position.X + 1024;
+	    machine.SharedContext.As<ApocalypseWindow>("win").Position.Y = machine.SharedContext.InfoWindow.Position.Y;
+*/
+
         }
     }
 }

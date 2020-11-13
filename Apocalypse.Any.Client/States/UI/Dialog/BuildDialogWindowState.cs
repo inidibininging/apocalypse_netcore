@@ -35,7 +35,7 @@ namespace Apocalypse.Any.Client.States.UI.Dialog
                 SelectedFrame = (ImagePaths.DialogueFrame, 0 ,0),
                 LayerDepth = DrawingPlainOrder.UI,
                 ForceDraw = true,
-                Position = new Core.Behaviour.MovementBehaviour()
+                Position = new MovementBehaviour()
                 {
                     X = machine.SharedContext.DialogWindow.Position.X,
                     Y = machine.SharedContext.DialogWindow.Position.Y
@@ -49,7 +49,7 @@ namespace Apocalypse.Any.Client.States.UI.Dialog
                 SelectedFrame = (ImagePaths.DialogueFrame, 0 ,1),
                 LayerDepth = DrawingPlainOrder.UI,
                 ForceDraw = true,
-                Position = new Core.Behaviour.MovementBehaviour()
+                Position = new MovementBehaviour()
                 {
                     X = machine.SharedContext.DialogWindow.Position.X + 640,
                     Y = machine.SharedContext.DialogWindow.Position.Y
@@ -64,7 +64,7 @@ namespace Apocalypse.Any.Client.States.UI.Dialog
                 SelectedFrame = (ImagePaths.DialogueFrame, 0 ,2),
                 LayerDepth = DrawingPlainOrder.UI,
                 ForceDraw = true,
-                Position = new Core.Behaviour.MovementBehaviour()
+                Position = new MovementBehaviour()
                 {
                     X = machine.SharedContext.DialogWindow.Position.X ,
                     Y = machine.SharedContext.DialogWindow.Position.Y + 448
@@ -78,7 +78,7 @@ namespace Apocalypse.Any.Client.States.UI.Dialog
                 SelectedFrame = (ImagePaths.DialogueFrame, 0 ,3),
                 LayerDepth = DrawingPlainOrder.UI,
                 ForceDraw = true,
-                Position = new Core.Behaviour.MovementBehaviour()
+                Position = new MovementBehaviour()
                 {
                     X = machine.SharedContext.DialogWindow.Position.X + 640,
                     Y = machine.SharedContext.DialogWindow.Position.Y + 448
@@ -96,7 +96,7 @@ namespace Apocalypse.Any.Client.States.UI.Dialog
                     SelectedFrame = (ImagePaths.DialogueFrame, 0 ,4),
                     LayerDepth = DrawingPlainOrder.UI + DrawingPlainOrder.PlainStep,
                     ForceDraw = true,
-                    Position = new Core.Behaviour.MovementBehaviour()
+                    Position = new MovementBehaviour()
                     {
                         X = machine.SharedContext.DialogWindow.Position.X + (64 * dialogWall),
                         Y = machine.SharedContext.DialogWindow.Position.Y
@@ -116,7 +116,7 @@ namespace Apocalypse.Any.Client.States.UI.Dialog
                     SelectedFrame = (ImagePaths.DialogueFrame, 0 ,4),
                     LayerDepth = DrawingPlainOrder.UI + DrawingPlainOrder.PlainStep,
                     ForceDraw = true,
-                    Position = new Core.Behaviour.MovementBehaviour()
+                    Position = new MovementBehaviour()
                     {
                         X = machine.SharedContext.DialogWindow.Position.X + (64 * dialogWall),
                         Y = machine.SharedContext.DialogWindow.Position.Y + machine.SharedContext.DialogWindow.Scale.Y
@@ -138,7 +138,7 @@ namespace Apocalypse.Any.Client.States.UI.Dialog
                     SelectedFrame = (ImagePaths.DialogueFrame, 0 ,4),
                     LayerDepth = DrawingPlainOrder.UI + DrawingPlainOrder.PlainStep,
                     ForceDraw = true,
-                    Position = new Core.Behaviour.MovementBehaviour()
+                    Position = new MovementBehaviour()
                     {
                         X = machine.SharedContext.DialogWindow.Position.X,// + machine.SharedContext.DialogWindow.Scale.Y,
                         Y = machine.SharedContext.DialogWindow.Position.Y + (64 * dialogWall),
@@ -159,7 +159,7 @@ namespace Apocalypse.Any.Client.States.UI.Dialog
                     SelectedFrame = (ImagePaths.DialogueFrame, 0, 4),
                     LayerDepth = DrawingPlainOrder.UI + DrawingPlainOrder.PlainStep,
                     ForceDraw = true,
-                    Position = new Core.Behaviour.MovementBehaviour()
+                    Position = new MovementBehaviour()
                     {
                         X = machine.SharedContext.DialogWindow.Position.X + machine.SharedContext.DialogWindow.Scale.X - 32,
                         Y = machine.SharedContext.DialogWindow.Position.Y + (64 * dialogWall),

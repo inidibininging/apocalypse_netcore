@@ -41,6 +41,7 @@ namespace Apocalypse.Any.GameServer.States.Sector
         public void Handle(IStateMachine<string, IGameSectorLayerService> machine)
         {
             Execute(machine.SharedContext);
+	    System.Console.WriteLine("creating planeeeeeet");
         }
     }
 }

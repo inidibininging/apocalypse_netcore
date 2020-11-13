@@ -37,7 +37,7 @@ namespace Apocalypse.Any.Client.States.UI.Inventory
                 return;
             }
             if (machine.SharedContext.InventoryImages.Count != 0)
-                machine.SharedContext.InventoryImages = InventoryDrawingFactory.CreateInventoryGrid(machine.SharedContext.InventoryWindow, machine.SharedContext.InventoryImages).ToList();
+                machine.SharedContext.InventoryImages = PlayerInventoryDrawingFactory.CreateInventoryGrid(machine.SharedContext.InventoryWindow, machine.SharedContext.InventoryImages).ToList();
         }
 
         public void Handle(IStateMachine<string, INetworkGameScreen> machine)
@@ -56,12 +56,6 @@ namespace Apocalypse.Any.Client.States.UI.Inventory
                 machine.SharedContext.Messages.Add("last meta data bag items is not available");
                 return;
             }
-
-            // if(!machine.SharedContext.LastMetadataBag.Items.Any())
-            // {
-            //     machine.SharedContext.Messages.Add("last meta data bag has no items");
-            //     return;
-            // }
 
             if (machine.SharedContext.LastMetadataBag.Items.Count > 0)
             {

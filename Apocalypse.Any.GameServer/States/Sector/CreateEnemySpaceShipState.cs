@@ -10,7 +10,7 @@ using System;
 
 namespace Apocalypse.Any.GameServer.States.Sector
 {
-    public class CreateEnemyCommand : ICommand<IGameSectorLayerService>, IState<string, IGameSectorLayerService>
+    public class CreateEnemySpaceShipState : ICommand<IGameSectorLayerService>, IState<string, IGameSectorLayerService>
     {
         public RandomEnemySpaceshipFactory EnemySpaceshipFactory { get; set; }
         public ICharacterNameGenerator<EnemySpaceship> EnemyNameGenerator { get; set; }
@@ -39,7 +39,7 @@ namespace Apocalypse.Any.GameServer.States.Sector
             return true;
         }
 
-        public CreateEnemyCommand(ICharacterNameGenerator<EnemySpaceship> enemyNameGenerator)
+        public CreateEnemySpaceShipState(ICharacterNameGenerator<EnemySpaceship> enemyNameGenerator)
         {
             EnemyNameGenerator = enemyNameGenerator ?? throw new ArgumentNullException(nameof(enemyNameGenerator));
         }

@@ -39,7 +39,7 @@ namespace Apocalypse.Any.Client.States
                     //no registered img in old
                     if (newImg.SelectedFrame.frame == ImagePaths.ProjectileFrame)
                     {
-                        // Console.WriteLaaine("lol");
+                        
                     }
                     var newImageClient = new ImageClient(newImg, machine.SharedContext.GameSheet.Frames);
                     newImageClient.LoadContent(ScreenService.Instance.Content);
@@ -74,6 +74,25 @@ namespace Apocalypse.Any.Client.States
                                                     108,
                                                     255)),
                                     ((float)Randomness.Instance.From(20, 150) / 200f));
+                    }
+
+                    ScreenService.Instance.Sounds.Play($"SynthRainbow0{Randomness.Instance.From(0, 3)}");
+                }
+                
+                if (img.SelectedFrame.frame == ImagePaths.ProjectileFrame)
+                {
+                    img.SelectedFrame = (ImagePaths.ExplosionFrame, 0, 8);
+                    img.Scale = new Vector2(img.Scale.X + 1, img.Scale.Y + 1);
+                    
+
+                    for (var i = 0; i < 5; i++)
+                    {
+                        machine.SharedContext
+                            .As<RandomSparkField>(nameof(RandomSparkField))
+                            .Add(img.Position.X,
+                                img.Position.Y,
+                                img.Color,
+                                ((float)Randomness.Instance.From(20, 150) / 200f));
                     }
 
                     ScreenService.Instance.Sounds.Play($"SynthRainbow0{Randomness.Instance.From(0, 3)}");

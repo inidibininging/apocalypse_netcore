@@ -1,3 +1,6 @@
+using System;
+using System.Collections.Generic;
+using Apocalypse.Any.Constants;
 using Apocalypse.Any.Core.Behaviour;
 using Apocalypse.Any.Core.Utilities;
 using Apocalypse.Any.Domain.Common.Model;
@@ -5,13 +8,9 @@ using Apocalypse.Any.Domain.Common.Model.Network;
 using Apocalypse.Any.Domain.Common.Model.RPG;
 using Apocalypse.Any.Domain.Server.Model;
 using Apocalypse.Any.Domain.Server.Model.Interfaces;
-using Apocalypse.Any.Infrastructure.Server.Services.Factories;
 using Microsoft.Xna.Framework;
-using System;
-using System.Collections.Generic;
-using Apocalypse.Any.Constants;
 
-namespace Apocalypse.Any.Infrastructure.Common.Services.Network.Interfaces.Factories
+namespace Apocalypse.Any.Infrastructure.Server.Services.Factories
 {
     public class MockItemFactory : CheckWithReflectionFactoryBase<Item>//, IItemFactory
     {
@@ -25,22 +24,10 @@ namespace Apocalypse.Any.Infrastructure.Common.Services.Network.Interfaces.Facto
             SectorRandomPositionFactory sectorRandomPositionFactory,
             ICharacterNameGenerator<Item> itemNameGenerator)
         {
-            if (characterSheetFactory == null)
-                throw new ArgumentNullException(nameof(characterSheetFactory));
-            CharacterSheetFactory = characterSheetFactory;
-
-            if (sectorRandomPositionFactory == null)
-                throw new ArgumentNullException(nameof(sectorRandomPositionFactory));
-            RandomSectorPositionGenerator = sectorRandomPositionFactory;
-
-            if (itemNameGenerator == null)
-                throw new ArgumentNullException(nameof(itemNameGenerator));
-            NameGenerator = itemNameGenerator;
+            CharacterSheetFactory = characterSheetFactory ?? throw new ArgumentNullException(nameof(characterSheetFactory));
+            RandomSectorPositionGenerator = sectorRandomPositionFactory ?? throw new ArgumentNullException(nameof(sectorRandomPositionFactory));
+            NameGenerator = itemNameGenerator ?? throw new ArgumentNullException(nameof(itemNameGenerator));
         }
-
-        //public Item Create(IGameSectorBoundaries sectorBoundaries)
-        //{
-        //}
 
         private Item GenerateSurvivor(
             ICharacterSheet characterSheet,
@@ -115,31 +102,25 @@ namespace Apocalypse.Any.Infrastructure.Common.Services.Network.Interfaces.Facto
             }            
         };
 
-        public override bool CanUse<TParam>(TParam instance)
-        {
-            return CanUseByTType<TParam, IGameSectorBoundaries>();
-        }
-        public override List<Type> GetValidParameterTypes()
-        {
-            return new List<Type>() { typeof(IGameSectorBoundaries) };
-        }
+        public override bool CanUse<TParam>(TParam instance) => CanUseByTType<TParam, IGameSectorBoundaries>();
+        public override List<Type> GetValidParameterTypes() => new List<Type>() { typeof(IGameSectorBoundaries) };
+
         protected override Item UseConverter<TParam>(TParam parameter)
         {
-            var sectorBoundaries = parameter as IGameSectorBoundaries;
-            
+            var sectorBoundaries = parameter as IGameSectorBoundaries ?? throw new ArgumentNullException(nameof(parameter));
             var randomSheet = CharacterSheetFactory.GetRandomSheet();
             Console.WriteLine($"random sheet created with {randomSheet.Speed} ag & {randomSheet.Attack} atk");
             var exp = Randomness.Instance.From(1, 255);
 
             var generatedPosition = Vector2.Zero;
-            try
-            {
+            // try
+            // {
                 generatedPosition = RandomSectorPositionGenerator.Create(sectorBoundaries);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-            }
+            // }
+            // catch (Exception ex)
+            // {
+            //     Console.WriteLine(ex.Message);
+            // }
             var item = GenerateSurvivor(randomSheet, generatedPosition);
             item.DisplayName = NameGenerator.Generate(item);
             return item;

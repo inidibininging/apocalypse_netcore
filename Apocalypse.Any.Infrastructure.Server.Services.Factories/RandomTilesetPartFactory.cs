@@ -14,7 +14,7 @@ namespace Apocalypse.Any.Infrastructure.Server.Services.Factories
     public class RandomTilesetPartFactory : CheckWithReflectionFactoryBase<ImageData>
     {
         private int Path { get; }
-        public List<(int frame, int x, int y)> Frames { get; set; }
+        private List<(int frame, int x, int y)> Frames { get; set; }
 
         public RandomTilesetPartFactory(int path,                                        
                                         List<(int frame, int x, int y)> frames)
@@ -22,14 +22,11 @@ namespace Apocalypse.Any.Infrastructure.Server.Services.Factories
             Path = path;
             Frames = frames;
         }
-        public override bool CanUse<TParam>(TParam instance)
-        {
-            return CanUseByTType<TParam, MovementBehaviour>();
-        }
+        public override bool CanUse<TParam>(TParam instance) => CanUseByTType<TParam, MovementBehaviour>();
 
         protected override ImageData UseConverter<TParam>(TParam parameter)
         {
-            var position = parameter as MovementBehaviour;
+            var position = parameter as MovementBehaviour ?? throw new ArgumentNullException();
             return new ImageData()
             {
                 Id = Guid.NewGuid().ToString(),
@@ -38,22 +35,19 @@ namespace Apocalypse.Any.Infrastructure.Server.Services.Factories
                 //SelectedFrame = $"{IdPrefix}_{Randomness.Instance.From(StartX, EndX)}_{(Randomness.Instance.From(StartY, EndY))}",
                 SelectedFrame = Frames.ElementAt(Randomness.Instance.From(0, Frames.Count - 1)),
                 Color = Color.White,
-                Scale = new Vector2(32),
+                Scale = new Vector2(16),
                 Position = new MovementBehaviour()
                 {
                     X = position.X,
                     Y = position.Y
                 },
                 Rotation = new RotationBehaviour(),
-                Width = 1024,
-                Height = 1024,
+                Width = 512,
+                Height = 512,
                 LayerDepth = DrawingPlainOrder.Entities - DrawingPlainOrder.PlainStep
             };
         }
 
-        public override List<Type> GetValidParameterTypes()
-        {
-            return new List<Type>() { typeof(MovementBehaviour) };
-        }
+        public override List<Type> GetValidParameterTypes() => new List<Type>() { typeof(MovementBehaviour) };
     }
 }

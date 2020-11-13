@@ -1,9 +1,9 @@
-using Apocalypse.Any.Infrastructure.Server.Services.Data.Interfaces;
-using States.Core.Infrastructure.Services;
 using System;
 using System.Collections.Generic;
+using Apocalypse.Any.Infrastructure.Server.Services.Data.Interfaces;
+using States.Core.Infrastructure.Services;
 
-namespace Apocalypse.Any.GameServer.States.Services
+namespace Apocalypse.Any.GameServer.States.Sector.Services
 {
     public class NewGameSectorNewDelegate : IStateNewService<string, IGameSectorLayerService>
     {
@@ -11,23 +11,19 @@ namespace Apocalypse.Any.GameServer.States.Services
 
         public NewGameSectorNewDelegate(Func<Dictionary<string, IState<string, IGameSectorLayerService>>> getDelegate)
         {
-            if (getDelegate == null)
-                throw new ArgumentNullException(nameof(getDelegate));
-            GetDelegate = getDelegate;
+            GetDelegate = getDelegate ?? throw new ArgumentNullException(nameof(getDelegate));
         }
 
         public string New(IState<string, IGameSectorLayerService> state)
         {
-            var dictionary = GetDelegate();
             var identifier = Guid.NewGuid().ToString();
-            dictionary.Add(identifier, state);
+            GetDelegate()?.Add(identifier, state);
             return identifier;
         }
 
         public string New(string identifier, IState<string, IGameSectorLayerService> state)
         {
-            var dictionary = GetDelegate();
-            dictionary.Add(identifier, state);
+            GetDelegate()?.Add(identifier, state);
             return identifier;
         }
     }

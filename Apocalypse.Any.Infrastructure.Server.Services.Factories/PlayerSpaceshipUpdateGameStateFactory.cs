@@ -1,4 +1,8 @@
-﻿using Apocalypse.Any.Core.Utilities;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using Apocalypse.Any.Constants;
+using Apocalypse.Any.Core.Utilities;
 using Apocalypse.Any.Domain.Common.Model;
 using Apocalypse.Any.Domain.Common.Model.Network;
 using Apocalypse.Any.Domain.Server.Model;
@@ -7,13 +11,8 @@ using Apocalypse.Any.Infrastructure.Common.Services.Network.Interfaces.Transform
 using Apocalypse.Any.Infrastructure.Common.Services.Serializer.Interfaces;
 using Apocalypse.Any.Infrastructure.Server.Services.Data.Interfaces;
 using Microsoft.Xna.Framework;
-using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using Apocalypse.Any.Constants;
 
-namespace Apocalypse.Any.Infrastructure.Server.Services.Transformations
+namespace Apocalypse.Any.Infrastructure.Server.Services.Factories
 {
     public class PlayerSpaceshipUpdateGameStateFactory : CheckWithReflectionFactoryBase<GameStateData>
     {
@@ -52,7 +51,6 @@ namespace Apocalypse.Any.Infrastructure.Server.Services.Transformations
                 .Players
                 .FirstOrDefault(somePlayer => somePlayer.LoginToken == loginToken);
 
-
             //var playerRectangle = new Rectangle(player.CurrentImage.Position.ToVector2().ToPoint(), new Point((int)MathF.Round(player.Stats.Aura * (int)MathF.Round(player.CurrentImage.Width * player.CurrentImage.Scale.X))));
             var playerRectangleWithAura = ImageToRectangleTransformationService.Transform(player.CurrentImage, (int)MathF.Round(player.CurrentImage.Width * player.CurrentImage.Scale.X * player.Stats.Aura));
             var playerRectangle = ImageToRectangleTransformationService.Transform(player.CurrentImage);
@@ -63,11 +61,11 @@ namespace Apocalypse.Any.Infrastructure.Server.Services.Transformations
                                     .Any(l => l.DataAsEnumerable<IdentifiableCircularLocation>().Any(
                                             location =>
                                             {
-                                                var radiusAsVector2 = location.Radius.ToVector2();
+                                                var (x, y) = location.Radius.ToVector2();
                                                 var locationRectangle = ImageToRectangleTransformationService.Transform(location.Position,
                                                                                                 1f.ToVector2(),
-                                                                                                (int)MathF.Round(radiusAsVector2.X),
-                                                                                                (int)MathF.Round(radiusAsVector2.Y));
+                                                                                                (int)MathF.Round(x),
+                                                                                                (int)MathF.Round(y));
                                                 return locationRectangle.Intersects(playerRectangle);
                                             }))
 ;
@@ -161,7 +159,7 @@ namespace Apocalypse.Any.Infrastructure.Server.Services.Transformations
                 .ImageData
                 .Where(e => Vector2.Distance(
                                 e.Position.ToVector2(),
-                                player.CurrentImage.Position.ToVector2()) <= DrawingDistance + 1024 || 
+                                player.CurrentImage.Position.ToVector2()) <= DrawingDistance * 2 || 
                             e.SelectedFrame.frame == ImagePaths.FogFrame)
                 .ToList());
 

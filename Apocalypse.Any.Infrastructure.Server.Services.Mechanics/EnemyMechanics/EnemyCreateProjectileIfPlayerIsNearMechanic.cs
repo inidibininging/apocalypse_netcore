@@ -3,6 +3,7 @@ using Apocalypse.Any.Infrastructure.Common.Services.Network.Interfaces.Factories
 using Apocalypse.Any.Infrastructure.Common.Services.Network.Interfaces.Transformations;
 using Microsoft.Xna.Framework;
 using System;
+using Apocalypse.Any.Infrastructure.Server.Services.Factories;
 
 namespace Apocalypse.Any.Infrastructure.Server.Services.Mechanics.EnemyMechanics
 {

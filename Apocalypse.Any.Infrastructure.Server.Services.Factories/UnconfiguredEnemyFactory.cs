@@ -15,10 +15,7 @@ namespace Apocalypse.Any.Infrastructure.Server.Services.Factories
     public class UnconfiguredEnemyFactory : RandomEnemySpaceshipFactory
     {
         public override bool CanUse<TParam>(TParam instance) => CanUseByTType<TParam, string>();
-        public override List<Type> GetValidParameterTypes()
-        {
-            return new List<Type>() { typeof(string) };
-        }
+        public override List<Type> GetValidParameterTypes() => new List<Type>() { typeof(string) };
         protected override EnemySpaceship UseConverter<TParam>(TParam parameter)
         {
             var enemy = base.UseConverter(Guid.NewGuid().ToString());
