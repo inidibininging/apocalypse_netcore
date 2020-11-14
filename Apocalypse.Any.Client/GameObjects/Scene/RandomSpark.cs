@@ -4,6 +4,7 @@ using Apocalypse.Any.Core.Behaviour;
 using Apocalypse.Any.Core.Drawing;
 using Apocalypse.Any.Core.Services;
 using Apocalypse.Any.Core.Utilities;
+using Apocalypse.Any.Domain.Common.DrawingOrder;
 using Microsoft.Xna.Framework;
 
 namespace Apocalypse.Any.Client.GameObjects.Scene
@@ -21,6 +22,7 @@ namespace Apocalypse.Any.Client.GameObjects.Scene
                                                     0);
 
         public Vector2 Scale { get; set; } = new Vector2((float)(Randomness.Instance.From(0, 300) / 100f));
+        public float LayerDepth { get; set; } = DrawingPlainOrder.EntitiesFX;
         private MovementBehaviour Destination { get; set; } = new MovementBehaviour();
         public float SingleUnit { get; set; } = 0.5f;
         private float RotationDirection = 0;

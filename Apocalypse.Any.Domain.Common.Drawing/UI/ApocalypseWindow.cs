@@ -8,6 +8,7 @@ using System;
 using System.Linq;
 using Apocalypse.Any.Constants;
 using Apocalypse.Any.Core.Behaviour;
+using Apocalypse.Any.Core.Utilities;
 
 namespace Apocalypse.Any.Domain.Common.Drawing.UI
 {
@@ -15,7 +16,18 @@ namespace Apocalypse.Any.Domain.Common.Drawing.UI
     {
 
         public bool Colliding { get; private set; }
-        public bool IsVisible { get; set; }
+
+        public bool IsVisible
+        {
+            get
+            {
+                return Alpha.Alpha > 0;
+            }
+            set
+            {
+                Alpha.Alpha = value ? 1 : 0;
+            }
+        }
 
         public ApocalypseWindow()
         {
@@ -45,6 +57,7 @@ namespace Apocalypse.Any.Domain.Common.Drawing.UI
 
         public override void Update(GameTime time)
         {
+            //UI Elements don't support Alpha, because it depends on IsVisible
             AllOfType<IChildUIElement>()
                 .ToList()
                 .ForEach(child =>
@@ -55,10 +68,13 @@ namespace Apocalypse.Any.Domain.Common.Drawing.UI
                     child.ParentScale = new Vector2(Scale.X,Scale.Y);
                     child.ParentWidth = Width;
                     child.ParentHeight = Height;
+                    child.IsVisible = IsVisible;
+                    child.LayerDepth = LayerDepth;
                 });
             base.Update(time);
         }
 
+        
         #region Collision Interface
 
         public virtual void OnCollision(ICollidable collidable)

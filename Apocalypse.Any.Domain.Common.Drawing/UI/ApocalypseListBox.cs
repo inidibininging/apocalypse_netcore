@@ -5,6 +5,7 @@ using Apocalypse.Any.Constants;
 using Apocalypse.Any.Core.Behaviour;
 using Apocalypse.Any.Core.Drawing.UI;
 using Apocalypse.Any.Core.Utilities;
+using Apocalypse.Any.Domain.Common.DrawingOrder;
 using Lidgren.Network;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -18,8 +19,15 @@ namespace Apocalypse.Any.Domain.Common.Drawing.UI
         /// <summary>
         /// Vertical space between items.
         /// </summary>
-        public int SpaceBetweenListItem { get; set; } = 32;
+        public int SpaceBetweenListItem { get; set; } = 8;
         public int SpaceFromLeft { get; set; } = 16;
+        
+        private int ItemSizeY { get; set; } = 32;
+
+        public IEnumerable<ApocalypseListItem<TContext>> Items
+        {
+            get => AllOfType<ApocalypseListItem<TContext>>().OrderByDescending(item => item.Position.Y);
+        }
         
         public ApocalypseListBox(Dictionary<(int frame, int x, int y), Rectangle> frames) : base(frames)
         {
@@ -29,19 +37,17 @@ namespace Apocalypse.Any.Domain.Common.Drawing.UI
         {
         }
 
-        public void Add(string text)
+        public void Add(string text, (int frameName, int x, int y) selectedFrame, bool useTextAsKey = false)
         {
-            var items = AllOfType<ApocalypseListItem<TContext>>().OrderByDescending(item => item.Position.Y);
-        
-            var itemToAdd = items.FirstOrDefault();
+            var itemToAdd = Items.FirstOrDefault();
             
             //TODO: extract this to an interface for adding stuff to a UIElement
-            Add(Guid.NewGuid().ToString(),new ApocalypseListItem<TContext>(SpriteSheetRectangle, default(TContext))
+            var listItem = new ApocalypseListItem<TContext>(SpriteSheetRectangle, default(TContext))
             {
                 Position = new MovementBehaviour()
                 {
                     X = SpaceFromLeft,
-                    Y = SpaceBetweenListItem * (items.Count() + 1) //+ (itemToAdd?.Position.Y ?? SpaceBetweenListItem) * items.Count()
+                    Y = Items.Any() ? (SpaceBetweenListItem + ItemSizeY) * (Items.Count()) : 0//+ (itemToAdd?.Position.Y ?? SpaceBetweenListItem) * items.Count()
                 },
                 ParentPosition = new MovementBehaviour()
                 {
@@ -52,7 +58,9 @@ namespace Apocalypse.Any.Domain.Common.Drawing.UI
                 ParentWidth = Width,
                 ParentHeight = Height,
                 Text = text
-            });
+            };
+            listItem.SelectedFrame = SelectedFrame = selectedFrame;
+            Add(useTextAsKey ? text : Guid.NewGuid().ToString(), listItem);
             // TODO: Erase the TContext
         }
 
@@ -64,6 +72,8 @@ namespace Apocalypse.Any.Domain.Common.Drawing.UI
 
         public override void Update(GameTime time)
         {
+            ItemSizeY = SourceRect.Height;
+            
             foreach (var child in AllOfType<IChildUIElement>())
             {
                 child.ParentPosition.X = ParentPosition.X;
@@ -71,6 +81,8 @@ namespace Apocalypse.Any.Domain.Common.Drawing.UI
                 child.ParentWidth = ParentWidth;
                 child.ParentHeight = ParentHeight;
                 child.ParentScale = ParentScale;
+                child.IsVisible = IsVisible;
+                child.LayerDepth = LayerDepth + DrawingPlainOrder.MicroPlainStep;
             }
             //TODO: pass the space between items in some form to the child item        
             base.Update(time);

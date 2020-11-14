@@ -48,9 +48,9 @@ namespace Apocalypse.Any.Domain.Common.Drawing.UI
             //set positions to underlying image
             //TODO: Look for unnecessary parenthesis in the project.
             if (ParentPosition == null) return;
-            base.Position.X = ParentPosition.X + (Position.X - SourceRect.X);
-            base.Position.Y = ParentPosition.Y + (Position.Y - SourceRect.Y);
-
+            base.Position.X = ParentPosition.X + Position.X;
+            base.Position.Y = ParentPosition.Y + Position.Y;
+             
         }
         #endregion
 
@@ -58,5 +58,10 @@ namespace Apocalypse.Any.Domain.Common.Drawing.UI
         public Vector2 ParentScale { get; set; }
         public float ParentWidth { get; set; }
         public float ParentHeight { get; set; }
+        public bool IsVisible
+        {
+            get => Alpha.Alpha > 0;
+            set => Alpha.Alpha = value ? 1 : 0;
+        }
     }
 }

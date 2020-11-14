@@ -7,6 +7,7 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using Apocalypse.Any.Constants;
+using Apocalypse.Any.Domain.Common.DrawingOrder;
 
 namespace Apocalypse.Any.Core.Drawing
 {
@@ -245,6 +246,14 @@ namespace Apocalypse.Any.Core.Drawing
             }
             
         }
+
+        public void Add(Image image)
+        {
+            if(image.LayerDepth == 0 && LayerDepth != 0)
+                image.LayerDepth = LayerDepth + DrawingPlainOrder.MicroPlainStep;
+            base.Add(image);
+        }
+        
 
         public override void Update(GameTime time) => ForEach(obj => obj.Update(time));
         

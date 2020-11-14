@@ -84,7 +84,6 @@ namespace Apocalypse.Any.Client.States
                     img.SelectedFrame = (ImagePaths.ExplosionFrame, 0, 8);
                     img.Scale = new Vector2(img.Scale.X + 1, img.Scale.Y + 1);
                     
-
                     for (var i = 0; i < 5; i++)
                     {
                         machine.SharedContext
@@ -92,7 +91,8 @@ namespace Apocalypse.Any.Client.States
                             .Add(img.Position.X,
                                 img.Position.Y,
                                 img.Color,
-                                ((float)Randomness.Instance.From(20, 150) / 200f));
+                                ((float)Randomness.Instance.From(20, 150) / 200f), 
+                                img.LayerDepth);
                     }
 
                     ScreenService.Instance.Sounds.Play($"SynthRainbow0{Randomness.Instance.From(0, 3)}");

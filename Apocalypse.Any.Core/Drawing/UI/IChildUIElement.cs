@@ -10,6 +10,7 @@ namespace Apocalypse.Any.Core.Drawing.UI
         Vector2 ParentScale { get; set; }
         float ParentWidth { get; set; }
         float ParentHeight { get; set; }
-        
+        bool IsVisible { get; set; }
+        float LayerDepth { get; set; }
     }
 }

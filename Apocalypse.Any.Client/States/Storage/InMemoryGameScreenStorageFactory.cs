@@ -89,6 +89,7 @@ namespace Apocalypse.Any.Client.States.Storage
                     ClientGameScreenBook.BuildCharacterWindow,
                     ClientGameScreenBook.BuildInfoWindow,
                     ClientGameScreenBook.BuildInventoryWindow,
+                    nameof(BuildItemWindowState),
                     nameof(BuildDialogWindowState),
                     //ClientGameScreenBook.ReadServerDataFromConsole,
                     // ClientGameScreenBook.FillWithDefaultServerDataState,
@@ -217,7 +218,10 @@ namespace Apocalypse.Any.Client.States.Storage
             var dummyHudSheetToChangeInTheFuture = new Dictionary<(int frame,int x, int y), Rectangle>();
             dummyHudSheetToChangeInTheFuture.Add((ImagePaths.HUDFrame, 0, 0), new Rectangle(0, 0, 32, 32));
             
+            
             inMemoryStorage.Add(ClientGameScreenBook.BuildInventoryWindow, new BuildInventoryWindowState(dummyHudSheetToChangeInTheFuture));
+            inMemoryStorage.Add(nameof(BuildItemWindowState),
+                new BuildItemWindowState(dummyHudSheetToChangeInTheFuture));
             inMemoryStorage.Add(ClientGameScreenBook.UpdateInventoryWindow, new UpdateInventoryWindowState());
             inMemoryStorage.Add(ClientGameScreenBook.UpdateInventoryImages, new UpdateInventoryImagesState(new PlayerInventoryDrawingFactory()));
 

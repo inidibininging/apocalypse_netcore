@@ -7,6 +7,7 @@ using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
 using System.Linq;
 using Apocalypse.Any.Constants;
+using Apocalypse.Any.Domain.Common.DrawingOrder;
 
 namespace Apocalypse.Any.Client.GameObjects.Scene
 {
@@ -43,11 +44,12 @@ namespace Apocalypse.Any.Client.GameObjects.Scene
                 Sheet.Rotation.Rotation = randomSpark.Rotation.Rotation;
                 Sheet.Color = randomSpark.Color;
                 Sheet.Scale = randomSpark.Scale;
+                Sheet.LayerDepth = randomSpark.LayerDepth;
                 Sheet.Draw(spriteBatch);
                 i++;
             });
         }
-        public void Add(float x,float y, Color color, float scale = 0.5f){
+        public void Add(float x,float y, Color color,float scale = 0.5f, float layerDepth = DrawingPlainOrder.EntitiesFX){
             var spark = new RandomSpark();
             spark.Position = new MovementBehaviour(){
                 X = x,
@@ -55,6 +57,7 @@ namespace Apocalypse.Any.Client.GameObjects.Scene
             };
             spark.Scale = new Vector2(scale,scale);
             spark.Color = color;
+            spark.LayerDepth = layerDepth;
             // spark.ChangeSparkFrame(100);
             RandomSparks.Add(spark);
             Sheet.SpriteSheetRectangle.Add((RandomSparks.Count, 0, 0), new Rectangle(spark.FramePosition.ToPoint(), new Point(32)));
