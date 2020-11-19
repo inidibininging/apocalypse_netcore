@@ -37,7 +37,7 @@ namespace Apocalypse.Any.Domain.Common.Drawing.UI
         {
         }
 
-        public void Add(string text, (int frameName, int x, int y) selectedFrame, bool useTextAsKey = false)
+        public string Add(string text, (int frameName, int x, int y) selectedFrame, bool useTextAsKey = false)
         {
             var itemToAdd = Items.FirstOrDefault();
             
@@ -47,7 +47,7 @@ namespace Apocalypse.Any.Domain.Common.Drawing.UI
                 Position = new MovementBehaviour()
                 {
                     X = SpaceFromLeft,
-                    Y = Items.Any() ? (SpaceBetweenListItem + ItemSizeY) * (Items.Count()) : 0//+ (itemToAdd?.Position.Y ?? SpaceBetweenListItem) * items.Count()
+                    Y = Items.Any() ? (SpaceBetweenListItem + ItemSizeY) * (Items.Count()) : 0
                 },
                 ParentPosition = new MovementBehaviour()
                 {
@@ -60,8 +60,10 @@ namespace Apocalypse.Any.Domain.Common.Drawing.UI
                 Text = text
             };
             listItem.SelectedFrame = SelectedFrame = selectedFrame;
-            Add(useTextAsKey ? text : Guid.NewGuid().ToString(), listItem);
+            var newKey = useTextAsKey ? text : Guid.NewGuid().ToString();
+            Add(newKey, listItem);
             // TODO: Erase the TContext
+            return newKey;
         }
 
         public void Remove(string text)

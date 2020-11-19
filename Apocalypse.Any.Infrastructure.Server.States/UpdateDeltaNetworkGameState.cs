@@ -51,7 +51,7 @@ namespace Apocalypse.Any.Infrastructure.Server.States
         private GameStateData LastGameStateData { get; set; }
 
         public TimeSpan LastDiff { get; set; }
-        public const int DiffMiliseconds = 10500; 
+        public const int DiffMiliseconds = 5000; 
         public void Handle(INetworkStateContext<TWorld> gameStateContext, NetworkCommandConnection networkCommandConnection)
         {
             if (string.IsNullOrWhiteSpace(networkCommandConnection?.CommandArgument))
@@ -71,7 +71,7 @@ namespace Apocalypse.Any.Infrastructure.Server.States
                                         .GetGameStateByLoginToken(clientData.LoginToken);                             
                 
 
-                if (LastGameStateData == null || networkCommandConnection.CommandName == NetworkCommandConstants.UpdateCommand || LastDiff.TotalMilliseconds < DiffMiliseconds)
+                if (LastGameStateData == null || networkCommandConnection.CommandName == NetworkCommandConstants.UpdateCommand)
                 {
                     UpdateLastGameStateData(serverGameState);
 
@@ -95,7 +95,7 @@ namespace Apocalypse.Any.Infrastructure.Server.States
                     );
                     var b = DateTime.Now - a;
                     LastDiff = b;
-
+                    Console.WriteLine(LastDiff);
                     if(sentMessage == Lidgren.Network.NetSendResult.FailedNotConnected || sentMessage == Lidgren.Network.NetSendResult.Dropped)
                     {
                         LastGameStateData = null; //triggers full update again
@@ -117,7 +117,6 @@ namespace Apocalypse.Any.Infrastructure.Server.States
             using (var stream = new MemoryStream())
             {
                 var serializer = new XmlSerializer(typeof(GameStateData));
-
                 serializer.Serialize(stream, serverGameState);
                 stream.Position = 0;
                 LastGameStateData = (GameStateData)serializer.Deserialize(stream);

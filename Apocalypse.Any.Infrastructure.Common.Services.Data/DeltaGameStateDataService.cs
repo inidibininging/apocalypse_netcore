@@ -9,12 +9,13 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using Apocalypse.Any.Constants;
+using Microsoft.Xna.Framework;
 
 namespace Apocalypse.Any.Infrastructure.Common.Services.Data
 {
     public class DeltaGameStateDataService : IDeltaGameStateDataService
     {
-        const float FloatTolerance = 0.2f;
+        const float FloatTolerance = 0.4f;
         public DeltaGameStateData GetDelta(GameStateData gameStateDataBefore, GameStateData gameStateDataAfter)
         {
             if (gameStateDataBefore.LoginToken != gameStateDataAfter.LoginToken)
@@ -90,8 +91,8 @@ namespace Apocalypse.Any.Infrastructure.Common.Services.Data
                     {
                         Id = imgAfter.Id,
                         Alpha = Math.Abs(imgAfter.Alpha.Alpha - imgBefore.Alpha.Alpha) > FloatTolerance ? (float?)imgAfter.Alpha.Alpha : null,
-                        Width = Math.Abs(imgAfter.Width - imgBefore.Width) > FloatTolerance ? (float?)imgAfter.Width : null,
-                        Height = Math.Abs(imgAfter.Height - imgBefore.Height) > FloatTolerance ? (float?)imgAfter.Height : null,
+                        // Width = Math.Abs(imgAfter.Width - imgBefore.Width) > FloatTolerance ? (float?)imgAfter.Width : null,
+                        // Height = Math.Abs(imgAfter.Height - imgBefore.Height) > FloatTolerance ? (float?)imgAfter.Height : null,
                         LayerDepth = Math.Abs(imgAfter.LayerDepth - imgBefore.LayerDepth) > FloatTolerance ? (float?)imgAfter.LayerDepth : null,
                         
                         X = Math.Abs(imgAfter.Position.X - imgBefore.Position.X) > FloatTolerance ? (float?)imgAfter.Position.X : null,
@@ -194,23 +195,20 @@ namespace Apocalypse.Any.Infrastructure.Common.Services.Data
                 if (imgPack.delta.Id == null)
                     continue;
 
-                imgPack.imgBefore.Id = imgPack.delta.Id;
                 imgPack.imgBefore.Alpha.Alpha = imgPack.delta.Alpha.HasValue && Math.Abs(imgPack.delta.Alpha.Value - imgPack.imgBefore.Alpha.Alpha) > FloatTolerance ? imgPack.delta.Alpha.Value : imgPack.imgBefore.Alpha.Alpha;
-                imgPack.imgBefore.Width = imgPack.delta.Width.HasValue && Math.Abs(imgPack.delta.Width.Value - imgPack.imgBefore.Width) > FloatTolerance ? imgPack.delta.Width.Value : imgPack.imgBefore.Width;
-                imgPack.imgBefore.Height = imgPack.delta.Height.HasValue && Math.Abs(imgPack.delta.Height.Value - imgPack.imgBefore.Height) > FloatTolerance ? imgPack.delta.Height.Value : imgPack.imgBefore.Height;
                 imgPack.imgBefore.LayerDepth = imgPack.delta.LayerDepth.HasValue && Math.Abs(imgPack.delta.LayerDepth.Value - imgPack.imgBefore.LayerDepth) > FloatTolerance ? imgPack.delta.LayerDepth.Value : imgPack.imgBefore.LayerDepth;
                 
                 imgPack.imgBefore.Rotation.Rotation = imgPack.delta.Rotation.HasValue && Math.Abs(imgPack.delta.Rotation.Value - imgPack.imgBefore.Rotation.Rotation) > FloatTolerance ? imgPack.delta.Rotation.Value : imgPack.imgBefore.Rotation.Rotation;
                 imgPack.imgBefore.Position.X = imgPack.delta.X.HasValue && Math.Abs(imgPack.delta.X.Value - imgPack.imgBefore.Position.X) > FloatTolerance ? imgPack.delta.X.Value : imgPack.imgBefore.Position.X;
                 imgPack.imgBefore.Position.Y = imgPack.delta.Y.HasValue && Math.Abs(imgPack.delta.Y.Value - imgPack.imgBefore.Position.Y) > FloatTolerance ? imgPack.delta.Y.Value : imgPack.imgBefore.Position.Y;
                 
-                imgPack.imgBefore.Path = imgPack.delta.Path != ImagePaths.empty && imgPack.delta.Path != imgPack.imgBefore.Path ? imgPack.delta.Path : imgPack.imgBefore.Path;
+                // imgPack.imgBefore.Path = imgPack.delta.Path != ImagePaths.empty && imgPack.delta.Path != imgPack.imgBefore.Path ? imgPack.delta.Path : imgPack.imgBefore.Path;
                 imgPack.imgBefore.SelectedFrame = imgPack.delta.SelectedFrame.frame != ImagePaths.UndefinedFrame && imgPack.delta.SelectedFrame != imgPack.imgBefore.SelectedFrame ? imgPack.delta.SelectedFrame : imgPack.imgBefore.SelectedFrame;
                 var scaleXChanged = imgPack.delta.ScaleX.HasValue && Math.Abs(imgPack.delta.ScaleX.Value - imgPack.imgBefore.Scale.X) > FloatTolerance;
                 var scaleYChanged = imgPack.delta.ScaleY.HasValue && Math.Abs(imgPack.delta.ScaleY.Value - imgPack.imgBefore.Scale.Y) > FloatTolerance;
                 if (scaleXChanged || scaleYChanged)
                 {
-                    imgPack.imgBefore.Scale = new Microsoft.Xna.Framework.Vector2(
+                    imgPack.imgBefore.Scale = new Vector2(
                         scaleXChanged ? imgPack.delta.ScaleX.Value : imgPack.imgBefore.Scale.X,
                         scaleYChanged ? imgPack.delta.ScaleY.Value : imgPack.imgBefore.Scale.Y
                         );
@@ -230,7 +228,7 @@ namespace Apocalypse.Any.Infrastructure.Common.Services.Data
             }
 
 
-            if ((newImages = newImages.Where(i => i.Path != null)).Any())
+            if ((newImages = newImages.Where(i => i.Path != ImagePaths.blank)).Any())
             {
                 gameStateDataBefore.Images.AddRange(newImages);
             }
@@ -245,20 +243,21 @@ namespace Apocalypse.Any.Infrastructure.Common.Services.Data
 
         public GameStateData UpdateGameStateData(GameStateData gameStateData, DeltaGameStateData deltaGameStateData)
         {
-
-            if (deltaGameStateData.LoginToken != gameStateData.LoginToken)
-                return gameStateData;
+            //disabled some checks because of performance
+            
+            // if (deltaGameStateData.LoginToken != gameStateData.LoginToken)
+            //     return gameStateData;
             if (deltaGameStateData.CameraX != null && gameStateData.Camera.Position.X != deltaGameStateData.CameraX)
                 gameStateData.Camera.Position.X = deltaGameStateData.CameraX.Value;
             if (deltaGameStateData.CameraY != null && gameStateData.Camera.Position.Y != deltaGameStateData.CameraY)
                 gameStateData.Camera.Position.Y = deltaGameStateData.CameraY.Value;
-            if (deltaGameStateData.CameraRotation != null && gameStateData.Camera.Rotation.Rotation != deltaGameStateData.CameraRotation)
-                gameStateData.Camera.Rotation.Rotation = deltaGameStateData.CameraRotation.Value;
+            // if (deltaGameStateData.CameraRotation != null && gameStateData.Camera.Rotation.Rotation != deltaGameStateData.CameraRotation)
+            //     gameStateData.Camera.Rotation.Rotation = deltaGameStateData.CameraRotation.Value;
 
-            if (deltaGameStateData.ScreenWidth != null && gameStateData.Screen.ScreenWidth != deltaGameStateData.ScreenWidth)
-                gameStateData.Screen.ScreenWidth = deltaGameStateData.ScreenWidth.Value;
-            if (deltaGameStateData.ScreenHeight != null && gameStateData.Screen.ScreenHeight != deltaGameStateData.ScreenHeight)
-                gameStateData.Screen.ScreenHeight = deltaGameStateData.ScreenHeight.Value;
+            // if (deltaGameStateData.ScreenWidth != null && gameStateData.Screen.ScreenWidth != deltaGameStateData.ScreenWidth)
+            //     gameStateData.Screen.ScreenWidth = deltaGameStateData.ScreenWidth.Value;
+            // if (deltaGameStateData.ScreenHeight != null && gameStateData.Screen.ScreenHeight != deltaGameStateData.ScreenHeight)
+            //     gameStateData.Screen.ScreenHeight = deltaGameStateData.ScreenHeight.Value;
 
             gameStateData = ApplyChangesFromDeltaToGameStateData(gameStateData, deltaGameStateData);
 

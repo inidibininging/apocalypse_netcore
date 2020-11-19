@@ -21,8 +21,8 @@ namespace Apocalypse.Any.Domain.Common.Model.Network
         public float? ScaleX { get; set; }
         public float? ScaleY { get; set; }
 
-        public float? Width { get; set; }
-        public float? Height { get; set; }
+        // public float? Width { get; set; }
+        // public float? Height { get; set; }
 
         public static implicit operator ImageData(DeltaImageData deltaImageData)
         {
@@ -31,8 +31,8 @@ namespace Apocalypse.Any.Domain.Common.Model.Network
                 Id = deltaImageData.Id,
                 Path = deltaImageData.Path,
                 SelectedFrame = deltaImageData.SelectedFrame,
-                Width = deltaImageData.Width.Value,
-                Height = deltaImageData.Height.Value,
+                // Width = deltaImageData.Width.Value,
+                // Height = deltaImageData.Height.Value,
                 Alpha = new Core.Behaviour.AlphaBehaviour()
                 {
                     Alpha = deltaImageData.Alpha.Value

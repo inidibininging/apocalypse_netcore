@@ -31,10 +31,10 @@ namespace Apocalypse.Any.Infrastructure.Common.Services.Interpolation
                 ScaleX.Update(imagesData.ScaleX.Value);
             if (imagesData.ScaleY.HasValue)
                 ScaleY.Update(imagesData.ScaleY.Value);
-            if (imagesData.Width.HasValue)
-                Width.Update(imagesData.Width.Value);
-            if (imagesData.Height.HasValue)
-                Height.Update(imagesData.Height.Value);
+            // if (imagesData.Width.HasValue)
+            //     Width.Update(imagesData.Width.Value);
+            // if (imagesData.Height.HasValue)
+            //     Height.Update(imagesData.Height.Value);
             return this;
         }
     }
