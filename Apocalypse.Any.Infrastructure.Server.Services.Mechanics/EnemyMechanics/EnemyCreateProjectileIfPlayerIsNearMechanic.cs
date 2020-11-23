@@ -3,27 +3,24 @@ using Apocalypse.Any.Infrastructure.Common.Services.Network.Interfaces.Factories
 using Apocalypse.Any.Infrastructure.Common.Services.Network.Interfaces.Transformations;
 using Microsoft.Xna.Framework;
 using System;
+using Apocalypse.Any.Domain.Server.Model.Interfaces;
 using Apocalypse.Any.Infrastructure.Server.Services.Factories;
 
 namespace Apocalypse.Any.Infrastructure.Server.Services.Mechanics.EnemyMechanics
 {
     public class EnemyCreateProjectileIfPlayerIsNearMechanic
     {
-        private ProjectileFactory ProjectileMaker  { get; set; }
-        // private ImageToRectangleTransformationService ImageToRectangle { get; set; }
+        private int DistanceForDisablingProjectiles { get; set; } = 512;
+    
 
-        public EnemyCreateProjectileIfPlayerIsNearMechanic(
-            ProjectileFactory projectileFactory//,
-            // ImageToRectangleTransformationService imageToRectangleTransformationService
-            )
+        private IGenericTypeFactory<Projectile> ProjectileFactory  { get; set; }
+
+        public EnemyCreateProjectileIfPlayerIsNearMechanic(ProjectileFactory projectileFactory)
         {
             if (projectileFactory == null)
                 throw new ArgumentNullException(nameof(projectileFactory));
-            ProjectileMaker = projectileFactory;
+            ProjectileFactory = projectileFactory;
 
-            // if (imageToRectangleTransformationService == null)
-            //     throw new ArgumentNullException(nameof(imageToRectangleTransformationService));
-            // ImageToRectangle = imageToRectangleTransformationService;
         }
 
         public Projectile Update(
@@ -34,14 +31,13 @@ namespace Apocalypse.Any.Infrastructure.Server.Services.Mechanics.EnemyMechanics
         {
             if (enemy == null || player == null)
                 return null;
-            var distance = 512;
-            var distanceBetweenPlayerAndEnemy = Vector2.Distance(player.CurrentImage.Position, enemy.CurrentImage.Position);
-            if(distanceBetweenPlayerAndEnemy > distance)
+            
+            if (Vector2.Distance(player.CurrentImage.Position, enemy.CurrentImage.Position) <
+                DistanceForDisablingProjectiles)
                 return null;
+            
             enemy.CurrentImage.Rotation.Rotation = MathHelper.Lerp(player.CurrentImage.Rotation, enemy.CurrentImage.Rotation, 0.001f);
-            return ProjectileMaker.Create(enemy);
-            // var enemyRect = ImageToRectangle.Transform(enemy.CurrentImage, offsetEnemy);
-            // var playerRect = ImageToRectangle.Transform(player.CurrentImage, offsetPlayer);
+            return ProjectileFactory.Create(enemy);
 
         }
     }

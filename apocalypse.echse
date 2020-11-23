@@ -97,9 +97,9 @@
    Set Tag void = .void
    Set Tag citySettings = .true
    Set Tag planetSettings = .true
-   Set Tag fogSettings = .false
+   Set Tag fogSettings = .true
    Set Tag spaceshipsSettings = .true   
-   Set Tag enemySettings = .none
+   Set Tag enemySettings = .hard
    
    !BuildWorld ( citySettings, planetSettings, fogSettings, spaceshipsSettings, enemySettings )    
 

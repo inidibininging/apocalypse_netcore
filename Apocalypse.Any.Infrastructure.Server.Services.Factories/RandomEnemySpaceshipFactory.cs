@@ -46,9 +46,9 @@ namespace Apocalypse.Any.Infrastructure.Server.Services.Factories
                     Alpha = new AlphaBehaviour() { Alpha = 1 },
                     Path = ImagePaths.gamesheetExtended, //TODO: look for Image/gamesheetExtended when replacing it with an atlas
                     SelectedFrame = RandomEnemyFrame(),
-                    Height = 32,
-                    Width = 32,
-                    Scale = new Vector2(1.5f, 1.5f),
+                    Height = 64,
+                    Width = 64,
+                    Scale = new Vector2(2f, 2f),
                     Color = Color.White,
                     Position = new MovementBehaviour() { X = 0, Y = 0 },
                     Rotation = new RotationBehaviour() { Rotation = 180 },

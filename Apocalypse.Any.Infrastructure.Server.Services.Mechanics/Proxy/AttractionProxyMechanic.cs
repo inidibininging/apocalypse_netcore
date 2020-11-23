@@ -10,12 +10,11 @@ namespace Apocalypse.Any.Infrastructure.Server.Services.Mechanics.Proxy
         where TFullPositionHolder : IFullPositionHolder
     {
         public bool Active { get; set; } = true;
-        private IAttractionMechanic AttractionMechanics { get; set; }
-        private Func<TFullPositionHolder,IFullPositionHolder> GetTarget { get; set; }
+        protected IAttractionMechanic AttractionMechanics { get; private set; }
+        protected Func<TFullPositionHolder,IFullPositionHolder> GetTarget { get; private set; }
 
-        private Func<TFullPositionHolder,float> GetForce { get; set; }
-
-        //AttractionMechanic
+        protected Func<TFullPositionHolder,float> GetForce { get; private set; }
+        
         public AttractionProxyMechanic(
             IAttractionMechanic attractionMechanics, 
             Func<TFullPositionHolder,IFullPositionHolder> getTarget,
@@ -26,7 +25,7 @@ namespace Apocalypse.Any.Infrastructure.Server.Services.Mechanics.Proxy
             GetForce = getForce ?? throw new ArgumentNullException(nameof(getForce));
         }
 
-        public TFullPositionHolder Update(TFullPositionHolder entity)
+        public virtual TFullPositionHolder Update(TFullPositionHolder entity)
         {
             var target =  GetTarget(entity);
             var force = GetForce(entity);
