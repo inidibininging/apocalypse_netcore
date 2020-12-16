@@ -20,7 +20,7 @@ namespace Apocalypse.Any.Infrastructure.Server.Language
 
             LexiconSymbol.Letter,
             LexiconSymbol.TagLetter,
-            LexiconSymbol.TagIdentifier,            
+            LexiconSymbol.TagIdentifier, 
 
             //TODO: amplify with more comparers. This is the worst language ever -.-
             LexiconSymbol.Equal,
@@ -39,6 +39,7 @@ namespace Apocalypse.Any.Infrastructure.Server.Language
 
                 if (!machine.SharedContext.MoveNext())
                     break;
+
                 if (!ValidLexemes.Contains(machine.SharedContext.Current))
                     continue;
 
@@ -58,14 +59,18 @@ namespace Apocalypse.Any.Infrastructure.Server.Language
                 if (machine.SharedContext.Current != LexiconSymbol.SkipMaterial && 
                     machine.SharedContext.Current != LexiconSymbol.Equal &&
                     Left != null && 
-                    Comparison != null)
-                {
-                    Right = new TagExpression();
-                    Right.Handle(machine);
+                    Comparison != null)                
+		        {
+		            if (machine.SharedContext.Current == LexiconSymbol.TagIdentifier && Right == null) {
+			            Right = new TagExpression();
+			            Right.Handle(machine);
+		            }
+
+		            if (machine.SharedContext.Current == LexiconSymbol.Letter && Right == null) { 
+		   	            Right = new IdentifierExpression();
+			            Right.Handle(machine);	
+		            }
                 }
-
-
-                
             }
 
             if (Left == null)

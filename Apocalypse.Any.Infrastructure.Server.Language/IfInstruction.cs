@@ -55,6 +55,7 @@ namespace Apocalypse.Any.Infrastructure.Server.Language
             Console.WriteLine(System.Environment.NewLine);
             return variable;
         }
+        
         public override void Handle(IStateMachine<string, IGameSectorLayerService> machine)
         {
             LastEvaluation = Expression.Comparison.ComparisonSymbol == LexiconSymbol.Equal &&

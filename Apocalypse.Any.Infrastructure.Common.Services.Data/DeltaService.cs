@@ -28,6 +28,9 @@ namespace Apocalypse.Any.Infrastructure.Common.Services.Data
             {
                 DeltaRecords.Clear();
             }
+
+            if (Value == null)
+                Value = value;
             Before = Value;
             Value = value;
             Delta = GetDelta(Before,Value);

@@ -53,7 +53,7 @@ namespace Apocalypse.Any.Infrastructure.Server.Services.Data
         {
             if (!items.All(item => CanUse(item)))
                 return false;
-            Data = new ConcurrentBag<TData>(items.Cast<TData>());
+            Data = new ConcurrentBag<TData>(items.Cast<TData>());	    
             return true;
         }
     }

@@ -13,6 +13,7 @@ namespace Apocalypse.Any.Infrastructure.Server.Language
         public readonly List<char> Separator = System.Environment.NewLine.ToList();
         public readonly List<char> Carriage = new List<char>() { '\r' };
         public readonly List<char> LineFeed = new List<char>() { '\n' };
+        public readonly List<char> Tab = new List<char>() { '\t' };
         public readonly List<char> PositiveSign = new List<char>() { '+' };
         public readonly List<char> NegativeSign = new List<char>() { '-' };
         public readonly List<char> Assignment = new List<char>() { '=' };
@@ -60,7 +61,8 @@ namespace Apocalypse.Any.Infrastructure.Server.Language
             SymbolTable.Add(Empty, LexiconSymbol.SkipMaterial);
             SymbolTable.Add(Carriage, LexiconSymbol.SkipMaterial);
             SymbolTable.Add(LineFeed, LexiconSymbol.SkipMaterial);
-            
+            SymbolTable.Add(Tab, LexiconSymbol.SkipMaterial);
+
             SymbolTable.Add(PositiveSign,LexiconSymbol.PositiveSign);
             SymbolTable.Add(NegativeSign,LexiconSymbol.NegativeSign);
             SymbolTable.Add(Assignment, LexiconSymbol.Assign);

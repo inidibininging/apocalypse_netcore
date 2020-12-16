@@ -20,16 +20,10 @@ namespace Apocalypse.Any.Client.States
 
         public void Handle(IStateMachine<string, INetworkGameScreen> machine)
         {
-            if (machine.SharedContext.CurrentGameStateData == null)
+            if (machine.SharedContext.CurrentGameStateData?.Camera?.Position == null)
                 return;
 
-            if (machine.SharedContext.CurrentGameStateData.Camera == null)
-                return;
-
-            if (machine.SharedContext.CurrentGameStateData.Camera.Position == null)
-                return;
-
-            if (machine.SharedContext.CurrentGameStateData.Camera.Rotation == null)
+            if (machine.SharedContext.CurrentGameStateData.Camera?.Rotation == null)
                 return;
 
             var playerImage = GetPlayerImage(machine);

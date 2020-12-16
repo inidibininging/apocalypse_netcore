@@ -30,7 +30,16 @@ namespace Apocalypse.Any.Client.GameObjects.Scene
         public Vector2 FramePosition { get; set; }
 
         public string Path { get; private set; } = "debris";
-
+	
+	public DateTime CreationDate { get; set; } = new DateTime();
+	public TimeSpan DecayTime { get; set; } = TimeSpan.FromSeconds(15);
+	public bool SparkDecayTime 
+	{ 
+		get
+		{
+			return CreationDate.Add(DecayTime) < DateTime.Now;
+		}
+	}
         private Vector2 GenerateRandomFrame(int rolls = 1) => new Vector2(
                     Randomness.Instance.From(0, 25) * 32,
                     rolls == 1 ? (Randomness.Instance.TrueOrFalse() ?
@@ -46,6 +55,7 @@ namespace Apocalypse.Any.Client.GameObjects.Scene
             Destination.Y = Randomness.Instance.From(0, (int)ScreenService.Instance.Resolution.Y * 20);
             Color = Color.White;
             FramePosition = new Vector2(6 * 32,7 * 32);
+	    
             // ChangeSparkFrame();
         }
         public void ChangeSparkFrame(int rolls = 1){
@@ -55,6 +65,7 @@ namespace Apocalypse.Any.Client.GameObjects.Scene
 
         public void Update(GameTime gameTime)
         {
+	    
             Rotation.Rotation += RotationDirection;
             var SingleUnitX = MathHelper.Lerp(Position.X,Destination.X, 0.0001f);
             var SingleUnitY = MathHelper.Lerp(Position.Y,Destination.Y, 0.0001f);

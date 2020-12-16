@@ -17,6 +17,10 @@ namespace Apocalypse.Any.Infrastructure.Server.Language
 
         public TagVariable GetVariableOfFunction(IStateMachine<string, IGameSectorLayerService> machine, int argumentIndex)
         {
+            //return null if argument index is below 0
+            if (argumentIndex < 0)
+                return null;
+            
             //look up for the variable inside the execution instruction
             var callerArgument =
                 Expression

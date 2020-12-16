@@ -19,7 +19,10 @@ namespace Apocalypse.Any.Core.Camera
         IRotatableGameObject
     {
         public float Zoom { get; set; }
-
+        public float ZoomDelta { get; set; }
+        const float ZoomMinimum = 0.25f;
+        const float ZoomMaximum = 2f;
+        
         public Viewport CurrentViewport { get; set; }
 
         public Matrix TransformMatrix
@@ -49,10 +52,10 @@ namespace Apocalypse.Any.Core.Camera
 
         private int scrollWheelValueRaw = 0;
         private int scrollWheelValueBefore = 0;
-        public float NextZoom { get; private set; }
-        public float ZoomDifference { get; set; }
-        private TimeSpan delayed = TimeSpan.FromMilliseconds(200);
-        private TimeSpan counter = TimeSpan.Zero;
+        private float NextZoom { get; set; }
+        float ZoomDifference { get; set; }
+        private readonly TimeSpan delayed = TimeSpan.FromMilliseconds(200);
+        private TimeSpan _counter = TimeSpan.Zero;
 
         public CameraInfoText CameraDebugInfo { get; set; }
         public MovementBehaviour Position { get; set; }
@@ -71,9 +74,10 @@ namespace Apocalypse.Any.Core.Camera
             if (time == null)
                 return;
 
-            if (counter < delayed)
+            
+            if (_counter < delayed)
             {
-                counter += time.ElapsedGameTime;
+                _counter += time.ElapsedGameTime;
                 return;
             }
             else
@@ -81,7 +85,7 @@ namespace Apocalypse.Any.Core.Camera
                 ZoomDifference = Math.Abs(NextZoom - Zoom);
                 if (ZoomDifference >= 0.0004 && NextZoom != 0)
                 {
-                    Zoom = MathHelper.Lerp(Zoom, NextZoom, 0.02f);
+                    Zoom = MathHelper.Lerp(Zoom, NextZoom, 0.04f);
                 }
                 
                 //nextZoom = 0;
@@ -89,19 +93,26 @@ namespace Apocalypse.Any.Core.Camera
                 scrollWheelValueRaw = Mouse.GetState().ScrollWheelValue;
 
                 float delta = scrollWheelValueRaw - scrollWheelValueBefore;
+                const float scrollZoomFactor = 0.25f;
                 if(delta != 0)
                 {
                     if (delta > 0)
-                        delta = 0.25f;
+                        delta = scrollZoomFactor;
                     if (delta < 0)
-                        delta = -0.25f;
+                        delta = scrollZoomFactor * -1;
 
-                    if (Zoom + delta > 0.5 && Zoom + delta < 1.5)
+                    if ((Zoom + delta > ZoomMinimum && Zoom + delta < ZoomMaximum))
                         NextZoom = Zoom + delta;
-
                 }
-
-                counter = TimeSpan.Zero;
+                else
+                //works only scroll was not used
+                {
+                    if ((Zoom + ZoomDelta > ZoomMinimum && Zoom + ZoomDelta < ZoomMaximum))
+                        NextZoom = Zoom + ZoomDelta;
+                }
+                
+                ZoomDelta = 0;
+                _counter = TimeSpan.Zero;
             }
 
             CameraDebugInfo?.Update(time);

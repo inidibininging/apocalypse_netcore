@@ -41,6 +41,12 @@ namespace Apocalypse.Any.Infrastructure.Server.Language
                     Right = new TagExpression();
                     Right.Handle(machine);
                 }
+                
+                if (machine.SharedContext.Current == LexiconSymbol.Letter && Left != null)
+                {
+                    Right = new IdentifierExpression();
+                    Right.Handle(machine);
+                }
 
                 if(!machine.SharedContext.MoveNext() || (Left != null && Right != null))
                     break;

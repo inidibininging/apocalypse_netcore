@@ -15,6 +15,50 @@ namespace Apocalypse.Any.Infrastructure.Server.Language
         
         }
 
+        private TagVariable GetVariable(string name, IStateMachine<string, IGameSectorLayerService> machine)
+        {
+            //get the variable out of the function scope 
+            var variable = machine
+                .SharedContext
+                .DataLayer
+                .GetLayersByType<TagVariable>()
+                .FirstOrDefault()
+                ?.DataAsEnumerable<TagVariable>()
+                .FirstOrDefault(t => t.Name == name &&
+                                     t.Scope == Scope?.Expression.Name);
+
+            var lastFn = Scope;
+            var identifierName = name;
+            while (variable == null)
+            {
+                var argumentIndex = lastFn.GetFunctionArgumentIndex(identifierName);
+                
+                if (argumentIndex < 0)
+                    throw new ArgumentNullException(nameof(identifierName),
+                        $"Tag with name {identifierName} not found inside {Scope.Expression.Name}");
+                
+                variable = lastFn
+                    .LastCaller
+                    .GetVariableOfFunction(machine, argumentIndex);
+                if (variable != null)
+                    continue;
+                identifierName = lastFn
+                    .LastCaller
+                    .Expression
+                    .Arguments
+                    .Arguments
+                    .ElementAt(argumentIndex)
+                    .Name;
+                lastFn = lastFn.LastCaller.Scope;
+                
+            }
+            if (variable.DataTypeSymbol != LexiconSymbol.TagDataType)
+                throw new InvalidOperationException($"Syntax error. Cannot execute a modify instruction. Data type of variable is not a tag.");
+            Console.WriteLine($"Variable:{variable.Name} Current Value:{variable.Value}");
+            Console.WriteLine(System.Environment.NewLine);
+            return variable;
+        }
+        
         public override void Handle(IStateMachine<string, IGameSectorLayerService> machine)
         {
 
@@ -49,17 +93,40 @@ namespace Apocalypse.Any.Infrastructure.Server.Language
             
             if (variable == null)
             {
+                /*
+                    if the value of tag variable is a tag. cool assign value.
+                    if the value of tag variable is a variable itself, trace back variable value                     
+                 */
+                var tagValueAssigned = string.Empty;
+                if (Expression.Right is IdentifierExpression)
+                {
+                    var tagVariable = GetVariable(Expression.Right.Name, machine);
+                    if (tagVariable == null)
+                        throw new ArgumentNullException(nameof(tagVariable),
+                            $"Tag with name {Expression.Right.Name} not found inside {Scope.Expression.Name}");
+                    tagValueAssigned = tagVariable.Value;
+                }
+
+                if (Expression.Right is TagExpression)
+                {
+                    tagValueAssigned = Expression.Right.Name;
+                }
+
+                if (string.IsNullOrWhiteSpace(tagValueAssigned))
+                    throw new ArgumentNullException(nameof(tagValueAssigned), $"The value of Tag {Expression.Left.Name} is empty inside {Scope.Expression.Name}");
+                
                 tagLayer.Add(new TagVariable()
                 {
                     Name = Expression.Left.Name,
-                    Value = Expression.Right.Name,
+                    Value = tagValueAssigned,
                     Scope = scopeOfAssignment,
                     DataTypeSymbol = Expression.DataType.DataType
                 });
+                
                 variable = tagLayer.DataAsEnumerable<TagVariable>().FirstOrDefault(t => t.Name == Expression.Left.Name &&
                                                                       t.Scope == scopeOfAssignment);
                 if(variable == null)
-                    throw new ArgumentNullException(nameof(tagLayer), $"Tag with name {Expression.Left.Name} cannot be created");
+                    throw new ArgumentNullException(nameof(tagLayer), $"Tag with name {Expression.Left.Name} cannot be created inside {Scope.Expression.Name}");
             }
             else
             {

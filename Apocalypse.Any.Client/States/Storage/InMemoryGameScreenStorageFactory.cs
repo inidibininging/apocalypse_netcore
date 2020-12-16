@@ -37,7 +37,7 @@ namespace Apocalypse.Any.Client.States.Storage
             var inMemoryStorage = new Dictionary<string, IState<string, INetworkGameScreen>>();
 
             var serializer = Activator.CreateInstance(gameClientConfiguration.SerializationAdapterType.LoadType(true, false)[0]) as ISerializationAdapter;
-
+            
             inMemoryStorage.Add(ClientGameScreenBook.CheckLoginSent, new CheckLoginSentState());
             inMemoryStorage.Add(ClientGameScreenBook.CreateFetchDataIfNotExists, new CommandStateStateDelegate<string, INetworkGameScreen>((machine) =>
               {
@@ -182,6 +182,7 @@ namespace Apocalypse.Any.Client.States.Storage
                     ClientGameScreenBook.UpdateInventoryImages,
                     ClientGameScreenBook.UpdateScreen,
                     ClientGameScreenBook.UpdateCamera,
+                    nameof(UpdateCameraZoomBasedOnCursorState),
                     ClientGameScreenBook.UpdateInventoryWindow,
                     nameof(UpdateDialogWindowState),
                     nameof(UpdateInventoryItemHoverTextState),
@@ -204,7 +205,8 @@ namespace Apocalypse.Any.Client.States.Storage
 
             //converts metadata to an object
             var dataConverter = new NetworkCommandDataConverterService(serializer);
-            inMemoryStorage.Add(ClientGameScreenBook.UpdateMetadataState, new UpdateMetadataState(dataConverter));
+            inMemoryStorage.Add(nameof(UpdateMetadataState), new UpdateMetadataState(dataConverter));
+            inMemoryStorage.Add(nameof(UpdateCameraZoomBasedOnCursorState), new UpdateCameraZoomBasedOnCursorState());
             inMemoryStorage.Add(ClientGameScreenBook.UpdateScreen, new UpdateScreenState());
             inMemoryStorage.Add(ClientGameScreenBook.UpdateCamera, new UpdateCameraState());
             inMemoryStorage.Add(ClientGameScreenBook.SendGameStateUpdateData, new SendGameStateUpdateDataState(serializer));
