@@ -41,9 +41,9 @@ namespace Apocalypse.Any.Infrastructure.Server.States
             //If receive command
             if (networkCommandConnectionToHandle.CommandName == NetworkCommandConstants.ReceiveWorkCommand)
             {
-                var sectorKey = NetworkCommandDataConverterService.ConvertToObject(networkCommandConnectionToHandle) as string;
-                if (string.IsNullOrWhiteSpace(sectorKey))
-                    return;
+                var sectorKey = int.Parse(NetworkCommandDataConverterService.ConvertToObject(networkCommandConnectionToHandle).ToString());
+                // if (string.IsNullOrWhiteSpace(sectorKey))
+                //     return;
                 var sectorLayerService = gameStateContext.GameStateRegistrar.WorldGameStateDataLayer.GetSector(sectorKey);
                 gameStateContext
                     .CurrentNetOutgoingMessageBusService

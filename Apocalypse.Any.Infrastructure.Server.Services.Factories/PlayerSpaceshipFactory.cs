@@ -47,7 +47,7 @@ namespace Apocalypse.Any.Infrastructure.Server.Services.Factories
                 Defense = 5,
                 Aura = 5,
                 Strength = 5,
-                Health = 100,
+                Health = 1000,
                 Experience = 0,
             };
         }

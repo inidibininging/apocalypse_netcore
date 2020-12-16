@@ -14,11 +14,10 @@ namespace Apocalypse.Any.Client.States
     {
         private ImageClient GetPlayerImage(IStateMachine<string, INetworkGameScreen> machine)
         {
-            return machine.SharedContext.Images.Where(oldImg => oldImg.ServerData.Id == machine.SharedContext.PlayerImageId).FirstOrDefault();
+            return machine.SharedContext.Images.FirstOrDefault(oldImg => oldImg.ServerData.Id == machine.SharedContext.PlayerImageId);
         }
 
-        public FloatDeltaService ZoomDerivative1 { get; set; } = new FloatDeltaService();
-        public FloatDeltaService ZoomDerivative2 { get; set; } = new FloatDeltaService();
+        private FloatDeltaService ZoomDerivative1 { get; set; } = new FloatDeltaService();
         
         public void Handle(IStateMachine<string, INetworkGameScreen> machine)
         {
@@ -27,7 +26,6 @@ namespace Apocalypse.Any.Client.States
             var playerImage = GetPlayerImage(machine);
             if (playerImage == null)
                 return;
-
 
             var distance = Vector2.Distance(playerImage.Position - playerImage.Scale,
                 ScreenService.Instance.DefaultScreenCamera.Position.ToVector2());
@@ -41,28 +39,27 @@ namespace Apocalypse.Any.Client.States
             var zoomDirection = (int)MathF.Round(ZoomDerivative1.Delta * 10);
             const int zoomMaxDeltaThresholdValue = 1;
             
-            
             if (zoomDirection > zoomMaxDeltaThresholdValue || zoomDirection < zoomMaxDeltaThresholdValue * -1)
                 return;
             
-            const float zoomFactor = 0.25f;
+            const float zoomFactor = 0.5f;
 
             if (ScreenService.Instance.DefaultScreenCamera.Position.X > playerImage.Position.X)
             {
                 if (zoomDirection > 0)
-                    ScreenService.Instance.DefaultScreenCamera.ZoomDelta = zoomFactor * -1;
+                    ScreenService.Instance.DefaultScreenCamera.ZoomOut(zoomFactor);
             
                 if (zoomDirection < 0)
-                    ScreenService.Instance.DefaultScreenCamera.ZoomDelta = zoomFactor;
+                    ScreenService.Instance.DefaultScreenCamera.ZoomIn(zoomFactor);
             }
-            
+                        
             if (ScreenService.Instance.DefaultScreenCamera.Position.X < playerImage.Position.X)
             {
                 if (zoomDirection < 0)
-                    ScreenService.Instance.DefaultScreenCamera.ZoomDelta = zoomFactor;
+                    ScreenService.Instance.DefaultScreenCamera.ZoomIn(zoomFactor);
             
                 if (zoomDirection > 0)
-                    ScreenService.Instance.DefaultScreenCamera.ZoomDelta = zoomFactor * -1;
+                    ScreenService.Instance.DefaultScreenCamera.ZoomOut(zoomFactor);
             }
             
             

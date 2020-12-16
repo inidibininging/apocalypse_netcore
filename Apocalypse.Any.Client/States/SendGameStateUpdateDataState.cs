@@ -97,7 +97,8 @@ namespace Apocalypse.Any.Client.States
             if(machine.SharedContext.CurrentGameStateData == null || 
                     cmds.Contains("Exit") || 
                     cmds.Contains(DefaultKeys.Use) ||
-                    cmds.Contains(DefaultKeys.CloseDialog))
+                    cmds.Contains(DefaultKeys.CloseDialog) || 
+                    machine.SharedContext.LastMetadataBag?.Stats.Health <= machine.SharedContext.LastMetadataBag?.Stats.GetMinAttributeValue())
             {
                 var sendResult = machine.SharedContext.Client.SendMessage(
                                         CreateMessage(

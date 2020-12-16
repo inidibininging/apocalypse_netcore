@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework.Input;
+﻿using System;
+using Microsoft.Xna.Framework.Input;
 using System.Collections.Generic;
 
 namespace Apocalypse.Any.Core.Input.Translator
@@ -20,6 +21,8 @@ namespace Apocalypse.Any.Core.Input.Translator
 
         public IEnumerable<string> Translate(GamePadState input)
         {
+            if (!input.IsConnected)
+                return Array.Empty<string>();
             var commandInput = new List<string>();
 
             if (input.IsButtonDown(Buttons.A))

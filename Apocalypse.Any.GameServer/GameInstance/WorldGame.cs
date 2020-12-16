@@ -60,7 +60,7 @@ namespace Apocalypse.Any.GameServer.GameInstance
         /// Sectors contexts.
         /// It means you dont return game sectors but rather a context to a game sector.
         /// </summary>
-        public Dictionary<string, IStateMachine<string, IGameSectorLayerService>> GameSectorLayerServices { get; set; }
+        public Dictionary<int, IStateMachine<string, IGameSectorLayerService>> GameSectorLayerServices { get; set; }
 
         /// <summary>
         /// Factory for game sector contexts
@@ -85,9 +85,7 @@ namespace Apocalypse.Any.GameServer.GameInstance
         public GameServerConfiguration Configuration { get; set; }
 
         #endregion Server stuff
-
-        //private string StartingSector { get; } = "hub";
-
+        
         #region EntityFactories
 
         public PlayerSpaceshipFactory PlayerFactory { get; set; } = new PlayerSpaceshipFactory();
@@ -102,7 +100,7 @@ namespace Apocalypse.Any.GameServer.GameInstance
             Configuration = configuration;
             var leSerializationType = configuration.SerializationAdapterType.LoadType(true, false)[0];
             SerializationAdapter = Activator.CreateInstance(leSerializationType) as ISerializationAdapter;
-            GameSectorLayerServices = new Dictionary<string, IStateMachine<string, IGameSectorLayerService>>();
+            GameSectorLayerServices = new Dictionary<int, IStateMachine<string, IGameSectorLayerService>>();
             SectorStateMachine = new InMemoryStorageGameSectorLayerServiceFactory();
             AuthenticationService = new ExampleLoginAndRegistrationService();
             CreateServer(
@@ -195,37 +193,37 @@ namespace Apocalypse.Any.GameServer.GameInstance
             }
         }
 
-        private void AddOtherSectors()
-        {
-            var sectorList = new List<string>();
-            for (int sectorIndex = 0; sectorIndex < 1; sectorIndex++)
-            {
-                var sectorId = Guid.NewGuid().ToString();
+        // private void AddOtherSectors()
+        // {
+        //     var sectorList = new List<int>();
+        //     for (int sectorIndex = 0; sectorIndex < 1; sectorIndex++)
+        //     {
+        //         var sectorId = Guid.NewGuid().ToString();
+        //
+        //         var sectorDown = Configuration.StartingSector;
+        //         var sectorUp = Configuration.StartingSector;
+        //         var sectorLeft = Configuration.StartingSector;
+        //         var sectorRight = Configuration.StartingSector;
+        //
+        //         if (sectorIndex - 4 > 0)
+        //             sectorDown = sectorList[sectorIndex - 4];
+        //         if (sectorIndex - 3 > 0)
+        //             sectorUp = sectorList[sectorIndex - 3];
+        //         if (sectorIndex - 2 > 0)
+        //             sectorLeft = sectorList[sectorIndex - 2];
+        //         if (sectorIndex - 1 > 0)
+        //             sectorRight = sectorList[sectorIndex - 1];
+        //
+        //         sectorList.Add(sectorId);
+        //         BuildSector(sectorId, sectorUp, sectorLeft, sectorRight, sectorDown);
+        //     }
+        // }
 
-                var sectorDown = Configuration.StartingSector;
-                var sectorUp = Configuration.StartingSector;
-                var sectorLeft = Configuration.StartingSector;
-                var sectorRight = Configuration.StartingSector;
-
-                if (sectorIndex - 4 > 0)
-                    sectorDown = sectorList[sectorIndex - 4];
-                if (sectorIndex - 3 > 0)
-                    sectorUp = sectorList[sectorIndex - 3];
-                if (sectorIndex - 2 > 0)
-                    sectorLeft = sectorList[sectorIndex - 2];
-                if (sectorIndex - 1 > 0)
-                    sectorRight = sectorList[sectorIndex - 1];
-
-                sectorList.Add(sectorId);
-                BuildSector(sectorId, sectorUp, sectorLeft, sectorRight, sectorDown);
-            }
-        }
-
-        private void BuildSector(string sectorName,
-                                string sectorUp,
-                                string sectorLeft,
-                                string sectorRight,
-                                string sectorDown)
+        private void BuildSector(int sectorName,
+            int sectorUp,
+            int sectorLeft,
+            int sectorRight,
+            int sectorDown)
         {
             //Factory has to build this
             AddSectorStateMachine(sectorName);
@@ -257,7 +255,7 @@ namespace Apocalypse.Any.GameServer.GameInstance
             SectorsOwnerMechanics.Add(playerShifter);
         }
 
-        private static GameSectorRoutePair CreateRoutePair(GameSectorTrespassingDirection trespassingDirection, string sourceSector, string destinationSector)
+        private static GameSectorRoutePair CreateRoutePair(GameSectorTrespassingDirection trespassingDirection, int sourceSector, int destinationSector)
         {
             return new GameSectorRoutePair()
             {
@@ -290,14 +288,14 @@ namespace Apocalypse.Any.GameServer.GameInstance
             Console.WriteLine(Server.ToString());
         }
 
-        private void AddSectorStateMachine(string sectorName)
+        private void AddSectorStateMachine(int sectorId)
         {
-            if (string.IsNullOrWhiteSpace(sectorName))
-                throw new ArgumentNullException("sector must have a name");
-            if (GameSectorLayerServices.ContainsKey(sectorName))
-                throw new SectorAlreadyExistsException(sectorName);
+            // if (string.IsNullOrWhiteSpace(sectorName))
+            //     throw new ArgumentNullException("sector must have a name");
+            if (GameSectorLayerServices.ContainsKey(sectorId))
+                throw new SectorAlreadyExistsException(sectorId);
 
-            GameSectorLayerServices.Add(sectorName, SectorStateMachine.BuildStateMachine(Configuration));
+            GameSectorLayerServices.Add(sectorId, SectorStateMachine.BuildStateMachine(Configuration));
         }
 
         private TimeSpan TotalRealTime { get; set; }
@@ -560,7 +558,7 @@ namespace Apocalypse.Any.GameServer.GameInstance
                 sector.SharedContext.Messages.Add(message);
         }
 
-        public IGameSectorLayerService GetSector(string sectorIdentifier) => GameSectorLayerServices[sectorIdentifier].SharedContext;
+        public IGameSectorLayerService GetSector(int sectorIdentifier) => GameSectorLayerServices[sectorIdentifier].SharedContext;
 
         private ILogger<byte> GetLogger()
         {

@@ -79,7 +79,7 @@ namespace Apocalypse.Any.Client.States
                 LastItemCount = metadataBagConverted.Items.Count;
             }
             
-            machine.SharedContext.Messages.Add(metadataBagConverted.GameSectorTag);
+            machine.SharedContext.Messages.Add(metadataBagConverted.GameSectorTag.ToString());
             machine.SharedContext.LastMetadataBag = metadataBagConverted;
 
             // //assign the first character sheet

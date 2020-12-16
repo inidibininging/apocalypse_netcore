@@ -11,6 +11,6 @@ namespace Apocalypse.Any.Infrastructure.Server.Services.Data.Interfaces
         /// </summary>
         /// <param name="sectorIdentifier"></param>
         /// <returns></returns>
-        IGameSectorLayerService GetSector(string sectorIdentifier);
+        IGameSectorLayerService GetSector(int sectorIdentifier);
     }
 }

@@ -12,7 +12,7 @@ namespace Apocalypse.Any.Domain.Server.Model
         public string RunOperation { get; set; }
         public int MaxEnemies { get; set; }
         public int MaxPlayers { get; set; }
-        public string StartingSector { get; set; }
+        public int StartingSector { get; set; }
         public string ServerPeerName { get; set; }
         public string ServerIp { get; set; }
         public int ServerPort { get; set; }

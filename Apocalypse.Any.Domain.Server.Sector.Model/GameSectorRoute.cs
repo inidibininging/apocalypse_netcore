@@ -7,6 +7,6 @@
     {
         public GameSectorTrespassingDirection Trespassing { get; set; }
 
-        public string GameSectorTag { get; set; }
+        public int GameSectorTag { get; set; }
     }
 }

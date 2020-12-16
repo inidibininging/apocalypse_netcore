@@ -13,7 +13,7 @@ namespace Apocalypse.Any.GameServer.GameInstance
     public interface IWorldGame
     {
         GameServerConfiguration Configuration { get; set; }
-        Dictionary<string, IStateMachine<string, IGameSectorLayerService>> GameSectorLayerServices { get; set; }
+        Dictionary<int, IStateMachine<string, IGameSectorLayerService>> GameSectorLayerServices { get; set; }
         PlayerSpaceshipFactory PlayerFactory { get; set; }
         IList<ISingleUpdeatableMechanic<IGameSectorsOwner, IGameSectorsOwner>> SectorsOwnerMechanics { get; set; }
         IGameSectorLayerServiceStateMachineFactory<GameServerConfiguration> SectorStateMachine { get; set; }
@@ -22,7 +22,7 @@ namespace Apocalypse.Any.GameServer.GameInstance
         bool ForwardClientDataToGame(GameStateUpdateData updateData);
         bool ForwardServerDataToGame(GameStateData gameStateData);
         GameStateData GetGameStateByLoginToken(string loginToken);
-        IGameSectorLayerService GetSector(string sectorIdentifier);
+        IGameSectorLayerService GetSector(int sectorIdentifier);
         GameStateData RegisterGameStateData(string loginToken);
         void Update(GameTime gameTime);
     }

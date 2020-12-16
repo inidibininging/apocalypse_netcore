@@ -84,7 +84,7 @@ namespace Apocalypse.Any.Client.States
                     img.SelectedFrame = (ImagePaths.ExplosionFrame, 0, 8);
                     img.Scale = new Vector2(img.Scale.X + 1, img.Scale.Y + 1);
                     
-                    for (var i = 0; i < 5; i++)
+                    for (var i = 0; i < 2; i++)
                     {
                         machine.SharedContext
                             .As<RandomSparkField>(nameof(RandomSparkField))

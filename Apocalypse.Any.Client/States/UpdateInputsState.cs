@@ -13,9 +13,8 @@ namespace Apocalypse.Any.Client.States
         {
             machine.SharedContext.InputService.Update(machine.SharedContext.UpdateGameTime);
 
-            // var inputNow = new List<string>(machine.SharedContext.InputService.InputNow);
-            // if(!inputNow.Any())
-            //     inputNow = new List<string>();
+            //handle zoom in zoom out of camera
+            
         }
     }
 }

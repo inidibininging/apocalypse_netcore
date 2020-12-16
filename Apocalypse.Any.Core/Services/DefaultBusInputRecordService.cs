@@ -58,6 +58,7 @@ namespace Apocalypse.Any.Core.Services
         private IList<IInputTranslator<JoystickState, IEnumerable<string>>> GetGenericJoystickTranslators()
         {
             var joystickTranslators = new List<IInputTranslator<JoystickState, IEnumerable<string>>>();
+            
             for (int i = 0; i < GamePad.MaximumGamePadCount; i++)
             {
                 try
@@ -102,6 +103,7 @@ namespace Apocalypse.Any.Core.Services
 
             if (JoystickTranslators != null)
             {
+                
                 var index = JoystickTranslators.Count;
                 allOutputs
                     .AddRange

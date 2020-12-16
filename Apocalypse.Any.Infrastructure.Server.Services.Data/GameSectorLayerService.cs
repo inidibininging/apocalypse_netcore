@@ -19,7 +19,7 @@ namespace Apocalypse.Any.GameServer.States.Sector
         public int MaxPlayers { get; set; }
         public IGameSectorBoundaries SectorBoundaries { get; set; }
         public Dictionary<string, IGenericTypeFactory<GameStateData>> GameStateDataLayer { get; set; }
-        public string Tag { get; set; }
+        public int Tag { get; set; }
         public GameSectorStatus CurrentStatus { get; set; }
         public GameTime CurrentGameTime { get; set; }
         

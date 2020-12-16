@@ -10,7 +10,7 @@ namespace Apocalypse.Any.GameServer.GameInstance
         {
         }
 
-        public SectorAlreadyExistsException(string message) : base(message)
+        public SectorAlreadyExistsException(int sectorId) : base($"Sector Id {sectorId} already exists")
         {
         }
 

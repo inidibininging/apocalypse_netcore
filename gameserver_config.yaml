@@ -11,7 +11,7 @@ ServerPeerName: asteroid
 ServerPort: 8080
 # ServerUpdateInSeconds: 0.0099999997764825821
 ServerUpdateInSeconds: 0.0099999997764825821
-StartingSector: hub
+StartingSector: 0
 StartupFunction: Main
 StartupScript: '/home/develop/src/apocalypse_netcore/apocalypse.echse'
 SectorXSize: 16000

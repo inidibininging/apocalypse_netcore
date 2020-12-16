@@ -21,13 +21,16 @@ namespace Apocalypse.Any.Client.States
                                             new GenericGamepadDeviceToKeysTranslator(0),
                                             new GenericGamepadDeviceToKeysTranslator(1),
                                             new GenericGamepadDeviceToKeysTranslator(2),
-                                            new GenericGamepadDeviceToKeysTranslator(3)
+                                            new GenericGamepadDeviceToKeysTranslator(3),
+                                            new GenericGamepadDeviceToKeysTranslator(4)
                                         },
+                                        
                                         new List<IInputTranslator<JoystickState, IEnumerable<string>>>() {
                                             new JoystickDeviceToKeysTranslator(0),
                                             new JoystickDeviceToKeysTranslator(1),
                                             new JoystickDeviceToKeysTranslator(2),
-                                            new JoystickDeviceToKeysTranslator(3)
+                                            new JoystickDeviceToKeysTranslator(3),
+                                            new JoystickDeviceToKeysTranslator(4),
                                         },
                                         null//new ScreenVector2ToKeysTranslator(getPlayerFullPos)
                                     );

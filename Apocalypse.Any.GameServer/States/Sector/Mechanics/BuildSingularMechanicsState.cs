@@ -59,7 +59,7 @@ namespace Apocalypse.Any.GameServer.States.Sector.Mechanics
 
             EnemyShootProjectiles(machine);
 
-            ProjectileMove(machine);
+            ProjectileMoveSlow(machine);
 
             AttractProjectileToEnemy(machine);
 
@@ -168,7 +168,7 @@ namespace Apocalypse.Any.GameServer.States.Sector.Mechanics
                                 .OrderByDescending(img => img.Scale.X * img.Width).FirstOrDefault(img =>
                                     img.Path >= ImagePaths.planetsRandom0_edit &&
                                     img.Path <= ImagePaths.planetsRandom4_edit),
-                            (subject) => 0.0000005f)));
+                            (subject) => 0.0001f)));
             }
         }
 
@@ -258,22 +258,31 @@ namespace Apocalypse.Any.GameServer.States.Sector.Mechanics
                                     return null;
                                 }
                             },
-                            (subject) => 0.0001f)));
+                            (subject) => 0.01f)));
             }
         }
 
-        private static void ProjectileMove(IStateMachine<string, IGameSectorLayerService> machine)
+        private static void ProjectileMoveSlow(IStateMachine<string, IGameSectorLayerService> machine)
         {
-            if (!machine.SharedContext.SingularMechanics.ProjectileMechanics.ContainsKey("projectile_move"))
+            if (!machine.SharedContext.SingularMechanics.ProjectileMechanics.ContainsKey(nameof(ProjectileMoveSlow)))
             {
-                machine.SharedContext.SingularMechanics.ProjectileMechanics.Add("projectile_move",
+                // machine.SharedContext.SingularMechanics.ProjectileMechanics.Add(nameof(ProjectileMoveSlow),
+                //     new SingleCharacterEntityWithImageDataAdapter<Projectile>(
+                //         new ThrustProxyMechanic(new ThrustMechanic())
+                //         {
+                //             SpeedFactor = 3.0f
+                //         }));
+                machine.SharedContext.SingularMechanics.ProjectileMechanics.Add(nameof(ProjectileMoveSlow),
                     new SingleCharacterEntityWithImageDataAdapter<Projectile>(
-                        new ThrustProxyMechanic(new ThrustMechanic())
-                        {
-                            SpeedFactor = 3.0f
-                        }));
+                        new ThrustProxyFuncFactorMechanic(new ThrustMechanic(),
+                            () =>
+                            {
+                                return 0;
+                            })));
+
             }
         }
+        
 
         private static void MakeEnemyMoveRandomly(IStateMachine<string, IGameSectorLayerService> machine)
         {
