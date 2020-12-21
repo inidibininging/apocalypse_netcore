@@ -3,16 +3,15 @@ BuildOperation: BuildDefaultSectorState
 RunOperation: RunAsDefaultSector
 MaxEnemies: 16
 MaxPlayers: 4
-RedisHost: localhost
-RedisPort: 6379
+RedisHost: 
+RedisPort: 0
 SerializationAdapterType: Apocalypse.Any.Infrastructure.Common.Services.Serializer.MsgPackAdapter.MsgPackSerializerAdapter
 ServerIp: 127.0.0.1
 ServerPeerName: asteroid
 ServerPort: 8080
-# ServerUpdateInSeconds: 0.0099999997764825821
 ServerUpdateInSeconds: 0.0099999997764825821
 StartingSector: 0
 StartupFunction: Main
-StartupScript: '/home/develop/src/apocalypse_netcore/apocalypse.echse'
+StartupScript: 'H:/Code/apocalypse_github/apocalypse.echse'
 SectorXSize: 16000
 SectorYSize: 16000

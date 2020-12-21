@@ -68,6 +68,7 @@ namespace Apocalypse.Any.GameServer.States.Sector.Mechanics.PlayerMechanics
                 {
                     if (cmd == DefaultKeys.Boost)
                     {
+                        Console.WriteLine($"Boost! {nameof(ProcessThrustForPlayerMechanicsState)} in {machine.SharedContext.Tag}");
                         //Fix for not using boost for players in a dialog
                         if (player.Tags.Contains(ProcessPlayerDialogsRequestsState.PlayerOnDialogEvent))
                         {
@@ -80,22 +81,10 @@ namespace Apocalypse.Any.GameServer.States.Sector.Mechanics.PlayerMechanics
                             Y = player.CurrentImage.Position.Y,
                         };
 
-                        for (int currentSpeedTime = 0; currentSpeedTime < player.Stats.Speed*2; currentSpeedTime++)
+                        for (int currentSpeedTime = 0; currentSpeedTime < player.Stats.Speed; currentSpeedTime++)
                         {
                             machine.SharedContext.SingularMechanics.PlayerMechanics["thrust_players"].Update(player);
                         }
-
-                        //if (LerpIt)
-                        //{
-                        //    player.CurrentImage.Position.X = MathHelper.Lerp(
-                        //                                        playerPositionBeforeThrust.X,
-                        //                                        player.CurrentImage.Position.X,
-                        //                                        0.0001f);
-                        //    player.CurrentImage.Position.Y = MathHelper.Lerp(
-                        //                                        playerPositionBeforeThrust.Y,
-                        //                                        player.CurrentImage.Position.Y,
-                        //                                        0.0001f);
-                        //}
 
                         var playerDirection = DirectionVector.Translate(player.CurrentImage) * BurstPositionDunnoWtf;//todo: fix this. this is due to the sourceRect.
                         machine.SharedContext.DataLayer.ImageData.Add(new ImageData()

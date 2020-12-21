@@ -1,7 +1,9 @@
-﻿using Apocalypse.Any.Domain.Server.Sector.Model;
+﻿using Apocalypse.Any.Domain.Common.Model;
+using Apocalypse.Any.Domain.Server.Sector.Model;
 using Apocalypse.Any.Infrastructure.Server.Services.Data.Interfaces;
 using Apocalypse.Any.Infrastructure.Server.Services.Mechanics.Sector.Interfaces;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -43,6 +45,7 @@ namespace Apocalypse.Any.Infrastructure.Server.Services.Mechanics.RoutingMechani
                         var gameSectorDestination = gameSectorOwner.GameSectorLayerServices.FirstOrDefault(gs => gs.Value.SharedContext.Tag == sectorPair.GameSectorDestinationTag);
                         if (gameSectorDestination.Value == null)
                             continue;
+
                         var thePlayer =
                             gameSectorOfPlayer
                             .Value
@@ -50,24 +53,46 @@ namespace Apocalypse.Any.Infrastructure.Server.Services.Mechanics.RoutingMechani
                             .DataLayer
                             .Players
                             .FirstOrDefault(player => player.LoginToken == entitySectorRoute.LoginToken);
+
+                        var gameStateData = gameSectorOfPlayer.Value.SharedContext.IODataLayer.GetGameStateByLoginToken(thePlayer.LoginToken);
+
+                        //remove player from sector
                         if (!gameSectorOfPlayer
                             .Value
                             .SharedContext
                             .DataLayer
                             .Players
                             .TryTake(out thePlayer))
-                        {
                             continue;
-                        }
 
+                        //mark sector as running if sector is not running ( should be put in a game sector owner mechanic )
+                        if (gameSectorDestination.Value.SharedContext.CurrentStatus != Domain.Server.Model.Interfaces.GameSectorStatus.Running)
+                            gameSectorDestination.Value.SharedContext.CurrentStatus = Domain.Server.Model.Interfaces.GameSectorStatus.Running;
+                                                
+                        
+                        //center player for now
                         thePlayer.CurrentImage.Position.X = gameSectorDestination.Value.SharedContext.SectorBoundaries.MaxSectorX / 2;
                         thePlayer.CurrentImage.Position.Y = gameSectorDestination.Value.SharedContext.SectorBoundaries.MaxSectorY / 2;
+
+                        //gameSectorOfPlayer
+                        //    .Value
+                        //    .SharedContext
+                        //    .DataLayer
+                        //    .Players = new ConcurrentBag<PlayerSpaceship>(gameSectorOfPlayer
+                        //                                                    .Value
+                        //                                                    .SharedContext
+                        //                                                    .DataLayer
+                        //                                                    .Players.Where(p => p.Id == thePlayer.Id));
+
                         gameSectorDestination
                             .Value
                             .SharedContext
                             .DataLayer
                             .Players
                             .Add(thePlayer);
+                        gameSectorDestination.Value.SharedContext.IODataLayer.RegisterGameStateData(thePlayer.LoginToken);
+                        gameSectorDestination.Value.SharedContext.IODataLayer.ForwardServerDataToGame(gameStateData);
+                        
 
                         entitySectorRoute.GameSectorTag = gameSectorDestination.Value.SharedContext.Tag;
                         RouteMediator.Notify(this, entitySectorRoute);

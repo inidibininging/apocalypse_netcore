@@ -8,7 +8,7 @@
 :BuildWorld ( citySettings, planetSettings, fogSettings, spaceshipsSettings, enemySettings )
 
     If fogSettings Is .true
-    Create    !CreateRandomFogCommand ( fogSettings )
+        !CreateRandomFogCommand ( fogSettings )
         !CreateRandomFogCommand ( fogSettings )
         !CreateRandomFogCommand ( fogSettings )
         !CreateRandomFogCommand ( fogSettings )

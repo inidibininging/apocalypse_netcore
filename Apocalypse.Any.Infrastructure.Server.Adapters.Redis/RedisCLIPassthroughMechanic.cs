@@ -32,7 +32,7 @@ namespace Apocalypse.Any.Infrastructure.Server.Adapters.Redis
                             .Where(user => (user.Roles & UserDataRole.CanSendRemoteStateCommands) != 0)
                             .SelectMany(user => entity.GameSectorLayerServices.Values.Select(
                             gameSector => gameSector.SharedContext.IODataLayer.GetGameStateByLoginToken(user.LoginToken))).FirstOrDefault();
-                    if(gameStateDataCommand != null){
+                    if (gameStateDataCommand != null){
                         gameStateDataCommand.Commands.AddRange(JsonConvert.DeserializeObject<List<string>>(content));
                         await conn.GetDatabase().StringSetAsync("World.CLI",JsonConvert.SerializeObject(new List<string>()));
                     }

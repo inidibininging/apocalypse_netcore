@@ -21,10 +21,10 @@ namespace Apocalypse.Any.Core.Camera
         public float Zoom { get; set; }
         private  float ZoomDelta { get; set; }
         const float ZoomMinimum = 0.25f;
-        const float ZoomMaximum = 2f;
+        const float ZoomMaximum = 2.5f;
         private const float ZoomSpeed = 0.025f;
         
-        private const float ScrollZoomFactor = 0.50f;
+        private const float ScrollZoomFactor = 1.00f;
 
         public Viewport CurrentViewport { get; set; }
 

@@ -41,6 +41,7 @@ namespace Apocalypse.Any.GameServer.States.Sector.Mechanics.PlayerMechanics
                        if (cmd == DefaultKeys.Shoot &&
                            player.Stats.Strength > machine.SharedContext.DataLayer.Projectiles.Count(proj => proj.OwnerName == player.DisplayName))
                        {
+                           Console.WriteLine($"Shoot! {nameof(ProcessShootingForPlayerMechanicsState)} in {machine.SharedContext.Tag}");
                            var projectile = machine.SharedContext.Factories.ProjectileFactory[nameof(ProjectileFactory)].Create(player);
                            machine.SharedContext.DataLayer.Projectiles.Add(projectile);
                        }

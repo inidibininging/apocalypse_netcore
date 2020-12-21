@@ -20,5 +20,13 @@ namespace Apocalypse.Any.Infrastructure.Server.Services.Data.Interfaces
         /// <param name="gameStateData"></param>
         /// <returns></returns>
         bool ForwardServerDataToGame(GameStateData gameStateData);
+
+
+        /// <summary>
+        /// Flushes the game state data if possible, leaving only the player.
+        /// </summary>
+        /// <param name="loginToken"></param>
+        /// <returns></returns>
+        //bool FlushGameStateData(string loginToken);
     }
 }

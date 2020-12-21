@@ -33,10 +33,9 @@ namespace Apocalypse.Any.GameServer.States.Sector.Factories
                 //cache = RelativeToPlayer.Create(cache);
                 machine.SharedContext.IODataLayer.ForwardServerDataToGame(cache);
             });
-            //Console.ForegroundColor = ConsoleColor.Yellow;
-            //machine.SharedContext.Messages.ToList().ForEach(msg => Console.WriteLine(msg));
+
             machine.SharedContext.Messages.Clear();
-            //Console.ForegroundColor = ConsoleColor.Green;
+
         }
     }
 }

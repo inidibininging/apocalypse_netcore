@@ -76,8 +76,7 @@ namespace Apocalypse.Any.GameServer.States.Sector.Mechanics
             {
                 machine.SharedContext.SingularMechanics.ImageDataMechanics.Add("move_props_around",
                     new ThrustProxyImageDataMechanic(
-                        new ThrustMechanic()
-                    )
+                        new ThrustMechanic())
                     {
                         SpeedFactor = (float) Randomness.Instance.From(1, 100) / 200f
                     });
@@ -229,8 +228,7 @@ namespace Apocalypse.Any.GameServer.States.Sector.Mechanics
 
         private static void AttractProjectileToEnemy(IStateMachine<string, IGameSectorLayerService> machine)
         {
-            if (!machine.SharedContext.SingularMechanics.ProjectileMechanics.ContainsKey(
-                "projectile_attract_to_some_enemy"))
+            if (!machine.SharedContext.SingularMechanics.ProjectileMechanics.ContainsKey("projectile_attract_to_some_enemy"))
             {
                 machine.SharedContext.SingularMechanics.ProjectileMechanics.Add(
                     "projectile_attract_to_some_enemy",
@@ -265,21 +263,22 @@ namespace Apocalypse.Any.GameServer.States.Sector.Mechanics
         private static void ProjectileMoveSlow(IStateMachine<string, IGameSectorLayerService> machine)
         {
             if (!machine.SharedContext.SingularMechanics.ProjectileMechanics.ContainsKey(nameof(ProjectileMoveSlow)))
-            {
-                // machine.SharedContext.SingularMechanics.ProjectileMechanics.Add(nameof(ProjectileMoveSlow),
-                //     new SingleCharacterEntityWithImageDataAdapter<Projectile>(
-                //         new ThrustProxyMechanic(new ThrustMechanic())
-                //         {
-                //             SpeedFactor = 3.0f
-                //         }));
+            {               
+                var thrustMechanic = new ThrustMechanic();
                 machine.SharedContext.SingularMechanics.ProjectileMechanics.Add(nameof(ProjectileMoveSlow),
-                    new SingleCharacterEntityWithImageDataAdapter<Projectile>(
-                        new ThrustProxyFuncFactorMechanic(new ThrustMechanic(),
-                            () =>
+                    new DelegateSingleImageDataMechanic<Projectile>((projectile) =>
                             {
-                                return 0;
-                            })));
+                                var enemy = machine.SharedContext.DataLayer.Enemies.FirstOrDefault(e => e.Id == projectile.OwnerName);
+                                var player = machine.SharedContext.DataLayer.Players.FirstOrDefault(e => e.Id == projectile.OwnerName);
+                                const int basicAcceleration = 3;
 
+                                if (enemy != null)
+                                    thrustMechanic.Update(projectile.CurrentImage, basicAcceleration + (enemy.Stats.Speed / enemy.Stats.GetMaxAttributeValue()));
+                                if (player != null)
+                                    thrustMechanic.Update(projectile.CurrentImage, basicAcceleration + (player.Stats.Speed / player.Stats.GetMaxAttributeValue()));
+
+                                return projectile;                                
+                            }));
             }
         }
         
@@ -297,8 +296,7 @@ namespace Apocalypse.Any.GameServer.States.Sector.Mechanics
 
         private static void EnemyWontLeaveScreen(IStateMachine<string, IGameSectorLayerService> machine)
         {
-            if (!machine.SharedContext.SingularMechanics.EnemyMechanics.ContainsKey("enemies_wont_leave_the_screen")
-            )
+            if (!machine.SharedContext.SingularMechanics.EnemyMechanics.ContainsKey("enemies_wont_leave_the_screen"))
             {
                 machine.SharedContext.SingularMechanics.EnemyMechanics.Add("enemies_wont_leave_the_screen",
                     new SingleCharacterEntityFullPositionHolderAdapterMechanic<EnemySpaceship>(
@@ -330,11 +328,9 @@ namespace Apocalypse.Any.GameServer.States.Sector.Mechanics
 
                     Task.Factory.StartNew(() =>
                     {
-                        if (machine.SharedContext.Factories.ProjectileFactory.ContainsKey(nameof(ProjectileFactory))
-                        )
+                        if (machine.SharedContext.Factories.ProjectileFactory.ContainsKey(nameof(ProjectileFactory)))
                         {
-                            var enemyProjectile = machine.SharedContext.Factories
-                                .ProjectileFactory[nameof(ProjectileFactory)].Create(enemy);
+                            var enemyProjectile = machine.SharedContext.Factories.ProjectileFactory[nameof(ProjectileFactory)].Create(enemy);
                             if (enemyProjectile != null)
                             {
                                 enemyProjectile.OwnerName = enemy.DisplayName;

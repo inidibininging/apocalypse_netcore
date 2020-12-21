@@ -7,5 +7,7 @@ namespace Apocalypse.Any.Infrastructure.Server.Services.Data.Interfaces
         GameStateData GetGameStateByLoginToken(string loginToken);
        
         GameStateData RegisterGameStateData(string loginToken);
+
+        
     }
 }

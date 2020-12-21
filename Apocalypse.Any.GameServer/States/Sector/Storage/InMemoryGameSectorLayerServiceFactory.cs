@@ -56,9 +56,7 @@ namespace Apocalypse.Any.GameServer.States.Sector.Storage
             var inMemoryStorage = new Dictionary<string, IState<string, IGameSectorLayerService>>();
             var serializer = Activator.CreateInstance(gameServerConfiguration.SerializationAdapterType.LoadType(true, false)[0]) as ISerializationAdapter;
 
-            inMemoryStorage.Add(nameof(BuildGameStateDataLayerState), new BuildGameStateDataLayerState());
-            
-
+            inMemoryStorage.Add(nameof(BuildIODataLayerState), new BuildIODataLayerState());
             inMemoryStorage.Add(nameof(BuildFactoriesState), new BuildFactoriesState());
             inMemoryStorage.Add(nameof(BuildSingularMechanicsState), new BuildSingularMechanicsState());
             inMemoryStorage.Add(nameof(BuildMiniCityFactories), new BuildMiniCityFactories(new Client.Services.RectangularFrameGeneratorService(), (Randomness.Instance.From(0,200) > 125 ? ImagePaths.miniCity : ImagePaths.miniCity2)));
@@ -84,7 +82,7 @@ namespace Apocalypse.Any.GameServer.States.Sector.Storage
                     new Action<IStateMachine<string, IGameSectorLayerService>>((machine) =>
                     {
                         machine.SharedContext.PlayerDialogService = new ExamplePlayerDialogService(() => (machine.SharedContext.DataLayer.Layers.FirstOrDefault(l => (l as IDialogService) != null) as IDialogService));                        
-                    })));            
+                    })));
             inMemoryStorage.Add("BuildEventDispatcher",
                 new CommandStateActionDelegate<string, IGameSectorLayerService>(
                     new Action<IStateMachine<string, IGameSectorLayerService>>((machine) =>
@@ -134,6 +132,12 @@ namespace Apocalypse.Any.GameServer.States.Sector.Storage
                     {
                         machine.SharedContext.CurrentStatus = GameSectorStatus.Running;
                     })));
+            inMemoryStorage.Add("ResetSectorStatus",
+                new CommandStateActionDelegate<string, IGameSectorLayerService>(
+                    new Action<IStateMachine<string, IGameSectorLayerService>>((machine) =>
+                    {
+                        machine.SharedContext.CurrentStatus = GameSectorStatus.StandBy;
+                    })));
             inMemoryStorage.Add("BuildLogger",
                 new CommandStateActionDelegate<string, IGameSectorLayerService>(
                     new Action<IStateMachine<string, IGameSectorLayerService>>((machine) =>
@@ -146,7 +150,7 @@ namespace Apocalypse.Any.GameServer.States.Sector.Storage
                 Operations = new List<string>()
                 {
                     nameof(BuildDataLayerState<GenericGameStateDataLayer>),
-                    nameof(BuildGameStateDataLayerState),
+                    nameof(BuildIODataLayerState),
                     "BuildPlayerDialogService",
                     "BuildEventDispatcher",
                     "BuildSectorBoundaries",
@@ -155,7 +159,7 @@ namespace Apocalypse.Any.GameServer.States.Sector.Storage
                     nameof(BuildFactoriesState),
                     nameof(BuildMiniCityFactories),
                     nameof(BuildSingularMechanicsState),
-                    "MarkSectorAsRunning"
+                    "ResetSectorStatus"
                 }
             });
 
@@ -181,15 +185,18 @@ namespace Apocalypse.Any.GameServer.States.Sector.Storage
             inMemoryStorage.Add("UpdatePlayerMechanics", new CommandStateActionDelegate<string, IGameSectorLayerService>(
                     new Action<IStateMachine<string, IGameSectorLayerService>>((machine) =>
                     {
+                        if (machine.SharedContext.DataLayer.Players.Count == 0)
+                            return;
+
                         foreach (var mech in machine.SharedContext.SingularMechanics.PlayerMechanics)
                         {
                             foreach (var entity in machine.SharedContext.DataLayer.Players)
                             {
                                 //Fix for skipping players that are in a dialog
-                                if (mech.Key == "thrust_players" && entity.Tags.Contains(ProcessPlayerDialogsRequestsState.PlayerOnDialogEvent))
-                                {
+                                if (mech.Key == "thrust_players" && 
+                                    entity.Tags.Contains(ProcessPlayerDialogsRequestsState.PlayerOnDialogEvent))                                
                                     continue;
-                                }
+                                
                                 mech.Value.Update(entity);
                             }
                         }
@@ -329,7 +336,6 @@ namespace Apocalypse.Any.GameServer.States.Sector.Storage
                     "UpdateEnemyMechanics",
                     "UpdateProps",
                     "UpdatePlayerMechanics",
-                    //ServerGameSectorNewBook.UpdateAllSingularEnemyMechanicsState,
 
                     //process player input
                     nameof(ProcessRotationMapsForPlayerMechanicsState),

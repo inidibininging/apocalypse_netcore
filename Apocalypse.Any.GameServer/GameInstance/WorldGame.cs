@@ -41,6 +41,7 @@ using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 using Apocalypse.Any.Infrastructure.Server.Services.Factories;
+using Apocalypse.Any.Infrastructure.Server.Services.Mechanics.SectorMechanics;
 
 namespace Apocalypse.Any.GameServer.GameInstance
 {
@@ -124,25 +125,22 @@ namespace Apocalypse.Any.GameServer.GameInstance
                 RedisHost = Configuration.RedisHost,
                 RedisPort = Configuration.RedisPort
             };
-
+            
+            var transferStuff = new TransferPlayerStuffBetweenSectorsMechanic();
+            var updateSectorStatusMechanic = new UpdateSectorStatusMechanic();
             SectorsOwnerMechanics = new List<ISingleUpdeatableMechanic<IGameSectorsOwner, IGameSectorsOwner>>
             {
                 //routeTrespassingMarker,
                 //playerShifter,
                 cliPassthrough,
                 rediCliPassthrough,
+                transferStuff,
+                updateSectorStatusMechanic,
                 writer
             };
 
-            //create default starting sector
-            //AddSectorStateMachine(Configuration.StartingSector);
-            BuildSector(
-                Configuration.StartingSector,
-                Configuration.StartingSector,
-                Configuration.StartingSector,
-                Configuration.StartingSector,
-                Configuration.StartingSector);
-
+            //create default starting sector    
+            BuildGrid();
 
             var inGameSectorStateMachine = GameSectorLayerServices[Configuration.StartingSector];
             inGameSectorStateMachine.SharedContext = new GameSectorLayerService
@@ -155,8 +153,6 @@ namespace Apocalypse.Any.GameServer.GameInstance
                 .Get(Configuration.BuildOperation)
                 .Handle(inGameSectorStateMachine);
             
-            // AddOtherSectors();
-
 
             //datalayer to gather data out of the game world
             var serverStateDataLayer = new ServerGameStateService<WorldGame>(
@@ -164,8 +160,6 @@ namespace Apocalypse.Any.GameServer.GameInstance
                                                 AuthenticationService,
                                                 this,
                                                 SerializationAdapter);
-            //hard coded logger here
-
 
             GameStateContext = new ServerNetworkGameStateContext<WorldGame>(
                 ServerInput,
@@ -185,39 +179,35 @@ namespace Apocalypse.Any.GameServer.GameInstance
 
             Console.WriteLine("runner starting..." + Configuration.StartupFunction);
             CreateGameTimeIfNotExists(null);
-            Console.WriteLine(CurrentGameTime);
+
             foreach (var sector in GameSectorLayerServices.Values)
             {
                 sector.SharedContext.CurrentGameTime = CurrentGameTime;
                 sector.Run(Configuration.StartupFunction);
             }
+
+            //Set starting sector to run
+            GameSectorLayerServices[Configuration.StartingSector]
+                .GetService
+                .Get("MarkSectorAsRunning")
+                .Handle(GameSectorLayerServices[Configuration.StartingSector]);
         }
 
-        // private void AddOtherSectors()
-        // {
-        //     var sectorList = new List<int>();
-        //     for (int sectorIndex = 0; sectorIndex < 1; sectorIndex++)
-        //     {
-        //         var sectorId = Guid.NewGuid().ToString();
-        //
-        //         var sectorDown = Configuration.StartingSector;
-        //         var sectorUp = Configuration.StartingSector;
-        //         var sectorLeft = Configuration.StartingSector;
-        //         var sectorRight = Configuration.StartingSector;
-        //
-        //         if (sectorIndex - 4 > 0)
-        //             sectorDown = sectorList[sectorIndex - 4];
-        //         if (sectorIndex - 3 > 0)
-        //             sectorUp = sectorList[sectorIndex - 3];
-        //         if (sectorIndex - 2 > 0)
-        //             sectorLeft = sectorList[sectorIndex - 2];
-        //         if (sectorIndex - 1 > 0)
-        //             sectorRight = sectorList[sectorIndex - 1];
-        //
-        //         sectorList.Add(sectorId);
-        //         BuildSector(sectorId, sectorUp, sectorLeft, sectorRight, sectorDown);
-        //     }
-        // }
+        private void BuildGrid()
+        {
+            const int columnCount = 2;
+            for (int cell = 0; cell < 2; cell++)
+            {
+                var nextCell = cell % columnCount > 0 ? Math.Abs(cell - 1) : cell + 1;
+                BuildSector(
+                    cell,
+                    Math.Abs(cell - columnCount),
+                    nextCell,
+                    nextCell,
+                    cell + columnCount); ;
+            }
+        }
+         
 
         private void BuildSector(int sectorName,
             int sectorUp,
@@ -290,8 +280,6 @@ namespace Apocalypse.Any.GameServer.GameInstance
 
         private void AddSectorStateMachine(int sectorId)
         {
-            // if (string.IsNullOrWhiteSpace(sectorName))
-            //     throw new ArgumentNullException("sector must have a name");
             if (GameSectorLayerServices.ContainsKey(sectorId))
                 throw new SectorAlreadyExistsException(sectorId);
 
@@ -331,9 +319,12 @@ namespace Apocalypse.Any.GameServer.GameInstance
             UpdateGameTime(CurrentGameTime);
             GameStateContext.Update();
 
-            foreach (var sectorOwnerMechanic in SectorsOwnerMechanics)
-                sectorOwnerMechanic.Update(this);
-
+            foreach (var sectorMechanic in SectorsOwnerMechanics)
+            {
+                sectorMechanic.Update(this);
+            }
+            //foreach (var sectorOwnerMechanic in SectorsOwnerMechanics)       
+            
             foreach (var sector in GameSectorLayerServices.Values.Where(sector => sector.SharedContext.CurrentStatus == GameSectorStatus.Running))
             {
                 sector.SharedContext.CurrentGameTime = CurrentGameTime;
@@ -344,11 +335,10 @@ namespace Apocalypse.Any.GameServer.GameInstance
                 sector
                     .GetService
                     .Get(Configuration.RunOperation)
-                    //  .Get("RunInParallel")
                     .Handle(sector);
                 
             }
-            Thread.Sleep(TotalGameTime);
+            Thread.Sleep(TimeSpan.FromSeconds(Configuration.ServerUpdateInSeconds));
         }
 
         private PlayerSpaceship CreatePlayerSpaceShip(string loginToken)
@@ -365,24 +355,30 @@ namespace Apocalypse.Any.GameServer.GameInstance
                                 {
                                     try
                                     {
-                                        return sector
-                                                .SharedContext
-                                                .IODataLayer
-                                                .GetGameStateByLoginToken(loginToken);
+                                        return (gameState: sector
+                                                            .SharedContext
+                                                            .IODataLayer
+                                                            .GetGameStateByLoginToken(loginToken), sectorTag: sector.SharedContext.Tag);
                                     }
                                     catch (Exception ex)
-                                    {
+                                    {                                        
                                         sector.SharedContext.Messages.Add(ex.Message);
-                                        return null;
+                                        return (gameState: null, sectorTag: 0);
                                     }
                                 });
 
-            foundGameStates = foundGameStates.Where(gameState => gameState != null);
-
+            foundGameStates = foundGameStates.Where(gameState => gameState.gameState != null);
+            
             if (foundGameStates.Any())
             {
-                //Console.WriteLine($"{nameof(GetGameStateByLoginToken)}:Found game state ");
-                return foundGameStates.First();
+                var problematicGameState = foundGameStates.GroupBy(gs => gs.sectorTag).Where(gameStates => gameStates.Count() > 1).Select(gs => gs.Key);
+                if(problematicGameState.Any())
+                {
+                    Console.ForegroundColor = ConsoleColor.Yellow;
+                    Console.WriteLine($"Sectors {string.Join(',', problematicGameState.Select(gs => gs.ToString()))} have more than one gamestate");
+                    Console.ForegroundColor = ConsoleColor.White;                    
+                }
+                return foundGameStates.First().gameState;
             }
 
             Console.WriteLine($"{nameof(GetGameStateByLoginToken)}:Found NO game state ");
@@ -403,12 +399,15 @@ namespace Apocalypse.Any.GameServer.GameInstance
 
         public GameStateData RegisterGameStateData(string loginToken)
         {
+            Console.WriteLine($"{nameof(RegisterGameStateData)} in World");
             var newPlayer = CreatePlayerSpaceShip(loginToken);
+            newPlayer.CurrentImage.Position.X = GameSectorLayerServices[Configuration.StartingSector].SharedContext.SectorBoundaries.MaxSectorX / 2;
+            newPlayer.CurrentImage.Position.Y = GameSectorLayerServices[Configuration.StartingSector].SharedContext.SectorBoundaries.MaxSectorY / 2;
+
             GameSectorLayerServices[Configuration.StartingSector]
                     .SharedContext
                     .DataLayer
                     .Players.Add(newPlayer);
-
             
             FirePlayerRegisteredEvent(newPlayer);
 
@@ -432,7 +431,8 @@ namespace Apocalypse.Any.GameServer.GameInstance
 
             return GameSectorLayerServices[Configuration.StartingSector]
                     .SharedContext
-                    .IODataLayer.RegisterGameStateData(loginToken);
+                    .IODataLayer
+                    .RegisterGameStateData(loginToken);
         }
 
         /// <summary>
@@ -452,41 +452,6 @@ namespace Apocalypse.Any.GameServer.GameInstance
             {
                 throw new InvalidOperationException($"Cannot use {nameof(FirePlayerRegisteredEvent)}. EventQueue PlayerRegistered doesn't exist");
             }
-
-            //get relation layer for event
-            //var playerRegisteredEventRelationLayer = GameSectorLayerServices[Configuration.StartingSector]
-            //                                        .SharedContext
-            //                                        .DataLayer
-            //                                        .Layers
-            //                                        .Where(l => l.DisplayName == PlayerRegisteredEventName &&
-            //                                                    l.GetValidTypes().Any(t => t == typeof(DynamicRelation)))
-            //                                        .FirstOrDefault();
-            //var playerRegisteredEventRelationLayer = GameSectorLayerServices[Configuration.StartingSector]
-            //                                        .SharedContext
-            //                                        .DataLayer
-            //                                        .Layers
-            //                                        .Where(l => l.DisplayName == PlayerRegisteredEventName &&
-            //                                                    l.GetValidTypes().Any(t => t == typeof(DynamicRelation)))
-            //                                        .FirstOrDefault();
-
-
-            //if (playerRegisteredEventRelationLayer == null)
-            //{
-            //    throw new InvalidOperationException($"Cannot use {nameof(FirePlayerRegisteredEvent)}. DynamicRelation layer with the name PlayerRegistered doesn't exist");
-            //}
-
-            //var playerRegisteredEventRelation = new DynamicRelation()
-            //{
-            //    Id = Guid.NewGuid().ToString(),
-            //    Entity1 = typeof(PlayerSpaceship),
-            //    Entity1Id = newPlayer.Id,
-            //    Entity2 = null,
-            //    Entity2Id = string.Empty,
-            //};
-            //playerRegisteredEventRelationLayer.Add(playerRegisteredEventRelation);
-            //if (!playerRegisteredEventRelationLayer.DataAsEnumerable<DynamicRelation>().Contains(playerRegisteredEventRelation))
-            //    throw new InvalidOperationException($"Adding the players relation for PlayerRegisteredEvent didn't work. The relation to add is not valid for {playerRegisteredEventRelationLayer.DisplayName}");
-
 
             var playerRegisteredEvent = new EventQueueArgument()
             {
@@ -516,6 +481,7 @@ namespace Apocalypse.Any.GameServer.GameInstance
                                     .Players
                                     .FirstOrDefault(player => player.LoginToken == updateData.LoginToken);
 
+
                 if (currentPlayer == null)
                     return false;
 
@@ -540,10 +506,17 @@ namespace Apocalypse.Any.GameServer.GameInstance
                                         .SharedContext
                                         .DataLayer
                                         .Players
-                                        .FirstOrDefault(player => player.LoginToken == gameStateData.LoginToken);
+                                        .Where(player => player.LoginToken == gameStateData.LoginToken);
 
-                    if (currentPlayer == null)
+                    if (!currentPlayer.Any())
                         return false;
+
+                    if (currentPlayer.Count() > 1)
+                    {
+                        Console.ForegroundColor = ConsoleColor.Yellow;
+                        Console.WriteLine("Something is wrong ... player with same login token found in different sectors");
+                        Console.ForegroundColor = ConsoleColor.White;
+                    }
 
                     return sector
                     .SharedContext
@@ -571,7 +544,7 @@ namespace Apocalypse.Any.GameServer.GameInstance
                 .CreateLogger();
 
             var services = new ServiceCollection();
-
+            
             services.AddSingleton(providers);
             services.AddSingleton<ILoggerFactory>(sc =>
             {

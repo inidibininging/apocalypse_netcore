@@ -95,7 +95,6 @@ namespace Apocalypse.Any.Infrastructure.Server.States
                     );
                     var b = DateTime.Now - a;
                     LastDiff = b;
-                    Console.WriteLine(LastDiff);
                     if(sentMessage == Lidgren.Network.NetSendResult.FailedNotConnected || sentMessage == Lidgren.Network.NetSendResult.Dropped)
                     {
                         LastGameStateData = null; //triggers full update again
