@@ -60,8 +60,8 @@ namespace Apocalypse.Any.Client.GameObjects.Scene
                                 Scale.Y + (SingleUnitDepth *(GoUp ? 1 : -1)));
 
             if(Scale.X < 0.1 && Randomness.Instance.From(0,100) > 50)
-                GoUp= true;            
-            if(Scale.X > 1.5 && Randomness.Instance.From(0,100) > 50)
+                GoUp = true;            
+            if(Scale.X > 4 && Randomness.Instance.From(0,100) > 50)
                 GoUp = false;
 
         }

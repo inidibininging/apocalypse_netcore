@@ -284,7 +284,7 @@ namespace Apocalypse.Any.GameServer.States.Sector.Mechanics
                             {
                                 var enemy = machine.SharedContext.DataLayer.Enemies.FirstOrDefault(e => e.Id == projectile.OwnerName);
                                 var player = machine.SharedContext.DataLayer.Players.FirstOrDefault(e => e.Id == projectile.OwnerName);
-                                const int basicAcceleration = 3;
+                                const int basicAcceleration = 16;
 
                                 if (enemy != null)
                                     thrustMechanic.Update(projectile.CurrentImage, basicAcceleration + (enemy.Stats.Speed / enemy.Stats.GetMaxAttributeValue()));
