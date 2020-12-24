@@ -54,7 +54,6 @@ namespace Apocalypse.Any.GameServer.States.Sector.Mechanics.PlayerMechanics
         public void Handle(IStateMachine<string, IGameSectorLayerService> machine)
         {
             
-
             machine
                 .SharedContext
                 .DataLayer
@@ -68,25 +67,32 @@ namespace Apocalypse.Any.GameServer.States.Sector.Mechanics.PlayerMechanics
                 {
                     if (cmd == DefaultKeys.Boost)
                     {
-                        Console.WriteLine($"Boost! {nameof(ProcessThrustForPlayerMechanicsState)} in {machine.SharedContext.Tag}");
                         //Fix for not using boost for players in a dialog
                         if (player.Tags.Contains(ProcessPlayerDialogsRequestsState.PlayerOnDialogEvent))
                         {
                             return;
                         }
+                        
+                        //add boost tag to player. for now this is needed by mechanics who need to know if the player is boosting or not
+                        if(!player.Tags.Contains(DefaultKeys.Boost))
+                            player.Tags.Add(DefaultKeys.Boost);
+                        
 
                         var playerPositionBeforeThrust = new MovementBehaviour()
                         {
                             X = player.CurrentImage.Position.X,
-                            Y = player.CurrentImage.Position.Y,
+                            Y = player.CurrentImage.Position.Y
                         };
 
                         for (int currentSpeedTime = 0; currentSpeedTime < player.Stats.Speed; currentSpeedTime++)
                         {
                             machine.SharedContext.SingularMechanics.PlayerMechanics["thrust_players"].Update(player);
                         }
+                        machine.SharedContext.SingularMechanics.PlayerMechanics["thrust_players_zero"].Update(player);
 
                         var playerDirection = DirectionVector.Translate(player.CurrentImage) * BurstPositionDunnoWtf;//todo: fix this. this is due to the sourceRect.
+                        
+                        //make burst image for a thrust
                         machine.SharedContext.DataLayer.ImageData.Add(new ImageData()
                         {
                             Id = Guid.NewGuid().ToString(),
@@ -110,7 +116,17 @@ namespace Apocalypse.Any.GameServer.States.Sector.Mechanics.PlayerMechanics
                             LayerDepth = DrawingPlainOrder.EntitiesFX
                         });
                     }
+
                 });
+                
+                if (player.Tags.Contains(DefaultKeys.Boost))
+                {
+                    player.Tags.Remove(DefaultKeys.Boost);
+                }
+                else
+                {
+                    machine.SharedContext.SingularMechanics.PlayerMechanics["thrust_players_zero"].Update(player);
+                }
             });
             
         }

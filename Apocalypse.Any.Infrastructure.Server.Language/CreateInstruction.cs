@@ -14,7 +14,7 @@ namespace Apocalypse.Any.Infrastructure.Server.Language
         public CreateInstruction(Interpreter interpreter, CreateExpression createExpression, int functionIndex)
             : base(interpreter, createExpression, functionIndex)
         {
-            Console.WriteLine("adding create instruction");
+            // Console.WriteLine("adding create instruction");
         }
         
 

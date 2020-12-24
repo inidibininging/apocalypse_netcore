@@ -187,17 +187,22 @@ namespace Apocalypse.Any.GameServer.States.Sector.Storage
                     {
                         if (machine.SharedContext.DataLayer.Players.Count == 0)
                             return;
+                        
+                        
 
                         foreach (var mech in machine.SharedContext.SingularMechanics.PlayerMechanics)
                         {
                             foreach (var entity in machine.SharedContext.DataLayer.Players)
                             {
-                                //Fix for skipping players that are in a dialog
-                                if (mech.Key == "thrust_players" && 
-                                    entity.Tags.Contains(ProcessPlayerDialogsRequestsState.PlayerOnDialogEvent))                                
-                                    continue;
+                                // var playersView = machine.SharedContext.IODataLayer.GetGameStateByLoginToken(entity.LoginToken);
                                 
-                                mech.Value.Update(entity);
+                                //Fix for skipping players that are in a dialog
+                                // if (mech.Key == "thrust_players" && 
+                                //     entity.Tags.Contains(ProcessPlayerDialogsRequestsState.PlayerOnDialogEvent))                                
+                                //     continue;
+                                //
+                                // mech.Value.Update(entity);
+                                
                             }
                         }
                     })));

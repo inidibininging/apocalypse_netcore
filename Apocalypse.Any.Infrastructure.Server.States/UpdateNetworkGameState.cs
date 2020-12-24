@@ -41,22 +41,23 @@ namespace Apocalypse.Any.Infrastructure.Server.States
                 return;
 
             var gameStateUpdateDataTypeFull = typeof(GameStateUpdateData).FullName;
-            if (typeArgumentAsString == gameStateUpdateDataTypeFull)
-            {
-                var clientData = SerializationAdapter.DeserializeObject<GameStateUpdateData>(networkCommandConnection.Data);
+            if (typeArgumentAsString != gameStateUpdateDataTypeFull) return;
+            
+            Console.WriteLine($"FULL IN {nameof(UpdateNetworkGameState<TWorld>)} ");
+            var clientData = SerializationAdapter.DeserializeObject<GameStateUpdateData>(networkCommandConnection.Data);
 
-                gameStateContext.GameStateRegistrar.WorldGameStateDataLayer.ForwardClientDataToGame(clientData);
+            gameStateContext.GameStateRegistrar.WorldGameStateDataLayer.ForwardClientDataToGame(clientData);
 
-                var serverGameState = gameStateContext.GameStateRegistrar.WorldGameStateDataLayer.GetGameStateByLoginToken(clientData.LoginToken);
+            var serverGameState = gameStateContext.GameStateRegistrar.WorldGameStateDataLayer.GetGameStateByLoginToken(clientData.LoginToken);
                 
-                gameStateContext.ChangeHandlerEasier(gameStateContext[(byte)ServerInternalGameStates.UpdateDelta], networkCommandConnection);
-                gameStateContext.CurrentNetOutgoingMessageBusService.SendToClient
-                (
-                    NetworkCommandConstants.UpdateCommand,
-                    serverGameState,
-                    networkCommandConnection.Connection
-                );
-            }
+            gameStateContext.ChangeHandlerEasier(gameStateContext[(byte)ServerInternalGameStates.UpdateDelta], networkCommandConnection);
+                
+            gameStateContext.CurrentNetOutgoingMessageBusService.SendToClient
+            (
+                NetworkCommandConstants.UpdateCommand,
+                serverGameState,
+                networkCommandConnection.Connection
+            );
         }
     }
 }

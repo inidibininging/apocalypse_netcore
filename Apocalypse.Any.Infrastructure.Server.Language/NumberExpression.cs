@@ -20,9 +20,8 @@ namespace Apocalypse.Any.Infrastructure.Server.Language
                     break;
             }
             NumberValue = int.Parse(entityName.ToString());
-            if(NumberValue.HasValue)
-                Console.WriteLine($"Parsed Number: {NumberValue.Value}");
-            else                
+            
+            if(!NumberValue.HasValue)                
                 throw new InvalidOperationException($"Syntax error: ${nameof(NumberValue)} side is not implemented near {machine.SharedContext.CurrentBuffer}");
         }
     }

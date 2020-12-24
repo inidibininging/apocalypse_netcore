@@ -27,6 +27,7 @@ namespace Apocalypse.Any.Infrastructure.Server.Services.Factories
         protected override ImageData UseConverter<TParam>(TParam parameter)
         {
             var position = parameter as MovementBehaviour ?? throw new ArgumentNullException();
+            
             return new ImageData()
             {
                 Id = Guid.NewGuid().ToString(),
@@ -46,6 +47,7 @@ namespace Apocalypse.Any.Infrastructure.Server.Services.Factories
                 Height = 512,
                 LayerDepth = DrawingPlainOrder.Entities - DrawingPlainOrder.PlainStep
             };
+            
         }
 
         public override List<Type> GetValidParameterTypes() => new List<Type>() { typeof(MovementBehaviour) };

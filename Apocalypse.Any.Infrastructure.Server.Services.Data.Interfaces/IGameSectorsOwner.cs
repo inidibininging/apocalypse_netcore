@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace Apocalypse.Any.Infrastructure.Server.Services.Data.Interfaces
 {
-    public interface IGameSectorsOwner
+    public interface IGameSectorsOwner : IGameServerConfigurable
     {
         Dictionary<int, IStateMachine<string, IGameSectorLayerService>> GameSectorLayerServices { get; set; }
         IGameSectorLayerServiceStateMachineFactory<GameServerConfiguration> SectorStateMachine { get; set; }

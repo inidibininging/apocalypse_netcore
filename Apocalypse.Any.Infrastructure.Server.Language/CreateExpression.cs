@@ -38,21 +38,21 @@ namespace Apocalypse.Any.Infrastructure.Server.Language
 
                 if (machine.SharedContext.Current == LexiconSymbol.CreatorLetter)
                 {
-                    Console.WriteLine($"adding {nameof(CreatorExpression)}");
+                    // Console.WriteLine($"adding {nameof(CreatorExpression)}");
                     Creator = new CreatorExpression();
                     Creator.Handle(machine);
                 }
 
                 if (machine.SharedContext.Current == LexiconSymbol.TagIdentifier)
                 {
-                    Console.WriteLine($"adding {nameof(TagExpression)}");
+                    // Console.WriteLine($"adding {nameof(TagExpression)}");
                     Identifier = new TagExpression();
                     Identifier.Handle(machine);
                 }
 
                 if (machine.SharedContext.Current == LexiconSymbol.Letter)
                 {
-                    Console.WriteLine($"adding {nameof(IdentifierExpression)}");
+                    // Console.WriteLine($"adding {nameof(IdentifierExpression)}");
                     Identifier = new IdentifierExpression();
                     Identifier.Handle(machine);
                 }

@@ -56,7 +56,7 @@ namespace Apocalypse.Any.Infrastructure.Server.Language
                     Section != null &&
                     Attribute != null)
                 {
-                    Console.WriteLine($"adding {nameof(EntityExpression)}");
+                    // Console.WriteLine($"adding {nameof(EntityExpression)}");
                     Identifier = new EntityExpression();
                     Identifier.Handle(machine);
                 }
@@ -64,14 +64,14 @@ namespace Apocalypse.Any.Infrastructure.Server.Language
                     Section != null &&
                     Attribute != null)
                 {
-                    Console.WriteLine($"adding {nameof(TagExpression)}");
+                    // Console.WriteLine($"adding {nameof(TagExpression)}");
                     Identifier = new TagExpression();
                     Identifier.Handle(machine);
                 }
 
                 if (machine.SharedContext.Current == LexiconSymbol.Attribute)
                 {
-                    Console.WriteLine($"adding {nameof(AttributeExpression)}");
+                    // Console.WriteLine($"adding {nameof(AttributeExpression)}");
                     Attribute = new AttributeExpression();
                     Attribute.Handle(machine);
                 }
@@ -81,7 +81,7 @@ namespace Apocalypse.Any.Infrastructure.Server.Language
                     machine.SharedContext.Current == LexiconSymbol.Alpha ||
                     machine.SharedContext.Current == LexiconSymbol.Stats)
                 {
-                    Console.WriteLine($"adding section {nameof(AttributeExpression)}");
+                    // Console.WriteLine($"adding section {nameof(AttributeExpression)}");
                     Section = new AttributeExpression();
                     Section.Handle(machine);
                 }
@@ -92,7 +92,7 @@ namespace Apocalypse.Any.Infrastructure.Server.Language
                     Section != null &&
                     Attribute != null)
                 {
-                    Console.WriteLine($"adding {nameof(IdentifierExpression)}");
+                    // Console.WriteLine($"adding {nameof(IdentifierExpression)}");
                     Identifier = new IdentifierExpression();
                     Identifier.Handle(machine);
                 }
@@ -100,13 +100,13 @@ namespace Apocalypse.Any.Infrastructure.Server.Language
                 if (machine.SharedContext.Current == LexiconSymbol.PositiveSign ||
                    machine.SharedContext.Current == LexiconSymbol.NegativeSign)
                 {
-                    Console.WriteLine($"adding {nameof(SignConverterExpression)}");
+                    // Console.WriteLine($"adding {nameof(SignConverterExpression)}");
                     SignConverter = new SignConverterExpression();
                     SignConverter.Handle(machine);
                 }
                 if (machine.SharedContext.Current == LexiconSymbol.Number)
                 {
-                    Console.WriteLine($"adding {nameof(NumberExpression)}");
+                    // Console.WriteLine($"adding {nameof(NumberExpression)}");
                     Number = new NumberExpression();
                     Number.Handle(machine);
                 }

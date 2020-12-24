@@ -15,7 +15,7 @@ namespace Apocalypse.Any.Infrastructure.Server.Language
         public ModifyInstruction(Interpreter interpreter, ModifyAttributeExpression modifyExpression, int functionIndex) 
             : base(interpreter, modifyExpression, functionIndex)
         {
-            Console.WriteLine("adding mod instruction");
+            // Console.WriteLine("adding mod instruction");
         }
 
         

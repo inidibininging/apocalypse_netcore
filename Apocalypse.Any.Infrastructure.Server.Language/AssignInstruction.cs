@@ -54,8 +54,8 @@ namespace Apocalypse.Any.Infrastructure.Server.Language
             }
             if (variable.DataTypeSymbol != LexiconSymbol.TagDataType)
                 throw new InvalidOperationException($"Syntax error. Cannot execute a modify instruction. Data type of variable is not a tag.");
-            Console.WriteLine($"Variable:{variable.Name} Current Value:{variable.Value}");
-            Console.WriteLine(System.Environment.NewLine);
+            // Console.WriteLine($"Variable:{variable.Name} Current Value:{variable.Value}");
+            // Console.WriteLine(System.Environment.NewLine);
             return variable;
         }
         

@@ -51,8 +51,8 @@ namespace Apocalypse.Any.Infrastructure.Server.Language
             }
             if (variable.DataTypeSymbol != LexiconSymbol.TagDataType)
                 throw new InvalidOperationException($"Syntax error. Cannot execute a modify instruction. Data type of variable is not a tag.");
-            Console.WriteLine($"Variable:{variable.Name} Current Value:{variable.Value}");
-            Console.WriteLine(System.Environment.NewLine);
+            // Console.WriteLine($"Variable:{variable.Name} Current Value:{variable.Value}");
+            // Console.WriteLine(System.Environment.NewLine);
             return variable;
         }
         
@@ -72,14 +72,14 @@ namespace Apocalypse.Any.Infrastructure.Server.Language
                 var currentInstruction = Owner.Instructions[EndIfIndex];
                 if (currentInstruction is EndIfInstruction)
                 {
-                    Console.WriteLine("EndIf instruction found");
+                    // Console.WriteLine("EndIf instruction found");
                     break;
                 }
 
-                Console.WriteLine(currentInstruction);
+                // Console.WriteLine(currentInstruction);
                 if (currentInstruction is FunctionInstruction)
                 {
-                    Console.WriteLine("function instruction found. aborting function instruction");
+                    // Console.WriteLine("function instruction found. aborting function instruction");
                     break;
                 }
                 currentInstruction.Handle(machine);
@@ -101,7 +101,7 @@ namespace Apocalypse.Any.Infrastructure.Server.Language
                 }
                 if (currentInstruction is WaitInstruction)
                 {
-                    Console.WriteLine("wait instruction found. aborting function instruction");
+                    // Console.WriteLine("wait instruction found. aborting function instruction");
                     break;
                 }
             }

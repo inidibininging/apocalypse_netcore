@@ -16,7 +16,7 @@ namespace Apocalypse.Any.Infrastructure.Common.Services.Network.Interfaces.Data
     public class InMemoryGameStateDataLayer :
         IWorldGameStateDataIOLayer
     {
-        protected List<GameStateData> DataCache { get; set; } = new List<GameStateData>();
+        protected static List<GameStateData> DataCache { get; set; } = new List<GameStateData>();
 
         private IEnumerable<GameStateData> GetGameStateDataById(string id) => from gameState in DataCache
                                                                               where gameState.Id == id

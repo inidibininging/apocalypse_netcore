@@ -23,9 +23,11 @@ namespace Apocalypse.Any.Infrastructure.Server.Language
             if (!System.IO.File.Exists(FilePath))
                 throw new FileNotFoundException("No mechanic specified", FilePath);
             var scriptFileContent = File.ReadAllText(FilePath);
+            
             Interpreter.Context = context;
             Interpreter.Run(scriptFileContent);
             Interpreter.Context = null;
+            
             return this;
         }
         public void Run(IStateMachine<string, IGameSectorLayerService> context)

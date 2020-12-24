@@ -18,8 +18,8 @@ namespace Apocalypse.Any.GameServer.States.Sector
 
         public bool CanExecute(IGameSectorLayerService parameters)
         {
-            if (parameters.CurrentStatus != GameSectorStatus.Running)
-                return false;
+            // if (parameters.CurrentStatus != GameSectorStatus.Running)
+            //     return false;
             if (parameters.Factories.ImageDataFactory == null)
                 return false;
             if (!parameters.Factories.ImageDataFactory.ContainsKey(Factories.BuildMiniCityFactories.StreetCenterImageDataFactory) &&
@@ -43,6 +43,7 @@ namespace Apocalypse.Any.GameServer.States.Sector
                                                                         parameters.Factories.ImageDataFactory[Factories.BuildMiniCityFactories.BuildingTopDataFactory],
                                                                         50, 50, 50, 50);
 
+            
             foreach (var cityPart in MiniCityFactory.Create(parameters.SectorBoundaries).ToList())
                 parameters.DataLayer.ImageData.Add(cityPart);
 

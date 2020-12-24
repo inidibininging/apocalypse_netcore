@@ -188,9 +188,9 @@ namespace Apocalypse.Any.Infrastructure.Server.Language
 
                 var tempValidTokenBuffer = validTokenBuffer;
                 var rulesToApply = validTokenBuffer;
-                rulesToApply = Rules.Select(appliedRule => rulesToApply = appliedRule(singleToken, rulesToApply, CurrentSymbol))
-                        .Where(ls => ls != LexiconSymbol.NA)
-                        .LastOrDefault();
+                rulesToApply = Rules
+                    .Select(appliedRule => rulesToApply = appliedRule(singleToken, rulesToApply, CurrentSymbol))
+                    .LastOrDefault(ls => ls != LexiconSymbol.NA);
                 if (rulesToApply != tempValidTokenBuffer)
                 {
                     validTokenBuffer = rulesToApply;

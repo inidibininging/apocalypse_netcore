@@ -73,7 +73,7 @@ namespace Apocalypse.Any.GameServer.States.Sector
             machine.SharedContext.DataLayer.Layers.Add(new GenericInMemoryDataLayer<IntBank>(PlayerBankLayerName));
             machine.SharedContext.DataLayer.Layers.Add(new DynamicRelationLayer<Item, IntBank>(DropPlayerItemEventName)); 
 
-            //add events
+            //add event handlers
             var eventHandlers = new GenericInMemoryDataLayer<IIdentifiableNotifiableModel>(DropPlayerItemEventName);
             eventHandlers.Add(new PlayerItemDialogNotifier(DropPlayerItemEventName, PlayerBankLayerName, () => machine.SharedContext));
             eventHandlers.Add(new CreatePlayerBankOnPlayerRegistrationNotifier(PlayerRegisteredEventName,  PlayerBankLayerName, BankFactory, () => machine.SharedContext));

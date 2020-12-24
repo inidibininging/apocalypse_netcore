@@ -34,7 +34,7 @@ namespace Apocalypse.Any.GameServer.States.Sector.Factories
         {
             if (machine.SharedContext == null)
             {
-                machine.SharedContext.Messages.Add("game sector is not available");
+                // machine.SharedContext.Messages.Add("game sector is not available");
                 return;
             }
 

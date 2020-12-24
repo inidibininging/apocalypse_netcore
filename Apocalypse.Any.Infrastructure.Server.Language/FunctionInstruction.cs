@@ -14,7 +14,7 @@ namespace Apocalypse.Any.Infrastructure.Server.Language
         public FunctionInstruction(Interpreter interpreter, FunctionExpression function, int functionIndex) 
             : base(interpreter, function, functionIndex)
         {
-            Console.WriteLine("adding function instruction " + function.Name);
+            // Console.WriteLine("adding function instruction " + function.Name);
             interpreter.Context.NewService.New(Expression.Name,this);
         }
 
@@ -35,11 +35,11 @@ namespace Apocalypse.Any.Infrastructure.Server.Language
             var currentInstructionIndex = FunctionIndex+1;
             while(currentInstructionIndex < Owner.Instructions.Count) {
                 var currentInstruction = Owner.Instructions[currentInstructionIndex];
-                Console.WriteLine(currentInstruction);
+                // Console.WriteLine(currentInstruction);
                 currentInstructionIndex++;                
 
                 if (currentInstruction is FunctionInstruction){
-                    Console.WriteLine("function instruction found. aborting function instruction");
+                    // Console.WriteLine("function instruction found. aborting function instruction");
                     break;
                 }
                 
@@ -51,11 +51,11 @@ namespace Apocalypse.Any.Infrastructure.Server.Language
 
                 if (currentInstruction is WaitInstruction)
                 {
-                    Console.WriteLine("wait instruction found. aborting function instruction");
+                    // Console.WriteLine("wait instruction found. aborting function instruction");
                     break;
                 }
             }
-            Console.WriteLine($"function {Expression.Name} executed");
+            // Console.WriteLine($"function {Expression.Name} executed");
         }
 
 

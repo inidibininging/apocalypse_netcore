@@ -35,11 +35,13 @@ using Serilog;
 using Serilog.Extensions.Logging;
 using States.Core.Infrastructure.Services;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Xml;
 using Apocalypse.Any.Infrastructure.Server.Services.Factories;
 using Apocalypse.Any.Infrastructure.Server.Services.Mechanics.SectorMechanics;
 
@@ -112,8 +114,6 @@ namespace Apocalypse.Any.GameServer.GameInstance
             //translator
             var serverTranslator = new NetworkCommandTranslator(SerializationAdapter);
             var serverMessageTranslator = new NetIncomingMessageNetworkCommandConnectionTranslator(serverTranslator);
-
-
             var cliPassthrough = new CLIPassthroughMechanic(AuthenticationService, Configuration.RunOperation);
             var writer = new GameSectorLayerWriterMechanic
             {
@@ -172,21 +172,28 @@ namespace Apocalypse.Any.GameServer.GameInstance
 
             //Language script file
             LanguageScriptFileEvaluator languageScriptFileEvaluator = new LanguageScriptFileEvaluator(Configuration.StartupScript, Configuration.StartupFunction, Configuration.RunOperation);
+            Console.ForegroundColor = ConsoleColor.Yellow;
             foreach (var sector in GameSectorLayerServices.Values)
             {
                 languageScriptFileEvaluator.Evaluate(sector);
+                Console.Write(".");
             }
+            Console.ForegroundColor = ConsoleColor.White;
 
             Console.WriteLine("runner starting..." + Configuration.StartupFunction);
             CreateGameTimeIfNotExists(null);
 
+            Console.ForegroundColor = ConsoleColor.Green;
             foreach (var sector in GameSectorLayerServices.Values)
             {
                 sector.SharedContext.CurrentGameTime = CurrentGameTime;
                 sector.Run(Configuration.StartupFunction);
+                Console.Write(".");
             }
-
+            Console.ForegroundColor = ConsoleColor.White;
+            
             //Set starting sector to run
+            Console.WriteLine($"Done loading sectors. Starting sector {Configuration.StartingSector}");
             GameSectorLayerServices[Configuration.StartingSector]
                 .GetService
                 .Get("MarkSectorAsRunning")
@@ -195,17 +202,67 @@ namespace Apocalypse.Any.GameServer.GameInstance
 
         private void BuildGrid()
         {
-            const int columnCount = 2;
-            for (int cell = 0; cell < 2; cell++)
+            const int columnCount = 10;
+            const int rowCount = 10;
+            var cell = 1;
+            var gridTrespassingMechanic = new RouteTrespassingMarkerMechanic();
+            
+            
+            for (int y = 1; y <= columnCount; y++)
             {
-                var nextCell = cell % columnCount > 0 ? Math.Abs(cell - 1) : cell + 1;
-                BuildSector(
-                    cell,
-                    Math.Abs(cell - columnCount),
-                    nextCell,
-                    nextCell,
-                    cell + columnCount); ;
+                for (int x = 1; x <= rowCount; x++)
+                {
+                    var left = -1;
+                    var right = 1;
+                    var up = columnCount * -1;
+                    var down = columnCount;
+
+                    if (y == 1)
+                    {
+                        up = ((rowCount * columnCount) - (rowCount));
+                    }
+                    
+                    if (y == columnCount)
+                    {
+                        down = ((rowCount * columnCount) - (rowCount)) * -1;
+                    }
+                    
+                    if (x == 1)
+                    {
+                        left = rowCount - 1;
+                    }
+
+                    if (x == rowCount)
+                    {
+                        right = (rowCount - 1) * -1;
+                    }
+
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    BuildSector(
+                        cell,
+                        cell + up,
+                        cell + right,
+                        cell + left,
+                        cell + down);
+                    Console.Write(".");
+                    Console.ForegroundColor = ConsoleColor.White;
+                    Console.WriteLine($"x:{x} y:{y} c:{cell} u:{cell + up} l:{cell + left} r:{cell + right} d:{cell + down}");
+
+                    gridTrespassingMechanic.RegisterRoutePair(
+                        CreateRoutePair(GameSectorTrespassingDirection.Up, cell, cell + up));
+                    gridTrespassingMechanic.RegisterRoutePair(
+                        CreateRoutePair(GameSectorTrespassingDirection.Left, cell, cell + left));
+                    gridTrespassingMechanic.RegisterRoutePair(
+                        CreateRoutePair(GameSectorTrespassingDirection.Right, cell, cell + right));
+                    gridTrespassingMechanic.RegisterRoutePair(
+                        CreateRoutePair(GameSectorTrespassingDirection.Down, cell, cell + left));
+                    
+                    cell += 1;
+                }
+
             }
+            
+            SectorsOwnerMechanics.Add(gridTrespassingMechanic);
         }
          
 
@@ -228,24 +285,9 @@ namespace Apocalypse.Any.GameServer.GameInstance
                 .Get(ServerGameSectorNewBook.BuildDefaultSectorState)
                 .Handle(sourceSector);
 
-            var playerShifter = new RouterPlayerShifterMechanic(
-                new RouteDualMediator(null, null),
-                new List<GameSectorRoutePair>() {
-                    CreateRoutePair(GameSectorTrespassingDirection.Down,sectorName, sectorDown),
-                    CreateRoutePair(GameSectorTrespassingDirection.Left,sectorName, sectorLeft),
-                    CreateRoutePair(GameSectorTrespassingDirection.Right,sectorName, sectorRight),
-                    CreateRoutePair(GameSectorTrespassingDirection.Up,sectorName, sectorUp),
-                });
-            var routeTrespassingMarker = new RouteTrespassingMarkerMechanic(new RouteDualMediator(null, null), 100);
-            var mediator = new RouteDualMediator(routeTrespassingMarker, playerShifter);
-            routeTrespassingMarker.setRouteMediator(mediator);
-            playerShifter.SetRouteMediator(mediator);
-
-            SectorsOwnerMechanics.Add(routeTrespassingMarker);
-            SectorsOwnerMechanics.Add(playerShifter);
         }
 
-        private static GameSectorRoutePair CreateRoutePair(GameSectorTrespassingDirection trespassingDirection, int sourceSector, int destinationSector)
+        private GameSectorRoutePair CreateRoutePair(GameSectorTrespassingDirection trespassingDirection, int sourceSector, int destinationSector)
         {
             return new GameSectorRoutePair()
             {
@@ -323,22 +365,28 @@ namespace Apocalypse.Any.GameServer.GameInstance
             {
                 sectorMechanic.Update(this);
             }
-            //foreach (var sectorOwnerMechanic in SectorsOwnerMechanics)       
-            
-            foreach (var sector in GameSectorLayerServices.Values.Where(sector => sector.SharedContext.CurrentStatus == GameSectorStatus.Running))
+            var timeToWait = TimeSpan.FromSeconds(Configuration.ServerUpdateInSeconds);
+
+            foreach (var sector in GameSectorLayerServices
+                                                                                    .Values
+                                                                                    .AsParallel()
+                                                                                    .Where(sector => sector.SharedContext.CurrentStatus == GameSectorStatus.Running && sector.SharedContext.DataLayer.Players.Any()))
             {
-                sector.SharedContext.CurrentGameTime = CurrentGameTime;
-                sector
-                    .SharedContext
-                    .EventDispatcher
-                    .DispatchEvents(gameTime);
-                sector
-                    .GetService
-                    .Get(Configuration.RunOperation)
-                    .Handle(sector);
+            
+                    sector.SharedContext.CurrentGameTime = CurrentGameTime;
+                    sector
+                        .SharedContext
+                        .EventDispatcher
+                        .DispatchEvents(gameTime);
                 
+                    sector
+                        .GetService
+                        .Get(Configuration.RunOperation)
+                        .Handle(sector);    
+            
             }
-            Thread.Sleep(TimeSpan.FromSeconds(Configuration.ServerUpdateInSeconds));
+            Thread.Sleep(timeToWait);
+            
         }
 
         private PlayerSpaceship CreatePlayerSpaceShip(string loginToken)
@@ -348,7 +396,6 @@ namespace Apocalypse.Any.GameServer.GameInstance
 
         public GameStateData GetGameStateByLoginToken(string loginToken)
         {
-            //TODO: proxy ?? pattern 
             var foundGameStates = GameSectorLayerServices
                                 .Values
                                 .Select((sector) =>
@@ -369,9 +416,13 @@ namespace Apocalypse.Any.GameServer.GameInstance
 
             foundGameStates = foundGameStates.Where(gameState => gameState.gameState != null);
             
+            
             if (foundGameStates.Any())
             {
-                var problematicGameState = foundGameStates.GroupBy(gs => gs.sectorTag).Where(gameStates => gameStates.Count() > 1).Select(gs => gs.Key);
+                var problematicGameState = foundGameStates
+                                                                .GroupBy(gs => gs.sectorTag)
+                                                                .Where(gameStates => gameStates.Count() > 1)
+                                                                .Select(gs => gs.Key);
                 if(problematicGameState.Any())
                 {
                     Console.ForegroundColor = ConsoleColor.Yellow;
@@ -411,23 +462,23 @@ namespace Apocalypse.Any.GameServer.GameInstance
             
             FirePlayerRegisteredEvent(newPlayer);
 
-            //for demo purpouses
-            var demoItem = GameSectorLayerServices[Configuration.StartingSector]
-                            .SharedContext
-                            .Factories
-                            .ItemFactory
-                            [nameof(MockItemFactory)]
-                            .Create(GameSectorLayerServices[Configuration.StartingSector]
-                            .SharedContext.SectorBoundaries);
-            if (demoItem != null)
-            {
-                demoItem.OwnerName = newPlayer.DisplayName;
-                GameSectorLayerServices[Configuration.StartingSector]
-                    .SharedContext
-                    .DataLayer
-                    .Items
-                    .Add(demoItem);
-            }
+            // //for demo purpouses
+            // var demoItem = GameSectorLayerServices[Configuration.StartingSector]
+            //                 .SharedContext
+            //                 .Factories
+            //                 .ItemFactory
+            //                 [nameof(MockItemFactory)]
+            //                 .Create(GameSectorLayerServices[Configuration.StartingSector]
+            //                 .SharedContext.SectorBoundaries);
+            // if (demoItem != null)
+            // {
+            //     demoItem.OwnerName = newPlayer.DisplayName;
+            //     GameSectorLayerServices[Configuration.StartingSector]
+            //         .SharedContext
+            //         .DataLayer
+            //         .Items
+            //         .Add(demoItem);
+            // }
 
             return GameSectorLayerServices[Configuration.StartingSector]
                     .SharedContext
@@ -452,7 +503,8 @@ namespace Apocalypse.Any.GameServer.GameInstance
             {
                 throw new InvalidOperationException($"Cannot use {nameof(FirePlayerRegisteredEvent)}. EventQueue PlayerRegistered doesn't exist");
             }
-
+	    
+	        //this needs to be created through a factory
             var playerRegisteredEvent = new EventQueueArgument()
             {
                 Id = Guid.NewGuid().ToString(),

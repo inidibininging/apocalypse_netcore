@@ -36,7 +36,7 @@ namespace Apocalypse.Any.Infrastructure.Server.Language
         public void Run(string key)
         {
             SharedIdentifier = key;
-            Console.WriteLine($"running {key}");
+            // Console.WriteLine($"running {key}");
             using(var codeStream = Interpreter.GenerateStreamFromString(key)){
                 codeStream.Seek(0, SeekOrigin.Begin);
                 using(var coreReader =  new StreamReader(codeStream))

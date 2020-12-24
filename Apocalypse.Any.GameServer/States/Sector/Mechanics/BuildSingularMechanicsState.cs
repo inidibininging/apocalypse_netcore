@@ -22,6 +22,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Apocalypse.Any.Constants;
 using Apocalypse.Any.Infrastructure.Server.Services.Factories;
+using Apocalypse.Any.Infrastructure.Server.Services.Mechanics.Interfaces;
 
 namespace Apocalypse.Any.GameServer.States.Sector.Mechanics
 {
@@ -101,14 +102,31 @@ namespace Apocalypse.Any.GameServer.States.Sector.Mechanics
         {
             if (!machine.SharedContext.SingularMechanics.EnemyMechanics.ContainsKey("thrust_enemies"))
                 machine.SharedContext.SingularMechanics.EnemyMechanics.Add("thrust_enemies",
-                    CreateThrustCommand<EnemySpaceship>(1.0f));
+                    CreateThrustCommand<EnemySpaceship>(new ThrustMechanic()
+                    {
+                        BasicAcceleration = 1.0f
+                    }));
         }
 
         private static void ThrustPlayer(IStateMachine<string, IGameSectorLayerService> machine)
         {
             if (!machine.SharedContext.SingularMechanics.PlayerMechanics.ContainsKey("thrust_players"))
+            {
                 machine.SharedContext.SingularMechanics.PlayerMechanics.Add("thrust_players",
-                    CreateThrustCommand<PlayerSpaceship>(1.25f));
+                    CreateThrustCommand<PlayerSpaceship>(new ThrustMechanic()
+                    {
+                        BasicAcceleration = 1.25f
+                    }));
+            }
+
+            if (!machine.SharedContext.SingularMechanics.PlayerMechanics.ContainsKey("thrust_players_zero"))
+            {
+                machine.SharedContext.SingularMechanics.PlayerMechanics.Add("thrust_players_zero",
+                    new ZeroGravityThrustMechanic()
+                    {
+                        BasicAcceleration = 1.25f
+                    });
+            }
         }
 
         private static void EnemyFacePlayerInDistance(IStateMachine<string, IGameSectorLayerService> machine)
@@ -177,20 +195,16 @@ namespace Apocalypse.Any.GameServer.States.Sector.Mechanics
                 machine.SharedContext.SingularMechanics.ImageDataMechanics.Add("prop_rotation",
                     new PropRotationMechanic());
         }
-
-
-
+        
 
         private static SingleCharacterEntityFullPositionHolderAdapterMechanic<TCharacterEntity>
-            CreateThrustCommand<TCharacterEntity>(float speedFactor)
+            CreateThrustCommand<TCharacterEntity>(ThrustMechanic thrustMechanic)
             where TCharacterEntity : CharacterEntity, new()
         {
             return new SingleCharacterEntityFullPositionHolderAdapterMechanic<TCharacterEntity>(
-                new ThrustProxyMechanic(
-                    new ThrustMechanic()
-                )
+                new ThrustProxyMechanic(thrustMechanic)
                 {
-                    SpeedFactor = speedFactor
+                    SpeedFactor = thrustMechanic.BasicAcceleration
                 });
         }
 

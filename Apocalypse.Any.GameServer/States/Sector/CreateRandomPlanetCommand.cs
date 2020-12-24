@@ -14,8 +14,8 @@ namespace Apocalypse.Any.GameServer.States.Sector
 
         public bool CanExecute(IGameSectorLayerService parameters)
         {
-            if (parameters.CurrentStatus != GameSectorStatus.Running)
-                return false;
+            // if (parameters.CurrentStatus != GameSectorStatus.Running)
+            //     return false;
             if (parameters.Factories.ImageDataFactory == null)
                 return false;
             if (!parameters.Factories.ImageDataFactory.ContainsKey(nameof(RandomPlanetFactory)))
@@ -35,13 +35,13 @@ namespace Apocalypse.Any.GameServer.States.Sector
             if (planet == null)
                 return;
             parameters.DataLayer.ImageData.Add(planet);
-            parameters.Messages.Add("Added planet");
+            // parameters.Messages.Add("Added planet");
         }
 
         public void Handle(IStateMachine<string, IGameSectorLayerService> machine)
         {
             Execute(machine.SharedContext);
-	    System.Console.WriteLine("creating planeeeeeet");
+	    // System.Console.WriteLine("creating planeeeeeet");
         }
     }
 }

@@ -51,7 +51,7 @@ namespace Apocalypse.Any.Infrastructure.Server.States
         private GameStateData LastGameStateData { get; set; }
 
         public TimeSpan LastDiff { get; set; }
-        public const int DiffMiliseconds = 5000; 
+        public const int DiffMiliseconds = 1000; 
         public void Handle(INetworkStateContext<TWorld> gameStateContext, NetworkCommandConnection networkCommandConnection)
         {
             if (string.IsNullOrWhiteSpace(networkCommandConnection?.CommandArgument))
@@ -94,10 +94,13 @@ namespace Apocalypse.Any.Infrastructure.Server.States
                         networkCommandConnection.Connection
                     );
                     var b = DateTime.Now - a;
-                    LastDiff = b;
-                    if(sentMessage == Lidgren.Network.NetSendResult.FailedNotConnected || sentMessage == Lidgren.Network.NetSendResult.Dropped)
+                    LastDiff += b;
+                    if(sentMessage == Lidgren.Network.NetSendResult.FailedNotConnected || 
+                       sentMessage == Lidgren.Network.NetSendResult.Dropped ||
+                       LastDiff.TotalMilliseconds > DiffMiliseconds)
                     {
                         LastGameStateData = null; //triggers full update again
+                        LastDiff = TimeSpan.Zero;
                     }
                     else
                     {

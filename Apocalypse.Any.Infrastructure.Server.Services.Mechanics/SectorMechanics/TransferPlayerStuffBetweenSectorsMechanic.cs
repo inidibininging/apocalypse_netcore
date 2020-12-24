@@ -52,7 +52,7 @@ namespace Apocalypse.Any.Infrastructure.Server.Services.Mechanics.SectorMechanic
                                                                     .DataLayer
                                                                     .Items
                                                                     .Except(items));
-                            Console.WriteLine($"Transfering stuff of player {player.Id} from {otherSector.SharedContext.Tag} to {sector.SharedContext.Tag}");
+                            Console.WriteLine($"Transferring stuff of player {player.Id} from {otherSector.SharedContext.Tag} to {sector.SharedContext.Tag}");
                             foreach (var item in items)
                                 sector
                                     .SharedContext

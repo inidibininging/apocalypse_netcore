@@ -10,9 +10,8 @@ using Apocalypse.Any.Infrastructure.Server.Services.Factories;
 
 namespace Apocalypse.Any.GameServer.GameInstance
 {
-    public interface IWorldGame
+    public interface IWorldGame : IGameServerConfigurable
     {
-        GameServerConfiguration Configuration { get; set; }
         Dictionary<int, IStateMachine<string, IGameSectorLayerService>> GameSectorLayerServices { get; set; }
         PlayerSpaceshipFactory PlayerFactory { get; set; }
         IList<ISingleUpdeatableMechanic<IGameSectorsOwner, IGameSectorsOwner>> SectorsOwnerMechanics { get; set; }

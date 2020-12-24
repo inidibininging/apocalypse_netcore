@@ -23,7 +23,7 @@ namespace Apocalypse.Any.Infrastructure.Server.Language
                 
                 if (machine.SharedContext.Current == LexiconSymbol.Letter)
                 {
-                    Console.WriteLine($"adding {nameof(T)} to group expression");
+                    // Console.WriteLine($"adding {nameof(T)} to group expression");
                     Arguments.Add(new T());
                     Arguments.Last().Handle(machine);
                 }

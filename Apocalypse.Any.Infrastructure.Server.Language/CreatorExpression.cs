@@ -11,7 +11,7 @@ namespace Apocalypse.Any.Infrastructure.Server.Language
     {
         public override void Handle(IStateMachine<string, Tokenizer> machine)
         {
-            Console.WriteLine(machine.SharedContext.CurrentBuffer);
+            // Console.WriteLine(machine.SharedContext.CurrentBuffer);
             var entityName = new StringBuilder();
             while (machine.SharedContext.Current == LexiconSymbol.CreatorLetter)
             {

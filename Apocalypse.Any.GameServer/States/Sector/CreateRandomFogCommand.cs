@@ -13,8 +13,8 @@ namespace Apocalypse.Any.GameServer.States.Sector
 
         public bool CanExecute(IGameSectorLayerService parameters)
         {
-            if (parameters.CurrentStatus != GameSectorStatus.Running)
-                return false;
+            // if (parameters.CurrentStatus != GameSectorStatus.Running)
+            //     return false;
             if (parameters.Factories.ImageDataFactory == null)
                 return false;
             if (!parameters.Factories.ImageDataFactory.ContainsKey(nameof(RandomMediumSpaceshipFactory)))

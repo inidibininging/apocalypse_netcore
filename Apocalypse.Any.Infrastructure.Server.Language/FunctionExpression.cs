@@ -21,10 +21,10 @@ namespace Apocalypse.Any.Infrastructure.Server.Language
                     break;
             }
             Name = string.Join("",functionName.ToString().Skip(1));
-            Console.WriteLine($"function set to {Name}");
+            // Console.WriteLine($"function set to {Name}");
             
             Arguments = new GroupArgumentExpression<IdentifierExpression>();
-            Console.WriteLine($"group expression found");
+            // Console.WriteLine($"group expression found");
             Arguments.Handle(machine);
 
             if (string.IsNullOrWhiteSpace(Name))
