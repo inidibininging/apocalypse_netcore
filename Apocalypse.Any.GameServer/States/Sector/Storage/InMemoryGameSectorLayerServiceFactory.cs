@@ -276,10 +276,19 @@ namespace Apocalypse.Any.GameServer.States.Sector.Storage
                     //process other player input
                     nameof(ProcessUseInventoryForPlayerState),
                     nameof(ProcessCollisionMechanicState),
-                    nameof(ProcessPlayerChooseStatState), 
+                    nameof(ProcessPlayerChooseStatState),
+
+                    //dialog related states
+                    nameof(CreateOrUpdateIdentifiableCircularLocationState),
+                    nameof(CreateOrUpdateItemDialogRelationsState),
+                    nameof(CreatePlayerSelectsItemDialogEventState),
+                    nameof(ProcessPlayerDialogsRequestsState),
+                    nameof(AddDroppedItemsAsCurrencyToPlayersBankState),
+
                     nameof(ProcessInventoryLeftState),
-                    nameof(ProcessInventoryRightState), 
+                    nameof(ProcessInventoryRightState),
                     nameof(ProcessReleaseStatState),
+                    nameof(ProcessDeadPlayer),
                 }
             });
 
@@ -313,7 +322,8 @@ namespace Apocalypse.Any.GameServer.States.Sector.Storage
                      //remove junk
                      nameof(DropItemsState),
                      nameof(RemoveImagesMechanicsState),
-                     nameof(RemoveDeadEnemiesMechanicsState)
+                     nameof(RemoveDeadEnemiesMechanicsState),
+                     "ConsumeItemExperienceState"
                 }
             });
 
@@ -330,8 +340,7 @@ namespace Apocalypse.Any.GameServer.States.Sector.Storage
                                     "GarbageThread",
                                 };
 
-                        var workStack = tasks.Select(taskName => new Task(() => machine.GetService.Get(taskName).Handle(machine))).ToList();
-                        workStack.ForEach(task => task.Start());
+                        var workStack = tasks.Select(taskName => Task.Factory.StartNew(() => machine.GetService.Get(taskName).Handle(machine))).ToList();
                         while (workStack.Any(work => !work.IsCompleted))
                         {
                             // Console.WriteLine("Working in parallel....");
@@ -343,8 +352,7 @@ namespace Apocalypse.Any.GameServer.States.Sector.Storage
             {
                 Operations = new List<string>()
                  {
-                     
-                    //server internal stuff
+                     //server internal stuff
                     "UpdateEnemyMechanics",
                     "UpdateProps",
                     nameof(SetMechanicsStatusBasedOnDistanceToPlayerState),

@@ -1,6 +1,6 @@
 !Apocalypse.Any.Domain.Server.Model.GameServerConfiguration,%20Apocalypse.Any.Domain.Server.Model,%20Version=1.0.0.0,%20Culture=neutral,%20PublicKeyToken=null
 BuildOperation: BuildDefaultSectorState
-RunOperation: RunAsDefaultSector
+RunOperation: RunInParallel
 MaxEnemies: 16
 MaxPlayers: 4
 RedisHost: 
@@ -12,6 +12,6 @@ ServerPort: 8080
 ServerUpdateInSeconds: 0.0009999997764825821
 StartingSector: 1
 StartupFunction: Main
-StartupScript: '/home/develop/src/apocalypse_netcore/apocalypse.echse'
+StartupScript: 'C:/src/apocalypse_netcore/apocalypse.echse'
 SectorXSize: 32000
 SectorYSize: 32000
