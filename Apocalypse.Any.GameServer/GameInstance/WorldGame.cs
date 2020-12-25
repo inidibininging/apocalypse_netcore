@@ -154,8 +154,7 @@ namespace Apocalypse.Any.GameServer.GameInstance
                 .Handle(inGameSectorStateMachine);
             
 
-            //datalayer to gather data out of the game world
-            var serverStateDataLayer = new ServerGameStateService<WorldGame>(
+a            var serverStateDataLayer = new ServerGameStateService<WorldGame>(
                                                 AuthenticationService,
                                                 AuthenticationService,
                                                 this,
@@ -372,21 +371,21 @@ namespace Apocalypse.Any.GameServer.GameInstance
 
             foreach (var sector in GameSectorLayerServices
                                                                                     .Values
-                                                                                    .AsParallel()
                                                                                     .Where(sector => sector.SharedContext.CurrentStatus == GameSectorStatus.Running && sector.SharedContext.DataLayer.Players.Any()))
             {
-            
-                    sector.SharedContext.CurrentGameTime = CurrentGameTime;
-                    sector
-                        .SharedContext
-                        .EventDispatcher
-                        .DispatchEvents(gameTime);
+                sector.SharedContext.CurrentGameTime = CurrentGameTime;
+                    Task.Factory.StartNew(() =>
+                    {
+                        sector
+                            .SharedContext
+                            .EventDispatcher
+                            .DispatchEvents(gameTime);
                 
-                    sector
-                        .GetService
-                        .Get(Configuration.RunOperation)
-                        .Handle(sector);    
-            
+                        sector
+                            .GetService
+                            .Get(Configuration.RunOperation)
+                            .Handle(sector);    
+                    });
             }
             Thread.Sleep(timeToWait);
             
