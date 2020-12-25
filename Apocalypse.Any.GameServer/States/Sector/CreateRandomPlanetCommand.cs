@@ -8,6 +8,9 @@ using States.Core.Infrastructure.Services;
 
 namespace Apocalypse.Any.GameServer.States.Sector
 {
+    /// <summary>
+    /// Creates a random planet in a random position
+    /// </summary>
     public class CreateRandomPlanetCommand : ICommand<IGameSectorLayerService>, IState<string, IGameSectorLayerService>
     {
         private RandomPlanetFactory RandomPlanetFactory { get; set; }

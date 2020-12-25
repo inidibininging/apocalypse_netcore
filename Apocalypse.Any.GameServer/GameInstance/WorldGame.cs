@@ -200,10 +200,13 @@ namespace Apocalypse.Any.GameServer.GameInstance
                 .Handle(GameSectorLayerServices[Configuration.StartingSector]);
         }
 
-        private void BuildGrid()
+        /// <summary>
+        /// Builds a looping grid out of sectors. By default is 4x4 = 16 Sectors
+        /// </summary>
+        private void BuildGrid(int size = 4)
         {
-            const int columnCount = 10;
-            const int rowCount = 10;
+            var columnCount = size;
+            var rowCount = size;
             var cell = 1;
             var gridTrespassingMechanic = new RouteTrespassingMarkerMechanic();
             

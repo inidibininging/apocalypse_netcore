@@ -18,5 +18,13 @@ namespace Apocalypse.Any.Domain.Common.Model
         public ImageData CurrentImage { get; set; }
         public List<string> Tags { get; set; }
 
+        public void AddReplaceTag(string tag)
+        {
+            if (Tags == null)
+                return;
+            if (Tags.Contains(tag))
+                return;
+            Tags.Add(tag);
+        }
     }
 }

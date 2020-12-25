@@ -10,6 +10,9 @@ using System;
 
 namespace Apocalypse.Any.GameServer.States.Sector
 {
+    /// <summary>
+    /// Creates a random enemy
+    /// </summary>
     public class CreateEnemySpaceShipState : ICommand<IGameSectorLayerService>, IState<string, IGameSectorLayerService>
     {
         public RandomEnemySpaceshipFactory EnemySpaceshipFactory { get; set; }

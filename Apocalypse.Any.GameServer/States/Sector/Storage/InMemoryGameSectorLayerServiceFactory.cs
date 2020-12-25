@@ -44,6 +44,7 @@ namespace Apocalypse.Any.GameServer.States.Sector.Storage
         private const string PlayerRegisteredEventName = "PlayerRegisteredEvent";
         private const string DefaultSectorBank = "DefaultBank";
 
+        private const string TagNameForDeactivatingMechanics = "NoPlayerInDistance";
         public IStateMachine<string, IGameSectorLayerService> BuildStateMachine(GameServerConfiguration gameServerConfiguration)
         {
             if (gameServerConfiguration == null)
@@ -72,7 +73,7 @@ namespace Apocalypse.Any.GameServer.States.Sector.Storage
                     DefaultSectorBank,
                     () => new IntBankFactory()
                 ));
-
+            
             inMemoryStorage.Add(nameof(AddDroppedItemsAsCurrencyToPlayersBankState), new AddDroppedItemsAsCurrencyToPlayersBankState(new ShortCounterThreshold()));
             inMemoryStorage.Add(nameof(CreateOrUpdateItemDialogRelationsState), new CreateOrUpdateItemDialogRelationsState(DropPlayerItemDialogName));
             inMemoryStorage.Add(nameof(CreatePlayerSelectsItemDialogEventState), new CreatePlayerSelectsItemDialogEventState(DropPlayerItemDialogName));
@@ -164,6 +165,8 @@ namespace Apocalypse.Any.GameServer.States.Sector.Storage
             });
 
             inMemoryStorage.Add(nameof(DropItemsState), new DropItemsState());
+            inMemoryStorage.Add(nameof(SetMechanicsStatusBasedOnDistanceToPlayerState), new SetMechanicsStatusBasedOnDistanceToPlayerState(TagNameForDeactivatingMechanics, distanceToActivate: 512));
+            
             inMemoryStorage.Add(nameof(CreateEnemySpaceShipState), new CreateEnemySpaceShipState(new MockEnemyPreNameGenerator()));
             inMemoryStorage.Add(nameof(CreateRandomPlanetCommand), new CreateRandomPlanetCommand());
             inMemoryStorage.Add(nameof(CreateRandomMediumSpaceShipState), new CreateRandomMediumSpaceShipState());
@@ -171,41 +174,44 @@ namespace Apocalypse.Any.GameServer.States.Sector.Storage
             inMemoryStorage.Add(nameof(CreateRandomMiniCityCommand), new CreateRandomMiniCityCommand());
 
             inMemoryStorage.Add(nameof(UpdateProjectileMechanicsState), new UpdateProjectileMechanicsState());
+            
+            //Applies all enemy mechanisc to every enemy if the enemy is in players distance
             inMemoryStorage.Add("UpdateEnemyMechanics", new CommandStateActionDelegate<string, IGameSectorLayerService>(
                     new Action<IStateMachine<string, IGameSectorLayerService>>((machine) =>
                     {
                         foreach (var mech in machine.SharedContext.SingularMechanics.EnemyMechanics)
                         {
-                            foreach (var entity in machine.SharedContext.DataLayer.Enemies)
+                            foreach (var entity in machine.SharedContext.DataLayer.Enemies.Where(e => !e.Tags.Contains(TagNameForDeactivatingMechanics)))
                             {
                                 mech.Value.Update(entity);
                             }
                         }
                     })));
-            inMemoryStorage.Add("UpdatePlayerMechanics", new CommandStateActionDelegate<string, IGameSectorLayerService>(
-                    new Action<IStateMachine<string, IGameSectorLayerService>>((machine) =>
-                    {
-                        if (machine.SharedContext.DataLayer.Players.Count == 0)
-                            return;
-                        
-                        
-
-                        foreach (var mech in machine.SharedContext.SingularMechanics.PlayerMechanics)
-                        {
-                            foreach (var entity in machine.SharedContext.DataLayer.Players)
-                            {
-                                // var playersView = machine.SharedContext.IODataLayer.GetGameStateByLoginToken(entity.LoginToken);
-                                
-                                //Fix for skipping players that are in a dialog
-                                // if (mech.Key == "thrust_players" && 
-                                //     entity.Tags.Contains(ProcessPlayerDialogsRequestsState.PlayerOnDialogEvent))                                
-                                //     continue;
-                                //
-                                // mech.Value.Update(entity);
-                                
-                            }
-                        }
-                    })));
+            
+            // inMemoryStorage.Add("UpdatePlayerMechanics", new CommandStateActionDelegate<string, IGameSectorLayerService>(
+            //         new Action<IStateMachine<string, IGameSectorLayerService>>((machine) =>
+            //         {
+            //             if (machine.SharedContext.DataLayer.Players.Count == 0)
+            //                 return;
+            //             
+            //             
+            //
+            //             foreach (var mech in machine.SharedContext.SingularMechanics.PlayerMechanics)
+            //             {
+            //                 foreach (var entity in machine.SharedContext.DataLayer.Players)
+            //                 {
+            //                     // var playersView = machine.SharedContext.IODataLayer.GetGameStateByLoginToken(entity.LoginToken);
+            //                     
+            //                     //Fix for skipping players that are in a dialog
+            //                     // if (mech.Key == "thrust_players" && 
+            //                     //     entity.Tags.Contains(ProcessPlayerDialogsRequestsState.PlayerOnDialogEvent))                                
+            //                     //     continue;
+            //                     //
+            //                     // mech.Value.Update(entity);
+            //                     
+            //                 }
+            //             }
+            //         })));
 
             inMemoryStorage.Add("UpdateProps", new CommandStateActionDelegate<string, IGameSectorLayerService>(
                     new Action<IStateMachine<string, IGameSectorLayerService>>((machine) =>
@@ -286,7 +292,7 @@ namespace Apocalypse.Any.GameServer.States.Sector.Storage
                     //server internal stuff
                     "UpdateEnemyMechanics",
                     "UpdateProps",
-                    "UpdatePlayerMechanics",
+                    // "UpdatePlayerMechanics",
                 }
             });
 
@@ -337,10 +343,12 @@ namespace Apocalypse.Any.GameServer.States.Sector.Storage
             {
                 Operations = new List<string>()
                  {
+                     
                     //server internal stuff
                     "UpdateEnemyMechanics",
                     "UpdateProps",
-                    "UpdatePlayerMechanics",
+                    nameof(SetMechanicsStatusBasedOnDistanceToPlayerState),
+                    // "UpdatePlayerMechanics",
 
                     //process player input
                     nameof(ProcessRotationMapsForPlayerMechanicsState),
@@ -375,7 +383,7 @@ namespace Apocalypse.Any.GameServer.States.Sector.Storage
                     nameof(DropItemsState),
                     nameof(RemoveImagesMechanicsState),
                     nameof(RemoveDeadEnemiesMechanicsState),
-                    "ConsumeItemExperienceState"                    
+                    "ConsumeItemExperienceState"                
                  }
             });
 

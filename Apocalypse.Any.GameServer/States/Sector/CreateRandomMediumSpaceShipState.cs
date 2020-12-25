@@ -7,6 +7,9 @@ using States.Core.Infrastructure.Services;
 
 namespace Apocalypse.Any.GameServer.States.Sector
 {
+    /// <summary>
+    /// Creates a random flying ship in the game
+    /// </summary>
     public class CreateRandomMediumSpaceShipState: ICommand<IGameSectorLayerService>, IState<string, IGameSectorLayerService>
     {
         // private RandomMediumSpaceshipFactory RandomMediumSpaceshipFactory { get; set; }

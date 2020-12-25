@@ -7,6 +7,9 @@ using System.Linq;
 
 namespace Apocalypse.Any.GameServer.States.Sector.Mechanics.ProjectileMechanics
 {
+    /// <summary>
+    /// Applies all projectile mechanics to every projectile in the sector
+    /// </summary>
     public class UpdateProjectileMechanicsState : IState<string, IGameSectorLayerService>
     {
         public void Handle(IStateMachine<string, IGameSectorLayerService> machine)

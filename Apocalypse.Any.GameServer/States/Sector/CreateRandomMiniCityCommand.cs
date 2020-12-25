@@ -12,6 +12,9 @@ using System.Text;
 
 namespace Apocalypse.Any.GameServer.States.Sector
 {
+    /// <summary>
+    /// Creates or expands a city in the current sector
+    /// </summary>
     public class CreateRandomMiniCityCommand : ICommand<IGameSectorLayerService>, IState<string, IGameSectorLayerService>
     {
         private RandomMiniCityFactory MiniCityFactory { get; set; }

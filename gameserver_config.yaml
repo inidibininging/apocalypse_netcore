@@ -9,7 +9,7 @@ SerializationAdapterType: Apocalypse.Any.Infrastructure.Common.Services.Serializ
 ServerIp: 127.0.0.1
 ServerPeerName: asteroid
 ServerPort: 8080
-ServerUpdateInSeconds: 0.0099999997764825821
+ServerUpdateInSeconds: 0.0009999997764825821
 StartingSector: 1
 StartupFunction: Main
 StartupScript: '/home/develop/src/apocalypse_netcore/apocalypse.echse'
