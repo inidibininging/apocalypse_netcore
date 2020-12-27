@@ -154,7 +154,7 @@ namespace Apocalypse.Any.GameServer.GameInstance
                 .Handle(inGameSectorStateMachine);
             
 
-a            var serverStateDataLayer = new ServerGameStateService<WorldGame>(
+            var serverStateDataLayer = new ServerGameStateService<WorldGame>(
                                                 AuthenticationService,
                                                 AuthenticationService,
                                                 this,

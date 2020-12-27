@@ -254,7 +254,8 @@ namespace Apocalypse.Any.GameServer.States.Sector.Storage
 
             inMemoryStorage.Add(nameof(RemoveImagesMechanicsState), new RemoveImagesMechanicsState());
             inMemoryStorage.Add(nameof(RemoveDeadEnemiesMechanicsState), new RemoveDeadEnemiesMechanicsState());
-
+            inMemoryStorage.Add(nameof(SectorCsvLoggerState),new SectorCsvLoggerState());
+            
             inMemoryStorage.Add("ProcessPlayerInputBeforeThread", new RoutineState<string, IGameSectorLayerService>()
             {
                 Operations = new List<string>()
@@ -391,7 +392,8 @@ namespace Apocalypse.Any.GameServer.States.Sector.Storage
                     nameof(DropItemsState),
                     nameof(RemoveImagesMechanicsState),
                     nameof(RemoveDeadEnemiesMechanicsState),
-                    "ConsumeItemExperienceState"                
+                    "ConsumeItemExperienceState",
+                    nameof(SectorCsvLoggerState)
                  }
             });
 
