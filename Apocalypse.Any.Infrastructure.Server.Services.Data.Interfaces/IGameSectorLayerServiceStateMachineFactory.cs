@@ -1,4 +1,5 @@
-﻿using States.Core.Infrastructure.Services;
+﻿using Apocalypse.Any.Domain.Common.Model.Network;
+using States.Core.Infrastructure.Services;
 
 namespace Apocalypse.Any.Infrastructure.Server.Services.Data.Interfaces
 {

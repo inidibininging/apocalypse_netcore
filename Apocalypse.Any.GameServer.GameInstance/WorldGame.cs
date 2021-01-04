@@ -101,7 +101,7 @@ namespace Apocalypse.Any.GameServer.GameInstance
         )
         {
             Configuration = configuration;
-            var leSerializationType = configuration.SerializationAdapterType.LoadType(true, false)[0];
+            var leSerializationType = configuration.SerializationAdapterType.LoadType(false, false)[0];
             SerializationAdapter = Activator.CreateInstance(leSerializationType) as ISerializationAdapter;
             GameSectorLayerServices = new Dictionary<int, IStateMachine<string, IGameSectorLayerService>>();
             SectorStateMachine = new InMemoryStorageGameSectorLayerServiceFactory();
@@ -463,24 +463,6 @@ namespace Apocalypse.Any.GameServer.GameInstance
                     .Players.Add(newPlayer);
             
             FirePlayerRegisteredEvent(newPlayer);
-
-            // //for demo purpouses
-            // var demoItem = GameSectorLayerServices[Configuration.StartingSector]
-            //                 .SharedContext
-            //                 .Factories
-            //                 .ItemFactory
-            //                 [nameof(MockItemFactory)]
-            //                 .Create(GameSectorLayerServices[Configuration.StartingSector]
-            //                 .SharedContext.SectorBoundaries);
-            // if (demoItem != null)
-            // {
-            //     demoItem.OwnerName = newPlayer.DisplayName;
-            //     GameSectorLayerServices[Configuration.StartingSector]
-            //         .SharedContext
-            //         .DataLayer
-            //         .Items
-            //         .Add(demoItem);
-            // }
 
             return GameSectorLayerServices[Configuration.StartingSector]
                     .SharedContext

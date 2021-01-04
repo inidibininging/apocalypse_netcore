@@ -12,10 +12,10 @@ namespace Apocalypse.Any.Infrastructure.Server.States.Translators
 {
     public class NetworkCommandToUpdateGameState : INetworkCommandConnectionToGameStateTranslator
     {
-        private IWorldGameStateDataInputLayer GameStatesDataLayer { get; set; }
+        private IWorldGameStateDataInputLayer<GameStateData> GameStatesDataLayer { get; set; }
         public ISerializationAdapter SerializationAdapter { get; }
 
-        public NetworkCommandToUpdateGameState(IWorldGameStateDataInputLayer gameStateDataLayer, ISerializationAdapter serializationAdapter)
+        public NetworkCommandToUpdateGameState(IWorldGameStateDataInputLayer<GameStateData> gameStateDataLayer, ISerializationAdapter serializationAdapter)
         {
             if (gameStateDataLayer == null)
                 throw new ArgumentNullException(nameof(gameStateDataLayer));

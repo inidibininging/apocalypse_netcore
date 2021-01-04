@@ -52,5 +52,7 @@
         /// </summary>
         UserRoleGateWay = 9,
         UpdateDelta = 10,
+
+
     };
 }

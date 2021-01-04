@@ -29,7 +29,6 @@ namespace Apocalypse.Any.Infrastructure.Server.Worker
         TImageData>
     {
         private NetClient Client { get; set; }
-
         private GameClientConfiguration ClientConfiguration { get; set; }
 
         private IGameSectorDataLayer<
@@ -106,10 +105,10 @@ namespace Apocalypse.Any.Infrastructure.Server.Worker
                 Client.CreateMessage(message),
                 NetDeliveryMethod.Unreliable))
             {
-                Thread.Sleep(1000);
+                Thread.Sleep(500);
             }
         }
-        private string CreateMessage<T>(int commandName, T instanceToSend)
+        private string CreateMessage<T>(byte commandName, T instanceToSend)
         {
             var content = SerializationAdapter.SerializeObject
                     (
@@ -124,7 +123,8 @@ namespace Apocalypse.Any.Infrastructure.Server.Worker
         }
         public void ProcessIncomingMessages()
         {
-            var dataInputs = Input.FetchMessageChunk()
+            var dataInputs = Input
+                            .FetchMessageChunk()
                             .Where(msg => msg.MessageType == NetIncomingMessageType.Data);
 
             var inputs = dataInputs
@@ -138,23 +138,28 @@ namespace Apocalypse.Any.Infrastructure.Server.Worker
                                 catch (Exception ex)
                                 {
                                     Console.WriteLine(ex);
-
                                 }
                                 return null;
                             })
-                            .Where(msg => msg != null) // why do I receive gamestate data?? => because a player needs to be physically bound to a game .else other mechanics depending on getting the players game state for every registered player will fail.
-                            .Where(msg => msg.CommandName == NetworkCommandConstants.ReceiveWorkCommand)
+                            .Where(msg => msg != null && msg.CommandName == NetworkCommandConstants.ReceiveWorkCommand) // why do I receive gamestate data?? => because a player needs to be physically bound to a game .else other mechanics depending on getting the players game state for every registered player will fail.
                             .Select(msg =>
                             {
+                                if (msg.Data == "ww==")
+                                    return true;
                                 try
                                 {
+                                    Console.WriteLine(msg.Data);
+                                    Console.WriteLine("--------------------------");
+                                    //TODO: Pass a map of states mapped to bytes
+                                    
                                     var ret = NetworkCommandDataConverterService.ConvertToObject(msg);
-                                    Console.WriteLine(ret);
+                                    Console.WriteLine("--------------------------");
                                     return ret;
                                 }
                                 catch (Exception ex)
                                 {
                                     Console.WriteLine(ex);
+                                    
                                 }
                                 return null;
                             })
@@ -165,7 +170,7 @@ namespace Apocalypse.Any.Infrastructure.Server.Worker
 
             if (inputs.Any(msg => (msg is bool) && (bool)msg == true))
             {
-                Output.SendToClient<string>(NetworkCommandConstants.ReceiveWorkCommand, "hub", Client.ServerConnection);
+                Output.SendToClient<string>(NetworkCommandConstants.ReceiveWorkCommand, "0", NetDeliveryMethod.ReliableOrdered, 0, Client.ServerConnection);
                 Console.WriteLine("sent package");
                 return;
             }
@@ -173,8 +178,8 @@ namespace Apocalypse.Any.Infrastructure.Server.Worker
             foreach (var obj in inputs)
             {
                 //Console.WriteLine(dataLayer.Enemies.Select(enemy => enemy));
-                Console.WriteLine((obj as GameStateDataLayer).Enemies.FirstOrDefault().DisplayName);
-                Output.SendToClient<string>(NetworkCommandConstants.ReceiveWorkCommand, "hub", Client.ServerConnection);
+                //Console.WriteLine((obj as GameStateDataLayer).Enemies.FirstOrDefault()?.DisplayName);
+                Output.SendToClient<string>(NetworkCommandConstants.ReceiveWorkCommand, "0", NetDeliveryMethod.ReliableOrdered, 0, Client.ServerConnection);
             }
         }
     }

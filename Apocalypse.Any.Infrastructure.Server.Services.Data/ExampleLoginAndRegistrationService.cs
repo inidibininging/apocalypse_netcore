@@ -45,7 +45,8 @@ namespace Apocalypse.Any.Infrastructure.Common.Services.Network.Interfaces.Data
                 NewInGame = true // password is "12345" unhashed
             },
             new UserDataWithLoginToken(){
-                Roles = UserDataRole.CanViewWorldByLoginToken,
+                Roles = UserDataRole.CanViewWorldByLoginToken | 
+                        UserDataRole.CanReceiveWork,
                 Username = "foo3",
                 Password = "5994471ABB01112AFCC18159F6CC74B4F511B99806DA59B3CAF5A9C173CACFC5",
                 NewInGame = true // password is "12345" unhashed

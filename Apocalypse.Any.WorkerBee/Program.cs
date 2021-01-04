@@ -2,6 +2,7 @@
 using Apocalypse.Any.Domain.Common.Model;
 using Apocalypse.Any.Domain.Common.Model.Network;
 using Apocalypse.Any.Domain.Server.Model;
+using Apocalypse.Any.GameServer.GameInstance;
 using Apocalypse.Any.Infrastructure.Common.Services.Serializer.JsonAdapter;
 using Apocalypse.Any.Infrastructure.Common.Services.Serializer.MsgPackAdapter;
 using Apocalypse.Any.Infrastructure.Common.Services.Serializer.YamlAdapter;
@@ -16,10 +17,11 @@ namespace Apocalypse.Any.WorkerBee
         static void Main(string[] args)
         {
             var yamler = new YamlSerializerAdapter();
-            var jsonler = typeof(JsonSerializerAdapter);
-            var msgler = typeof(MsgPackSerializerAdapter);
-            var config = yamler.DeserializeObject<GameClientConfiguration>(File.ReadAllText(args[0]));
 
+            var clientConfig = yamler.DeserializeObject<GameClientConfiguration>(File.ReadAllText(args[0]));
+            var serverConfig = yamler.DeserializeObject<GameServerConfiguration>(File.ReadAllText(args[1]));
+
+            var world = new WorldGame(serverConfig);
             var dataLayerWorker = new DataLayerWorker<
                                         PlayerSpaceship,
                                         EnemySpaceship,
@@ -27,9 +29,15 @@ namespace Apocalypse.Any.WorkerBee
                                         Projectile,
                                         CharacterEntity,
                                         CharacterEntity,
-                                        ImageData>(config);
-            while(true)
+                                        ImageData>(clientConfig);
+            while (true)
+            {
+                world.Update(null);
                 dataLayerWorker.ProcessIncomingMessages();
+            }
+
+            
+                
         }
     }
 }

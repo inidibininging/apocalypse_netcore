@@ -35,7 +35,7 @@ namespace Apocalypse.Any.Client.States
             SerializationAdapter = serializationAdapter ?? throw new ArgumentNullException(nameof(serializationAdapter));
         }
 
-        private string CreateMessage<T>(int commandName, T instanceToSend)
+        private string CreateMessage<T>(byte commandName, T instanceToSend)
         {
             var content = SerializationAdapter.SerializeObject
                     (

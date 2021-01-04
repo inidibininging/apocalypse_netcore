@@ -34,6 +34,8 @@ namespace Apocalypse.Any.Infrastructure.Server.States
                     .CurrentNetOutgoingMessageBusService
                     .SendToClient(NetworkCommandConstants.ReceiveWorkCommand,
                                   true,
+                                  Lidgren.Network.NetDeliveryMethod.ReliableOrdered,
+                                  0,
                                   networkCommandConnectionToHandle.Connection);
                 return;
             }
@@ -45,10 +47,13 @@ namespace Apocalypse.Any.Infrastructure.Server.States
                 // if (string.IsNullOrWhiteSpace(sectorKey))
                 //     return;
                 var sectorLayerService = gameStateContext.GameStateRegistrar.WorldGameStateDataLayer.GetSector(sectorKey);
+
                 gameStateContext
                     .CurrentNetOutgoingMessageBusService
                     .SendToClient(NetworkCommandConstants.ReceiveWorkCommand,
                                   sectorLayerService.DataLayer as GameStateDataLayer,
+                                  Lidgren.Network.NetDeliveryMethod.ReliableOrdered,
+                                  0,
                                   networkCommandConnectionToHandle.Connection);
                 return;
             }

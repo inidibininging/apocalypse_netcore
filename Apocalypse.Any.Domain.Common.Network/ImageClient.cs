@@ -54,24 +54,27 @@ namespace Apocalypse.Any.Domain.Common.Network
         {
             //Data validation
             var currentImageData = (this as IImageData);
-            var data = new ImageData();
+            
 
             //code smells here
             //this is a point where a synchronization method can be introduced
             if (ServerData?.Id == null)
             {
-                //Console.WriteLine($"First registration {ServerData.SelectedFrame}");
-                //first registration
-                data.Alpha = currentImageData.Alpha;
-                data.Color = currentImageData.Color;
-                data.Height = currentImageData.Height;
-                data.Width = currentImageData.Width;
-                data.LayerDepth = currentImageData.LayerDepth;
-                data.Path = currentImageData.Path;
-                data.Position = currentImageData.Position;
-                data.Rotation = currentImageData.Rotation;
-                data.Scale = currentImageData.Scale;
-                data.SelectedFrame = currentImageData.SelectedFrame;
+                var data = new ImageData
+                {
+                    //Console.WriteLine($"First registration {ServerData.SelectedFrame}");
+                    //first registration
+                    Alpha = currentImageData.Alpha,
+                    Color = currentImageData.Color,
+                    Height = currentImageData.Height,
+                    Width = currentImageData.Width,
+                    LayerDepth = currentImageData.LayerDepth,
+                    Path = currentImageData.Path,
+                    Position = currentImageData.Position,
+                    Rotation = currentImageData.Rotation,
+                    Scale = currentImageData.Scale,
+                    SelectedFrame = currentImageData.SelectedFrame
+                };
             }
             else
             {

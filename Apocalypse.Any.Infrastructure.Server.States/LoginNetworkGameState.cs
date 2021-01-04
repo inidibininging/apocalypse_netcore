@@ -22,14 +22,6 @@ namespace Apocalypse.Any.Infrastructure.Server.States
             CurrentNetworkCommandToLoginGameState = networkCommandToLoginGameState ?? throw new ArgumentNullException(nameof(networkCommandToLoginGameState));
         }
 
-        // private bool HasValidGameStateData(GameStateData gameStateData)
-        // {
-        //     if (gameStateData == null ||
-        //         string.IsNullOrWhiteSpace(gameStateData?.LoginToken))
-        //         return false;
-        //     return true;
-        // }
-
         public void Handle(INetworkStateContext<TWorld> gameStateContext, NetworkCommandConnection networkCommandConnectionToHandle)
         {
             try
@@ -40,7 +32,7 @@ namespace Apocalypse.Any.Infrastructure.Server.States
                 gameStateData = gameStateContext.GameStateRegistrar.WorldGameStateDataLayer.RegisterGameStateData(gameStateData.LoginToken);
 
                 gameStateContext.Logger.Log(LogLevel.Information, "SendToClient UpdateCommand register token data");
-                gameStateContext.CurrentNetOutgoingMessageBusService.SendToClient(NetworkCommandConstants.UpdateCommand, gameStateData, networkCommandConnectionToHandle.Connection);
+                gameStateContext.CurrentNetOutgoingMessageBusService.SendToClient(NetworkCommandConstants.UpdateCommand, gameStateData, Lidgren.Network.NetDeliveryMethod.ReliableOrdered, 0, networkCommandConnectionToHandle.Connection);
 
                 gameStateContext.Logger.Log(LogLevel.Information, "LoginSuccessful");
                 gameStateContext.ChangeHandlerEasier(gameStateContext.GameStateRegistrar.GetNeworkLayerState((byte)ServerInternalGameStates.LoginSuccessful), networkCommandConnectionToHandle);

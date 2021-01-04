@@ -2,11 +2,11 @@
 
 namespace Apocalypse.Any.Infrastructure.Server.Services.Data.Interfaces
 {
-    public interface IWorldGameStateDataInputLayer
+    public interface IWorldGameStateDataInputLayer<TGameStateData>
     {
-        GameStateData GetGameStateByLoginToken(string loginToken);
-       
-        GameStateData RegisterGameStateData(string loginToken);
+        TGameStateData GetGameStateByLoginToken(string loginToken);
+
+        TGameStateData RegisterGameStateData(string loginToken);
 
         
     }

@@ -1,8 +1,10 @@
-﻿namespace Apocalypse.Any.Infrastructure.Server.Services.Data.Interfaces
+﻿using Apocalypse.Any.Domain.Common.Model.Network;
+
+namespace Apocalypse.Any.Infrastructure.Server.Services.Data.Interfaces
 {
     public interface IWorldGameStateDataIOLayer
-        : IWorldGameStateDataInputLayer,
-        IWorldGameStateDataOutputLayer
+        : IWorldGameStateDataInputLayer<GameStateData>,
+        IWorldGameStateDataOutputLayer<GameStateData, GameStateUpdateData>
     {
     }
 }

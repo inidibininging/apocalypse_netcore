@@ -79,6 +79,8 @@ namespace Apocalypse.Any.Infrastructure.Server.States
                     (
                         NetworkCommandConstants.UpdateCommand,
                         serverGameState,
+                        Lidgren.Network.NetDeliveryMethod.ReliableOrdered,
+                        0,
                         networkCommandConnection.Connection
                     );
 
@@ -91,6 +93,8 @@ namespace Apocalypse.Any.Infrastructure.Server.States
                     (
                         NetworkCommandConstants.UpdateCommandDelta,
                         deltaGameState,
+                        Lidgren.Network.NetDeliveryMethod.ReliableOrdered,
+                        0,
                         networkCommandConnection.Connection
                     );
                     var b = DateTime.Now - a;

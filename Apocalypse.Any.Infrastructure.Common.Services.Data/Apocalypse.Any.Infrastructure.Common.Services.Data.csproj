@@ -6,6 +6,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Apocalypse.Any.Domain.Common.Model.Network\Apocalypse.Any.Domain.Common.Model.Network.csproj" />
+    <ProjectReference Include="..\Apocalypse.Any.Domain.Common.Model\Apocalypse.Any.Domain.Common.Model.csproj" />
     <ProjectReference Include="..\Apocalypse.Any.Infrastructure.Common.Services.Data.Interfaces\Apocalypse.Any.Infrastructure.Common.Services.Data.Interfaces.csproj" />
   </ItemGroup>
 

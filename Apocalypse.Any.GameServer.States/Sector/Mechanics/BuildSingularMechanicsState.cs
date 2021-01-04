@@ -54,7 +54,7 @@ namespace Apocalypse.Any.GameServer.States.Sector.Mechanics
 
             ThrustEnemy(machine);
 
-            MakeEnemyMoveRandomly(machine);
+            //MakeEnemyMoveRandomly(machine);
 
             EnemyWontLeaveScreen(machine);
 
@@ -297,16 +297,16 @@ namespace Apocalypse.Any.GameServer.States.Sector.Mechanics
         }
         
 
-        private static void MakeEnemyMoveRandomly(IStateMachine<string, IGameSectorLayerService> machine)
-        {
-            if (!machine.SharedContext.SingularMechanics.EnemyMechanics.ContainsKey("make_enemies_move_randomly"))
-            {
-                machine.SharedContext.SingularMechanics.EnemyMechanics.Add("make_enemies_move_randomly",
-                    new MoveRandomlyMechanic(
-                        new ThrustMechanic(),
-                        new RandomRotationMechanic()));
-            }
-        }
+        //private static void MakeEnemyMoveRandomly(IStateMachine<string, IGameSectorLayerService> machine)
+        //{
+        //    if (!machine.SharedContext.SingularMechanics.EnemyMechanics.ContainsKey("make_enemies_move_randomly"))
+        //    {
+        //        machine.SharedContext.SingularMechanics.EnemyMechanics.Add("make_enemies_move_randomly",
+        //            new MoveRandomlyMechanic(
+        //                new ThrustMechanic(),
+        //                new RandomRotationMechanic()));
+        //    }
+        //}
 
         private static void EnemyWontLeaveScreen(IStateMachine<string, IGameSectorLayerService> machine)
         {

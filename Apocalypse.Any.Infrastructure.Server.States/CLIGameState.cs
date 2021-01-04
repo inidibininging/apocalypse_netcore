@@ -45,10 +45,13 @@ namespace Apocalypse.Any.Infrastructure.Server.States
                     gameStateContext.ChangeHandlerEasier(gameStateContext.GameStateRegistrar.GetNeworkLayerState((byte)ServerInternalGameStates.Error), networkCommandConnectionToHandle);
                     return;
                 }
+
                 //say to client ready for rsc, waiting for signal
                 gameStateContext.CurrentNetOutgoingMessageBusService.SendToClient(
                     CLINetworkCommandConstants.WaitForSignalCommand,
                     gameStateContext.GameStateRegistrar.WorldGameStateDataLayer.GetGameStateByLoginToken(userData?.LoginToken),
+                    Lidgren.Network.NetDeliveryMethod.ReliableOrdered,
+                    0,
                     networkCommandConnectionToHandle.Connection);
             }
             else

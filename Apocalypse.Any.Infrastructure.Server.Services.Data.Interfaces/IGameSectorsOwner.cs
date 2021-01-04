@@ -1,4 +1,5 @@
 ﻿using Apocalypse.Any.Domain.Common.Mechanics;
+using Apocalypse.Any.Domain.Common.Model.Network;
 using Apocalypse.Any.Domain.Server.Model;
 using States.Core.Infrastructure.Services;
 using System.Collections.Generic;

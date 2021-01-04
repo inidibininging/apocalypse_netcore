@@ -8,9 +8,9 @@ namespace Apocalypse.Any.Infrastructure.Server.States.Translators
 {
     public class NetworkCommandToGameState : INetworkCommandConnectionToGameStateTranslator
     {
-        private IWorldGameStateDataInputLayer GameStatesDataLayer { get; set; }
+        private IWorldGameStateDataInputLayer<GameStateData> GameStatesDataLayer { get; set; }
 
-        public NetworkCommandToGameState(IWorldGameStateDataInputLayer gameStateDataLayer)
+        public NetworkCommandToGameState(IWorldGameStateDataInputLayer<GameStateData> gameStateDataLayer)
         {
             if (gameStateDataLayer == null)
                 throw new ArgumentNullException(nameof(gameStateDataLayer));

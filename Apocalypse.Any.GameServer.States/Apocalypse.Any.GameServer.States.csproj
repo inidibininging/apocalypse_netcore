@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Serilog.Sinks.ColoredConsole" Version="3.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Apocalypse.Any.Client\Apocalypse.Any.Client.csproj" />
+    <ProjectReference Include="..\Apocalypse.Any.Domain.Server.Sector.Model\Apocalypse.Any.Domain.Server.Sector.Model.csproj" />
+    <ProjectReference Include="..\Apocalypse.Any.GameServer.Domain\Apocalypse.Any.GameServer.Domain.csproj" />
+    <ProjectReference Include="..\Apocalypse.Any.Infrastructure.Common.Services.Serializer.YamlAdapter\Apocalypse.Any.Infrastructure.Common.Services.Serializer.YamlAdapter.csproj" />
+    <ProjectReference Include="..\Apocalypse.Any.Infrastructure.Common.Services\Apocalypse.Any.Infrastructure.Common.Services.csproj" />
+    <ProjectReference Include="..\Apocalypse.Any.Infrastructure.Server.PubSub\Apocalypse.Any.Infrastructure.Server.PubSub.csproj" />
+    <ProjectReference Include="..\Apocalypse.Any.Infrastructure.Server.Services.Data.Interfaces\Apocalypse.Any.Infrastructure.Server.Services.Data.Interfaces.csproj" />
+    <ProjectReference Include="..\Apocalypse.Any.Infrastructure.Server.Services.Factories\Apocalypse.Any.Infrastructure.Server.Services.Factories.csproj" />
+    <ProjectReference Include="..\Apocalypse.Any.Infrastructure.Server.Services.Mechanics\Apocalypse.Any.Infrastructure.Server.Services.Mechanics.csproj" />
+    <ProjectReference Include="..\Apocalypse.Any.Infrastructure.Server.Services.Network\Apocalypse.Any.Infrastructure.Server.Services.Network.csproj" />
+    <ProjectReference Include="..\Apocalypse.Any.Infrastructure.Server.States.Interfaces\Apocalypse.Any.Infrastructure.Server.States.Interfaces.csproj" />
+    <ProjectReference Include="..\States\States.Core\States.Core.csproj" />
+  </ItemGroup>
+
+</Project>

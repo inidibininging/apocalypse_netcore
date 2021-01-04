@@ -51,11 +51,13 @@ namespace Apocalypse.Any.Infrastructure.Server.States
             var serverGameState = gameStateContext.GameStateRegistrar.WorldGameStateDataLayer.GetGameStateByLoginToken(clientData.LoginToken);
                 
             gameStateContext.ChangeHandlerEasier(gameStateContext[(byte)ServerInternalGameStates.UpdateDelta], networkCommandConnection);
-                
+
             gameStateContext.CurrentNetOutgoingMessageBusService.SendToClient
             (
                 NetworkCommandConstants.UpdateCommand,
                 serverGameState,
+                Lidgren.Network.NetDeliveryMethod.UnreliableSequenced,
+                0,
                 networkCommandConnection.Connection
             );
         }

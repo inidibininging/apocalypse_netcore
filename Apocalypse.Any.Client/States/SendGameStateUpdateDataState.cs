@@ -25,7 +25,7 @@ namespace Apocalypse.Any.Client.States
         {
             SerializationAdapter = serializationAdapter ?? throw new ArgumentNullException(nameof(serializationAdapter));
         }
-        private NetOutgoingMessage CreateMessage<T>(IStateMachine<string, INetworkGameScreen> machine, int commandName, T instanceToSend)
+        private NetOutgoingMessage CreateMessage<T>(IStateMachine<string, INetworkGameScreen> machine, byte commandName, T instanceToSend)
         {
             return machine.SharedContext.Client.CreateMessage(
 

@@ -1,4 +1,5 @@
-﻿using Apocalypse.Any.Infrastructure.Common.Services.Data;
+﻿using Apocalypse.Any.Domain.Common.Model.Network;
+using Apocalypse.Any.Infrastructure.Common.Services.Data;
 using Apocalypse.Any.Infrastructure.Common.Services.Network;
 using Apocalypse.Any.Infrastructure.Common.Services.Serializer.Interfaces;
 using Apocalypse.Any.Infrastructure.Server.Services.Data.Interfaces;

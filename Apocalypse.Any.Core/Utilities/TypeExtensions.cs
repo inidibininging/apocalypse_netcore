@@ -51,27 +51,29 @@ namespace Apocalypse.Any.Core.Utilities
         /// <returns></returns>
         public static Type[] LoadType(this string typeName, bool referenced, bool gac)
         {
+
             //check for problematic work
             if (string.IsNullOrEmpty(typeName) || !referenced && !gac)
-                return new Type[] { };
+                return new Type[] { typeName.GetApocalypseTypes() };
 
             Assembly currentAssembly = Assembly.GetCallingAssembly();
-
+            
             List<string> assemblyFullnames = new List<string>();
             List<Type> types = new List<Type>();
 
             if (referenced)
             {            //Check refrenced assemblies
-                foreach (AssemblyName assemblyName in currentAssembly.GetReferencedAssemblies())
+                foreach (AssemblyName assemblyName in currentAssembly.GetReferencedAssemblies().Where(a => !a.Name.StartsWith("System.")))
                 {
-                    //Console.WriteLine("loading " + assemblyName.FullName);
+                    
                     //Load method resolve refrenced loaded assembly
                     Assembly assembly = Assembly.Load(assemblyName.FullName);
 
                     var type = assembly.GetType(typeName, false, true);
-
+                    
                     if (type != null && !assemblyFullnames.Contains(assembly.FullName))
                     {
+                        Console.WriteLine("TADA!");
                         types.Add(type);
                         assemblyFullnames.Add(assembly.FullName);
                     }

@@ -11,7 +11,7 @@ namespace Apocalypse.Any.Infrastructure.Common.Services.Network
         where TNetPeer : NetPeer
     {
         private TNetPeer Peer { get; set; }
-        public ISerializationAdapter SerializationAdapter { get; }
+        private ISerializationAdapter SerializationAdapter { get; }
 
         public NetOutgoingMessageBusService(TNetPeer peer, ISerializationAdapter serializationAdapter)
         {
@@ -28,8 +28,10 @@ namespace Apocalypse.Any.Infrastructure.Common.Services.Network
             return Peer.CreateMessage(SerializationAdapter.SerializeObject(instanceToSend));
         }
 
-        public NetSendResult SendToClient<T>(int commandName, T instanceToSend, NetConnection netConnection)
+        public NetSendResult SendToClient<T>(byte commandName, T instanceToSend, NetDeliveryMethod netDeliveryMethod, int sequenceChannel, NetConnection netConnection)
         {
+            if (netDeliveryMethod == 0)
+                netDeliveryMethod = NetDeliveryMethod.ReliableOrdered;
             return netConnection.SendMessage(
                     CreateMessage(
                         new NetworkCommand()
@@ -39,8 +41,8 @@ namespace Apocalypse.Any.Infrastructure.Common.Services.Network
                             Data = SerializationAdapter.SerializeObject(instanceToSend),
                         }
                 ),
-                NetDeliveryMethod.ReliableOrdered,
-                0); //TODO: Assign a T to a channel by using a Dictionary<Type,int>
+                netDeliveryMethod,
+                sequenceChannel); //TODO: Assign a T to a channel by using a Dictionary<Type,int>
         }
     }
 }
