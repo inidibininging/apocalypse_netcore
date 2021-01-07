@@ -27,17 +27,16 @@ namespace Apocalypse.Any.Client.GameInstance
         public List<string> Messages { get; set; } = new List<string>();
         public int LoginTries { get; set; } = 0;
         public int SecondsToNextLoginTry { get; set; } = 1;
-        public ISerializationAdapter SerializationAdapter { get; }
+        public IByteArraySerializationAdapter SerializationAdapter { get; }
 
-        public ClientWorldGame(ISerializationAdapter serializationAdapter)
+        public ClientWorldGame(IByteArraySerializationAdapter serializationAdapter)
         {
             SerializationAdapter = serializationAdapter ?? throw new ArgumentNullException(nameof(serializationAdapter));
         }
         private NetOutgoingMessage CreateMessage<T>(byte commandName, T instanceToSend)
         {
-            return Client.CreateMessage(
-
-                    SerializationAdapter.SerializeObject
+            var msg = Client.CreateMessage();
+            msg.Write(SerializationAdapter.SerializeObject
                     (
                         new NetworkCommand()
                         {
@@ -45,8 +44,8 @@ namespace Apocalypse.Any.Client.GameInstance
                             CommandArgument = typeof(T).FullName,
                             Data = SerializationAdapter.SerializeObject(instanceToSend)
                         }
-                    )
-                );
+                    ));
+            return msg;
         }
 
         public ClientWorldGame(string ip, int port, UserData loginData)

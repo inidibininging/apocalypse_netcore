@@ -3,6 +3,7 @@ using Apocalypse.Any.Infrastructure.Common.Services.Network.Interfaces;
 using Apocalypse.Any.Infrastructure.Server.Services.Data.Interfaces;
 using System;
 using Apocalypse.Any.Domain.Common.Network;
+using System.Text;
 
 namespace Apocalypse.Any.Infrastructure.Server.States.Translators
 {
@@ -31,9 +32,10 @@ namespace Apocalypse.Any.Infrastructure.Server.States.Translators
                 return null;
             if (input.CommandName != NetworkCommandConstants.GetGameStateByLoginToken)
                 return null;
-            if (string.IsNullOrWhiteSpace(input.Data))
+            if (input.Data == null)
                 throw new InvalidOperationException("No valid token sent");
-            var loginToken = input.Data;
+            var loginTokenData = input.Data;
+            var loginToken = Encoding.UTF8.GetString(loginTokenData);
             return GameStatesDataLayer.GetGameStateByLoginToken(loginToken);
         }
     }

@@ -10,10 +10,11 @@ using System.Text;
 
 namespace Apocalypse.Any.Infrastructure.Common.Services.Network.Output.Specification
 {
-    public class NetworkCommandMessageCreator : INetOutgoingMessageCreator<NetworkCommand>
+    public class NetworkCommandStringMessageCreator
+        : INetOutgoingMessageCreator<NetworkCommand>
     {
-        public ISerializationAdapter SerializationAdapter { get; }
-        public NetworkCommandMessageCreator(ISerializationAdapter serializationAdapter)
+        public IStringSerializationAdapter SerializationAdapter { get; }
+        public NetworkCommandStringMessageCreator(IStringSerializationAdapter serializationAdapter)
         {
             SerializationAdapter = serializationAdapter;
         }

@@ -13,7 +13,7 @@ namespace Apocalypse.Any.Domain.Common.Network.Utilities
         /// <typeparam name="T"></typeparam>
         /// <param name="stuff"></param>
         /// <returns></returns>
-        public static NetOutgoingMessage ToClientOutgoingMessage<T>(this T stuff, NetClient client, ISerializationAdapter serializationAdapter)
+        public static NetOutgoingMessage ToClientOutgoingMessage<T>(this T stuff, NetClient client, IStringSerializationAdapter serializationAdapter)
         {
             return client.CreateMessage(serializationAdapter.SerializeObject(stuff));
         }

@@ -13,9 +13,9 @@ namespace Apocalypse.Any.Infrastructure.Server.States
         where TWorld : IWorldGameStateDataIOLayer, IWorldGameSectorInputLayer
     {
         private INetworkCommandConnectionToGameStateTranslator CurrentNetworkCommandToUpdateGameState { get; set; }
-        public ISerializationAdapter SerializationAdapter { get; }
+        public IByteArraySerializationAdapter SerializationAdapter { get; }
 
-        public UpdateNetworkGameState(INetworkCommandConnectionToGameStateTranslator networkCommandToUpdateGameState, ISerializationAdapter serializationAdapter)
+        public UpdateNetworkGameState(INetworkCommandConnectionToGameStateTranslator networkCommandToUpdateGameState, IByteArraySerializationAdapter serializationAdapter)
         {
             if (networkCommandToUpdateGameState == null)
                 throw new ArgumentNullException(nameof(networkCommandToUpdateGameState));

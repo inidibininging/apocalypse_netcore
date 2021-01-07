@@ -17,10 +17,10 @@ namespace Apocalypse.Any.Infrastructure.Server.Services.Factories
     public class PlayerSpaceshipUpdateGameStateFactory : CheckWithReflectionFactoryBase<GameStateData>
     {
         public int DrawingDistance { get; set; } = 1024;
-        ISerializationAdapter SerializationAdapter { get; }
+        IByteArraySerializationAdapter SerializationAdapter { get; }
         ImageToRectangleTransformationService ImageToRectangleTransformationService { get; }
 
-        public PlayerSpaceshipUpdateGameStateFactory(ISerializationAdapter serializationAdapter, 
+        public PlayerSpaceshipUpdateGameStateFactory(IByteArraySerializationAdapter serializationAdapter, 
                 ImageToRectangleTransformationService imageToRectangleTransformationService)
         {
             SerializationAdapter = serializationAdapter ?? throw new ArgumentNullException(nameof(serializationAdapter));

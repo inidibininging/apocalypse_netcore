@@ -55,6 +55,8 @@ namespace Apocalypse.Any.Infrastructure.Server.States
                                   Lidgren.Network.NetDeliveryMethod.ReliableOrdered,
                                   0,
                                   networkCommandConnectionToHandle.Connection);
+
+                
                 return;
             }
         }

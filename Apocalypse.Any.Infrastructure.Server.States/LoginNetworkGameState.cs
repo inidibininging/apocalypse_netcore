@@ -28,6 +28,7 @@ namespace Apocalypse.Any.Infrastructure.Server.States
             {
                 //converts user to login token. If user is not registered, it will be... else ..boom
                 var gameStateData = CurrentNetworkCommandToLoginGameState.Translate(networkCommandConnectionToHandle);
+                
                 gameStateContext.Logger.Log(LogLevel.Information, "RegisterGameStateData");
                 gameStateData = gameStateContext.GameStateRegistrar.WorldGameStateDataLayer.RegisterGameStateData(gameStateData.LoginToken);
 

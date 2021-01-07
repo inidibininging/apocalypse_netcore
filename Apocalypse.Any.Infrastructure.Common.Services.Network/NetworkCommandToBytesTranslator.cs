@@ -9,10 +9,10 @@ namespace Apocalypse.Any.Infrastructure.Common.Services.Network
     public class NetworkCommandToBytesTranslator : IInputTranslator<NetworkCommand, byte[]>
     {
         private IInputTranslator<string, byte> CommandArgumentTranslator { get; }
-        private IInputTranslator<string, byte[]> DataTranslator { get;  }
+        private IInputTranslator<byte[], byte[]> DataTranslator { get;  }
         public NetworkCommandToBytesTranslator(
             IInputTranslator<string, byte> commandArgumentTranslator,
-            IInputTranslator<string, byte[]> dataTranslator)
+            IInputTranslator<byte[], byte[]> dataTranslator)
         {
             CommandArgumentTranslator = commandArgumentTranslator ?? throw new ArgumentNullException(nameof(commandArgumentTranslator));
             DataTranslator = dataTranslator ?? throw new ArgumentNullException(nameof(dataTranslator));
@@ -24,7 +24,7 @@ namespace Apocalypse.Any.Infrastructure.Common.Services.Network
             if(!string.IsNullOrWhiteSpace(input.CommandArgument))
                 output[1] = CommandArgumentTranslator.Translate(input.CommandArgument);
 
-            if (!string.IsNullOrWhiteSpace(input.Data))
+            if (input.Data != null)
                 DataTranslator.Translate(input.Data).CopyTo(output, 2);
             
             return output;

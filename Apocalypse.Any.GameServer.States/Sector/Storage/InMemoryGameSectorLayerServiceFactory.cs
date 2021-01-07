@@ -55,7 +55,7 @@ namespace Apocalypse.Any.GameServer.States.Sector.Storage
         private IStateMachine<string, IGameSectorLayerService> BuildDefaultStateMachine(GameServerConfiguration gameServerConfiguration)
         {
             var inMemoryStorage = new Dictionary<string, IState<string, IGameSectorLayerService>>();
-            var serializer = Activator.CreateInstance(gameServerConfiguration.SerializationAdapterType.LoadType(false, false)[0]) as ISerializationAdapter;
+            var serializer = Activator.CreateInstance(gameServerConfiguration.SerializationAdapterType.LoadType(false, false)[0]) as IByteArraySerializationAdapter;
 
             inMemoryStorage.Add(nameof(BuildIODataLayerState), new BuildIODataLayerState());
             inMemoryStorage.Add(nameof(BuildFactoriesState), new BuildFactoriesState());

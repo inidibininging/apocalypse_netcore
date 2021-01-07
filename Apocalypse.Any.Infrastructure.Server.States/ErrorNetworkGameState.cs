@@ -13,7 +13,7 @@ namespace Apocalypse.Any.Infrastructure.Server.States
         {
             try
             {
-                throw new InvalidOperationException(networkCommandConnectionToHandle.Data);
+                throw new InvalidOperationException(networkCommandConnectionToHandle.CommandName.ToString());
             }
             catch (Exception ex)
             {

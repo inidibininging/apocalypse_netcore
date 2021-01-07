@@ -20,17 +20,16 @@ namespace Apocalypse.Any.CLI
         public string LoginToken { get; set; }
         public int SecondsToNextLoginTry { get; set; } = 1;
         public Queue<string> Commands { get; private set; } = new Queue<string>();
-        public ISerializationAdapter SerializationAdapter { get; }
+        public IByteArraySerializationAdapter SerializationAdapter { get; }
 
-        public CLIServerConnector(ISerializationAdapter serializationAdapter)
+        public CLIServerConnector(IByteArraySerializationAdapter serializationAdapter)
         {
             SerializationAdapter = serializationAdapter ?? throw new ArgumentNullException(nameof(serializationAdapter));
         }
         private NetOutgoingMessage CreateMessage<T>(byte commandName, T instanceToSend)
         {
-            return Client.CreateMessage(
-
-                    SerializationAdapter.SerializeObject
+            var msg = Client.CreateMessage();
+            msg.Write(SerializationAdapter.SerializeObject
                     (
                         new NetworkCommand()
                         {
@@ -38,8 +37,8 @@ namespace Apocalypse.Any.CLI
                             CommandArgument = typeof(T).FullName,
                             Data = SerializationAdapter.SerializeObject(instanceToSend)
                         }
-                    )
-                );
+                    ));
+            return msg;
         }
 
         public void Initialize()
@@ -83,7 +82,8 @@ namespace Apocalypse.Any.CLI
 
             try
             {
-                var readMsg = currentMessage.ReadString();
+                var readMsgLength = currentMessage.LengthBytes;
+                var readMsg = currentMessage.ReadBytes(readMsgLength);
                 var netCmd = SerializationAdapter.DeserializeObject<IdentifiableNetworkCommand>(readMsg);
                 var gData = SerializationAdapter.DeserializeObject<GameStateData>(netCmd.Data);
 

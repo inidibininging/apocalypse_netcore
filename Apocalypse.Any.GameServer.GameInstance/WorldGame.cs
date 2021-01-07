@@ -92,7 +92,7 @@ namespace Apocalypse.Any.GameServer.GameInstance
         #region EntityFactories
 
         public PlayerSpaceshipFactory PlayerFactory { get; set; } = new PlayerSpaceshipFactory();
-        private ISerializationAdapter SerializationAdapter { get; set; }
+        private IByteArraySerializationAdapter SerializationAdapter { get; set; }
         #endregion EntityFactories
 
         public WorldGame
@@ -102,7 +102,7 @@ namespace Apocalypse.Any.GameServer.GameInstance
         {
             Configuration = configuration;
             var leSerializationType = configuration.SerializationAdapterType.LoadType(false, false)[0];
-            SerializationAdapter = Activator.CreateInstance(leSerializationType) as ISerializationAdapter;
+            SerializationAdapter = Activator.CreateInstance(leSerializationType) as IByteArraySerializationAdapter;
             GameSectorLayerServices = new Dictionary<int, IStateMachine<string, IGameSectorLayerService>>();
             SectorStateMachine = new InMemoryStorageGameSectorLayerServiceFactory();
             AuthenticationService = new ExampleLoginAndRegistrationService();

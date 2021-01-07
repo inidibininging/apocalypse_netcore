@@ -26,12 +26,16 @@ namespace Apocalypse.Any.Core.Network.Server.Services
         {
             if (input == null)
                 return null;
-            var tzeMessisch = input.ReadString();
-            if (string.IsNullOrWhiteSpace(tzeMessisch))
+            
+            var tzeMessisch = input.ReadBytes(input.LengthBytes);
+            if (tzeMessisch == null)
+            {
+                Console.WriteLine("tzeMessisch ist null");
                 return null;
+            }
 
             NetworkCommand networkCommand = IncomingMessageTranslator.Translate(tzeMessisch);
-            //Console.WriteLine(networkCommand.Data);
+            
             NetworkCommandConnection networkCommandConnection = new NetworkCommandConnection();
 
             //Conversion to network command on server

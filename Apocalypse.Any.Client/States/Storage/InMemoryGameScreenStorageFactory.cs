@@ -36,7 +36,7 @@ namespace Apocalypse.Any.Client.States.Storage
         {
             var inMemoryStorage = new Dictionary<string, IState<string, INetworkGameScreen>>();
 
-            var serializer = Activator.CreateInstance(gameClientConfiguration.SerializationAdapterType.LoadType(true, false)[0]) as ISerializationAdapter;
+            var serializer = Activator.CreateInstance(gameClientConfiguration.SerializationAdapterType.LoadType(true, false)[0]) as IByteArraySerializationAdapter;
             
             inMemoryStorage.Add(ClientGameScreenBook.CheckLoginSent, new CheckLoginSentState());
             inMemoryStorage.Add(ClientGameScreenBook.CreateFetchDataIfNotExists, new CommandStateStateDelegate<string, INetworkGameScreen>((machine) =>

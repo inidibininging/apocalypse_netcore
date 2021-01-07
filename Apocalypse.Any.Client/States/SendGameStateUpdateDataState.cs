@@ -19,17 +19,16 @@ namespace Apocalypse.Any.Client.States
     /// </summary>
     public class SendGameStateUpdateDataState : IState<string, INetworkGameScreen>
     {
-        public ISerializationAdapter SerializationAdapter { get; }
+        public IByteArraySerializationAdapter SerializationAdapter { get; }
 
-        public SendGameStateUpdateDataState(ISerializationAdapter serializationAdapter)
+        public SendGameStateUpdateDataState(IByteArraySerializationAdapter serializationAdapter)
         {
             SerializationAdapter = serializationAdapter ?? throw new ArgumentNullException(nameof(serializationAdapter));
         }
         private NetOutgoingMessage CreateMessage<T>(IStateMachine<string, INetworkGameScreen> machine, byte commandName, T instanceToSend)
         {
-            return machine.SharedContext.Client.CreateMessage(
-
-                    SerializationAdapter.SerializeObject
+            var msg = machine.SharedContext.Client.CreateMessage();
+            msg.Write(SerializationAdapter.SerializeObject
                     (
                         new NetworkCommand()
                         {
@@ -37,8 +36,8 @@ namespace Apocalypse.Any.Client.States
                             CommandArgument = typeof(T).FullName,
                             Data = SerializationAdapter.SerializeObject(instanceToSend)
                         }
-                    )
-                );
+                    ));
+            return msg;
         }
 
         public void Handle(IStateMachine<string, INetworkGameScreen> machine)

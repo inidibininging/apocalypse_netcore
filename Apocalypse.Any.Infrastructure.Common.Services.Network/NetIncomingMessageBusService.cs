@@ -32,7 +32,9 @@ namespace Apocalypse.Any.Infrastructure.Common.Services.Network
         {
             IList<NetIncomingMessage> fetchedMessages = new List<NetIncomingMessage>();
             var fetchMessageResult = Peer.ReadMessages(fetchedMessages);
-            return fetchedMessages.Where(message => !string.IsNullOrWhiteSpace(message.PeekString())).ToList();
+            foreach (var msg in fetchedMessages)
+                Console.WriteLine(msg.LengthBytes);
+            return fetchedMessages.ToList();
         }
     }
 }

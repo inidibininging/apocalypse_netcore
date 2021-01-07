@@ -20,10 +20,10 @@ namespace Apocalypse.Any.Client.States
     public class FetchDataState : IState<string, INetworkGameScreen>
     {
         public INetIncomingMessageBusService IncomingMessageBusService { get; private set; }
-        public ISerializationAdapter SerializationAdapter { get; }
+        public IByteArraySerializationAdapter SerializationAdapter { get; }
         public IDeltaGameStateDataService DeltaGameStateDataService { get; }
         
-        public FetchDataState(INetIncomingMessageBusService incomingMessageBusService, ISerializationAdapter serializationAdapter, IDeltaGameStateDataService deltaGameStateDataService)
+        public FetchDataState(INetIncomingMessageBusService incomingMessageBusService, IByteArraySerializationAdapter serializationAdapter, IDeltaGameStateDataService deltaGameStateDataService)
         {
             IncomingMessageBusService = incomingMessageBusService ?? throw new ArgumentNullException(nameof(incomingMessageBusService));
             SerializationAdapter = serializationAdapter ?? throw new ArgumentNullException(nameof(serializationAdapter));
@@ -52,8 +52,8 @@ namespace Apocalypse.Any.Client.States
                     continue;
 
                 machine.SharedContext.Messages.Add("Data incoming...");
-                var readMsg = currentMessage.ReadString();
-
+                var readMsgLength = currentMessage.LengthBytes;
+                var readMsg = currentMessage.ReadBytes(readMsgLength);
                 bool failsToUpcast = false;
                 try
                 {

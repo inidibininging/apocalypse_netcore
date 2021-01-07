@@ -9,9 +9,9 @@ using System.Text;
 
 namespace Apocalypse.Any.Infrastructure.Common.Services.Serializer.MsgPackAdapter
 {
-    public class MsgPackSerializerAdapter : IStringSerializationAdapter
+    public class MsgPackByteArraySerializerAdapter : IByteArraySerializationAdapter
     {
-        public T DeserializeObject<T>(string content)
+        public T DeserializeObject<T>(byte[] content)
         {
             var context = new SerializationContext { SerializationMethod = SerializationMethod.Map };
             context.DictionarySerlaizationOptions.OmitNullEntry = true;
@@ -19,7 +19,7 @@ namespace Apocalypse.Any.Infrastructure.Common.Services.Serializer.MsgPackAdapte
             var serializer = SerializationContext.Default.GetSerializer<T>(context);
 
             T subject;
-            using (var ms = new MemoryStream(Convert.FromBase64String(content)))
+            using (var ms = new MemoryStream(content))
             {
                 ms.Position = 0;
                 subject = serializer.Unpack(ms);
@@ -27,13 +27,13 @@ namespace Apocalypse.Any.Infrastructure.Common.Services.Serializer.MsgPackAdapte
             return subject;
         }
 
-        public object DeserializeObject(string content, Type type)
+        public object DeserializeObject(byte[] content, Type type)
         {
             var serializer = MessagePackSerializer.Get(type);
             object subject;
 
 
-            using (var ms = new MemoryStream(Convert.FromBase64String(content)))
+            using (var ms = new MemoryStream(content))
             {
                 ms.Position = 0;                
                 subject = serializer.Unpack(ms);
@@ -41,35 +41,34 @@ namespace Apocalypse.Any.Infrastructure.Common.Services.Serializer.MsgPackAdapte
             return subject;
         }
 
-        public string SerializeObject<T>(T instance)
+        public byte[] SerializeObject<T>(T instance)
         {
-            var finalString = new StringBuilder();
-
             var context = new SerializationContext { SerializationMethod = SerializationMethod.Map };
             context.DictionarySerlaizationOptions.OmitNullEntry = true;
             var serializer = SerializationContext.Default.GetSerializer<T>(context);
-           
 
+            byte[] output;
             using (var ms = new MemoryStream())
             {
                 serializer.Pack(ms, instance);
                 ms.Position = 0;
-                finalString.Append(Convert.ToBase64String(ms.ToArray()));
+                output = ms.ToArray();
             }
-            return finalString.ToString();
+            return output;
         }
 
-        public string SerializeObject(object instance, Type type)
+        public byte[] SerializeObject(object instance, Type type)
         {
             var serializer = MessagePackSerializer.Get(type);
             var finalString = new StringBuilder();
+            byte[] output;
             using (var ms = new MemoryStream())
             {
                 serializer.Pack(ms, instance);
                 ms.Position = 0;
-                finalString.Append(Convert.ToBase64String(ms.ToArray()));
+                output = ms.ToArray();
             }
-            return finalString.ToString();
+            return output;
         }
     }
 }

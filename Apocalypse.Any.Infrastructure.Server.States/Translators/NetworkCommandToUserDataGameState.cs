@@ -13,9 +13,9 @@ namespace Apocalypse.Any.Infrastructure.Server.States.Translators
     public class NetworkCommandToUserDataGameState : INetworkCommandConnectionToGameStateTranslator
     {
         private IUserLoginService LoginService { get; }
-        public ISerializationAdapter SerializationAdapter { get; }
+        public IByteArraySerializationAdapter SerializationAdapter { get; }
 
-        public NetworkCommandToUserDataGameState(IUserLoginService loginService, ISerializationAdapter serializationAdapter)
+        public NetworkCommandToUserDataGameState(IUserLoginService loginService, IByteArraySerializationAdapter serializationAdapter)
         {
             LoginService = loginService ?? throw new ArgumentNullException(nameof(loginService));
             SerializationAdapter = serializationAdapter ?? throw new ArgumentNullException(nameof(serializationAdapter));
@@ -27,8 +27,11 @@ namespace Apocalypse.Any.Infrastructure.Server.States.Translators
                 return false;
             if (networkCommandConnection.CommandName != NetworkCommandConstants.LoginCommand)
                 return false;
-            if (string.IsNullOrWhiteSpace(networkCommandConnection.Data))
+            if (networkCommandConnection.Data.Length == 0)
+            {
+                Console.WriteLine("Warning. Data is 0");
                 return false;
+            }
             return true;
         }
 

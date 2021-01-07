@@ -15,12 +15,12 @@ namespace Apocalypse.Any.Infrastructure.Server.States.Translators
     {
         private IUserLoginService LoginService { get; set; }
         private IUserDataRoleService RoleService { get; set; }
-        public ISerializationAdapter SerializationAdapter { get; }
+        public IByteArraySerializationAdapter SerializationAdapter { get; }
 
         public NetworkCommandToUserDataWithLoginToken(
             IUserLoginService loginService,
             IUserDataRoleService roleService,
-            ISerializationAdapter serializationAdapter)
+            IByteArraySerializationAdapter serializationAdapter)
         {
             if (loginService == null)
                 throw new ArgumentNullException(nameof(loginService));
@@ -37,7 +37,7 @@ namespace Apocalypse.Any.Infrastructure.Server.States.Translators
                 return false;
             if (networkCommandConnection.CommandName != NetworkCommandConstants.LoginCommand)
                 return false;
-            if (string.IsNullOrWhiteSpace(networkCommandConnection.Data))
+            if (networkCommandConnection.Data == null)
                 return false;
             return true;
         }

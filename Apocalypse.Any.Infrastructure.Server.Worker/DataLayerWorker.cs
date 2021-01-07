@@ -45,7 +45,7 @@ namespace Apocalypse.Any.Infrastructure.Server.Worker
         private NetOutgoingMessageBusService<NetClient> Output { get; set; } // not in use for now cause it doesnt work? WHY?
         private NetworkCommandDataConverterService NetworkCommandDataConverterService { get; set; }
         private NetIncomingMessageNetworkCommandConnectionTranslator NetIncomingMessageNetworkCommand { get; set; }
-        public ISerializationAdapter SerializationAdapter { get; set; }
+        public IByteArraySerializationAdapter SerializationAdapter { get; set; }
         public DataLayerWorker(GameClientConfiguration configuration)
         {
             ClientConfiguration = configuration;
@@ -90,7 +90,7 @@ namespace Apocalypse.Any.Infrastructure.Server.Worker
 
             var serializerType = GetSerializer(ClientConfiguration.SerializationAdapterType);
             //var serializerType = ClientConfiguration.SerializationAdapterType.LoadType(true, false)?.FirstOrDefault();
-            SerializationAdapter = Activator.CreateInstance(serializerType) as ISerializationAdapter;
+            SerializationAdapter = Activator.CreateInstance(serializerType) as IByteArraySerializationAdapter;
             Input = new NetIncomingMessageBusService<NetClient>(Client);
             Output = new NetOutgoingMessageBusService<NetClient>(Client, SerializationAdapter);
             NetworkCommandDataConverterService = new NetworkCommandDataConverterService(SerializationAdapter);
@@ -98,17 +98,25 @@ namespace Apocalypse.Any.Infrastructure.Server.Worker
         }
         private void LoginGate()
         {
-            var message = CreateMessage(NetworkCommandConstants.LoginCommand, ClientConfiguration.User);
+            var message = CreateMessageContent(NetworkCommandConstants.LoginCommand, ClientConfiguration.User);
             if (Client.ConnectionStatus != NetConnectionStatus.Connected)
                 Client.Connect(ClientConfiguration.ServerIp, ClientConfiguration.ServerPort);
             while (NetSendResult.Sent != Client.SendMessage(
-                Client.CreateMessage(message),
+                CreateMessage(Client, message),
                 NetDeliveryMethod.Unreliable))
             {
+
                 Thread.Sleep(500);
             }
+            Console.WriteLine("DataLayerWorker logged in");
         }
-        private string CreateMessage<T>(byte commandName, T instanceToSend)
+        private NetOutgoingMessage CreateMessage(NetPeer netPeer, byte[] content)
+        {
+            var msg = netPeer.CreateMessage();
+                msg.Write(content);
+            return msg;
+        }
+        private byte[] CreateMessageContent<T>(byte commandName, T instanceToSend)
         {
             var content = SerializationAdapter.SerializeObject
                     (
@@ -144,7 +152,7 @@ namespace Apocalypse.Any.Infrastructure.Server.Worker
                             .Where(msg => msg != null && msg.CommandName == NetworkCommandConstants.ReceiveWorkCommand) // why do I receive gamestate data?? => because a player needs to be physically bound to a game .else other mechanics depending on getting the players game state for every registered player will fail.
                             .Select(msg =>
                             {
-                                if (msg.Data == "ww==")
+                                if (msg.Data == null || msg.Data.Length == 0)
                                     return true;
                                 try
                                 {

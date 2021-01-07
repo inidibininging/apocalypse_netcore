@@ -47,7 +47,7 @@ namespace Apocalypse.Any.Client.States
                 return;
 
             machine.SharedContext.PlayerImageId = machine.SharedContext.CurrentGameStateData.Metadata.Id;
-            if (string.IsNullOrWhiteSpace(machine.SharedContext.CurrentGameStateData.Metadata.Data))
+            if (machine.SharedContext.CurrentGameStateData.Metadata.Data == null)
                 return;
 
             //convert to object

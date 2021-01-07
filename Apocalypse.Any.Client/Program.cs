@@ -27,7 +27,7 @@ namespace Apocalypse.Any.Client
             //};
             var yamler = new YamlSerializerAdapter();
             var jsonler = new JsonSerializerAdapter();
-            var msgler = new MsgPackSerializerAdapter();
+            var msgler = new MsgPackByteArraySerializerAdapter();
             //System.IO.File.WriteAllText("startup.yaml",yamler.Serialize(gameClientConfiguration));
             var gameConfig = System.IO.File.ReadAllText(args[0]);
             var gameClientConfiguration = yamler.DeserializeObject<GameClientConfiguration>(gameConfig);

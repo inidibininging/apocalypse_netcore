@@ -11,9 +11,9 @@ namespace Apocalypse.Any.Core.Network.Server.Services
     public class NetworkCommandServerToLoginTokenTranslator : IInputTranslator<NetworkCommandConnection, string>
     {
         private IUserRegistrationService UserRegistration { get; set; }
-        public ISerializationAdapter SerializationAdapter { get; }
+        public IByteArraySerializationAdapter SerializationAdapter { get; }
 
-        public NetworkCommandServerToLoginTokenTranslator(IUserRegistrationService userRegistrationDataLayer, ISerializationAdapter serializationAdapter)
+        public NetworkCommandServerToLoginTokenTranslator(IUserRegistrationService userRegistrationDataLayer, IByteArraySerializationAdapter serializationAdapter)
         {
             if (userRegistrationDataLayer == null)
                 throw new ArgumentNullException(nameof(userRegistrationDataLayer));

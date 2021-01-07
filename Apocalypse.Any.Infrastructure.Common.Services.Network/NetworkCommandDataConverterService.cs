@@ -15,13 +15,12 @@ namespace Apocalypse.Any.Infrastructure.Common.Services.Network
     public class NetworkCommandDataConverterService
     {
         
-        public NetworkCommandDataConverterService(ISerializationAdapter serializationAdapter)
+        public NetworkCommandDataConverterService(IByteArraySerializationAdapter serializationAdapter)
         {
             SerializationAdapter = serializationAdapter ?? throw new ArgumentNullException(nameof(serializationAdapter));
-            var lol = typeof(PlayerMetadataBag).Name;
         }
 
-        public ISerializationAdapter SerializationAdapter { get; }
+        public IByteArraySerializationAdapter SerializationAdapter { get; }
 
         public object ConvertToObject(NetworkCommand command)
         {

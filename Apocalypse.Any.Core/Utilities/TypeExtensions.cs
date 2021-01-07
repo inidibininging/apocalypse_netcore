@@ -26,7 +26,6 @@ namespace Apocalypse.Any.Core.Utilities
             {
                 try
                 {
-                    Console.WriteLine(file);
                     var leAssembly = AssemblyLoadContext.Default.LoadFromAssemblyPath(file);
                     var leSerializerType = leAssembly.GetTypes().Where(t => t.FullName == apocType);
                     var leType = leSerializerType.FirstOrDefault();
@@ -73,7 +72,6 @@ namespace Apocalypse.Any.Core.Utilities
                     
                     if (type != null && !assemblyFullnames.Contains(assembly.FullName))
                     {
-                        Console.WriteLine("TADA!");
                         types.Add(type);
                         assemblyFullnames.Add(assembly.FullName);
                     }

@@ -27,11 +27,11 @@ namespace Apocalypse.Any.Infrastructure.Server.States
         where TWorld : IWorldGameStateDataIOLayer, IWorldGameSectorInputLayer
     {
         private INetworkCommandConnectionToGameStateTranslator CurrentNetworkCommandToUpdateGameState { get; set; }
-        public ISerializationAdapter SerializationAdapter { get; }
+        public IByteArraySerializationAdapter SerializationAdapter { get; }
 
         public UpdateDeltaNetworkGameState(
-            INetworkCommandConnectionToGameStateTranslator networkCommandToUpdateGameState, 
-            ISerializationAdapter serializationAdapter,
+            INetworkCommandConnectionToGameStateTranslator networkCommandToUpdateGameState,
+            IByteArraySerializationAdapter serializationAdapter,
             IDeltaGameStateDataService deltaGameStateDataService)
         {
             CurrentNetworkCommandToUpdateGameState = networkCommandToUpdateGameState ?? throw new ArgumentNullException(nameof(networkCommandToUpdateGameState)); ;

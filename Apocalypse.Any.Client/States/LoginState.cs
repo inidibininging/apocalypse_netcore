@@ -19,10 +19,10 @@ namespace Apocalypse.Any.Client.States
         private UserData PlayerData { get; set; }
         private string ServerIp { get; set; } = "127.0.0.1";
         private int ServerPort { get; set; } = 8080;
-        public ISerializationAdapter SerializationAdapter { get; }
+        public IByteArraySerializationAdapter SerializationAdapter { get; }
         public int SecondsToNextLoginTry { get; private set; } = 1;
 
-        public LoginState(UserData playerData, string ip, int port, ISerializationAdapter serializationAdapter)
+        public LoginState(UserData playerData, string ip, int port, IByteArraySerializationAdapter serializationAdapter)
         {
             if (string.IsNullOrEmpty(ip))
             {
@@ -35,7 +35,7 @@ namespace Apocalypse.Any.Client.States
             SerializationAdapter = serializationAdapter ?? throw new ArgumentNullException(nameof(serializationAdapter));
         }
 
-        private string CreateMessage<T>(byte commandName, T instanceToSend)
+        private byte[] CreateMessage<T>(byte commandName, T instanceToSend)
         {
             var content = SerializationAdapter.SerializeObject
                     (
@@ -63,7 +63,8 @@ namespace Apocalypse.Any.Client.States
             {
                 machine.SharedContext.Messages.Add($"Sending.Try Nr:{machine.SharedContext.LoginTries}");
                 var user = CreateMessage(NetworkCommandConstants.LoginCommand, machine.SharedContext.Configuration.User);
-                var outgoingMessage = machine.SharedContext.Client.CreateMessage(user);
+                var outgoingMessage = machine.SharedContext.Client.CreateMessage();
+                outgoingMessage.Write(user);
                 machine.SharedContext.LoginSendResult = machine.SharedContext.Client.SendMessage(outgoingMessage, NetDeliveryMethod.Unreliable);
 
                 machine.SharedContext.Messages.Add($"Wait {SecondsToNextLoginTry} seconds...");

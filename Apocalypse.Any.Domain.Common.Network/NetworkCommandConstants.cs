@@ -10,8 +10,9 @@
         public const int LoginCommand = 1;
         public const int UpdateCommand = 2;
         public const int UpdateCommandDelta = 3;
-        public const int ReceiveWorkCommand = 4;
-        public const int ExeceuteCommand = 5;
-        public const int GetGameStateByLoginToken = 6;
+        public const int UpdateCommandSpecific = 4;
+        public const int ReceiveWorkCommand = 5;
+        public const int ExeceuteCommand = 6;
+        public const int GetGameStateByLoginToken = 7;
     }
 }

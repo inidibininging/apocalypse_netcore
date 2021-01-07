@@ -20,7 +20,7 @@ namespace Apocalypse.Any.GameServer.Services
         private ConcurrentDictionary<byte, INetworkLayerState<TWorld>> InternalGameStates { get; set; } = new ConcurrentDictionary<byte, INetworkLayerState<TWorld>>();
 
         public TWorld WorldGameStateDataLayer { get; private set; }
-        public ISerializationAdapter SerializationAdapter { get; }
+        public IByteArraySerializationAdapter SerializationAdapter { get; }
         public IUserLoginService LoginService { get; private set; }
         public IUserDataRoleService RoleService { get; private set; }
 
@@ -28,7 +28,7 @@ namespace Apocalypse.Any.GameServer.Services
             IUserLoginService loginService,
             IUserDataRoleService roleService,
             TWorld gameStateDataLayer,
-            ISerializationAdapter serializationAdapter)
+            IByteArraySerializationAdapter serializationAdapter)
         {
             LoginService = loginService ?? throw new ArgumentNullException(nameof(loginService));
             RoleService = roleService ?? throw new ArgumentNullException(nameof(roleService));

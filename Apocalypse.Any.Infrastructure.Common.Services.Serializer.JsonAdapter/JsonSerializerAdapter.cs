@@ -4,7 +4,7 @@ using System;
 
 namespace Apocalypse.Any.Infrastructure.Common.Services.Serializer.JsonAdapter
 {
-    public class JsonSerializerAdapter : ISerializationAdapter
+    public class JsonSerializerAdapter : IStringSerializationAdapter
     {
 
         public T DeserializeObject<T>(string content)
