@@ -12,6 +12,6 @@ ServerPort: 8080
 ServerUpdateInSeconds: 0.0009999997764825821
 StartingSector: 1
 StartupFunction: Main
-StartupScript: 'C:/src/apocalypse_netcore/apocalypse.echse'
+StartupScript: '/home/develop/src/apocalypse_netcore/apocalypse.echse'
 SectorXSize: 32000
 SectorYSize: 32000

@@ -30,11 +30,9 @@ namespace Apocalypse.Any.Infrastructure.Common.Services.Network
 
         public IList<NetIncomingMessage> FetchMessageChunk()
         {
-            IList<NetIncomingMessage> fetchedMessages = new List<NetIncomingMessage>();
+            List<NetIncomingMessage> fetchedMessages = new List<NetIncomingMessage>();
             var fetchMessageResult = Peer.ReadMessages(fetchedMessages);
-            foreach (var msg in fetchedMessages)
-                Console.WriteLine(msg.LengthBytes);
-            return fetchedMessages.ToList();
+            return fetchedMessages;
         }
     }
 }

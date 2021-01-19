@@ -53,13 +53,13 @@ namespace Apocalypse.Any.GameServer.Delegator.Delegation
             if (currentMessage.MessageType != NetIncomingMessageType.Data)
                 return null;
 
-            byte[] package;
+            byte[] package = null;
             var packageLength = currentMessage.LengthBytes;
             try
             {
                 package = currentMessage.ReadBytes(packageLength);
 
-                if (!string.IsNullOrWhiteSpace(package))
+                if (package.Length != 0)
                 {
                     if (Messages.Count > 64)
                     {
@@ -99,7 +99,7 @@ namespace Apocalypse.Any.GameServer.Delegator.Delegation
                                         LoginToken = Token,
                                         Commands = new List<string>()
                                     }),
-                                NetDeliveryMethod.UnreliableSequenced);
+                                NetDeliveryMethod.ReliableOrdered);
 
             return package;
         }
@@ -129,7 +129,7 @@ namespace Apocalypse.Any.GameServer.Delegator.Delegation
                     (
                         CreateMessage(NetworkCommandConstants.LoginCommand,
                                         userData),
-                                        NetDeliveryMethod.Unreliable
+                                        NetDeliveryMethod.ReliableOrdered
                     );
 
                 Console.WriteLine($"Wait {secondsLoginTry} seconds...");

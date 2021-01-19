@@ -56,7 +56,7 @@ namespace Apocalypse.Any.Infrastructure.Server.States
             (
                 NetworkCommandConstants.UpdateCommand,
                 serverGameState,
-                Lidgren.Network.NetDeliveryMethod.UnreliableSequenced,
+                Lidgren.Network.NetDeliveryMethod.ReliableOrdered,
                 0,
                 networkCommandConnection.Connection
             );

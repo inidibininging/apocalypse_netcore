@@ -103,7 +103,7 @@ namespace Apocalypse.Any.Infrastructure.Server.Worker
                 Client.Connect(ClientConfiguration.ServerIp, ClientConfiguration.ServerPort);
             while (NetSendResult.Sent != Client.SendMessage(
                 CreateMessage(Client, message),
-                NetDeliveryMethod.Unreliable))
+                NetDeliveryMethod.ReliableOrdered))
             {
 
                 Thread.Sleep(500);

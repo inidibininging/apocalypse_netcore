@@ -36,7 +36,7 @@ namespace Apocalypse.Any.GameServer.Delegator.Delegation
             }
         }
 
-        public IStringSerializationAdapter SerializationAdapter { get; }
+        public IByteArraySerializationAdapter SerializationAdapter { get; }
 
         private CentralDelegationService(
             string peername,
@@ -44,14 +44,14 @@ namespace Apocalypse.Any.GameServer.Delegator.Delegation
             int port,
             string username,
             string password,
-            IStringSerializationAdapter serializationAdapter)
+            IByteArraySerializationAdapter serializationAdapter)
         {
             SerializationAdapter = serializationAdapter ?? throw new ArgumentNullException(nameof(serializationAdapter));
             DelegationService = new UserDataDelegationService(serializationAdapter);
             DelegationService.TryLogin(peername, ip, port, username, password);
         }
 
-        public string Feed()
+        public byte[] Feed()
         {
             return DelegationService.Feed();
         }

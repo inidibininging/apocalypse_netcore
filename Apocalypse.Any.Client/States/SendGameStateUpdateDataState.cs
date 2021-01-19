@@ -113,7 +113,7 @@ namespace Apocalypse.Any.Client.States
                                                     ScreenHeight = (int)MathF.Round(ScreenService.Instance.Resolution.Y)
                                                 }
                                             }),
-                                        NetDeliveryMethod.UnreliableSequenced);
+                                        NetDeliveryMethod.ReliableOrdered);
                 if (sendResult == NetSendResult.FailedNotConnected)
                     machine.GetService.Get(ClientGameScreenBook.Connect).Handle(machine);
             }

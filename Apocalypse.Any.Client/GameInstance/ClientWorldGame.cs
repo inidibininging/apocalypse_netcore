@@ -84,7 +84,7 @@ namespace Apocalypse.Any.Client.GameInstance
                     (
                         CreateMessage(NetworkCommandConstants.LoginCommand,
                                         serializedUsr),
-                                        NetDeliveryMethod.Unreliable
+                                        NetDeliveryMethod.ReliableOrdered
                     );
 
                 Messages.Add($"Wait {SecondsToNextLoginTry} seconds...");
