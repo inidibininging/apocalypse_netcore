@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -19,22 +20,30 @@ namespace Apocalypse.Any.Core.Utilities
             return LoadType(typeName, referenced, true);
         }
 
-        public static Type GetApocalypseTypes(this string apocType)
+
+        private static ConcurrentBag<Type> CachedApocalypseTypes = new ConcurrentBag<Type>();
+        public static Type GetApocalypseTypes(this string apocType, string directory)
         {
+            var foundCachedType = CachedApocalypseTypes.FirstOrDefault(t => t.FullName == apocType);
+
+            if (foundCachedType != null)
+                return foundCachedType;
+            
             string baseNameSpace = "Apocalypse.Any.*.dll";
-            foreach (var file in Directory.EnumerateFiles(Directory.GetCurrentDirectory(), baseNameSpace, SearchOption.TopDirectoryOnly))
+            foreach (var file in Directory.EnumerateFiles(directory, baseNameSpace, SearchOption.TopDirectoryOnly))
             {
                 try
                 {
-                    var leAssembly = AssemblyLoadContext.Default.LoadFromAssemblyPath(file);
-                    var leSerializerType = leAssembly.GetTypes().Where(t => t.FullName == apocType);
-                    var leType = leSerializerType.FirstOrDefault();
-                    if (leType != null)
-                        return leType;
+                    var loadedAssembly = AssemblyLoadContext.Default.LoadFromAssemblyPath(file);
+                    var foundLoadedType = loadedAssembly.GetTypes().FirstOrDefault(t => t.FullName == apocType);
+                    if (foundLoadedType != null)
+                    {
+                        CachedApocalypseTypes.Add(foundLoadedType);
+                        return foundLoadedType;
+                    }
                 }
                 catch (Exception ex)
                 {
-
                     Console.WriteLine(ex);
                 }
             }
@@ -50,10 +59,27 @@ namespace Apocalypse.Any.Core.Utilities
         /// <returns></returns>
         public static Type[] LoadType(this string typeName, bool referenced, bool gac)
         {
-
+            
             //check for problematic work
             if (string.IsNullOrEmpty(typeName) || !referenced && !gac)
-                return new Type[] { typeName.GetApocalypseTypes() };
+            {
+                var directoryPathOfExecution = Directory.GetCurrentDirectory();
+                var directoryPathOfDll = Assembly.GetExecutingAssembly().CodeBase;
+
+                
+                if (directoryPathOfDll.StartsWith("file:"))
+                    directoryPathOfDll = Path.GetDirectoryName(string.Join("",directoryPathOfDll.Skip("file:".Length)));
+                
+                var directoryPathOfExecutionType = typeName.GetApocalypseTypes(directoryPathOfExecution);
+                if (directoryPathOfExecutionType != null)
+                    return new[] { directoryPathOfExecutionType };
+
+                var directoryPathOfDllType = typeName.GetApocalypseTypes(directoryPathOfDll);
+                if (directoryPathOfDllType != null)
+                    return new[] { directoryPathOfDllType };
+
+                return null;
+            }
 
             Assembly currentAssembly = Assembly.GetCallingAssembly();
             

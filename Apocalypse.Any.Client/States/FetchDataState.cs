@@ -87,8 +87,8 @@ namespace Apocalypse.Any.Client.States
                     }
                 }
 
-                try
-                {
+                // try
+                // {
                     if (machine.SharedContext.CurrentNetworkCommand.CommandName == NetworkCommandConstants.UpdateCommand)
                     {
                         var a = DateTime.Now;
@@ -113,12 +113,12 @@ namespace Apocalypse.Any.Client.States
                         machine.SharedContext.Messages.Add("Added LoginToken");
                     }
 
-                }
-                catch (Exception ex)
-                {
-                    machine.SharedContext.CurrentGameStateData = null;
-                    machine.SharedContext.Messages.Add(ex.Message);
-                }
+                // }
+                // catch (Exception ex)
+                // {
+                //     machine.SharedContext.CurrentGameStateData = null;
+                //     machine.SharedContext.Messages.Add(ex.Message);
+                // }
             }
            
         }

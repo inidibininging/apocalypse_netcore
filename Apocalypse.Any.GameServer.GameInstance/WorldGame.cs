@@ -101,8 +101,11 @@ namespace Apocalypse.Any.GameServer.GameInstance
         )
         {
             Configuration = configuration;
-            var leSerializationType = configuration.SerializationAdapterType.LoadType(false, false)[0];
-            SerializationAdapter = Activator.CreateInstance(leSerializationType) as IByteArraySerializationAdapter;
+            var leSerializationType = configuration.SerializationAdapterType.LoadType(false, false);
+            if (leSerializationType == null || leSerializationType.Length == 0)
+                throw new Exception("Serializer cannot be loaded");
+            
+            SerializationAdapter = Activator.CreateInstance(leSerializationType.First()) as IByteArraySerializationAdapter;
             GameSectorLayerServices = new Dictionary<int, IStateMachine<string, IGameSectorLayerService>>();
             SectorStateMachine = new InMemoryStorageGameSectorLayerServiceFactory();
             AuthenticationService = new ExampleLoginAndRegistrationService();

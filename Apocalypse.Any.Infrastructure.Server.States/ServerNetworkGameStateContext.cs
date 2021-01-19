@@ -80,8 +80,8 @@ namespace Apocalypse.Any.Infrastructure.Server.States
             .ToList()
             .ForEach(message =>
             {
-                // Task.Factory.StartNew(() =>
-                // {
+                Task.Factory.StartNew(() =>
+                {
                     //Important note: The server will try to establish a connection externally. If the connection doesnt work it depends on a fail net connection.
                     //For example: I had huge problems connecting after recognizing that the client and server didnt connect cuz my wifi was broken. -.-
                     if (message.MessageType == NetIncomingMessageType.Data)
@@ -89,13 +89,13 @@ namespace Apocalypse.Any.Infrastructure.Server.States
                         var networkCommandConnection = CurrentNetworkCommandServerTranslator.Translate(message);
                         this[networkCommandConnection.Connection.RemoteUniqueIdentifier].Handle(this, networkCommandConnection);
                     }
-                // });
+                });
             });
         }
 
         public void ChangeHandlerEasier(INetworkLayerState<TWorld> gameState, NetworkCommandConnection networkCommandConnection)
         {
-            Logger.LogDebug(networkCommandConnection.CommandName.ToString());
+            // Logger.LogDebug(networkCommandConnection.CommandName.ToString());
             this[networkCommandConnection.Connection.RemoteUniqueIdentifier] = gameState;
         }
 

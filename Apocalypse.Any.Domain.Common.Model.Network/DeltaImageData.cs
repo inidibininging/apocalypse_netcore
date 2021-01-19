@@ -35,24 +35,26 @@ namespace Apocalypse.Any.Domain.Common.Model.Network
                 // Height = deltaImageData.Height.Value,
                 Alpha = new Core.Behaviour.AlphaBehaviour()
                 {
-                    Alpha = deltaImageData.Alpha.Value
+                    Alpha = deltaImageData.Alpha.GetValueOrDefault(0)
                 },
                 Color = new Microsoft.Xna.Framework.Color(
-                        deltaImageData.R.Value,
-                        deltaImageData.G.Value,
-                        deltaImageData.B.Value
+                        deltaImageData.R.GetValueOrDefault(0),
+                        deltaImageData.G.GetValueOrDefault(0),
+                        deltaImageData.B.GetValueOrDefault(0)
                     ),
-                LayerDepth = deltaImageData.LayerDepth.Value,
+                LayerDepth = deltaImageData.LayerDepth.GetValueOrDefault(0),
                 Position = new Core.Behaviour.MovementBehaviour()
                 {
-                    X = deltaImageData.X.Value,
-                    Y = deltaImageData.Y.Value
+                    X = deltaImageData.X.GetValueOrDefault(0),
+                    Y = deltaImageData.Y.GetValueOrDefault(0)
                 },
                 Rotation = new Core.Behaviour.RotationBehaviour()
                 {
-                    Rotation = deltaImageData.Rotation.Value
+                    Rotation = deltaImageData.Rotation.GetValueOrDefault(0)
                 },
-                Scale = new Microsoft.Xna.Framework.Vector2(deltaImageData.ScaleX.Value, deltaImageData.ScaleY.Value)
+                Scale = new Microsoft.Xna.Framework.Vector2(
+                    deltaImageData.ScaleX.GetValueOrDefault(0), 
+                    deltaImageData.ScaleY.GetValueOrDefault(0))
             };
         }
     }

@@ -393,7 +393,7 @@ namespace Apocalypse.Any.GameServer.States.Sector.Storage
                     nameof(RemoveImagesMechanicsState),
                     nameof(RemoveDeadEnemiesMechanicsState),
                     "ConsumeItemExperienceState",
-                    nameof(SectorCsvLoggerState)
+                    // nameof(SectorCsvLoggerState)
                  }
             });
 
