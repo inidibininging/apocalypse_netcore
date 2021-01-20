@@ -94,7 +94,7 @@ namespace Apocalypse.Any.Infrastructure.Common.Services.Network.Interfaces.Data
                 cache.Images = gameStateData.Images;
                 cache.Metadata = gameStateData.Metadata;                
                 cache.Screen = gameStateData.Screen;
-                cache.Sounds = gameStateData.Sounds;
+                // cache.Sounds = gameStateData.Sounds;
                 return true;
             });
         }

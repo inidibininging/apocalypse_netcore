@@ -32,6 +32,7 @@
         public const string CloseInventory = "+close_inventory";
         public const string Use = "+use";
         public const string Release = "+release";
+        public const string Press = "+press";
         public const string InventoryLeft = "+inventory_left";
         public const string InventoryRight = "+inventory_right";
 
