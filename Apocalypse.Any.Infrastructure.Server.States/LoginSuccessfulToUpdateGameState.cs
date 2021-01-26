@@ -37,32 +37,20 @@ namespace Apocalypse.Any.Infrastructure.Server.States
         public void Handle(INetworkStateContext<TWorld> gameStateContext, NetworkCommandConnection networkCommandConnectionToHandle)
         {
             if (!HasValidGameState(networkCommandConnectionToHandle))
-                gameStateContext.GameStateRegistrar.GetNeworkLayerState((byte)ServerInternalGameStates.Error);
+                gameStateContext.GameStateRegistrar.GetNetworkLayerState((byte)ServerInternalGameStates.Error);
 
             var typeToProofAgainst = typeof(UserData).FullName;
             if (networkCommandConnectionToHandle.CommandArgument != typeToProofAgainst)
             {
                 Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine($"Cannot transition user to update state. Command argument is not of type user data. Type is {networkCommandConnectionToHandle.CommandArgument}");
-                var errorHandler = gameStateContext.GameStateRegistrar.GetNeworkLayerState((byte)ServerInternalGameStates.Error);
-                gameStateContext.ChangeHandlerEasier(gameStateContext.GameStateRegistrar.GetNeworkLayerState((byte)ServerInternalGameStates.Error), networkCommandConnectionToHandle);
-               
+                var errorHandler = gameStateContext.GameStateRegistrar.GetNetworkLayerState((byte)ServerInternalGameStates.Error);
+                gameStateContext.ChangeHandlerEasier(gameStateContext.GameStateRegistrar.GetNetworkLayerState((byte)ServerInternalGameStates.Error), networkCommandConnectionToHandle);
             }
             else
             {
-                var userRoleGateway = gameStateContext.GameStateRegistrar.GetNeworkLayerState((byte)ServerInternalGameStates.UserRoleGateWay);
+                var userRoleGateway = gameStateContext.GameStateRegistrar.GetNetworkLayerState((byte)ServerInternalGameStates.UserRoleGateWay);
                 gameStateContext.ChangeHandlerEasier(userRoleGateway, networkCommandConnectionToHandle);
-                
-
-                //Console.WriteLine("Transitioning user to update or else");
-                //var gameStateData = CurrentNetworkCommandToUpdateGameState.Translate(networkCommandConnectionToHandle);
-                //gameStateContext.CurrentNetOutgoingMessageBusService.SendToClient
-                //(
-                //    NetworkCommandConstants.UpdateCommand,
-                //    gameStateData,
-                //    networkCommandConnectionToHandle.Connection
-                //);
-                //gameStateContext.ChangeHandlerEasier(gameStateContext.GameStateRegistrar.GetNeworkLayerState((byte)ServerInternalGameStates.Update), networkCommandConnectionToHandle);
             }
             gameStateContext[networkCommandConnectionToHandle.ConnectionId].Handle(gameStateContext, networkCommandConnectionToHandle);
         }

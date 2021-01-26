@@ -100,7 +100,7 @@ namespace Apocalypse.Any.Client
 #endif
             //Duh?.Update(gameTime);
             ScreenService.Instance.Update(gameTime);
-
+            
             GameContext.GetService.Get(ClientGameScreenBook.Update).Handle(GameContext);
             GameContext.SharedContext.Messages.Clear();
             base.Update(gameTime);

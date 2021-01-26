@@ -250,6 +250,7 @@ namespace Apocalypse.Any.GameServer.States.Sector.Storage
             inMemoryStorage.Add(nameof(ProcessInventoryLeftState), new ProcessInventoryLeftState());
             inMemoryStorage.Add(nameof(ProcessInventoryRightState), new ProcessInventoryRightState());
             inMemoryStorage.Add(nameof(ProcessReleaseStatState), new ProcessReleaseStatState());
+            inMemoryStorage.Add(nameof(ProcessPressReleaseState), new ProcessPressReleaseState());
             inMemoryStorage.Add(nameof(ProcessDeadPlayer), new ProcessDeadPlayer());
 
             inMemoryStorage.Add(nameof(RemoveImagesMechanicsState), new RemoveImagesMechanicsState());
@@ -363,7 +364,8 @@ namespace Apocalypse.Any.GameServer.States.Sector.Storage
                     nameof(ProcessRotationMapsForPlayerMechanicsState),
                     nameof(ProcessShootingForPlayerMechanicsState),
                     nameof(ProcessThrustForPlayerMechanicsState),
-
+                    nameof(ProcessPressReleaseState),
+                    
                     //projectiles
                     nameof(UpdateProjectileMechanicsState),
                     nameof(RemoveDestroyedProjectilesState),
@@ -375,7 +377,7 @@ namespace Apocalypse.Any.GameServer.States.Sector.Storage
                     nameof(ProcessUseInventoryForPlayerState),
                     nameof(ProcessCollisionMechanicState),
                     nameof(ProcessPlayerChooseStatState),
-
+                    
                     //dialog related states
                     nameof(CreateOrUpdateIdentifiableCircularLocationState),
                     nameof(CreateOrUpdateItemDialogRelationsState),

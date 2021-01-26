@@ -17,7 +17,7 @@ namespace Apocalypse.Any.Infrastructure.Server.States
                 networkCommandConnectionToHandle.CommandArgument = typeof(GameStateUpdateData).FullName;
                 gameStateContext
                     .GameStateRegistrar
-                    .GetNeworkLayerState((byte)ServerInternalGameStates.Update)
+                    .GetNetworkLayerState((byte)ServerInternalGameStates.Update)
                     .Handle(gameStateContext, networkCommandConnectionToHandle);
             }
         }

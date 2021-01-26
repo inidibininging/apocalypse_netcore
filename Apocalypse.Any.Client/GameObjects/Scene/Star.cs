@@ -79,7 +79,7 @@ namespace Apocalypse.Any.Client.GameObjects.Scene
             };
             var randomValue = Randomness.Instance.From(0, randomMap.Count - 1);
             InputMapper
-                .DefaultMap
+                .DefaultMovementMap
                 .Select(cmdTrans => cmdTrans.Translate(randomMap[randomValue]))
                 .Where(cmdTrans => cmdTrans != null)
                 .ToList()

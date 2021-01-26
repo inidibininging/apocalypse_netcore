@@ -36,7 +36,7 @@ namespace Apocalypse.Any.Infrastructure.Server.States
                 gameStateContext.CurrentNetOutgoingMessageBusService.SendToClient(NetworkCommandConstants.UpdateCommand, gameStateData, Lidgren.Network.NetDeliveryMethod.ReliableOrdered, 0, networkCommandConnectionToHandle.Connection);
 
                 gameStateContext.Logger.Log(LogLevel.Information, "LoginSuccessful");
-                gameStateContext.ChangeHandlerEasier(gameStateContext.GameStateRegistrar.GetNeworkLayerState((byte)ServerInternalGameStates.LoginSuccessful), networkCommandConnectionToHandle);
+                gameStateContext.ChangeHandlerEasier(gameStateContext.GameStateRegistrar.GetNetworkLayerState((byte)ServerInternalGameStates.LoginSuccessful), networkCommandConnectionToHandle);
             }
             catch (System.Exception ex)
             {

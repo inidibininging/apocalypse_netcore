@@ -34,7 +34,6 @@ namespace Apocalypse.Any.Infrastructure.Common.Services.Network
         {
             if (netDeliveryMethod == 0)
                 netDeliveryMethod = NetDeliveryMethod.ReliableOrdered;
-            Console.WriteLine(commandName);
             return netConnection.SendMessage(
                     CreateMessage(
                         new NetworkCommand()

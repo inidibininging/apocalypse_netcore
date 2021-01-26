@@ -28,8 +28,8 @@ namespace Apocalypse.Any.Infrastructure.Server.States
                 return;
             try
             {
-                var gData = CurrentNetworkCommandToInitialGameState.Translate(networkCommandConnection);
-                if (!HasValidGameStateData(gData))
+                var gameStateData = CurrentNetworkCommandToInitialGameState.Translate(networkCommandConnection);
+                if (!HasValidGameStateData(gameStateData))
                 {
                     gameStateContext.ChangeHandlerEasier(gameStateContext[(byte)ServerInternalGameStates.Login], networkCommandConnection);
                 }

@@ -53,6 +53,9 @@
         UserRoleGateWay = 9,
         UpdateDelta = 10,
 
-
+        /// <summary>
+        /// Sends the player keys 
+        /// </summary>
+        SendPressedRelease = 11
     };
 }

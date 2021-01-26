@@ -6,8 +6,8 @@ namespace Apocalypse.Any.Infrastructure.Common.Services.Network.Interfaces
 {
     public interface INetIncomingMessageBusService
     {
-        IList<NetIncomingMessage> FetchMessageChunk();
+        List<NetIncomingMessage> FetchMessageChunk();
 
-        Task<IList<NetIncomingMessage>> FetchMessageChunkAsync();
+        Task<List<NetIncomingMessage>> FetchMessageChunkAsync();
     }
 }

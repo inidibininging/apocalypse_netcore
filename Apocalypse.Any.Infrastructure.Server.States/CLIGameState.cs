@@ -35,14 +35,14 @@ namespace Apocalypse.Any.Infrastructure.Server.States
                 //check permissions
                 if (!userData.Roles.HasFlag(UserDataRole.CanSendRemoteStateCommands))
                 {
-                    gameStateContext.ChangeHandlerEasier(gameStateContext.GameStateRegistrar.GetNeworkLayerState((byte)ServerInternalGameStates.Error), networkCommandConnectionToHandle);
+                    gameStateContext.ChangeHandlerEasier(gameStateContext.GameStateRegistrar.GetNetworkLayerState((byte)ServerInternalGameStates.Error), networkCommandConnectionToHandle);
                     return;
                 }
                 if (!CachedAuthorizedUsers.TryAdd(networkCommandConnectionToHandle.ConnectionId, userData))
                 {
                     Console.ForegroundColor = ConsoleColor.Red;
                     Console.WriteLine("Whoops! Could not add user to cached authorized users");
-                    gameStateContext.ChangeHandlerEasier(gameStateContext.GameStateRegistrar.GetNeworkLayerState((byte)ServerInternalGameStates.Error), networkCommandConnectionToHandle);
+                    gameStateContext.ChangeHandlerEasier(gameStateContext.GameStateRegistrar.GetNetworkLayerState((byte)ServerInternalGameStates.Error), networkCommandConnectionToHandle);
                     return;
                 }
 
@@ -57,7 +57,7 @@ namespace Apocalypse.Any.Infrastructure.Server.States
             else
             {
                 //this is only triggered if the user has been registered as a CLI user
-                gameStateContext.GameStateRegistrar.GetNeworkLayerState((byte)ServerInternalGameStates.CLIPassthrough).Handle(gameStateContext, networkCommandConnectionToHandle);
+                gameStateContext.GameStateRegistrar.GetNetworkLayerState((byte)ServerInternalGameStates.CLIPassthrough).Handle(gameStateContext, networkCommandConnectionToHandle);
             }
         }
 

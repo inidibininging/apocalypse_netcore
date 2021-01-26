@@ -23,6 +23,7 @@ namespace Apocalypse.Any.Infrastructure.Server.States
         {
             { UserDataRole.CanReceiveWork, (byte)ServerInternalGameStates.ReceiveWork },
             { UserDataRole.CanSendRemoteStateCommands, (byte)ServerInternalGameStates.CLIPassthrough },
+            { UserDataRole.CanSendRemoteMovementCommands, (byte)ServerInternalGameStates.SendPressedRelease },
             { UserDataRole.CanViewWorldByLoginToken, (byte)ServerInternalGameStates.Update },
         };
 
@@ -38,7 +39,7 @@ namespace Apocalypse.Any.Infrastructure.Server.States
             //Now we look what the roles are and deliver answers
             if (networkCommandConnectionToHandle.CommandArgument != typeToProofAgainst)
             {
-                ThrowError(gameStateContext, networkCommandConnectionToHandle); 
+                ThrowError(gameStateContext, networkCommandConnectionToHandle);
             }
 
             var convertedInstance = NetworkCommandDataConverterService.ConvertToObject(networkCommandConnectionToHandle);
@@ -50,14 +51,17 @@ namespace Apocalypse.Any.Infrastructure.Server.States
             //Actual router. Only one state will fire. See that the order of the entries in Router also provides the priority. 
             //TODO: this should be a feature/library in the future
             var userRoles = UserDataRoleService.GetRoles(convertedInstance as UserData);
-            var userRolesHandler = gameStateContext.GameStateRegistrar.GetNeworkLayerState((byte)Routes.FirstOrDefault(kv => userRoles.HasFlag(kv.Key)).Value);
+            var userRolesHandler = gameStateContext.GameStateRegistrar.GetNetworkLayerState((byte)Routes.FirstOrDefault(kv => userRoles.HasFlag(kv.Key)).Value);
+            
+            gameStateContext.Logger.Log(LogLevel.Information, $"{nameof(UserRoleGateWayNetworkGameState<TWorld>)} performing ChangeHandlerEasier");
             gameStateContext.ChangeHandlerEasier(userRolesHandler, networkCommandConnectionToHandle);
+            
             userRolesHandler.Handle(gameStateContext, networkCommandConnectionToHandle);
         }
         private void ThrowError(INetworkStateContext<TWorld> gameStateContext, NetworkCommandConnection networkCommandConnectionToHandle)
         {
             gameStateContext.Logger.Log(LogLevel.Error, $"Cannot transition user to update state. Command argument is not of type user data. Type is {networkCommandConnectionToHandle.CommandArgument}");
-            gameStateContext.ChangeHandlerEasier(gameStateContext.GameStateRegistrar.GetNeworkLayerState((byte)ServerInternalGameStates.Error), networkCommandConnectionToHandle);
+            gameStateContext.ChangeHandlerEasier(gameStateContext.GameStateRegistrar.GetNetworkLayerState((byte)ServerInternalGameStates.Error), networkCommandConnectionToHandle);
         }
     }
 }

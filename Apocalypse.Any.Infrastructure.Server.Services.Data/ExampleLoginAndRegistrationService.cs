@@ -46,11 +46,18 @@ namespace Apocalypse.Any.Infrastructure.Common.Services.Network.Interfaces.Data
             },
             new UserDataWithLoginToken(){
                 Roles = UserDataRole.CanViewWorldByLoginToken | 
-                        UserDataRole.CanReceiveWork,
+                        UserDataRole.CanReceiveWork ,
                 Username = "foo3",
                 Password = "5994471ABB01112AFCC18159F6CC74B4F511B99806DA59B3CAF5A9C173CACFC5",
                 NewInGame = true // password is "12345" unhashed
+            },
+            new UserDataWithLoginToken(){
+                Roles = UserDataRole.CanSendRemoteMovementCommands,
+                        Username = "movement_test",
+                Password = "5994471ABB01112AFCC18159F6CC74B4F511B99806DA59B3CAF5A9C173CACFC5",
+                NewInGame = true // password is "12345" unhashed
             }
+            
         };
 
         private ExampleLoginTokenGeneratorService LoginTokenGeneratorService { get; } = new ExampleLoginTokenGeneratorService();

@@ -6,6 +6,7 @@ using Apocalypse.Any.Infrastructure.Server.Services.Data.Interfaces;
 using Apocalypse.Any.Infrastructure.Server.States.Interfaces;
 using Newtonsoft.Json;
 using System;
+using Microsoft.Extensions.Logging;
 
 namespace Apocalypse.Any.Infrastructure.Server.States
 {
@@ -17,9 +18,7 @@ namespace Apocalypse.Any.Infrastructure.Server.States
 
         public UpdateNetworkGameState(INetworkCommandConnectionToGameStateTranslator networkCommandToUpdateGameState, IByteArraySerializationAdapter serializationAdapter)
         {
-            if (networkCommandToUpdateGameState == null)
-                throw new ArgumentNullException(nameof(networkCommandToUpdateGameState));
-            CurrentNetworkCommandToUpdateGameState = networkCommandToUpdateGameState;
+            CurrentNetworkCommandToUpdateGameState = networkCommandToUpdateGameState ?? throw new ArgumentNullException(nameof(networkCommandToUpdateGameState));
             SerializationAdapter = serializationAdapter ?? throw new ArgumentNullException(nameof(serializationAdapter));
         }
 
@@ -43,13 +42,15 @@ namespace Apocalypse.Any.Infrastructure.Server.States
             var gameStateUpdateDataTypeFull = typeof(GameStateUpdateData).FullName;
             if (typeArgumentAsString != gameStateUpdateDataTypeFull) return;
             
-            Console.WriteLine($"FULL IN {nameof(UpdateNetworkGameState<TWorld>)} ");
+            gameStateContext.Logger.Log(LogLevel.Information, $"{nameof(UpdateNetworkGameState<TWorld>)} Deserializing client data as GameStateUpdateData");
             var clientData = SerializationAdapter.DeserializeObject<GameStateUpdateData>(networkCommandConnection.Data);
 
+            gameStateContext.Logger.Log(LogLevel.Information, $"{nameof(UpdateNetworkGameState<TWorld>)} Sending client data to client");
             gameStateContext.GameStateRegistrar.WorldGameStateDataLayer.ForwardClientDataToGame(clientData);
 
             var serverGameState = gameStateContext.GameStateRegistrar.WorldGameStateDataLayer.GetGameStateByLoginToken(clientData.LoginToken);
                 
+            gameStateContext.Logger.Log(LogLevel.Information, $"{nameof(UpdateNetworkGameState<TWorld>)} Switching to ServerInternalGameStates.UpdateDelta");
             gameStateContext.ChangeHandlerEasier(gameStateContext[(byte)ServerInternalGameStates.UpdateDelta], networkCommandConnection);
 
             gameStateContext.CurrentNetOutgoingMessageBusService.SendToClient

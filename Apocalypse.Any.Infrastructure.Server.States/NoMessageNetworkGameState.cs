@@ -11,7 +11,7 @@ namespace Apocalypse.Any.Infrastructure.Server.States
         {
             if (networkCommandConnection == null)
                 return;
-            gameStatecontext.ChangeHandlerEasier(gameStatecontext.GameStateRegistrar.GetNeworkLayerState((byte)ServerInternalGameStates.Login), networkCommandConnection); //where to?
+            gameStatecontext.ChangeHandlerEasier(gameStatecontext.GameStateRegistrar.GetNetworkLayerState((byte)ServerInternalGameStates.Login), networkCommandConnection); //where to?
             gameStatecontext[networkCommandConnection.ConnectionId].Handle(gameStatecontext, networkCommandConnection);
         }
     }

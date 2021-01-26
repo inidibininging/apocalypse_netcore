@@ -43,9 +43,9 @@ namespace Apocalypse.Any.Infrastructure.Common.Services.Serializer.MsgPackAdapte
 
         public byte[] SerializeObject<T>(T instance)
         {
-            var context = new SerializationContext { SerializationMethod = SerializationMethod.Map };
-            context.DictionarySerlaizationOptions.OmitNullEntry = true;
-            var serializer = SerializationContext.Default.GetSerializer<T>(context);
+            // var context = new SerializationContext { SerializationMethod = SerializationMethod.Map };
+            // context.DictionarySerlaizationOptions.OmitNullEntry = true;
+            var serializer = MessagePackSerializer.Get<T>();
 
             byte[] output;
             using (var ms = new MemoryStream())

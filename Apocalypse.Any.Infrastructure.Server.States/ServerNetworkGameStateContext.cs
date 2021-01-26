@@ -62,15 +62,16 @@ namespace Apocalypse.Any.Infrastructure.Server.States
 
         public void Initialize()
         {
-            clientHandlers.TryAdd((byte)ServerInternalGameStates.Initial, GameStateRegistrar.GetNeworkLayerState((byte)ServerInternalGameStates.Initial));
-            clientHandlers.TryAdd((byte)ServerInternalGameStates.Login, GameStateRegistrar.GetNeworkLayerState((byte)ServerInternalGameStates.Login));
-            clientHandlers.TryAdd((byte)ServerInternalGameStates.LoginSuccessful, GameStateRegistrar.GetNeworkLayerState((byte)ServerInternalGameStates.LoginSuccessful));
-            clientHandlers.TryAdd((byte)ServerInternalGameStates.ReceiveWork, GameStateRegistrar.GetNeworkLayerState((byte)ServerInternalGameStates.ReceiveWork));
-            clientHandlers.TryAdd((byte)ServerInternalGameStates.CLIPassthrough, GameStateRegistrar.GetNeworkLayerState((byte)ServerInternalGameStates.CLIPassthrough));
-            clientHandlers.TryAdd((byte)ServerInternalGameStates.Undefined, GameStateRegistrar.GetNeworkLayerState((byte)ServerInternalGameStates.Undefined));
-            clientHandlers.TryAdd((byte)ServerInternalGameStates.Error, GameStateRegistrar.GetNeworkLayerState((byte)ServerInternalGameStates.Error));
-            clientHandlers.TryAdd((byte)ServerInternalGameStates.Update, GameStateRegistrar.GetNeworkLayerState((byte)ServerInternalGameStates.Update));
-            clientHandlers.TryAdd((byte)ServerInternalGameStates.UpdateDelta, GameStateRegistrar.GetNeworkLayerState((byte)ServerInternalGameStates.UpdateDelta));
+            clientHandlers.TryAdd((byte)ServerInternalGameStates.Initial, GameStateRegistrar.GetNetworkLayerState((byte)ServerInternalGameStates.Initial));
+            clientHandlers.TryAdd((byte)ServerInternalGameStates.Login, GameStateRegistrar.GetNetworkLayerState((byte)ServerInternalGameStates.Login));
+            clientHandlers.TryAdd((byte)ServerInternalGameStates.LoginSuccessful, GameStateRegistrar.GetNetworkLayerState((byte)ServerInternalGameStates.LoginSuccessful));
+            clientHandlers.TryAdd((byte)ServerInternalGameStates.ReceiveWork, GameStateRegistrar.GetNetworkLayerState((byte)ServerInternalGameStates.ReceiveWork));
+            clientHandlers.TryAdd((byte)ServerInternalGameStates.SendPressedRelease, GameStateRegistrar.GetNetworkLayerState((byte)ServerInternalGameStates.SendPressedRelease));
+            clientHandlers.TryAdd((byte)ServerInternalGameStates.CLIPassthrough, GameStateRegistrar.GetNetworkLayerState((byte)ServerInternalGameStates.CLIPassthrough));
+            clientHandlers.TryAdd((byte)ServerInternalGameStates.Undefined, GameStateRegistrar.GetNetworkLayerState((byte)ServerInternalGameStates.Undefined));
+            clientHandlers.TryAdd((byte)ServerInternalGameStates.Error, GameStateRegistrar.GetNetworkLayerState((byte)ServerInternalGameStates.Error));
+            clientHandlers.TryAdd((byte)ServerInternalGameStates.Update, GameStateRegistrar.GetNetworkLayerState((byte)ServerInternalGameStates.Update));
+            clientHandlers.TryAdd((byte)ServerInternalGameStates.UpdateDelta, GameStateRegistrar.GetNetworkLayerState((byte)ServerInternalGameStates.UpdateDelta));
         }
 
         public void Update()
@@ -80,8 +81,8 @@ namespace Apocalypse.Any.Infrastructure.Server.States
             .ToList()
             .ForEach(message =>
             {
-                Task.Factory.StartNew(() =>
-                {
+                // Task.Factory.StartNew(() =>
+                // {
                     //Important note: The server will try to establish a connection externally. If the connection doesnt work it depends on a fail net connection.
                     //For example: I had huge problems connecting after recognizing that the client and server didnt connect cuz my wifi was broken. -.-
                     if (message.MessageType == NetIncomingMessageType.Data)
@@ -89,7 +90,7 @@ namespace Apocalypse.Any.Infrastructure.Server.States
                         var networkCommandConnection = CurrentNetworkCommandServerTranslator.Translate(message);
                         this[networkCommandConnection.Connection.RemoteUniqueIdentifier].Handle(this, networkCommandConnection);
                     }
-                });
+                // });
             });
         }
 

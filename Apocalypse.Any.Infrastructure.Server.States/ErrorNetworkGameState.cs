@@ -20,7 +20,7 @@ namespace Apocalypse.Any.Infrastructure.Server.States
                 gameStateContext.Logger.Log(LogLevel.Error, ex.Message + Environment.NewLine + ex.InnerException?.Message);
             }
 
-            gameStateContext.ChangeHandlerEasier(gameStateContext.GameStateRegistrar.GetNeworkLayerState((byte)ServerInternalGameStates.Login), networkCommandConnectionToHandle);
+            gameStateContext.ChangeHandlerEasier(gameStateContext.GameStateRegistrar.GetNetworkLayerState((byte)ServerInternalGameStates.Login), networkCommandConnectionToHandle);
         }
     }
 }

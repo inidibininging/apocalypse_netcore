@@ -8,6 +8,7 @@ using Apocalypse.Any.Infrastructure.Server.States.Interfaces;
 using Apocalypse.Any.Infrastructure.Server.States.Translators;
 using System;
 using System.Collections.Concurrent;
+using Apocalypse.Any.Core.Input.Translator;
 
 namespace Apocalypse.Any.GameServer.Services
 {
@@ -51,11 +52,12 @@ namespace Apocalypse.Any.GameServer.Services
                                                                                                           new DeltaGameStateDataService()));
             InternalGameStates.GetOrAdd((byte)ServerInternalGameStates.Undefined, new ErrorNetworkGameState<TWorld>());
             InternalGameStates.GetOrAdd((byte)ServerInternalGameStates.ReceiveWork, new ReceiveWorkNetworkGameState<TWorld>(new NetworkCommandDataConverterService(SerializationAdapter)));
+            InternalGameStates.GetOrAdd((byte)ServerInternalGameStates.SendPressedRelease, new SendPressedReleaseCommandGameState<TWorld>(new NetworkCommandDataConverterService(SerializationAdapter), new IntCommandStringCommandTranslator()));
             InternalGameStates.GetOrAdd((byte)ServerInternalGameStates.UserRoleGateWay, new UserRoleGateWayNetworkGameState<TWorld>(RoleService, new NetworkCommandDataConverterService(SerializationAdapter)));
             InternalGameStates.GetOrAdd((byte)ServerInternalGameStates.Error, new ErrorNetworkGameState<TWorld>());
         }
 
-        public INetworkLayerState<TWorld> GetNeworkLayerState(byte identifier)
+        public INetworkLayerState<TWorld> GetNetworkLayerState(byte identifier)
         {
             if (!InternalGameStates.ContainsKey(identifier))
                 throw new NotImplementedException();

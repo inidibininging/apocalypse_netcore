@@ -14,5 +14,6 @@
         public const int ReceiveWorkCommand = 5;
         public const int ExeceuteCommand = 6;
         public const int GetGameStateByLoginToken = 7;
+        public const int SendPressReleaseCommand = 8;
     }
 }

@@ -14,6 +14,7 @@ using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Threading.Tasks.Dataflow;
 using Apocalypse.Any.Constants;
 using Apocalypse.Any.Domain.Common.Drawing.UI;
 
@@ -79,12 +80,6 @@ namespace Apocalypse.Any.Client.Screens
         public NetworkGameScreen()
         {
             CursorImage = new SpriteSheet(null) { Path = ImagePaths.hud_misc_edit  };
-        }
-
-        public override void Initialize()
-        {
-            
-            base.Initialize();
         }
 
         public override void Draw(SpriteBatch spriteBatch)

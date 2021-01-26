@@ -59,9 +59,14 @@ namespace Apocalypse.Any.Core.Utilities
         /// <returns></returns>
         public static Type[] LoadType(this string typeName, bool referenced, bool gac)
         {
+            if (string.IsNullOrEmpty(typeName))
+                return new Type[]{};
+
+            if (typeName.StartsWith("System."))
+                return new Type[] {Type.GetType(typeName)};
             
             //check for problematic work
-            if (string.IsNullOrEmpty(typeName) || !referenced && !gac)
+            if (!referenced && !gac)
             {
                 var directoryPathOfExecution = Directory.GetCurrentDirectory();
                 var directoryPathOfDll = Assembly.GetExecutingAssembly().CodeBase;

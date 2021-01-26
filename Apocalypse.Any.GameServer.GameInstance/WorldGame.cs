@@ -55,7 +55,8 @@ namespace Apocalypse.Any.GameServer.GameInstance
         IUpdateableLite,
         IWorldGameStateDataIOLayer,
         IWorldGameSectorInputLayer,
-        IGameSectorsOwner, IWorldGame
+        IGameSectorsOwner, 
+        IWorldGame
     {
         //private Dictionary<string, IGameSectorNew> Sectors { get; set; }
 

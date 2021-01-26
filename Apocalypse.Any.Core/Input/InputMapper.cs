@@ -15,7 +15,7 @@ namespace Apocalypse.Any.Core.Input
         private static IList<ISingleKeyToMovementCommandTranslator> _defaultMap;
         private static IList<ISingleKeyToRotationCommandTranslator> _defaultRotationMap;
 
-        public static IList<ISingleKeyToMovementCommandTranslator> DefaultMap
+        public static IList<ISingleKeyToMovementCommandTranslator> DefaultMovementMap
             => _defaultMap ?? (_defaultMap = MovementMap());
 
         public static IList<ISingleKeyToRotationCommandTranslator> DefaultRotationMap
@@ -46,5 +46,7 @@ namespace Apocalypse.Any.Core.Input
             };
             return map;
         }
+
+        
     }
 }

@@ -11,5 +11,5 @@ ServerPeerName: asteroid
 SerializationAdapterType: Apocalypse.Any.Infrastructure.Common.Services.Serializer.MsgPackAdapter.MsgPackByteArraySerializerAdapter
 ServerPort: 8080
 User:
-  Username: foo3
+  Username: movement_test
   Password: 12345
