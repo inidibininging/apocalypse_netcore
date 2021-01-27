@@ -178,7 +178,7 @@ namespace Apocalypse.Any.Infrastructure.Server.Worker
                                     //TODO: Pass a map of states mapped to bytes
 
                                     var ret = NetworkCommandDataConverterService.ConvertToObject(msg);
-
+                                    Console.WriteLine(ret);
                                     switch (ret)
                                     {
                                         //Login successful, remember the login token

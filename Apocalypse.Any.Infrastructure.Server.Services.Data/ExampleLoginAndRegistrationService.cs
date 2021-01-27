@@ -45,8 +45,7 @@ namespace Apocalypse.Any.Infrastructure.Common.Services.Network.Interfaces.Data
                 NewInGame = true // password is "12345" unhashed
             },
             new UserDataWithLoginToken(){
-                Roles = UserDataRole.CanViewWorldByLoginToken | 
-                        UserDataRole.CanReceiveWork ,
+                Roles = UserDataRole.CanViewWorldByLoginToken,
                 Username = "foo3",
                 Password = "5994471ABB01112AFCC18159F6CC74B4F511B99806DA59B3CAF5A9C173CACFC5",
                 NewInGame = true // password is "12345" unhashed
@@ -57,7 +56,7 @@ namespace Apocalypse.Any.Infrastructure.Common.Services.Network.Interfaces.Data
                 Password = "5994471ABB01112AFCC18159F6CC74B4F511B99806DA59B3CAF5A9C173CACFC5",
                 NewInGame = true // password is "12345" unhashed
             }
-            
+
         };
 
         private ExampleLoginTokenGeneratorService LoginTokenGeneratorService { get; } = new ExampleLoginTokenGeneratorService();

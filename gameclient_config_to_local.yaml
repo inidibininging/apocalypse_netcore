@@ -1,6 +1,6 @@
 !Apocalypse.Any.Domain.Client.Model.GameClientConfiguration,%2520Apocalypse.Any.Domain.Client.Model,%2520Version=1.0.0.0,%2520Culture=neutral,%2520PublicKeyToken=null
 Background:
-  AsteroidsCount: 1300
+  AsteroidsCount: 10300
   DebrisFieldCount: 1500
   StarsFieldCount: 2000
 Screen:
@@ -9,7 +9,7 @@ Screen:
 ServerIp: 127.0.0.1
 ServerPeerName: asteroid
 SerializationAdapterType: Apocalypse.Any.Infrastructure.Common.Services.Serializer.MsgPackAdapter.MsgPackByteArraySerializerAdapter
-ServerPort: 8080
+ServerPort: 8081
 User:
-  Username: movement_test
+  Username: foo2
   Password: 12345

@@ -143,7 +143,7 @@ namespace Apocalypse.Any.GameServer.GameInstance
                 RedisHost = ServerConfiguration.RedisHost,
                 RedisPort = ServerConfiguration.RedisPort
             };
-            
+
             var transferStuff = new TransferPlayerStuffBetweenSectorsMechanic();
             var updateSectorStatusMechanic = new UpdateSectorStatusMechanic();
             SectorsOwnerMechanics = new List<ISingleUpdeatableMechanic<IGameSectorsOwner, IGameSectorsOwner>>
@@ -380,7 +380,6 @@ namespace Apocalypse.Any.GameServer.GameInstance
             if(!LoggedInToPressRelease)
                 LoggedInToPressRelease = (SendPressReleaseWorker?.TryLogin()).GetValueOrDefault();
 
-
             GameStateContext.Update();
 
             foreach (var sectorMechanic in SectorsOwnerMechanics)
@@ -409,7 +408,7 @@ namespace Apocalypse.Any.GameServer.GameInstance
             }
 
             //Sync server logic
-            if(LoggedInToPressRelease && SendPressReleaseWorker != null){
+            if(LoggedInToPressRelease && SendPressReleaseWorker != null && !string.IsNullOrWhiteSpace(SendPressReleaseWorker.LoginToken)){
                 var gameStateLoginToken = GetGameStateByLoginToken(SendPressReleaseWorker.LoginToken);
                 SendPressReleaseWorker?.ProcessIncomingMessages(gameStateLoginToken.Commands.Select(cmd => SyncCommandTranslator.Translate(cmd)));
             }
@@ -460,9 +459,18 @@ namespace Apocalypse.Any.GameServer.GameInstance
             }
 
             Console.WriteLine($"{nameof(GetGameStateByLoginToken)}:Found NO game state ");
+            Console.WriteLine($"login token: {loginToken}");
+
             var user = AuthenticationService.GetByLoginTokenHack(loginToken);
-            if (user == null) throw new NotImplementedException("new users cannot be inserted into this demo");
+            if (user == null)
+                throw new NotImplementedException("new users cannot be inserted into this demo");
+            
             var userGameStateData = RegisterGameStateData(loginToken);
+
+            //This is a hack. Needs to be removed from here
+            if(ClientConfiguration != null)
+                user.Roles |= UserDataRole.CanSendRemoteMovementCommands;
+
             if ((user.Roles & UserDataRole.CanSendRemoteStateCommands) != 0)
             {
                 //offer the player remote control on the server :) ... or :(
