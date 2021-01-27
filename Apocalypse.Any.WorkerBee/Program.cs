@@ -21,8 +21,8 @@ namespace Apocalypse.Any.WorkerBee
             var clientConfig = yamler.DeserializeObject<GameClientConfiguration>(File.ReadAllText(args[0]));
             var serverConfig = yamler.DeserializeObject<GameServerConfiguration>(File.ReadAllText(args[1]));
 
-            var world = new WorldGame(serverConfig);
-            var dataLayerWorker = new DataLayerWorker<
+            var world = new WorldGame(serverConfig, null);
+            var dataLayerWorker = new SyncClient<
                                         PlayerSpaceship,
                                         EnemySpaceship,
                                         Item,

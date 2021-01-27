@@ -51,8 +51,8 @@ namespace Apocalypse.Any.Client
             this.IsMouseVisible = false;
             //Initialize Screen Dimension
 
-            _graphics.PreferredBackBufferWidth = (int)Services.GetService<ScreenService>().Resolution.X;
-            _graphics.PreferredBackBufferHeight = (int)Services.GetService<ScreenService>().Resolution.Y;
+            _graphics.PreferredBackBufferWidth = (int)System.MathF.Round(Services.GetService<ScreenService>().Resolution.X);
+            _graphics.PreferredBackBufferHeight = (int)System.MathF.Round(Services.GetService<ScreenService>().Resolution.Y);
             //_graphics.IsFullScreen = true;
             _graphics.ApplyChanges();
 
@@ -63,7 +63,7 @@ namespace Apocalypse.Any.Client
             GameContext.SharedContext.Initialize();
             GameContext.GetService.Get(ClientGameScreenBook.Init).Handle(GameContext);
             ScreenService.Instance.Initialize(GameContext.SharedContext);
-            
+
         }
 
         /// <summary>
@@ -133,5 +133,6 @@ namespace Apocalypse.Any.Client
             screenManager.UnloadContent();
             base.UnloadContent();
         }
+
     }
 }

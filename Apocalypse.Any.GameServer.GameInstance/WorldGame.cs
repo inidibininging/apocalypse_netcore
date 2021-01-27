@@ -42,8 +42,11 @@ using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Xml;
+using Apocalypse.Any.Domain.Client.Model;
 using Apocalypse.Any.Infrastructure.Server.Services.Factories;
 using Apocalypse.Any.Infrastructure.Server.Services.Mechanics.SectorMechanics;
+using Apocalypse.Any.Infrastructure.Server.Worker;
+using Apocalypse.Any.Core.Input.Translator;
 
 namespace Apocalypse.Any.GameServer.GameInstance
 {
@@ -55,7 +58,7 @@ namespace Apocalypse.Any.GameServer.GameInstance
         IUpdateableLite,
         IWorldGameStateDataIOLayer,
         IWorldGameSectorInputLayer,
-        IGameSectorsOwner, 
+        IGameSectorsOwner,
         IWorldGame
     {
         //private Dictionary<string, IGameSectorNew> Sectors { get; set; }
@@ -81,53 +84,64 @@ namespace Apocalypse.Any.GameServer.GameInstance
         private ServerNetworkGameStateContext<WorldGame> GameStateContext { get; set; }
 
         private NetServer Server { get; set; }
+
+
         private NetIncomingMessageBusService<NetServer> ServerInput { get; set; }
         private NetOutgoingMessageBusService<NetServer> ServerOutput { get; set; }
 
         private ExampleLoginAndRegistrationService AuthenticationService { get; set; }
 
-        public GameServerConfiguration Configuration { get; set; }
+        public GameServerConfiguration ServerConfiguration { get; set; }
 
         #endregion Server stuff
-        
+
         #region EntityFactories
 
         public PlayerSpaceshipFactory PlayerFactory { get; set; } = new PlayerSpaceshipFactory();
-        private IByteArraySerializationAdapter SerializationAdapter { get; set; }
+        private IByteArraySerializationAdapter SerializationAdapter { get; }
+
+        private GameClientConfiguration ClientConfiguration { get; }
         #endregion EntityFactories
 
-        public WorldGame
-        (
-            GameServerConfiguration configuration
-        )
+        #region SyncClient
+        private SyncClient<PlayerSpaceship,EnemySpaceship,Item,Projectile,CharacterEntity,CharacterEntity,ImageData> SendPressReleaseWorker { get; }
+        private bool LoggedInToPressRelease { get; set; }
+        private IntCommandStringCommandTranslator SyncCommandTranslator { get; } = new IntCommandStringCommandTranslator();
+        #endregion
+
+        public WorldGame(GameServerConfiguration serverConfiguration, GameClientConfiguration clientConfiguration)
         {
-            Configuration = configuration;
-            var leSerializationType = configuration.SerializationAdapterType.LoadType(false, false);
+            ServerConfiguration = serverConfiguration;
+            ClientConfiguration = clientConfiguration;
+
+            var leSerializationType = serverConfiguration.SerializationAdapterType.LoadType(false, false);
             if (leSerializationType == null || leSerializationType.Length == 0)
                 throw new Exception("Serializer cannot be loaded");
-            
-            SerializationAdapter = Activator.CreateInstance(leSerializationType.First()) as IByteArraySerializationAdapter;
+
+            var serializerType = leSerializationType.FirstOrDefault() ?? throw new Exception($"Cannot load serializer type {serverConfiguration.SerializationAdapterType}");
+
+            SerializationAdapter = Activator.CreateInstance(serializerType) as IByteArraySerializationAdapter;
             GameSectorLayerServices = new Dictionary<int, IStateMachine<string, IGameSectorLayerService>>();
             SectorStateMachine = new InMemoryStorageGameSectorLayerServiceFactory();
             AuthenticationService = new ExampleLoginAndRegistrationService();
             CreateServer(
-                Configuration.ServerPeerName,
-                Configuration.ServerIp,
-                Configuration.ServerPort);
+                ServerConfiguration.ServerPeerName,
+                ServerConfiguration.ServerIp,
+                ServerConfiguration.ServerPort);
 
             //translator
             var serverTranslator = new NetworkCommandTranslator(SerializationAdapter);
             var serverMessageTranslator = new NetIncomingMessageNetworkCommandConnectionTranslator(serverTranslator);
-            var cliPassthrough = new CLIPassthroughMechanic(AuthenticationService, Configuration.RunOperation);
+            var cliPassthrough = new CLIPassthroughMechanic(AuthenticationService, ServerConfiguration.RunOperation);
             var writer = new GameSectorLayerWriterMechanic
             {
-                RedisHost = Configuration.RedisHost,
-                RedisPort = Configuration.RedisPort
+                RedisHost = ServerConfiguration.RedisHost,
+                RedisPort = ServerConfiguration.RedisPort
             };
             var rediCliPassthrough = new RedisCLIPassthroughMechanic(AuthenticationService)
             {
-                RedisHost = Configuration.RedisHost,
-                RedisPort = Configuration.RedisPort
+                RedisHost = ServerConfiguration.RedisHost,
+                RedisPort = ServerConfiguration.RedisPort
             };
             
             var transferStuff = new TransferPlayerStuffBetweenSectorsMechanic();
@@ -146,17 +160,16 @@ namespace Apocalypse.Any.GameServer.GameInstance
             //create default starting sector    
             BuildGrid();
 
-            var inGameSectorStateMachine = GameSectorLayerServices[Configuration.StartingSector];
+            var inGameSectorStateMachine = GameSectorLayerServices[ServerConfiguration.StartingSector];
             inGameSectorStateMachine.SharedContext = new GameSectorLayerService
             {
-                Tag = Configuration.StartingSector
+                Tag = ServerConfiguration.StartingSector
             };
-            
+
             inGameSectorStateMachine
                 .GetService
-                .Get(Configuration.BuildOperation)
+                .Get(ServerConfiguration.BuildOperation)
                 .Handle(inGameSectorStateMachine);
-            
 
             var serverStateDataLayer = new ServerGameStateService<WorldGame>(
                                                 AuthenticationService,
@@ -173,34 +186,41 @@ namespace Apocalypse.Any.GameServer.GameInstance
 
             GameStateContext.Initialize();
 
+            //Connection to the real server
+            if(ClientConfiguration != null)
+            {
+                SendPressReleaseWorker =
+                    new SyncClient<PlayerSpaceship, EnemySpaceship, Item, Projectile, CharacterEntity, CharacterEntity,ImageData>(ClientConfiguration);
+            }
+
             //Language script file
-            LanguageScriptFileEvaluator languageScriptFileEvaluator = new LanguageScriptFileEvaluator(Configuration.StartupScript, Configuration.StartupFunction, Configuration.RunOperation);
+            LanguageScriptFileEvaluator languageScriptFileEvaluator = new LanguageScriptFileEvaluator(ServerConfiguration.StartupScript, ServerConfiguration.StartupFunction, ServerConfiguration.RunOperation);
             Console.ForegroundColor = ConsoleColor.Yellow;
             foreach (var sector in GameSectorLayerServices.Values)
             {
                 languageScriptFileEvaluator.Evaluate(sector);
                 Console.Write(".");
             }
-            Console.ForegroundColor = ConsoleColor.White;
+            Console.ForegroundColor = ConsoleColor.Yellow;
 
-            Console.WriteLine("runner starting..." + Configuration.StartupFunction);
+            Console.WriteLine("runner starting..." + ServerConfiguration.StartupFunction);
             CreateGameTimeIfNotExists(null);
 
             Console.ForegroundColor = ConsoleColor.Green;
             foreach (var sector in GameSectorLayerServices.Values)
             {
                 sector.SharedContext.CurrentGameTime = CurrentGameTime;
-                sector.Run(Configuration.StartupFunction);
+                sector.Run(ServerConfiguration.StartupFunction);
                 Console.Write(".");
             }
             Console.ForegroundColor = ConsoleColor.White;
-            
+
             //Set starting sector to run
-            Console.WriteLine($"Done loading sectors. Starting sector {Configuration.StartingSector}");
-            GameSectorLayerServices[Configuration.StartingSector]
+            Console.WriteLine($"Done loading sectors. Starting sector {ServerConfiguration.StartingSector}");
+            GameSectorLayerServices[ServerConfiguration.StartingSector]
                 .GetService
                 .Get("MarkSectorAsRunning")
-                .Handle(GameSectorLayerServices[Configuration.StartingSector]);
+                .Handle(GameSectorLayerServices[ServerConfiguration.StartingSector]);
         }
 
         /// <summary>
@@ -212,8 +232,7 @@ namespace Apocalypse.Any.GameServer.GameInstance
             var rowCount = size;
             var cell = 1;
             var gridTrespassingMechanic = new RouteTrespassingMarkerMechanic();
-            
-            
+
             for (int y = 1; y <= columnCount; y++)
             {
                 for (int x = 1; x <= rowCount; x++)
@@ -227,12 +246,12 @@ namespace Apocalypse.Any.GameServer.GameInstance
                     {
                         up = ((rowCount * columnCount) - (rowCount));
                     }
-                    
+
                     if (y == columnCount)
                     {
                         down = ((rowCount * columnCount) - (rowCount)) * -1;
                     }
-                    
+
                     if (x == 1)
                     {
                         left = rowCount - 1;
@@ -244,12 +263,7 @@ namespace Apocalypse.Any.GameServer.GameInstance
                     }
 
                     Console.ForegroundColor = ConsoleColor.Red;
-                    BuildSector(
-                        cell,
-                        cell + up,
-                        cell + right,
-                        cell + left,
-                        cell + down);
+                    BuildSector(cell);
                     Console.Write(".");
                     Console.ForegroundColor = ConsoleColor.White;
                     Console.WriteLine($"x:{x} y:{y} c:{cell} u:{cell + up} l:{cell + left} r:{cell + right} d:{cell + down}");
@@ -262,21 +276,17 @@ namespace Apocalypse.Any.GameServer.GameInstance
                         CreateRoutePair(GameSectorTrespassingDirection.Right, cell, cell + right));
                     gridTrespassingMechanic.RegisterRoutePair(
                         CreateRoutePair(GameSectorTrespassingDirection.Down, cell, cell + left));
-                    
+
                     cell += 1;
                 }
 
             }
-            
+
             SectorsOwnerMechanics.Add(gridTrespassingMechanic);
         }
-         
 
-        private void BuildSector(int sectorName,
-            int sectorUp,
-            int sectorLeft,
-            int sectorRight,
-            int sectorDown)
+
+        private void BuildSector(int sectorName)
         {
             //Factory has to build this
             AddSectorStateMachine(sectorName);
@@ -331,7 +341,7 @@ namespace Apocalypse.Any.GameServer.GameInstance
             if (GameSectorLayerServices.ContainsKey(sectorId))
                 throw new SectorAlreadyExistsException(sectorId);
 
-            GameSectorLayerServices.Add(sectorId, SectorStateMachine.BuildStateMachine(Configuration));
+            GameSectorLayerServices.Add(sectorId, SectorStateMachine.BuildStateMachine(ServerConfiguration));
         }
 
         private TimeSpan TotalRealTime { get; set; }
@@ -341,7 +351,7 @@ namespace Apocalypse.Any.GameServer.GameInstance
 
         private GameTime CreateGameTime()
         {
-            TotalGameTime = TimeSpan.FromSeconds(Configuration.ServerUpdateInSeconds);
+            TotalGameTime = TimeSpan.FromSeconds(ServerConfiguration.ServerUpdateInSeconds);
             TotalRealTime = TimeSpan.FromTicks(0);
             return new GameTime(TotalGameTime, TotalRealTime);
         }
@@ -365,13 +375,20 @@ namespace Apocalypse.Any.GameServer.GameInstance
         {
             CreateGameTimeIfNotExists(gameTime);
             UpdateGameTime(CurrentGameTime);
+
+            //Try to login to the "real server"
+            if(!LoggedInToPressRelease)
+                LoggedInToPressRelease = (SendPressReleaseWorker?.TryLogin()).GetValueOrDefault();
+
+
             GameStateContext.Update();
 
             foreach (var sectorMechanic in SectorsOwnerMechanics)
             {
                 sectorMechanic.Update(this);
             }
-            var timeToWait = TimeSpan.FromSeconds(Configuration.ServerUpdateInSeconds);
+
+            var timeToWait = TimeSpan.FromSeconds(ServerConfiguration.ServerUpdateInSeconds);
 
             foreach (var sector in GameSectorLayerServices
                                                                                     .Values
@@ -384,15 +401,20 @@ namespace Apocalypse.Any.GameServer.GameInstance
                             .SharedContext
                             .EventDispatcher
                             .DispatchEvents(gameTime);
-                
                         sector
                             .GetService
-                            .Get(Configuration.RunOperation)
-                            .Handle(sector);    
+                            .Get(ServerConfiguration.RunOperation)
+                            .Handle(sector);
                     });
             }
+
+            //Sync server logic
+            if(LoggedInToPressRelease && SendPressReleaseWorker != null){
+                var gameStateLoginToken = GetGameStateByLoginToken(SendPressReleaseWorker.LoginToken);
+                SendPressReleaseWorker?.ProcessIncomingMessages(gameStateLoginToken.Commands.Select(cmd => SyncCommandTranslator.Translate(cmd)));
+            }
+
             Thread.Sleep(timeToWait);
-            
         }
 
         private PlayerSpaceship CreatePlayerSpaceShip(string loginToken)
@@ -414,15 +436,14 @@ namespace Apocalypse.Any.GameServer.GameInstance
                                                             .GetGameStateByLoginToken(loginToken), sectorTag: sector.SharedContext.Tag);
                                     }
                                     catch (Exception ex)
-                                    {                                        
+                                    {
                                         sector.SharedContext.Messages.Add(ex.Message);
                                         return (gameState: null, sectorTag: 0);
                                     }
                                 });
 
             foundGameStates = foundGameStates.Where(gameState => gameState.gameState != null);
-            
-            
+
             if (foundGameStates.Any())
             {
                 var problematicGameState = foundGameStates
@@ -433,42 +454,38 @@ namespace Apocalypse.Any.GameServer.GameInstance
                 {
                     Console.ForegroundColor = ConsoleColor.Yellow;
                     Console.WriteLine($"Sectors {string.Join(',', problematicGameState.Select(gs => gs.ToString()))} have more than one gamestate");
-                    Console.ForegroundColor = ConsoleColor.White;                    
+                    Console.ForegroundColor = ConsoleColor.White;
                 }
                 return foundGameStates.First().gameState;
             }
 
             Console.WriteLine($"{nameof(GetGameStateByLoginToken)}:Found NO game state ");
             var user = AuthenticationService.GetByLoginTokenHack(loginToken);
-            if (user != null)
+            if (user == null) throw new NotImplementedException("new users cannot be inserted into this demo");
+            var userGameStateData = RegisterGameStateData(loginToken);
+            if ((user.Roles & UserDataRole.CanSendRemoteStateCommands) != 0)
             {
-                var userGameStatedata = RegisterGameStateData(loginToken);
-                if ((user.Roles & UserDataRole.CanSendRemoteStateCommands) != 0)
-                {
-                    //offer the player remote control on the server :) ... or :(
-                    userGameStatedata.Metadata = new IdentifiableNetworkCommand() { CommandName = CLINetworkCommandConstants.WaitForSignalCommand };
-                }
+                //offer the player remote control on the server :) ... or :(
+                userGameStateData.Metadata = new IdentifiableNetworkCommand() { CommandName = CLINetworkCommandConstants.WaitForSignalCommand };
             }
-            throw new NotImplementedException("new users cannot be inserted into this demo");
+            return userGameStateData;
         }
-
-
 
         public GameStateData RegisterGameStateData(string loginToken)
         {
             Console.WriteLine($"{nameof(RegisterGameStateData)} in World");
             var newPlayer = CreatePlayerSpaceShip(loginToken);
-            newPlayer.CurrentImage.Position.X = GameSectorLayerServices[Configuration.StartingSector].SharedContext.SectorBoundaries.MaxSectorX / 2;
-            newPlayer.CurrentImage.Position.Y = GameSectorLayerServices[Configuration.StartingSector].SharedContext.SectorBoundaries.MaxSectorY / 2;
+            newPlayer.CurrentImage.Position.X = GameSectorLayerServices[ServerConfiguration.StartingSector].SharedContext.SectorBoundaries.MaxSectorX / 2;
+            newPlayer.CurrentImage.Position.Y = GameSectorLayerServices[ServerConfiguration.StartingSector].SharedContext.SectorBoundaries.MaxSectorY / 2;
 
-            GameSectorLayerServices[Configuration.StartingSector]
+            GameSectorLayerServices[ServerConfiguration.StartingSector]
                     .SharedContext
                     .DataLayer
                     .Players.Add(newPlayer);
-            
+
             FirePlayerRegisteredEvent(newPlayer);
 
-            return GameSectorLayerServices[Configuration.StartingSector]
+            return GameSectorLayerServices[ServerConfiguration.StartingSector]
                     .SharedContext
                     .IODataLayer
                     .RegisterGameStateData(loginToken);
@@ -481,7 +498,7 @@ namespace Apocalypse.Any.GameServer.GameInstance
         private void FirePlayerRegisteredEvent(PlayerSpaceship newPlayer)
         {
             const string PlayerRegisteredEventName = "PlayerRegisteredEvent";
-            var playerRegisteredEventLayer = GameSectorLayerServices[Configuration.StartingSector]
+            var playerRegisteredEventLayer = GameSectorLayerServices[ServerConfiguration.StartingSector]
                 .SharedContext
                 .DataLayer
                 .Layers
@@ -584,7 +601,7 @@ namespace Apocalypse.Any.GameServer.GameInstance
                 .CreateLogger();
 
             var services = new ServiceCollection();
-            
+
             services.AddSingleton(providers);
             services.AddSingleton<ILoggerFactory>(sc =>
             {

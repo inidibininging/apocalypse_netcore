@@ -29,6 +29,7 @@
     <ProjectReference Include="..\Apocalypse.Any.Infrastructure.Server.Services.Factories\Apocalypse.Any.Infrastructure.Server.Services.Factories.csproj" />
     <ProjectReference Include="..\Apocalypse.Any.Infrastructure.Server.Services.Mechanics\Apocalypse.Any.Infrastructure.Server.Services.Mechanics.csproj" />
     <ProjectReference Include="..\Apocalypse.Any.Infrastructure.Server.Services.Network\Apocalypse.Any.Infrastructure.Server.Services.Network.csproj" />
+    <ProjectReference Include="..\Apocalypse.Any.Infrastructure.Server.Worker\Apocalypse.Any.Infrastructure.Server.Worker.csproj" />
   </ItemGroup>
 
 </Project>

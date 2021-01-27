@@ -9,6 +9,7 @@ using Apocalypse.Any.Infrastructure.Common.Services.Network;
 using Apocalypse.Any.Infrastructure.Common.Services.Serializer.Interfaces;
 using Lidgren.Network;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.Loader;
@@ -20,7 +21,7 @@ namespace Apocalypse.Any.Infrastructure.Server.Worker
     /// <summary>
     /// A data layer worker only works with information based on the data layer. The data is withold in memory for best perfomance.
     /// </summary>
-    public class DataLayerWorker<
+    public class SyncClient<
         TPlayer,
         TEnemy,
         TItem,
@@ -48,21 +49,20 @@ namespace Apocalypse.Any.Infrastructure.Server.Worker
         private NetIncomingMessageNetworkCommandConnectionTranslator NetIncomingMessageNetworkCommand { get; set; }
         public IByteArraySerializationAdapter SerializationAdapter { get; set; }
 
-        public string LoginToken { get; set; }
-        public DataLayerWorker(GameClientConfiguration configuration)
+        public string LoginToken { get; private set; }
+        public SyncClient(GameClientConfiguration configuration)
         {
             ClientConfiguration = configuration;
-            Initialize();
-            LoginGate();
-            PerformFakeRelease();
+            CreateClientAndConnect();
+
+            // PerformFakeRelease();
         }
 
-        private void PerformFakeRelease() => Task.Factory.StartNew(() =>
-        {
-            Thread.Sleep(15.Seconds());
-            doIt = true;
-        });
-        
+        // private void PerformFakeRelease() => Task.Factory.StartNew(() =>
+        // {
+        //     Thread.Sleep(15.Seconds());
+        //     doIt = true;
+        // });
         private Type GetSerializer(string serializerType)
         {
             string baseNameSpace = "Apocalypse.Any.Infrastructure.Common.Services.Serializer*.dll";
@@ -87,7 +87,8 @@ namespace Apocalypse.Any.Infrastructure.Server.Worker
             }
             return null;
         }
-        private void Initialize()
+
+        private void CreateClientAndConnect()
         {
             Client = new NetClient(
                 new NetPeerConfiguration(ClientConfiguration.ServerPeerName)
@@ -99,29 +100,24 @@ namespace Apocalypse.Any.Infrastructure.Server.Worker
             Client.Start();
             Client.Connect(ClientConfiguration.ServerIp, ClientConfiguration.ServerPort);
 
-            var serializerType = GetSerializer(ClientConfiguration.SerializationAdapterType);
-            //var serializerType = ClientConfiguration.SerializationAdapterType.LoadType(true, false)?.FirstOrDefault();
+            var serializerType = GetSerializer(ClientConfiguration.SerializationAdapterType);            
             SerializationAdapter = Activator.CreateInstance(serializerType) as IByteArraySerializationAdapter;
             Input = new NetIncomingMessageBusService<NetClient>(Client);
             Output = new NetOutgoingMessageBusService<NetClient>(Client, SerializationAdapter);
             NetworkCommandDataConverterService = new NetworkCommandDataConverterService(SerializationAdapter);
             NetIncomingMessageNetworkCommand = new NetIncomingMessageNetworkCommandConnectionTranslator(new NetworkCommandTranslator(SerializationAdapter));
         }
-        
-        private void LoginGate()
+
+        public bool TryLogin()
         {
             var message = CreateMessageContent(NetworkCommandConstants.LoginCommand, ClientConfiguration.User);
             if (Client.ConnectionStatus != NetConnectionStatus.Connected)
                 Client.Connect(ClientConfiguration.ServerIp, ClientConfiguration.ServerPort);
-            while (NetSendResult.Sent != Client.SendMessage(
+            return (Client.SendMessage(
                 CreateMessage(Client, message),
-                NetDeliveryMethod.ReliableOrdered))
-            {
-                Thread.Sleep(100);
-            }
-            Console.WriteLine("DataLayerWorker logged in");
+                NetDeliveryMethod.ReliableOrdered) == NetSendResult.Sent);
         }
-        
+
         private NetOutgoingMessage CreateMessage(NetPeer netPeer, byte[] content)
         {
             var msg = netPeer.CreateMessage();
@@ -142,9 +138,15 @@ namespace Apocalypse.Any.Infrastructure.Server.Worker
             return content;
         }
 
-        private volatile bool doIt = false;
-        public void ProcessIncomingMessages()
+        private bool AckReceived {get; set;} = false;
+
+        public Queue<int> Commands { get; set; }
+        public void ProcessIncomingMessages(IEnumerable<int> commands)
         {
+            foreach(var cmd in commands)
+                Commands.Enqueue(cmd);
+
+            var nextCommand = Commands.Count == 0 ? -1 : Commands.Dequeue();
             var dataInputs = Input
                             .FetchMessageChunk()
                             .Where(msg => msg.MessageType == NetIncomingMessageType.Data);
@@ -163,7 +165,8 @@ namespace Apocalypse.Any.Infrastructure.Server.Worker
                                 return null;
                             })
                             .Where(msg => msg != null && 
-                                          (msg.CommandName == NetworkCommandConstants.SendPressReleaseCommand || msg.CommandName == NetworkCommandConstants.UpdateCommand)) // why do I receive gamestate data?? => because a player needs to be physically bound to a game .else other mechanics depending on getting the players game state for every registered player will fail.
+                                          (msg.CommandName == NetworkCommandConstants.SendPressReleaseCommand || 
+                                           msg.CommandName == NetworkCommandConstants.UpdateCommand)) // why do I receive gamestate data?? => because a player needs to be physically bound to a game .else other mechanics depending on getting the players game state for every registered player will fail.
                             .Select(msg =>
                             {
                                 if (msg.Data == null || msg.Data.Length == 0)
@@ -173,7 +176,7 @@ namespace Apocalypse.Any.Infrastructure.Server.Worker
                                     Console.WriteLine(msg.Data);
                                     Console.WriteLine("--------------------------");
                                     //TODO: Pass a map of states mapped to bytes
-                                    
+
                                     var ret = NetworkCommandDataConverterService.ConvertToObject(msg);
 
                                     switch (ret)
@@ -182,16 +185,16 @@ namespace Apocalypse.Any.Infrastructure.Server.Worker
                                         case GameStateData gameStateData when !string.IsNullOrWhiteSpace(gameStateData.LoginToken):
                                             LoginToken = gameStateData.LoginToken;
                                             break;
-                                        
-                                        //ACK Response
-                                        case bool b when b:
+
+                                        //ACK Response                                        
+                                        case bool b when b && !AckReceived:
                                         {
                                             //send fake input command
                                             var fakeInput = Output.SendToClient(NetworkCommandConstants.SendPressReleaseCommand,
-                                                new PressReleaseUpdateData() { Command = 0, LoginToken = LoginToken},
+                                                new PressReleaseUpdateData() { Command = Commands.Count == 0 ? -1 : Commands.Dequeue(), LoginToken = LoginToken},
                                                 NetDeliveryMethod.ReliableOrdered, 0, msg.Connection);
-                                            Console.WriteLine("Fake press sent");
-                                            
+                                            AckReceived = true;
+                                            Console.WriteLine("Ack received");
                                             //TODO: Send release after some time
                                             break;
                                         }
@@ -203,17 +206,19 @@ namespace Apocalypse.Any.Infrastructure.Server.Worker
                                 catch (Exception ex)
                                 {
                                     Console.WriteLine(ex);
-                                    
                                 }
                                 return null;
                             })
                             .ToList();
-            if (doIt)
+
+            if (AckReceived)
             {
+
+                var serverConnection = Client.Connections.FirstOrDefault();
                 var fakeInput = Output.SendToClient(NetworkCommandConstants.SendPressReleaseCommand,
-                    new PressReleaseUpdateData() { Command = 7, LoginToken = LoginToken},
-                    NetDeliveryMethod.ReliableOrdered, 0, Client.Connections[0]); // HARD CODED connection. First one should be the one from the message sending the fake press
-                Console.WriteLine("Fake release sent");
+                    new PressReleaseUpdateData() { Command = nextCommand, LoginToken = LoginToken},
+                    NetDeliveryMethod.ReliableOrdered, 0, serverConnection); // HARD CODED connection. First one should be the one from the message sending the fake press
+                Console.WriteLine($"Sent command {nextCommand}");
             }
         }
     }
