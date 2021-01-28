@@ -34,7 +34,7 @@ namespace Apocalypse.Any.WorkerBee
             while (true)
             {
                 world.Update(null);
-                dataLayerWorker.ProcessIncomingMessages();
+                dataLayerWorker.ProcessIncomingMessages(null);
                 
             }
 

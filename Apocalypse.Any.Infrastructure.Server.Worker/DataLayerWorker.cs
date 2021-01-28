@@ -108,14 +108,24 @@ namespace Apocalypse.Any.Infrastructure.Server.Worker
             NetIncomingMessageNetworkCommand = new NetIncomingMessageNetworkCommandConnectionTranslator(new NetworkCommandTranslator(SerializationAdapter));
         }
 
-        public bool TryLogin()
+        public void TryConnect()
         {
-            var message = CreateMessageContent(NetworkCommandConstants.LoginCommand, ClientConfiguration.User);
             if (Client.ConnectionStatus != NetConnectionStatus.Connected)
+            {
+                Console.WriteLine("############# Retry Connect ##############");
                 Client.Connect(ClientConfiguration.ServerIp, ClientConfiguration.ServerPort);
+            }
+                
+        }
+        public NetSendResult TryLogin()
+        {
+            TryConnect();
+            var message = CreateMessageContent(NetworkCommandConstants.LoginCommand, ClientConfiguration.User);
+            Console.WriteLine("############# TryLogin ##############");
             return (Client.SendMessage(
                 CreateMessage(Client, message),
-                NetDeliveryMethod.ReliableOrdered) == NetSendResult.Sent);
+                NetDeliveryMethod.ReliableOrdered));
+           
         }
 
         private NetOutgoingMessage CreateMessage(NetPeer netPeer, byte[] content)
@@ -140,10 +150,12 @@ namespace Apocalypse.Any.Infrastructure.Server.Worker
 
         private bool AckReceived {get; set;} = false;
 
-        public Queue<int> Commands { get; set; }
+        public Queue<int> Commands { get; set; } = new Queue<int>();
         public void ProcessIncomingMessages(IEnumerable<int> commands)
         {
-            foreach(var cmd in commands)
+            TryConnect();
+
+            foreach (var cmd in commands)
                 Commands.Enqueue(cmd);
 
             var nextCommand = Commands.Count == 0 ? -1 : Commands.Dequeue();
@@ -151,69 +163,86 @@ namespace Apocalypse.Any.Infrastructure.Server.Worker
                             .FetchMessageChunk()
                             .Where(msg => msg.MessageType == NetIncomingMessageType.Data);
 
-            var inputs = dataInputs
-                            .Select(msg =>
-                            {
-                                try
-                                {
-                                    return NetIncomingMessageNetworkCommand.Translate(msg);
-                                }
-                                catch (Exception ex)
-                                {
-                                    Console.WriteLine(ex);
-                                }
-                                return null;
-                            })
-                            .Where(msg => msg != null && 
-                                          (msg.CommandName == NetworkCommandConstants.SendPressReleaseCommand || 
-                                           msg.CommandName == NetworkCommandConstants.UpdateCommand)) // why do I receive gamestate data?? => because a player needs to be physically bound to a game .else other mechanics depending on getting the players game state for every registered player will fail.
-                            .Select(msg =>
-                            {
-                                if (msg.Data == null || msg.Data.Length == 0)
-                                    return true;
-                                try
-                                {
-                                    Console.WriteLine(msg.Data);
-                                    Console.WriteLine("--------------------------");
-                                    //TODO: Pass a map of states mapped to bytes
+            dataInputs
+                .ToList()
+                // why do I receive gamestate data?? => because a player needs to be physically bound to a game .else other mechanics depending on getting the players game state for every registered player will fail.               
+                .ForEach(msg =>
+                {
+                    NetworkCommandConnection networkCommandConnection = null;
+                    try
+                    {
+                        networkCommandConnection = NetIncomingMessageNetworkCommand.Translate(msg);
+                        Console.WriteLine(networkCommandConnection?.CommandName);
+                     
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine(ex);
+                        return;
+                    }
 
-                                    var ret = NetworkCommandDataConverterService.ConvertToObject(msg);
-                                    Console.WriteLine(ret);
-                                    switch (ret)
-                                    {
-                                        //Login successful, remember the login token
-                                        case GameStateData gameStateData when !string.IsNullOrWhiteSpace(gameStateData.LoginToken):
-                                            LoginToken = gameStateData.LoginToken;
-                                            break;
+                    if (msg == null)
+                    {
+                        Console.WriteLine("Message cannot be translated");
+                        return;
+                    }
 
-                                        //ACK Response                                        
-                                        case bool b when b && !AckReceived:
-                                        {
-                                            //send fake input command
-                                            var fakeInput = Output.SendToClient(NetworkCommandConstants.SendPressReleaseCommand,
-                                                new PressReleaseUpdateData() { Command = Commands.Count == 0 ? -1 : Commands.Dequeue(), LoginToken = LoginToken},
-                                                NetDeliveryMethod.ReliableOrdered, 0, msg.Connection);
-                                            AckReceived = true;
-                                            Console.WriteLine("Ack received");
-                                            //TODO: Send release after some time
-                                            break;
-                                        }
-                                    }
+                    if(networkCommandConnection.CommandName != NetworkCommandConstants.SendPressReleaseCommand && networkCommandConnection.CommandName != NetworkCommandConstants.UpdateCommand)
+                    {
+                        Console.WriteLine($"Command name is not SendPressReleaseCommand or UpdateCommand -> {networkCommandConnection.CommandName}");
+                        return;
+                    }
 
-                                    Console.WriteLine("--------------------------");
-                                    return ret;
-                                }
-                                catch (Exception ex)
+                    if (msg.Data == null || msg.Data.Length == 0)
+                    {
+                        Console.WriteLine("Message data is null or length is zero");
+                        return;
+                    }
+                        
+                    try
+                    {                        
+                        Console.WriteLine("--------------------------");
+                        //TODO: Pass a map of states mapped to bytes
+
+                        var ret = NetworkCommandDataConverterService.ConvertToObject(networkCommandConnection);
+                        Console.WriteLine(ret);
+                        switch (ret)
+                        {
+                            //Login successful, remember the login token
+                            case GameStateData gameStateData when !string.IsNullOrWhiteSpace(gameStateData.LoginToken):
+                                LoginToken = gameStateData.LoginToken;
+                                break;
+
+                            //ACK Response                                        
+                            case bool b when b && !AckReceived:
                                 {
-                                    Console.WriteLine(ex);
+                                    //send fake input command
+                                    var fakeInput = Output.SendToClient(NetworkCommandConstants.SendPressReleaseCommand,
+                                        new PressReleaseUpdateData() { Command = Commands.Count == 0 ? -1 : Commands.Dequeue(), LoginToken = LoginToken },
+                                        NetDeliveryMethod.ReliableOrdered, 0, networkCommandConnection.Connection);
+                                    AckReceived = true;
+                                    Console.WriteLine("ACK received!!!");
+                                    //TODO: Send release after some time
+                                    break;
                                 }
-                                return null;
-                            })
-                            .ToList();
+                        }
+
+                        Console.WriteLine("--------------------------");
+                                    
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine(ex);
+                    }
+                                
+                });                            
 
             if (AckReceived)
             {
-
+                Console.WriteLine(nextCommand);
+                if (nextCommand == -1)
+                    return;
+                
                 var serverConnection = Client.Connections.FirstOrDefault();
                 var fakeInput = Output.SendToClient(NetworkCommandConstants.SendPressReleaseCommand,
                     new PressReleaseUpdateData() { Command = nextCommand, LoginToken = LoginToken},

@@ -1,14 +1,15 @@
-﻿using Apocalypse.Any.Domain.Common.Model.Network;
+using Apocalypse.Any.Domain.Common.Model.Network;
 using Apocalypse.Any.Domain.Server.Model.Network;
+using Apocalypse.Any.Infrastructure.Common.Services.Network.Interfaces.Data;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 
-namespace Apocalypse.Any.Infrastructure.Common.Services.Network.Interfaces.Data
+namespace Apocalypse.Any.Infrastructure.Server.Services.Data
 {
-    public class ExampleLoginAndRegistrationService
+    public class ExampleLocalLoginAndRegistrationService
         : IUserAuthenticationService
     {
         private List<UserDataWithLoginToken> SampleDataByLoginToken { get; } = new List<UserDataWithLoginToken>()
@@ -39,7 +40,7 @@ namespace Apocalypse.Any.Infrastructure.Common.Services.Network.Interfaces.Data
                 NewInGame = true // password is "12345" unhashed
             },
             new UserDataWithLoginToken(){
-                Roles = UserDataRole.CanSendRemoteMovementCommands,
+                Roles = UserDataRole.CanViewWorldByLoginToken,
                 Username = "foo2",
                 Password = "5994471ABB01112AFCC18159F6CC74B4F511B99806DA59B3CAF5A9C173CACFC5",
                 NewInGame = true // password is "12345" unhashed
@@ -61,7 +62,7 @@ namespace Apocalypse.Any.Infrastructure.Common.Services.Network.Interfaces.Data
 
         private ExampleLoginTokenGeneratorService LoginTokenGeneratorService { get; } = new ExampleLoginTokenGeneratorService();
 
-        public ExampleLoginAndRegistrationService()
+        public ExampleLocalLoginAndRegistrationService()
         {
             //because the login token must be generated after instantiation
             foreach (var user in SampleDataByLoginToken)
@@ -127,9 +128,10 @@ namespace Apocalypse.Any.Infrastructure.Common.Services.Network.Interfaces.Data
         }
 
         public UserDataWithLoginToken GetByLoginTokenHack(string loginToken)
-            => SampleDataByLoginToken.Find(user => {
-                //Console.WriteLine(user.LoginToken);
-                return user.LoginToken == loginToken;
-            });
+                    => SampleDataByLoginToken.Find(user => {
+                        //Console.WriteLine(user.LoginToken);
+                        return user.LoginToken == loginToken;
+                    });
     }
+    
 }

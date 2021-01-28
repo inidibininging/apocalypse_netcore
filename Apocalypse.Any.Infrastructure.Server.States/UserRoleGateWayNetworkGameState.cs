@@ -53,7 +53,7 @@ namespace Apocalypse.Any.Infrastructure.Server.States
             var userRoles = UserDataRoleService.GetRoles(convertedInstance as UserData);
             var userRolesHandler = gameStateContext.GameStateRegistrar.GetNetworkLayerState((byte)Routes.FirstOrDefault(kv => userRoles.HasFlag(kv.Key)).Value);
             
-            gameStateContext.Logger.Log(LogLevel.Information, $"{nameof(UserRoleGateWayNetworkGameState<TWorld>)} performing ChangeHandlerEasier");
+            gameStateContext.Logger.Log(LogLevel.Information, $"{nameof(UserRoleGateWayNetworkGameState<TWorld>)} performing ChangeHandlerEasier {userRolesHandler}");
             gameStateContext.ChangeHandlerEasier(userRolesHandler, networkCommandConnectionToHandle);
             
             userRolesHandler.Handle(gameStateContext, networkCommandConnectionToHandle);

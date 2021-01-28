@@ -43,6 +43,8 @@ namespace Apocalypse.Any.Core.Input.Translator
 
         public int Translate(string input)
         {
+            //Problem. I need to check if the is pressed or not. This should be done by recording the last key pressed and when the input is nothing (-1) -> send a release
+            //The behaviour is similar to ProcessPressReleaseState
             switch (input)
             {
                 case DefaultKeys.Up + DefaultKeys.Press:

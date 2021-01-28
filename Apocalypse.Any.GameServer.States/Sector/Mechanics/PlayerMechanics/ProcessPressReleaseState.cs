@@ -32,6 +32,8 @@ namespace Apocalypse.Any.GameServer.States.Sector.Mechanics.PlayerMechanics
                 //get key down and remember  
                 foreach (var cmd in playerGameStateData.Commands)
                 {
+                    Console.WriteLine(cmd);
+                    
                     if (cmd.Contains(DefaultKeys.Press))
                     {
                         var pressKey = cmd.Replace(DefaultKeys.Press, "");
@@ -50,6 +52,8 @@ namespace Apocalypse.Any.GameServer.States.Sector.Mechanics.PlayerMechanics
                 //keep executing the pressed keys as commands
                 foreach (var cmd in KeyDownUp[player.LoginToken])
                 {
+
+                    
                     foreach (var mappedCommand in InputMapper.DefaultRotationMap)
                     {
                         mappedCommand
@@ -57,6 +61,7 @@ namespace Apocalypse.Any.GameServer.States.Sector.Mechanics.PlayerMechanics
                             .ToList()
                             .ForEach(foundCmd => foundCmd.Execute(player.CurrentImage.Rotation));
                     }
+
                     foreach (var mappedCommand in InputMapper.DefaultMovementMap)
                     {
                         mappedCommand
@@ -64,6 +69,7 @@ namespace Apocalypse.Any.GameServer.States.Sector.Mechanics.PlayerMechanics
                             .ToList()
                             .ForEach(foundCmd => foundCmd.Execute(player.CurrentImage.Position));
                     }
+
                 }
             }
             

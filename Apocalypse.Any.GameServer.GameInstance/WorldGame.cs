@@ -47,6 +47,7 @@ using Apocalypse.Any.Infrastructure.Server.Services.Factories;
 using Apocalypse.Any.Infrastructure.Server.Services.Mechanics.SectorMechanics;
 using Apocalypse.Any.Infrastructure.Server.Worker;
 using Apocalypse.Any.Core.Input.Translator;
+using Apocalypse.Any.Infrastructure.Server.Services.Data;
 
 namespace Apocalypse.Any.GameServer.GameInstance
 {
@@ -89,7 +90,7 @@ namespace Apocalypse.Any.GameServer.GameInstance
         private NetIncomingMessageBusService<NetServer> ServerInput { get; set; }
         private NetOutgoingMessageBusService<NetServer> ServerOutput { get; set; }
 
-        private ExampleLoginAndRegistrationService AuthenticationService { get; set; }
+        private IUserAuthenticationService AuthenticationService { get; set; }
 
         public GameServerConfiguration ServerConfiguration { get; set; }
 
@@ -123,7 +124,12 @@ namespace Apocalypse.Any.GameServer.GameInstance
             SerializationAdapter = Activator.CreateInstance(serializerType) as IByteArraySerializationAdapter;
             GameSectorLayerServices = new Dictionary<int, IStateMachine<string, IGameSectorLayerService>>();
             SectorStateMachine = new InMemoryStorageGameSectorLayerServiceFactory();
-            AuthenticationService = new ExampleLoginAndRegistrationService();
+            
+            if(clientConfiguration == null)
+                AuthenticationService = new ExampleLoginAndRegistrationService();
+            else
+                AuthenticationService = new ExampleLocalLoginAndRegistrationService();
+            
             CreateServer(
                 ServerConfiguration.ServerPeerName,
                 ServerConfiguration.ServerIp,
@@ -191,6 +197,7 @@ namespace Apocalypse.Any.GameServer.GameInstance
             {
                 SendPressReleaseWorker =
                     new SyncClient<PlayerSpaceship, EnemySpaceship, Item, Projectile, CharacterEntity, CharacterEntity,ImageData>(ClientConfiguration);
+                Console.WriteLine($"Sync client created for {clientConfiguration.User}");
             }
 
             //Language script file
@@ -377,8 +384,12 @@ namespace Apocalypse.Any.GameServer.GameInstance
             UpdateGameTime(CurrentGameTime);
 
             //Try to login to the "real server"
-            if(!LoggedInToPressRelease)
-                LoggedInToPressRelease = (SendPressReleaseWorker?.TryLogin()).GetValueOrDefault();
+            if (!LoggedInToPressRelease && ClientConfiguration != null)
+            {
+                var loginAttempt = (SendPressReleaseWorker?.TryLogin()).GetValueOrDefault();
+                Console.WriteLine(loginAttempt);
+                LoggedInToPressRelease = loginAttempt == NetSendResult.Sent;
+            }
 
             GameStateContext.Update();
 
@@ -408,9 +419,15 @@ namespace Apocalypse.Any.GameServer.GameInstance
             }
 
             //Sync server logic
-            if(LoggedInToPressRelease && SendPressReleaseWorker != null && !string.IsNullOrWhiteSpace(SendPressReleaseWorker.LoginToken)){
-                var gameStateLoginToken = GetGameStateByLoginToken(SendPressReleaseWorker.LoginToken);
-                SendPressReleaseWorker?.ProcessIncomingMessages(gameStateLoginToken.Commands.Select(cmd => SyncCommandTranslator.Translate(cmd)));
+            if(LoggedInToPressRelease && ClientConfiguration != null) 
+            {                
+                IEnumerable<int> commandsToSend = Array.Empty<int>();
+                if (!string.IsNullOrWhiteSpace(SendPressReleaseWorker.LoginToken))
+                {                    
+                    var gameStateLoginToken = GetGameStateByLoginToken(AuthenticationService.GetLoginToken(ClientConfiguration.User));
+                    commandsToSend = gameStateLoginToken.Commands.Select(cmd => SyncCommandTranslator.Translate(cmd));
+                }                
+                SendPressReleaseWorker?.ProcessIncomingMessages(commandsToSend);
             }
 
             Thread.Sleep(timeToWait);
@@ -446,9 +463,9 @@ namespace Apocalypse.Any.GameServer.GameInstance
             if (foundGameStates.Any())
             {
                 var problematicGameState = foundGameStates
-                                                                .GroupBy(gs => gs.sectorTag)
-                                                                .Where(gameStates => gameStates.Count() > 1)
-                                                                .Select(gs => gs.Key);
+                                                .GroupBy(gs => gs.sectorTag)
+                                                .Where(gameStates => gameStates.Count() > 1)
+                                                .Select(gs => gs.Key);
                 if(problematicGameState.Any())
                 {
                     Console.ForegroundColor = ConsoleColor.Yellow;
@@ -462,17 +479,19 @@ namespace Apocalypse.Any.GameServer.GameInstance
             Console.WriteLine($"login token: {loginToken}");
 
             var user = AuthenticationService.GetByLoginTokenHack(loginToken);
+            
             if (user == null)
                 throw new NotImplementedException("new users cannot be inserted into this demo");
             
             var userGameStateData = RegisterGameStateData(loginToken);
 
             //This is a hack. Needs to be removed from here
-            if(ClientConfiguration != null)
-                user.Roles |= UserDataRole.CanSendRemoteMovementCommands;
+            //if(ClientConfiguration != null)
+            //    user.Roles |= UserDataRole.CanSendRemoteMovementCommands;
 
             if ((user.Roles & UserDataRole.CanSendRemoteStateCommands) != 0)
-            {
+            {                
+
                 //offer the player remote control on the server :) ... or :(
                 userGameStateData.Metadata = new IdentifiableNetworkCommand() { CommandName = CLINetworkCommandConstants.WaitForSignalCommand };
             }

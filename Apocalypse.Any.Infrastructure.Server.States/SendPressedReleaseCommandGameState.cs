@@ -34,6 +34,7 @@ namespace Apocalypse.Any.Infrastructure.Server.States
         public void Handle(INetworkStateContext<TWorld> gameStateContext,
             NetworkCommandConnection networkCommandConnectionToHandle)
         {
+            gameStateContext.Logger.LogInformation($" {nameof(SendPressedReleaseCommandGameState<TWorld>)}. Handler");
 
             //get player login token
             if (string.IsNullOrWhiteSpace(networkCommandConnectionToHandle.CommandArgument))
