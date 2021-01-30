@@ -15,7 +15,7 @@ namespace Apocalypse.Any.GameServer.States.Sector.Mechanics.PlayerMechanics
     public class ProcessPressReleaseState : IState<string, IGameSectorLayerService>
     {
         public Dictionary<string, List<string>> KeyDownUp { get; set; } = new Dictionary<string, List<string>>();
-        
+
         public void Handle(IStateMachine<string, IGameSectorLayerService> machine)
         {
             //TODO:

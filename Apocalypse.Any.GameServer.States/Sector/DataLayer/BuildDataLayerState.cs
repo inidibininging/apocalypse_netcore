@@ -62,7 +62,7 @@ namespace Apocalypse.Any.GameServer.States.Sector
             //language related stuff
             machine.SharedContext.DataLayer.Layers.Add(new GenericInMemoryDataLayer<TagVariable>(null));
             machine.SharedContext.DataLayer.Layers.Add(new GenericInMemoryDataLayer<ReferenceVariable>(null));
-            
+
             //dialog related stuff
             machine.SharedContext.DataLayer.Layers.Add(new GenericInMemoryDataLayer<IdentifiableCircularLocation>(null));
             machine.SharedContext.DataLayer.Layers.Add(new DynamicRelationLayer<IdentifiableCircularLocation, DialogNode>(DialogLocationRelationLayerName));
@@ -77,7 +77,7 @@ namespace Apocalypse.Any.GameServer.States.Sector
             var eventHandlers = new GenericInMemoryDataLayer<IIdentifiableNotifiableModel>(DropPlayerItemEventName);
             eventHandlers.Add(new PlayerItemDialogNotifier(DropPlayerItemEventName, PlayerBankLayerName, () => machine.SharedContext));
             eventHandlers.Add(new CreatePlayerBankOnPlayerRegistrationNotifier(PlayerRegisteredEventName,  PlayerBankLayerName, BankFactory, () => machine.SharedContext));
-            
+
             machine.SharedContext.DataLayer.Layers.Add(eventHandlers);
 
 

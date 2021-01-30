@@ -15,11 +15,10 @@ namespace Apocalypse.Any.GameServer
     {
         private static void Main(string[] args)
         {
-           
             var yamler = new YamlSerializerAdapter();
             var jsonler = new JsonSerializerAdapter();
             var msgler = new MsgPackByteArraySerializerAdapter();
-
+            
             var config = yamler.DeserializeObject<GameServerConfiguration>(File.ReadAllText(args[0]));
             GameClientConfiguration possibleSync = null;
             if(args.Length > 1)

@@ -155,8 +155,10 @@ namespace Apocalypse.Any.Infrastructure.Server.Worker
         {
             TryConnect();
 
-            foreach (var cmd in commands)
+            foreach (var cmd in commands) {
+                // Console.WriteLine($"enque:{cmd}");
                 Commands.Enqueue(cmd);
+            }
 
             var nextCommand = Commands.Count == 0 ? -1 : Commands.Dequeue();
             var dataInputs = Input
@@ -173,7 +175,6 @@ namespace Apocalypse.Any.Infrastructure.Server.Worker
                     {
                         networkCommandConnection = NetIncomingMessageNetworkCommand.Translate(msg);
                         Console.WriteLine(networkCommandConnection?.CommandName);
-                     
                     }
                     catch (Exception ex)
                     {
@@ -198,9 +199,8 @@ namespace Apocalypse.Any.Infrastructure.Server.Worker
                         Console.WriteLine("Message data is null or length is zero");
                         return;
                     }
-                        
                     try
-                    {                        
+                    {
                         Console.WriteLine("--------------------------");
                         //TODO: Pass a map of states mapped to bytes
 
@@ -228,24 +228,20 @@ namespace Apocalypse.Any.Infrastructure.Server.Worker
                         }
 
                         Console.WriteLine("--------------------------");
-                                    
                     }
                     catch (Exception ex)
                     {
                         Console.WriteLine(ex);
                     }
-                                
-                });                            
+                });
 
-            if (AckReceived)
+            if (AckReceived && nextCommand != -1)
             {
-                Console.WriteLine(nextCommand);
-                if (nextCommand == -1)
-                    return;
-                
+                Console.WriteLine($"nextCommand:{nextCommand}");                
+
                 var serverConnection = Client.Connections.FirstOrDefault();
                 var fakeInput = Output.SendToClient(NetworkCommandConstants.SendPressReleaseCommand,
-                    new PressReleaseUpdateData() { Command = nextCommand, LoginToken = LoginToken},
+                    new PressReleaseUpdateData() { Command = nextCommand, LoginToken = LoginToken },
                     NetDeliveryMethod.ReliableOrdered, 0, serverConnection); // HARD CODED connection. First one should be the one from the message sending the fake press
                 Console.WriteLine($"Sent command {nextCommand}");
             }

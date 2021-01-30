@@ -30,16 +30,11 @@ namespace Apocalypse.Any.WorkerBee
                                         CharacterEntity,
                                         CharacterEntity,
                                         ImageData>(clientConfig);
-             
             while (true)
             {
                 world.Update(null);
                 dataLayerWorker.ProcessIncomingMessages(null);
-                
             }
-
-            
-                
         }
     }
 }

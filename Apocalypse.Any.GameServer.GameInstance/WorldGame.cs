@@ -106,8 +106,20 @@ namespace Apocalypse.Any.GameServer.GameInstance
 
         #region SyncClient
         private SyncClient<PlayerSpaceship,EnemySpaceship,Item,Projectile,CharacterEntity,CharacterEntity,ImageData> SendPressReleaseWorker { get; }
+        
+        /// <summary>
+        /// Tells if this instance is logged in to a sync server
+        /// </summary>
+        /// <value></value>
         private bool LoggedInToPressRelease { get; set; }
+
+        /// <summary>
+        /// Converts any input to an int command
+        /// </summary>
+        /// <returns></returns>
         private IntCommandStringCommandTranslator SyncCommandTranslator { get; } = new IntCommandStringCommandTranslator();
+        
+        private CommandPressReleaseTranslator PressReleaseTranslator { get; } = new CommandPressReleaseTranslator();
         #endregion
 
         public WorldGame(GameServerConfiguration serverConfiguration, GameClientConfiguration clientConfiguration)
@@ -192,7 +204,7 @@ namespace Apocalypse.Any.GameServer.GameInstance
 
             GameStateContext.Initialize();
 
-            //Connection to the real server
+            //Connection to sync server
             if(ClientConfiguration != null)
             {
                 SendPressReleaseWorker =
@@ -383,7 +395,7 @@ namespace Apocalypse.Any.GameServer.GameInstance
             CreateGameTimeIfNotExists(gameTime);
             UpdateGameTime(CurrentGameTime);
 
-            //Try to login to the "real server"
+            //Try to login to the sync server
             if (!LoggedInToPressRelease && ClientConfiguration != null)
             {
                 var loginAttempt = (SendPressReleaseWorker?.TryLogin()).GetValueOrDefault();
@@ -401,8 +413,8 @@ namespace Apocalypse.Any.GameServer.GameInstance
             var timeToWait = TimeSpan.FromSeconds(ServerConfiguration.ServerUpdateInSeconds);
 
             foreach (var sector in GameSectorLayerServices
-                                                                                    .Values
-                                                                                    .Where(sector => sector.SharedContext.CurrentStatus == GameSectorStatus.Running && sector.SharedContext.DataLayer.Players.Any()))
+                                    .Values
+                                    .Where(sector => sector.SharedContext.CurrentStatus == GameSectorStatus.Running && sector.SharedContext.DataLayer.Players.Any()))
             {
                 sector.SharedContext.CurrentGameTime = CurrentGameTime;
                     Task.Factory.StartNew(() =>
@@ -418,19 +430,34 @@ namespace Apocalypse.Any.GameServer.GameInstance
                     });
             }
 
-            //Sync server logic
-            if(LoggedInToPressRelease && ClientConfiguration != null) 
-            {                
-                IEnumerable<int> commandsToSend = Array.Empty<int>();
-                if (!string.IsNullOrWhiteSpace(SendPressReleaseWorker.LoginToken))
-                {                    
-                    var gameStateLoginToken = GetGameStateByLoginToken(AuthenticationService.GetLoginToken(ClientConfiguration.User));
-                    commandsToSend = gameStateLoginToken.Commands.Select(cmd => SyncCommandTranslator.Translate(cmd));
-                }                
-                SendPressReleaseWorker?.ProcessIncomingMessages(commandsToSend);
-            }
-
             Thread.Sleep(timeToWait);
+        }
+
+        /// <summary>
+        /// Compares a user with the user that plays locally.
+        /// If it matches, the commands of the player (player owned by user) will be delegated to the sync server
+        /// </summary>
+        /// <param name="loginToken">Login token from a player in the sync server</param>
+        /// <param name="commands"></param>
+        private void DelegatePlayerCommandsToSyncServer(string loginToken, IEnumerable<string> commands)
+        {
+            if(string.IsNullOrWhiteSpace(loginToken) || commands == null )
+                return;
+            if(!commands.Any())
+                return;
+            if(!LoggedInToPressRelease || ClientConfiguration == null)
+                return;
+
+            var user = AuthenticationService.GetByLoginTokenHack(loginToken);
+
+            Console.WriteLine($"CHECK - {user.Username} against {ClientConfiguration.User.Username} - {user.Password} against {ClientConfiguration.User.Password}");
+
+            //password will never match because password is encrypted and the client configuration password is not!
+            if(user.Username != ClientConfiguration.User.Username)
+                return;
+
+            Console.WriteLine("MATCH!");
+            SendPressReleaseWorker?.ProcessIncomingMessages(commands.Select(cmd => SyncCommandTranslator.Translate(cmd)));
         }
 
         private PlayerSpaceship CreatePlayerSpaceShip(string loginToken)
@@ -479,10 +506,10 @@ namespace Apocalypse.Any.GameServer.GameInstance
             Console.WriteLine($"login token: {loginToken}");
 
             var user = AuthenticationService.GetByLoginTokenHack(loginToken);
-            
+
             if (user == null)
                 throw new NotImplementedException("new users cannot be inserted into this demo");
-            
+
             var userGameStateData = RegisterGameStateData(loginToken);
 
             //This is a hack. Needs to be removed from here
@@ -490,7 +517,7 @@ namespace Apocalypse.Any.GameServer.GameInstance
             //    user.Roles |= UserDataRole.CanSendRemoteMovementCommands;
 
             if ((user.Roles & UserDataRole.CanSendRemoteStateCommands) != 0)
-            {                
+            {
 
                 //offer the player remote control on the server :) ... or :(
                 userGameStateData.Metadata = new IdentifiableNetworkCommand() { CommandName = CLINetworkCommandConstants.WaitForSignalCommand };
@@ -535,7 +562,7 @@ namespace Apocalypse.Any.GameServer.GameInstance
             {
                 throw new InvalidOperationException($"Cannot use {nameof(FirePlayerRegisteredEvent)}. EventQueue PlayerRegistered doesn't exist");
             }
-	    
+
 	        //this needs to be created through a factory
             var playerRegisteredEvent = new EventQueueArgument()
             {
@@ -550,10 +577,16 @@ namespace Apocalypse.Any.GameServer.GameInstance
         }
 
         private TimeSpan SendingDelta { get; set; } = TimeSpan.Zero;
+
         public bool ForwardClientDataToGame(GameStateUpdateData updateData)
         {
             //build it
             var now = DateTime.Now;
+
+            DelegatePlayerCommandsToSyncServer(
+                updateData.LoginToken, 
+                PressReleaseTranslator.Translate(updateData.Commands));
+
             return GameSectorLayerServices
                 .Values
                 .ToList()
@@ -568,6 +601,8 @@ namespace Apocalypse.Any.GameServer.GameInstance
 
                 if (currentPlayer == null)
                     return false;
+
+
 
                 var sent = sector
                 .SharedContext
