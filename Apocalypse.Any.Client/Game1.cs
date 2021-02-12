@@ -1,4 +1,6 @@
-﻿using Apocalypse.Any.Client.Screens;
+﻿using System;
+using System.Diagnostics;
+using Apocalypse.Any.Client.Screens;
 using Apocalypse.Any.Client.States;
 using Apocalypse.Any.Client.States.Storage;
 using Apocalypse.Any.Core.Services;
@@ -20,6 +22,37 @@ namespace Apocalypse.Any.Client
         private SpriteBatch _spriteBatch;
         public int SelectedStartScene { get; set; }
         public IStateMachine<string, INetworkGameScreen> GameContext { get; set; }
+        
+        public Process LocalServer { get; set; }
+        
+        private void InitLocalGameServer()
+        {
+            const string apocalypseNetCorePath = "/home/develop/src/apocalypse_netcore/";
+            string pathToLocalServerConfig = $"{apocalypseNetCorePath}localserver_config.yaml";
+            string pathToSyncServerConfig = $"{apocalypseNetCorePath}localserver_to_sync.yaml";
+            string localGameServer = $"{apocalypseNetCorePath}Apocalypse.Any.GameServer/bin/Debug/netcoreapp2.1/Apocalypse.Any.GameServer.dll";
+            LocalServer = new Process
+            {
+                StartInfo = (new ProcessStartInfo()
+                {
+                    FileName = $"dotnet",
+                    ArgumentList = {localGameServer, pathToLocalServerConfig, pathToSyncServerConfig}
+                })
+            };
+            LocalServer.OutputDataReceived += LocalServerOutputDataReceived;
+            LocalServer.Start();
+        }
+
+        private static void LocalServerOutputDataReceived(object sender, DataReceivedEventArgs args) => Console.WriteLine(args.Data);
+
+        protected override void Dispose(bool disposing)
+        {
+            LocalServer.OutputDataReceived -= LocalServerOutputDataReceived;
+            LocalServer.Kill();
+            LocalServer.Dispose();
+            LocalServer = null;
+            base.Dispose(disposing);
+        }
 
         public Game1(GameClientConfiguration gameClientConfiguration) : base()
         {
@@ -28,6 +61,7 @@ namespace Apocalypse.Any.Client
             Content.RootDirectory = "Content";
             var contextBuilder = new InMemoryGameScreenStorageFactory();
             GameContext = contextBuilder.BuildClientStateMachine(gameClientConfiguration);
+
         }
 
         private void SelectStartScene(string selection)
@@ -45,6 +79,8 @@ namespace Apocalypse.Any.Client
         /// </summary>
         protected override void Initialize()
         {
+            InitLocalGameServer();
+            
             // TODO: Add your initialization logic here
             //Services.AddService(new DefaultBusInputRecordService());
             Services.AddService(ScreenService.Instance); //TODO: Need to change this -> referring to a new screen service , not to the  singleton instance
@@ -63,6 +99,7 @@ namespace Apocalypse.Any.Client
             GameContext.SharedContext.Initialize();
             GameContext.GetService.Get(ClientGameScreenBook.Init).Handle(GameContext);
             ScreenService.Instance.Initialize(GameContext.SharedContext);
+
 
         }
 

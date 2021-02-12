@@ -3,7 +3,6 @@ using Apocalypse.Any.Client.States.UI.Dialog;
 using Apocalypse.Any.Core.Utilities;
 using Apocalypse.Any.Domain.Common.Model;
 using Apocalypse.Any.Domain.Common.Model.PubSub;
-using Apocalypse.Any.Domain.Server.DataLayer;
 using Apocalypse.Any.Domain.Server.Model;
 using Apocalypse.Any.Domain.Server.Model.Interfaces;
 using Apocalypse.Any.GameServer.States.Sector.Factories;
@@ -12,8 +11,6 @@ using Apocalypse.Any.GameServer.States.Sector.Mechanics.EnemyMechanics;
 using Apocalypse.Any.GameServer.States.Sector.Mechanics.ItemMechanics;
 using Apocalypse.Any.GameServer.States.Sector.Mechanics.PlayerMechanics;
 using Apocalypse.Any.GameServer.States.Sector.Mechanics.ProjectileMechanics;
-using Apocalypse.Any.Infrastructure.Common.Services.Network.Interfaces.Factories;
-using Apocalypse.Any.Infrastructure.Common.Services.Network.Interfaces.Transformations;
 using Apocalypse.Any.Infrastructure.Common.Services.Serializer.Interfaces;
 using Apocalypse.Any.Infrastructure.Server.PubSub;
 using Apocalypse.Any.Infrastructure.Server.PubSub.Interfaces;
@@ -30,7 +27,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Apocalypse.Any.Constants;
+using Apocalypse.Any.GameServer.States.Sector.DataLayer;
 using Apocalypse.Any.GameServer.States.Sector.Services;
+using Apocalypse.Any.Infrastructure.Server.Services.Transformations;
 
 namespace Apocalypse.Any.GameServer.States.Sector.Storage
 {

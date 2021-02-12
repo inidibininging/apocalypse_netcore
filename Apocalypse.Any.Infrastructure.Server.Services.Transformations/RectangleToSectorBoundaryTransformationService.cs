@@ -2,7 +2,7 @@ using Apocalypse.Any.Domain.Server.Model;
 using Apocalypse.Any.Domain.Server.Model.Interfaces;
 using Microsoft.Xna.Framework;
 
-namespace Apocalypse.Any.Infrastructure.Common.Services.Network.Interfaces.Transformations
+namespace Apocalypse.Any.Infrastructure.Server.Services.Transformations
 {
     public class RectangleToSectorBoundaryTransformationService
     {

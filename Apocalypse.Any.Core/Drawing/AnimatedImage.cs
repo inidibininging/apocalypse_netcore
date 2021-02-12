@@ -1,7 +1,7 @@
-﻿using Apocalypse.Any.Collections;
-using Apocalypse.Any.Core.Utilities;
+﻿using Apocalypse.Any.Core.Utilities;
 using Microsoft.Xna.Framework;
 using System;
+using Apocalypse.Any.Core.Collections;
 
 namespace Apocalypse.Any.Core.Drawing
 {

@@ -1,12 +1,12 @@
-﻿using Apocalypse.Any.Domain.Common.Model.Network;
-using Apocalypse.Any.Domain.Server.Model.Network;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
+using Apocalypse.Any.Domain.Common.Model.Network;
+using Apocalypse.Any.Domain.Server.Model.Network;
 
-namespace Apocalypse.Any.Infrastructure.Common.Services.Network.Interfaces.Data
+namespace Apocalypse.Any.Infrastructure.Server.Services.Data
 {
     public class ExampleLoginAndRegistrationService
         : IUserAuthenticationService

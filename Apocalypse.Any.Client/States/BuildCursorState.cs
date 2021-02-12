@@ -1,12 +1,12 @@
+using System.Linq;
 using Apocalypse.Any.Client.Screens;
+using Apocalypse.Any.Constants;
+using Apocalypse.Any.Core.Drawing;
 using Apocalypse.Any.Domain.Common.DrawingOrder;
 using Microsoft.Xna.Framework;
 using States.Core.Infrastructure.Services;
-using System.Linq;
-using Apocalypse.Any.Constants;
-using Apocalypse.Any.Core.Drawing;
 
-namespace Apocalypse.Any.Client.States.UI
+namespace Apocalypse.Any.Client.States
 {
     public class BuildCursorState : IState<string, INetworkGameScreen>
     {

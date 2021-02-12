@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Apocalypse.Any.Core.Input.Translator;
 
-namespace Apocalypse.Any.Core.Input.Translator
+namespace Apocalypse.Any.Core.Input
 {
     /// <summary>
     /// Records any given input as pressed keys and old input as released

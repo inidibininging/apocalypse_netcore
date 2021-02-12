@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.Serialization;
 
-namespace Apocalypse.Any.Infrastructure.Common.Services.Network.Interfaces.Data
+namespace Apocalypse.Any.Infrastructure.Server.Services.Data
 {
     [Serializable]
     internal class UserNotFoundException : Exception

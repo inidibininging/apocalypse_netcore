@@ -38,7 +38,7 @@ namespace Apocalypse.Any.Infrastructure.Server.States.Translators
         public GameStateData Translate(NetworkCommandConnection input)
         {
             if (!HasValidGameStateData(input))
-                throw new ArgumentException($"{nameof(input)} has no valid networkcommandconnection");
+                throw new ArgumentException($"{nameof(input)} has no valid network command connection");
 
             Console.WriteLine("casting to type...");
             var types = input.CommandArgument.LoadType(true, false);

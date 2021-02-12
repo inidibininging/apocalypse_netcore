@@ -22,18 +22,18 @@ namespace Apocalypse.Any.WorkerBee
             var serverConfig = yamler.DeserializeObject<GameServerConfiguration>(File.ReadAllText(args[1]));
 
             var world = new WorldGame(serverConfig, null);
-            var dataLayerWorker = new SyncClient<
-                                        PlayerSpaceship,
-                                        EnemySpaceship,
-                                        Item,
-                                        Projectile,
-                                        CharacterEntity,
-                                        CharacterEntity,
-                                        ImageData>(clientConfig);
+            // var dataLayerWorker = new SyncClient<
+            //                             PlayerSpaceship,
+            //                             EnemySpaceship,
+            //                             Item,
+            //                             Projectile,
+            //                             CharacterEntity,
+            //                             CharacterEntity,
+            //                             // ImageData>(clientConfig, world.LoggerServiceFactory.GetLogger());
             while (true)
             {
                 world.Update(null);
-                dataLayerWorker.ProcessIncomingMessages(null);
+                // dataLayerWorker.ProcessIncomingMessages(null);
             }
         }
     }

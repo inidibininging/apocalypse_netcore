@@ -1,12 +1,12 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using Apocalypse.Any.Core.Behaviour;
 using Apocalypse.Any.Core.Drawing;
 using Apocalypse.Any.Domain.Common.DrawingOrder;
 using Apocalypse.Any.Domain.Common.Network;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 
-namespace Apocalypse.Any.Client.Services.Creation
+namespace Apocalypse.Any.Client.Services
 {
     /// <summary>
     /// Draws the players inventory as a grid

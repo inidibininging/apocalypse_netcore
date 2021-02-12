@@ -1,12 +1,12 @@
-﻿using Apocalypse.Any.Core.Input;
+﻿using System;
+using System.Collections.Concurrent;
+using System.Linq;
+using Apocalypse.Any.Core.Input;
 using Apocalypse.Any.Domain.Common.Model.Network;
 using Apocalypse.Any.Infrastructure.Common.Services.Network;
 using Lidgren.Network;
-using System;
-using System.Collections.Concurrent;
-using System.Linq;
 
-namespace Apocalypse.Any.Core.Network.Server.Services
+namespace Apocalypse.Any.Infrastructure.Server.Services.Network
 {
     public class NetworkCommandConnectionProducerService<TNetPeer> : IObservable<NetworkCommandConnection>
         where TNetPeer : NetPeer

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Apocalypse.Any.Domain.Common.Mechanics;
 using Apocalypse.Any.Domain.Server.Model.Network;
-using Apocalypse.Any.Infrastructure.Common.Services.Network.Interfaces.Data;
+using Apocalypse.Any.Infrastructure.Server.Services.Data;
 using Apocalypse.Any.Infrastructure.Server.Services.Data.Interfaces;
 using Newtonsoft.Json;
 using StackExchange.Redis;

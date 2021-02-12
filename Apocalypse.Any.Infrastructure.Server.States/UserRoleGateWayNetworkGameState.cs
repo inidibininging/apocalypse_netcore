@@ -1,5 +1,4 @@
 ﻿using Apocalypse.Any.Domain.Common.Model.Network;
-using Apocalypse.Any.Domain.Server.DataLayer;
 using Apocalypse.Any.Domain.Server.Model.Network;
 using Apocalypse.Any.Infrastructure.Common.Services.Network;
 using Apocalypse.Any.Infrastructure.Server.Services.Data.Interfaces;

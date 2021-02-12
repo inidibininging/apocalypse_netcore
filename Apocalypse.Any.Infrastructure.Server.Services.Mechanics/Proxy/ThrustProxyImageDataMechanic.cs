@@ -1,9 +1,8 @@
+using System;
 using Apocalypse.Any.Domain.Common.Mechanics;
 using Apocalypse.Any.Domain.Common.Model.Network;
-using Apocalypse.Any.Infrastructure.Server.Services.Mechanics;
-using System;
 
-namespace Apocalypse.Any.GameServer.Mechanics.Proxy
+namespace Apocalypse.Any.Infrastructure.Server.Services.Mechanics.Proxy
 {
     public class ThrustProxyImageDataMechanic
     : ISingleFullPositionHolderMechanic<ImageData>

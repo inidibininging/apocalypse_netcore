@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Apocalypse.Any.Domain.Common.Model;
 using Apocalypse.Any.Domain.Server.Model;
-using Apocalypse.Any.GameServer.States.Sector;
 using Apocalypse.Any.Infrastructure.Server.Services.Data.Interfaces;
 using Apocalypse.Any.Web.Admin.Models;
 using Microsoft.AspNetCore.Http;

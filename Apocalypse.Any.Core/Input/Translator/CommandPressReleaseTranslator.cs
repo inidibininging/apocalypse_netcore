@@ -1,9 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Apocalypse.Any.Core.Input.Translator;
 
-namespace Apocalypse.Any.Core.Input
+namespace Apocalypse.Any.Core.Input.Translator
 {
     /// <summary>
     /// Records any input as pressed keys and returns any new input as pressed key and old input as released

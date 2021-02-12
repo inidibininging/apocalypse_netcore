@@ -1,12 +1,11 @@
-﻿using Apocalypse.Any.Core.Input;
+﻿using System;
+using Apocalypse.Any.Core.Input;
 using Apocalypse.Any.Domain.Common.Model.Network;
 using Apocalypse.Any.Domain.Common.Network;
 using Apocalypse.Any.Infrastructure.Common.Services.Serializer.Interfaces;
 using Apocalypse.Any.Infrastructure.Server.Services.Data.Interfaces;
-using Newtonsoft.Json;
-using System;
 
-namespace Apocalypse.Any.Core.Network.Server.Services
+namespace Apocalypse.Any.Infrastructure.Server.Services.Network
 {
     public class NetworkCommandServerToLoginTokenTranslator : IInputTranslator<NetworkCommandConnection, string>
     {

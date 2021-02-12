@@ -1,13 +1,13 @@
 ﻿using Apocalypse.Any.Domain.Common.Model.Network;
 using Apocalypse.Any.Domain.Common.Network;
-using Apocalypse.Any.Domain.Server.DataLayer;
-using Apocalypse.Any.GameServer.States.Sector;
 using Apocalypse.Any.Infrastructure.Common.Services.Network;
 using Apocalypse.Any.Infrastructure.Server.Services.Data.Interfaces;
 using Apocalypse.Any.Infrastructure.Server.States.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Apocalypse.Any.Domain.Server.Model;
+using Microsoft.Extensions.Logging;
 
 namespace Apocalypse.Any.Infrastructure.Server.States
 {
@@ -18,7 +18,7 @@ namespace Apocalypse.Any.Infrastructure.Server.States
         : INetworkLayerState<TWorld>
         where TWorld : IWorldGameStateDataIOLayer, IWorldGameSectorInputLayer
     {
-        private readonly NetworkCommandDataConverterService NetworkCommandDataConverterService;
+        private NetworkCommandDataConverterService NetworkCommandDataConverterService { get; }
 
         public ReceiveWorkNetworkGameState(NetworkCommandDataConverterService networkCommandDataConverterService)
         {
@@ -26,39 +26,39 @@ namespace Apocalypse.Any.Infrastructure.Server.States
         }
         public void Handle(INetworkStateContext<TWorld> gameStateContext, NetworkCommandConnection networkCommandConnectionToHandle)
         {
-            //If login command is here. it means that this state is fired first
-            if (networkCommandConnectionToHandle.CommandName == NetworkCommandConstants.LoginCommand)
-            {
-                //send an "ACK" for the worker
-                gameStateContext
-                    .CurrentNetOutgoingMessageBusService
-                    .SendToClient(NetworkCommandConstants.ReceiveWorkCommand,
-                                  true,
-                                  Lidgren.Network.NetDeliveryMethod.ReliableOrdered,
-                                  0,
-                                  networkCommandConnectionToHandle.Connection);
-                return;
-            }
+            throw new NotImplementedException();
+            // //If login command is here. it means that this state is fired first
+            // if (networkCommandConnectionToHandle.CommandName == NetworkCommandConstants.LoginCommand)
+            // {
+            //     //send an "ACK" for the worker
+            //     gameStateContext.Logger.LogInformation($"{nameof(ReceiveWorkNetworkGameState<TWorld>)} ACK on login");
+            //     gameStateContext
+            //         .CurrentNetOutgoingMessageBusService
+            //         .SendToClient(NetworkCommandConstants.ReceiveWorkCommand,
+            //             NetworkCommandConstants.OutOfSyncCommand,
+            //                       Lidgren.Network.NetDeliveryMethod.ReliableOrdered,
+            //                       0,
+            //                       networkCommandConnectionToHandle.Connection);
+            //     
+            //     return;
+            // }
+            //
+            // //If receive command
+            // if (networkCommandConnectionToHandle.CommandName != NetworkCommandConstants.ReceiveWorkCommand)
+            // {
+            //     gameStateContext.Logger.LogError($"{nameof(ReceiveWorkNetworkGameState<TWorld>)} Invalid state found for {networkCommandConnectionToHandle.ConnectionId}. Command name is not ReceiveWorkCommand. Given {networkCommandConnectionToHandle.CommandName} with {networkCommandConnectionToHandle.CommandArgument}");
+            //     return;
+            // }
+            //
+            // if (networkCommandConnectionToHandle.CommandArgument != typeof(ReceiveGameStateDataLayerPartRequest).FullName)
+            // {
+            //     gameStateContext.Logger.LogError($"{nameof(ReceiveWorkNetworkGameState<TWorld>)} Invalid state found for {networkCommandConnectionToHandle.ConnectionId}. No command argument given as {nameof(ReceiveGameStateDataLayerPartRequest)} ");                    
+            //     gameStateContext.ChangeHandlerEasier(gameStateContext[(byte)ServerInternalGameStates.Error], networkCommandConnectionToHandle); 
+            // }
+            //
+            // var syncClientRequest = NetworkCommandDataConverterService.ConvertToObject(networkCommandConnectionToHandle) as ReceiveGameStateDataLayerPartRequest;
 
-            //If receive command
-            if (networkCommandConnectionToHandle.CommandName == NetworkCommandConstants.ReceiveWorkCommand)
-            {
-                var sectorKey = int.Parse(NetworkCommandDataConverterService.ConvertToObject(networkCommandConnectionToHandle).ToString());
-                // if (string.IsNullOrWhiteSpace(sectorKey))
-                //     return;
-                var sectorLayerService = gameStateContext.GameStateRegistrar.WorldGameStateDataLayer.GetSector(sectorKey);
 
-                gameStateContext
-                    .CurrentNetOutgoingMessageBusService
-                    .SendToClient(NetworkCommandConstants.ReceiveWorkCommand,
-                                  sectorLayerService.DataLayer as GameStateDataLayer,
-                                  Lidgren.Network.NetDeliveryMethod.ReliableOrdered,
-                                  0,
-                                  networkCommandConnectionToHandle.Connection);
-
-                
-                return;
-            }
         }
     }
 }

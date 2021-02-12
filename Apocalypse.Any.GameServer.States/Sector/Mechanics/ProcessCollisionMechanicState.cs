@@ -1,5 +1,4 @@
 ﻿using Apocalypse.Any.Domain.Common.Model;
-using Apocalypse.Any.Infrastructure.Common.Services.Network.Interfaces.Transformations;
 using Apocalypse.Any.Infrastructure.Server.Services.Data.Interfaces;
 using Apocalypse.Any.Infrastructure.Server.Services.Mechanics;
 using Apocalypse.Any.Infrastructure.Server.Services.Mechanics.Interfaces;
@@ -10,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Apocalypse.Any.Constants;
+using Apocalypse.Any.Infrastructure.Server.Services.Transformations;
 
 namespace Apocalypse.Any.GameServer.States.Sector.Mechanics
 {

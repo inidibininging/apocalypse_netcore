@@ -33,11 +33,21 @@ namespace Apocalypse.Any.Infrastructure.Server.States
 
         public void Handle(INetworkStateContext<TWorld> gameStateContext, NetworkCommandConnection networkCommandConnection)
         {
+            var typeArgumentAsString = networkCommandConnection?.CommandArgument;
             if (string.IsNullOrWhiteSpace(networkCommandConnection?.CommandArgument))
+            {
+                gameStateContext.Logger.LogError("networkCommandConnection has a CommandArgument with null or empty value");
                 return;
-            var typeArgumentAsString = networkCommandConnection.CommandArgument;
-            if (string.IsNullOrWhiteSpace(typeArgumentAsString))
-                return;
+            }
+                
+            // var typeArgumentAsString = networkCommandConnection.CommandArgument;
+            //
+            // if (string.IsNullOrWhiteSpace(typeArgumentAsString))
+            // {
+            //     gameStateContext.Logger.LogError("networkCommandConnection Command with null or empty value");
+            //     return;
+            // }
+                
 
             var gameStateUpdateDataTypeFull = typeof(GameStateUpdateData).FullName;
             if (typeArgumentAsString != gameStateUpdateDataTypeFull) return;

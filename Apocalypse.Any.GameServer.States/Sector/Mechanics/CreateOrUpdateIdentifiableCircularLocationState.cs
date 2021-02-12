@@ -3,7 +3,6 @@ using Apocalypse.Any.Core.Behaviour;
 using Apocalypse.Any.Core.Input.Translator;
 using Apocalypse.Any.Core.Utilities;
 using Apocalypse.Any.Domain.Common.Model;
-using Apocalypse.Any.Infrastructure.Common.Services.Network.Interfaces.Transformations;
 using Apocalypse.Any.Infrastructure.Server.Services.Data;
 using Apocalypse.Any.Infrastructure.Server.Services.Data.Interfaces;
 using Microsoft.Xna.Framework;
@@ -15,6 +14,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using Apocalypse.Any.Constants;
+using Apocalypse.Any.Infrastructure.Server.Services.Transformations;
 
 namespace Apocalypse.Any.GameServer.States.Sector.Mechanics
 {

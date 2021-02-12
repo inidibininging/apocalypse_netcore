@@ -1,5 +1,4 @@
 using Apocalypse.Any.Client.Screens;
-using Apocalypse.Any.Client.Services.Creation;
 using Apocalypse.Any.Core.Drawing;
 using Apocalypse.Any.Core.Drawing.UI;
 using Apocalypse.Any.Core.Services;
@@ -12,6 +11,7 @@ using Newtonsoft.Json.Linq;
 using States.Core.Infrastructure.Services;
 using System;
 using System.Linq;
+using Apocalypse.Any.Client.Services;
 using Apocalypse.Any.Domain.Common.Drawing.UI;
 
 namespace Apocalypse.Any.Client.States.UI.Inventory

@@ -1,15 +1,13 @@
-﻿using Apocalypse.Any.Core.Input;
+﻿using System;
+using Apocalypse.Any.Core.Input;
 using Apocalypse.Any.Domain.Common.Model.Network;
 using Apocalypse.Any.Domain.Common.Network;
+using Lidgren.Network; //using Apocalypse.Any.Domain.Server.Model.Network;
 
-//using Apocalypse.Any.Domain.Server.Model.Network;
-using Lidgren.Network;
-using System;
-
-namespace Apocalypse.Any.Core.Network.Server.Services
+namespace Apocalypse.Any.Infrastructure.Server.Services.Network
 {
     /// <summary>
-    /// Translates net incoming messages to network command connection objects
+    /// Translates net incoming messages to a network command connection object
     /// </summary>
     public class NetIncomingMessageNetworkCommandConnectionTranslator : IInputTranslator<NetIncomingMessage, NetworkCommandConnection>
     {
@@ -17,9 +15,7 @@ namespace Apocalypse.Any.Core.Network.Server.Services
 
         public NetIncomingMessageNetworkCommandConnectionTranslator(NetworkCommandTranslator networkCommandTranslator)
         {
-            if (networkCommandTranslator == null)
-                throw new ArgumentNullException(nameof(networkCommandTranslator));
-            IncomingMessageTranslator = networkCommandTranslator;
+            IncomingMessageTranslator = networkCommandTranslator ?? throw new ArgumentNullException(nameof(networkCommandTranslator));
         }
 
         public NetworkCommandConnection Translate(NetIncomingMessage input)
@@ -27,15 +23,14 @@ namespace Apocalypse.Any.Core.Network.Server.Services
             if (input == null)
                 return null;
             
-            var tzeMessisch = input.ReadBytes(input.LengthBytes);
-            if (tzeMessisch == null)
+            var messageAsBytes = input.ReadBytes(input.LengthBytes);
+            if (messageAsBytes == null || messageAsBytes?.Length == 0)
             {
-                Console.WriteLine("tzeMessisch ist null");
+                //TODO: return a network command connection as error
                 return null;
             }
 
-            NetworkCommand networkCommand = IncomingMessageTranslator.Translate(tzeMessisch);
-            
+            NetworkCommand networkCommand = IncomingMessageTranslator.Translate(messageAsBytes);
             NetworkCommandConnection networkCommandConnection = new NetworkCommandConnection();
 
             //Conversion to network command on server

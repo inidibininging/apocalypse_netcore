@@ -25,7 +25,7 @@ namespace Apocalypse.Any.GameServer.States.Sector.Mechanics.PlayerMechanics
             foreach (var player in machine.SharedContext.DataLayer.Players)
             {
                 var playerGameStateData = machine.SharedContext.IODataLayer.GetGameStateByLoginToken(player.LoginToken);
-                
+
                 if (!KeyDownUp.ContainsKey(player.LoginToken) || KeyDownUp[player.LoginToken] == null)
                     KeyDownUp[player.LoginToken] = new List<string>();
 
@@ -33,7 +33,7 @@ namespace Apocalypse.Any.GameServer.States.Sector.Mechanics.PlayerMechanics
                 foreach (var cmd in playerGameStateData.Commands)
                 {
                     Console.WriteLine(cmd);
-                    
+
                     if (cmd.Contains(DefaultKeys.Press))
                     {
                         var pressKey = cmd.Replace(DefaultKeys.Press, "");
@@ -43,7 +43,7 @@ namespace Apocalypse.Any.GameServer.States.Sector.Mechanics.PlayerMechanics
 
                     if (!cmd.Contains(DefaultKeys.Release)) continue;
                     var releaseKey = cmd.Replace(DefaultKeys.Release, "");
-                    
+
                     //if release pressed kill it and stop passing releases 
                     if (KeyDownUp[player.LoginToken].Contains(releaseKey))
                         KeyDownUp[player.LoginToken].Remove(releaseKey);
@@ -52,8 +52,6 @@ namespace Apocalypse.Any.GameServer.States.Sector.Mechanics.PlayerMechanics
                 //keep executing the pressed keys as commands
                 foreach (var cmd in KeyDownUp[player.LoginToken])
                 {
-
-                    
                     foreach (var mappedCommand in InputMapper.DefaultRotationMap)
                     {
                         mappedCommand
@@ -72,7 +70,7 @@ namespace Apocalypse.Any.GameServer.States.Sector.Mechanics.PlayerMechanics
 
                 }
             }
-            
+
         }
     }
 }

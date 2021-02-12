@@ -1,12 +1,12 @@
+using System.Collections.Generic;
 using Apocalypse.Any.Domain.Common.Model;
 using Apocalypse.Any.Domain.Common.Model.Network;
 using Apocalypse.Any.Domain.Server.Model.Interfaces;
 using Apocalypse.Any.Infrastructure.Server.PubSub.Interfaces;
 using Apocalypse.Any.Infrastructure.Server.Services.Data.Interfaces;
 using Microsoft.Xna.Framework;
-using System.Collections.Generic;
 
-namespace Apocalypse.Any.GameServer.States.Sector
+namespace Apocalypse.Any.Infrastructure.Server.Services.Data
 {
     /// <summary>
     /// Representation of a game sector

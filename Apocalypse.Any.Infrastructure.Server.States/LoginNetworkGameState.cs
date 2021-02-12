@@ -29,19 +29,19 @@ namespace Apocalypse.Any.Infrastructure.Server.States
                 //converts user to login token. If user is not registered, it will be... else ..boom
                 var gameStateData = CurrentNetworkCommandToLoginGameState.Translate(networkCommandConnectionToHandle);
                 
-                gameStateContext.Logger.Log(LogLevel.Information, "RegisterGameStateData");
+                gameStateContext.Logger.LogInformation( "RegisterGameStateData");
                 gameStateData = gameStateContext.GameStateRegistrar.WorldGameStateDataLayer.RegisterGameStateData(gameStateData.LoginToken);
 
-                gameStateContext.Logger.Log(LogLevel.Information, "SendToClient UpdateCommand register token data");
+                gameStateContext.Logger.LogInformation("SendToClient UpdateCommand register token data");
                 gameStateContext.CurrentNetOutgoingMessageBusService.SendToClient(NetworkCommandConstants.UpdateCommand, gameStateData, Lidgren.Network.NetDeliveryMethod.ReliableOrdered, 0, networkCommandConnectionToHandle.Connection);
 
-                gameStateContext.Logger.Log(LogLevel.Information, "LoginSuccessful");
+                gameStateContext.Logger.LogInformation("LoginSuccessful");
                 gameStateContext.ChangeHandlerEasier(gameStateContext.GameStateRegistrar.GetNetworkLayerState((byte)ServerInternalGameStates.LoginSuccessful), networkCommandConnectionToHandle);
             }
             catch (System.Exception ex)
             {
-                gameStateContext.Logger.Log(LogLevel.Error, ex.Message);
-                gameStateContext.Logger.Log(LogLevel.Error, ex.InnerException?.Message);
+                gameStateContext.Logger.LogError(ex.Message);
+                gameStateContext.Logger.LogError(ex.InnerException?.Message);
                 gameStateContext.ChangeHandlerEasier(gameStateContext[(byte)ServerInternalGameStates.Error], networkCommandConnectionToHandle);
             }
             gameStateContext[networkCommandConnectionToHandle.ConnectionId].Handle(gameStateContext, networkCommandConnectionToHandle);

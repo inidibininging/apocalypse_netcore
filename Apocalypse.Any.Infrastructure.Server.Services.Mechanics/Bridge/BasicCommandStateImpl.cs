@@ -1,6 +1,6 @@
 using States.Core.Infrastructure.Services;
 
-namespace Apocalypse.Any.Infrastructure.Common.Services.Network.Interfaces.Mechanics.Bridge
+namespace Apocalypse.Any.Infrastructure.Server.Services.Mechanics.Bridge
 {
     public class BasicCommandStateImpl : IUnionStateCommand<string, IStateMachine<string, int>>
     {
