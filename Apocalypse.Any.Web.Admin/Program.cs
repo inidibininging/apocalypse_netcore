@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
 namespace Apocalypse.Any.Web.Admin
@@ -23,9 +24,9 @@ namespace Apocalypse.Any.Web.Admin
         /// <remarks>
         ///   The following defaults are applied to the returned <see cref="WebHostBuilder"/>:
         ///     use Kestrel as the web server and configure it using the application's configuration providers,
-        ///     set the <see cref="IHostingEnvironment.ContentRootPath"/> to the result of <see cref="Directory.GetCurrentDirectory()"/>,
+        ///     set the <see cref="Microsoft.AspNetCore.Hosting.IHostingEnvironment.ContentRootPath"/> to the result of <see cref="Directory.GetCurrentDirectory()"/>,
         ///     load <see cref="IConfiguration"/> from 'appsettings.json',
-        ///     load <see cref="IConfiguration"/> from User Secrets when <see cref="IHostingEnvironment.EnvironmentName"/> is 'Development' using the entry assembly,
+        ///     load <see cref="IConfiguration"/> from User Secrets when <see cref="Microsoft.AspNetCore.Hosting.IHostingEnvironment.EnvironmentName"/> is 'Development' using the entry assembly,
         ///     load <see cref="IConfiguration"/> from environment variables,
         ///     load <see cref="IConfiguration"/> from supplied command line args,
         ///     configures the <see cref="ILoggerFactory"/> to log to the console and debug output,

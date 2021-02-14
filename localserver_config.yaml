@@ -8,7 +8,7 @@ RedisPort: 0
 SerializationAdapterType: Apocalypse.Any.Infrastructure.Common.Services.Serializer.MsgPackAdapter.MsgPackByteArraySerializerAdapter
 ServerIp: 127.0.0.1
 ServerPeerName: asteroid
-ServerPort: 8081
+ServerPort: 8079
 ServerUpdateInSeconds: 0.0119999997764825821
 StartingSector: 1
 StartupFunction: Main

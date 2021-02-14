@@ -30,7 +30,7 @@ namespace Apocalypse.Any.Client
             const string apocalypseNetCorePath = "/home/develop/src/apocalypse_netcore/";
             string pathToLocalServerConfig = $"{apocalypseNetCorePath}localserver_config.yaml";
             string pathToSyncServerConfig = $"{apocalypseNetCorePath}localserver_to_sync.yaml";
-            string localGameServer = $"{apocalypseNetCorePath}Apocalypse.Any.GameServer/bin/Debug/netcoreapp2.1/Apocalypse.Any.GameServer.dll";
+            string localGameServer = $"{apocalypseNetCorePath}Apocalypse.Any.GameServer/bin/Debug/net5.0/Apocalypse.Any.GameServer.dll";
             LocalServer = new Process
             {
                 StartInfo = (new ProcessStartInfo()
