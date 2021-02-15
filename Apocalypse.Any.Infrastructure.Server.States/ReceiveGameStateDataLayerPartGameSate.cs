@@ -1,4 +1,6 @@
+using System.Collections.Concurrent;
 using System.Reflection.Metadata;
+using Apocalypse.Any.Domain.Common.Model;
 using Apocalypse.Any.Domain.Common.Model.Network;
 using Apocalypse.Any.Domain.Common.Network;
 using Apocalypse.Any.Domain.Server.Model;
@@ -20,16 +22,18 @@ namespace Apocalypse.Any.Infrastructure.Server.States
         {
             NetworkCommandDataConverterService = networkCommandDataConverterService;
         }
-        
+
         public void Handle(INetworkStateContext<TWorld> gameStateContext, NetworkCommandConnection networkCommandConnectionToHandle)
         {
-             
+
             if (networkCommandConnectionToHandle.CommandName != NetworkCommandConstants.SyncSectorCommand)
             {
                 gameStateContext.Logger.LogError($"{nameof(ReceiveGameStateDataLayerPartGameSate<TWorld>)} Command name is not ReceiveWorkCommand. Given: {networkCommandConnectionToHandle.CommandName}");
+                var back = gameStateContext.GameStateRegistrar.GetNetworkLayerState((byte)ServerInternalGameStates.SendPressedRelease);
+                gameStateContext.ChangeHandlerEasier(back, networkCommandConnectionToHandle);
                 return;
             }
-            
+
             var request = NetworkCommandDataConverterService.ConvertToObject(networkCommandConnectionToHandle) as ReceiveGameStateDataLayerPartRequest;
             if (request == null)
             {
@@ -46,18 +50,27 @@ namespace Apocalypse.Any.Infrastructure.Server.States
                 gameStateContext.Logger.LogError($"{nameof(ReceiveGameStateDataLayerPartGameSate<TWorld>)} Sector key given is invalid");
                 return;
             }
-            if (string.IsNullOrWhiteSpace(request.GetProperty))
+            if (request.GetProperty == "DataLayer")
             {
-                gameStateContext.Logger.LogError($"{nameof(ReceiveGameStateDataLayerPartGameSate<TWorld>)} GetProperty value is empty. Sending the whole game state data layer");
-                
+                // gameStateContext.Logger.log($"{nameof(ReceiveGameStateDataLayerPartGameSate<TWorld>)} GetProperty value is empty. Sending the whole game state data layer");
+
                 var sector = gameStateContext.GameStateRegistrar.WorldGameStateDataLayer.GetSector(request.SectorKey);
-                
+
+                GameStateDataLayer dataLayer = new GameStateDataLayer() {
+                    Players = new ConcurrentBag<PlayerSpaceship>(sector.DataLayer.Players),
+                    Enemies = new ConcurrentBag<EnemySpaceship>(sector.DataLayer.Enemies),
+                    Projectiles = new ConcurrentBag<Projectile>(sector.DataLayer.Projectiles),
+                    Items = new ConcurrentBag<Item>(sector.DataLayer.Items),
+                    PlayerItems = new ConcurrentBag<Item>(sector.DataLayer.PlayerItems),
+                    ImageData = new ConcurrentBag<ImageData>(sector.DataLayer.ImageData),
+                    GeneralCharacter = new ConcurrentBag<CharacterEntity>(sector.DataLayer.GeneralCharacter)
+                };
+
                 //TODO: conversion of IExpandedDataLayerService will fail, because it's an interface. Make a conversion format that can be sent between client (for now, a local server) and (sync) server 
-                
                 gameStateContext
                     .CurrentNetOutgoingMessageBusService
                     .SendToClient(NetworkCommandConstants.SyncSectorCommand,
-                        sector as GameSectorLayerService,
+                        dataLayer,
                         Lidgren.Network.NetDeliveryMethod.ReliableOrdered,
                         0,
                         networkCommandConnectionToHandle.Connection);

@@ -242,7 +242,7 @@ namespace Apocalypse.Any.GameServer.GameInstance
                 serverMessageTranslator,
                 serverStateDataLayer,
                 Logger);
-            
+
             GameStateContext.Initialize();
         }
 
@@ -381,7 +381,7 @@ namespace Apocalypse.Any.GameServer.GameInstance
                         right = (rowCount - 1) * -1;
                     }
 
-                    
+
                     BuildSector(cell);
 
                     Logger.LogInformation($"x:{x} y:{y} c:{cell} u:{cell + up} l:{cell + left} r:{cell + right} d:{cell + down}");
@@ -437,7 +437,7 @@ namespace Apocalypse.Any.GameServer.GameInstance
             ServerInput = new NetIncomingMessageBusService<NetServer>(Server);
             ServerOutput = new NetOutgoingMessageBusService<NetServer>(Server, SerializationAdapter);
             Server.Start();
-            Console.WriteLine(Server.ToString());
+            Logger.LogInformation(Server.ToString());
         }
 
         private void AddSectorStateMachine(int sectorId)
@@ -478,6 +478,7 @@ namespace Apocalypse.Any.GameServer.GameInstance
         
         public void Update(GameTime gameTime)
         {
+            DelegateSyncServerDataToLocalServer();
             CreateGameTimeIfNotExists(gameTime);
             UpdateGameTime(CurrentGameTime);
 
@@ -489,12 +490,12 @@ namespace Apocalypse.Any.GameServer.GameInstance
 
             var timeToWait = TimeSpan.FromSeconds(ServerConfiguration.ServerUpdateInSeconds);
 
-            RunPopulatedRunningSectorsAsync(gameTime);
+            RunPopulatedRunningSectorsWithATask(gameTime);
 
             Thread.Sleep(timeToWait);
         }
 
-        private void RunPopulatedRunningSectorsAsync(GameTime gameTime)
+        private void RunPopulatedRunningSectorsWithATask(GameTime gameTime)
         {
             foreach (var sector in GameSectorLayerServices
                 .Values
@@ -561,7 +562,6 @@ namespace Apocalypse.Any.GameServer.GameInstance
             if(user.Username != ClientConfiguration.User.Username)
                 return;
 
-
             var lastSectorOfClient = GameSectorLayerServices.FirstOrDefault(kv =>
                 kv.Value.SharedContext.DataLayer.Players.Any(p => p.LoginToken == loginToken)).Key;
             
@@ -569,10 +569,13 @@ namespace Apocalypse.Any.GameServer.GameInstance
             if (SendPressReleaseWorker == null)
                 return;
             
-            Console.WriteLine("MATCH!");
+            // Console.WriteLine("MATCH!");
             SendPressReleaseWorker.LastSectorKey = lastSectorOfClient;
             SendPressReleaseWorker.ProcessIncomingMessages(enumerable.Select(cmd => SyncCommandTranslator.Translate(cmd)));
         }
+
+
+
 
         private PlayerSpaceship CreatePlayerSpaceShip(string loginToken)
         {
@@ -710,7 +713,7 @@ namespace Apocalypse.Any.GameServer.GameInstance
                                     .DataLayer
                                     .Players
                                     .FirstOrDefault(player => player.LoginToken == updateData.LoginToken);
-                
+
                 if (currentPlayer == null)
                     return false;
 
@@ -718,12 +721,38 @@ namespace Apocalypse.Any.GameServer.GameInstance
                 .SharedContext
                 .IODataLayer
                 .ForwardClientDataToGame(updateData);
-                
+
                 SendingDelta = DateTime.Now - now;
                 return sent;
             });
         }
-        
+
+        private void DelegateSyncServerDataToLocalServer() {
+            if(ClientConfiguration == null)
+                return;
+            if(!SendPressReleaseWorker.NewDataLayer)
+                return;
+
+            Logger.LogInformation("PASSING DATA LAYER");
+
+            foreach(var s in GameSectorLayerServices.Values)
+            {
+                foreach(var player in s.SharedContext.DataLayer.Players)
+                {
+                    Logger.LogInformation("++++++++++++++++++++++++");
+                    Logger.LogInformation(player.LoginToken);
+                    // Logger.LogInformation("++++++++++++++++++++++++");
+                }
+            }
+
+            foreach(var player in SendPressReleaseWorker.DataLayer.Players)
+            {
+                Logger.LogInformation(player.LoginToken);
+            }
+
+            SendPressReleaseWorker.NewDataLayer = false;
+        }
+
         public bool ForwardServerDataToGame(GameStateData gameStateData)
         {
             //build it
@@ -747,7 +776,7 @@ namespace Apocalypse.Any.GameServer.GameInstance
                             .SharedContext
                             .IODataLayer
                             .ForwardServerDataToGame(gameStateData);
-                    
+
                     Logger.LogError("Something is wrong ... player with same login token found in different sectors");
 
                     return sector

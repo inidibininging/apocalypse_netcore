@@ -59,7 +59,8 @@ namespace Apocalypse.Any.Infrastructure.Server.Services.Data
 
         };
 
-        private ExampleLoginTokenGeneratorService LoginTokenGeneratorService { get; } = new ExampleLoginTokenGeneratorService();
+        //Had to change this to something static in order to identify players throughout all servers
+        private StaticLoginTokenGeneratorService<UserData> LoginTokenGeneratorService { get; } = new StaticLoginTokenGeneratorService<UserData>();
 
         public ExampleLocalLoginAndRegistrationService()
         {
@@ -132,5 +133,5 @@ namespace Apocalypse.Any.Infrastructure.Server.Services.Data
                         return user.LoginToken == loginToken;
                     });
     }
-    
+
 }

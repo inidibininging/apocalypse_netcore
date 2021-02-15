@@ -56,10 +56,9 @@ namespace Apocalypse.Any.Infrastructure.Server.Services.Data
                 Password = "5994471ABB01112AFCC18159F6CC74B4F511B99806DA59B3CAF5A9C173CACFC5",
                 NewInGame = true // password is "12345" unhashed
             }
-
         };
 
-        private ExampleLoginTokenGeneratorService LoginTokenGeneratorService { get; } = new ExampleLoginTokenGeneratorService();
+        private StaticLoginTokenGeneratorService<UserData> LoginTokenGeneratorService { get; } = new StaticLoginTokenGeneratorService<UserData>();
 
         public ExampleLoginAndRegistrationService()
         {

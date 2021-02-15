@@ -47,7 +47,7 @@ namespace Apocalypse.Any.Client.GameObjects.Scene
         {
             //Parallel.ForEach(Stars, (star) => star.Update(time));
             Stars.ForEach(star =>
-            {                
+            {
                 //star.MoveRandomly();
                 star.Update(time);
             });

@@ -32,7 +32,7 @@ namespace Apocalypse.Any.Infrastructure.Server.Language
                     WaitTimeSpan = TimeSpan.FromHours((machine.SharedContext.CurrentGameTime.ElapsedGameTime.TotalHours + Wait.Number.NumberValue.Value));
                 Console.WriteLine("Wait timespan added");
             }
-            
+
             var runOperation = machine.GetService.Get(Owner.RunOperation) as RoutineState<string,IGameSectorLayerService>;
             if(WaitTimeSpan < machine.SharedContext.CurrentGameTime.ElapsedGameTime)
             {
@@ -54,7 +54,7 @@ namespace Apocalypse.Any.Infrastructure.Server.Language
                 //if the this wait timespan is reached. a "pointer" will be made 
                 //Console.WriteLine("function index = "+FunctionIndex);
                 var currentInstructionIndex = FunctionIndex+1;
-                                
+
                 while(currentInstructionIndex < Owner.Instructions.Count){
                     var currentInstruction = Owner.Instructions[currentInstructionIndex];
                     currentInstructionIndex++;
@@ -73,7 +73,7 @@ namespace Apocalypse.Any.Infrastructure.Server.Language
                 //Console.WriteLine("operations after wait were executed");
                 //TODO: this is the behaviour needed for nested functions or IF ELSE Statements right???
 
-                
+
             }
             else
             {
@@ -86,7 +86,7 @@ namespace Apocalypse.Any.Infrastructure.Server.Language
                     runOperation.Operations = runOperation.Operations.Append(Id).ToList();
 
                     try
-                    {                        
+                    {
                         if (machine.GetService.HasState(Id))
                             return;
                         else

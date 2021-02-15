@@ -143,6 +143,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Apocalypse.Any.GameServer.S
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Apocalypse.Any.GameServer.Domain", "Apocalypse.Any.GameServer.Domain\Apocalypse.Any.GameServer.Domain.csproj", "{A4B31F0E-CB27-4D89-8C36-FADAA7A89918}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Apocalypse.Any.Services.Authentication", "Apocalypse.Any.Services.Authentication\Apocalypse.Any.Services.Authentication.csproj", "{1576045C-F80D-4C62-A990-A6DA62B041B9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -393,6 +395,10 @@ Global
 		{A4B31F0E-CB27-4D89-8C36-FADAA7A89918}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A4B31F0E-CB27-4D89-8C36-FADAA7A89918}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A4B31F0E-CB27-4D89-8C36-FADAA7A89918}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1576045C-F80D-4C62-A990-A6DA62B041B9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1576045C-F80D-4C62-A990-A6DA62B041B9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1576045C-F80D-4C62-A990-A6DA62B041B9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1576045C-F80D-4C62-A990-A6DA62B041B9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

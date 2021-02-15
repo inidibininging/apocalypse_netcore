@@ -35,18 +35,20 @@ namespace Apocalypse.Any.Infrastructure.Server.Worker
     {
         private NetClient Client { get; set; }
         private GameClientConfiguration ClientConfiguration { get; }
-        
+
         private ILogger<byte> Logger { get; }
-        
-        private IGameSectorDataLayer<
-            TPlayer,
-            TEnemy,
-            TItem,
-            TProjectile,
-            TEntitiesBaseType,
-            TGeneralCharacter,
-            TImageData> DataLayer
-        { get; set; }
+
+        private GameStateDataLayer dataLayer;
+        public GameStateDataLayer DataLayer
+        {
+            get {
+                return dataLayer;
+            }
+            private set {
+                dataLayer = value;
+                NewDataLayer = true;
+            }
+        }
 
         private NetIncomingMessageBusService<NetClient> Input { get; set; }
         private NetOutgoingMessageBusService<NetClient> Output { get; set; } // not in use for now cause it doesnt work? WHY?
@@ -71,14 +73,15 @@ namespace Apocalypse.Any.Infrastructure.Server.Worker
         }
 
         public bool SectorChanged { get; set; } = false;
-        
+        public bool NewDataLayer { get; set; } = false;
+
         public SyncClient(GameClientConfiguration configuration, ILogger<byte> logger)
         {
             ClientConfiguration = configuration;
             Logger = logger;
             CreateClientAndConnect();
         }
-        
+
         private Type GetSerializer(string serializerType)
         {
             const string baseNameSpace = "Apocalypse.Any.Infrastructure.Common.Services.Serializer*.dll";
@@ -116,7 +119,7 @@ namespace Apocalypse.Any.Infrastructure.Server.Worker
             Client.Start();
             Client.Connect(ClientConfiguration.ServerIp, ClientConfiguration.ServerPort);
 
-            var serializerType = GetSerializer(ClientConfiguration.SerializationAdapterType);            
+            var serializerType = GetSerializer(ClientConfiguration.SerializationAdapterType);
             SerializationAdapter = Activator.CreateInstance(serializerType) as IByteArraySerializationAdapter;
             Input = new NetIncomingMessageBusService<NetClient>(Client);
             Output = new NetOutgoingMessageBusService<NetClient>(Client, SerializationAdapter);
@@ -131,7 +134,7 @@ namespace Apocalypse.Any.Infrastructure.Server.Worker
                 Logger.LogWarning($"Tried to invoke {nameof(TryConnect)}, but there is no connection to a sync server");
                 return;
             }
-                
+
             if (Client.ConnectionStatus == NetConnectionStatus.Connected) return;
             Logger.LogInformation("############# Retry Connect ##############");
             Client.Connect(ClientConfiguration.ServerIp, ClientConfiguration.ServerPort);
@@ -139,13 +142,12 @@ namespace Apocalypse.Any.Infrastructure.Server.Worker
         public NetSendResult TryLogin()
         {
             if (Client == null) return NetSendResult.FailedNotConnected;
-            
+
             var message = CreateMessageContent(NetworkCommandConstants.LoginCommand, ClientConfiguration.User);
             Logger.LogInformation("############# TryLogin ##############");
             return (Client.SendMessage(
                 CreateMessage(Client, message),
                 NetDeliveryMethod.ReliableOrdered));
-
         }
 
         private NetOutgoingMessage CreateMessage(NetPeer netPeer, byte[] content)
@@ -239,17 +241,19 @@ namespace Apocalypse.Any.Infrastructure.Server.Worker
                             //ACK Response                                        
                             case int b when b == NetworkCommandConstants.OutOfSyncCommand:
                                 {
+                                    Logger.LogInformation("ACK received!!! got OutOfSync");
+                                    Logger.LogInformation(">>>>>>>>>>>>>>>>>>>>>>>>");
                                     //send first input command
-                                    var fakeInput = Output.SendToClient(NetworkCommandConstants.SyncSectorCommand,
+                                    var syncSectorCommand = Output.SendToClient(NetworkCommandConstants.SyncSectorCommand,
                                         new ReceiveGameStateDataLayerPartRequest() {
+                                            GetProperty = "DataLayer",
                                             SectorKey = LastSectorKey,
                                             // Command = Commands.Count == 0 ? -1 : Commands.Dequeue(),
                                             LoginToken = LoginToken
                                         },
                                         NetDeliveryMethod.ReliableOrdered, 0, networkCommandConnection.Connection);
                                     AckReceived = true;
-                                    Logger.LogInformation("ACK received!!! got OutOfSync");
-                                    Logger.LogInformation(">>>>>>>>>>>>>>>>>>>>>>>>");
+
                                     //TODO: Send release after some time
                                     break;
                                 }
@@ -257,13 +261,17 @@ namespace Apocalypse.Any.Infrastructure.Server.Worker
                             //GameStateDataLayer means that the client gets the actual data from the server
                             case GameStateDataLayer gameStateDataLayer when gameStateDataLayer != null && AckReceived:
                                 {
-                                    //TODO: forward game state of sync client to the local server
-                                    Logger.LogInformation(nameof(GameStateDataLayer));
+                                    
+
+                                    //TODO: forward game state of sync client to the local server                                    
                                     Logger.LogInformation("--------#---------------------#--------------");
                                     Logger.LogInformation("--------#-----ö---------ö-----#--------------");
                                     Logger.LogInformation("--------#----------f----------#--------------");
                                     Logger.LogInformation("--------#-----!!!!!!!!!!!!----#--------------");
                                     Logger.LogInformation("--------#---------------------#--------------");
+
+                                    DataLayer = gameStateDataLayer;
+
                                     break;
                                 }
                         }
@@ -295,7 +303,7 @@ namespace Apocalypse.Any.Infrastructure.Server.Worker
                     {
                         LoginToken = LoginToken,
                         SectorKey = LastSectorKey,
-                        // GetProperty = string.Empty // If property is given, a part of the sector will be sent
+                        GetProperty = "DataLayer" // If property is given, a part of the sector will be sent
                     },
                     NetDeliveryMethod.ReliableOrdered, 0, serverConnection); // HARD CODED connection. First one should be the one from the message sending the fake press
                 SectorChanged = false;
