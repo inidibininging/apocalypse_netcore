@@ -24,7 +24,7 @@ namespace Apocalypse.Any.Infrastructure.Server.States.Interfaces
 
         ILogger<byte> Logger { get;  }
 
-        void Update();
+        void ForwardIncomingMessagesToHandlers();
 
         void ChangeHandlerEasier(INetworkLayerState<TWorld> gameState, NetworkCommandConnection networkCommandConnection);
     }

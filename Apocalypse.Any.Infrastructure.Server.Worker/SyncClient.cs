@@ -171,17 +171,19 @@ namespace Apocalypse.Any.Infrastructure.Server.Worker
         }
 
         private bool AckReceived {get; set;} = false;
-        public Queue<int> Commands { get; set; } = new Queue<int>();
+        public Queue<int> CommandsToSyncServer { get; set; } = new Queue<int>();
+        public Queue<(string loginToken, string command)> CommandsToLocalServer { get; set; } = new Queue<(string loginToken, string command)>();
+
         public void ProcessIncomingMessages(IEnumerable<int> commands)
         {
             TryConnect();
 
             foreach (var cmd in commands) {
                 // Console.WriteLine($"enque:{cmd}");
-                Commands.Enqueue(cmd);
+                CommandsToSyncServer.Enqueue(cmd);
             }
 
-            var nextCommand = Commands.Count == 0 ? -1 : Commands.Dequeue();
+            var nextCommand = CommandsToSyncServer.Count == 0 ? -1 : CommandsToSyncServer.Dequeue();
             var dataInputs = Input
                             .FetchMessageChunk()
                             .Where(msg => msg.MessageType == NetIncomingMessageType.Data);
@@ -195,17 +197,17 @@ namespace Apocalypse.Any.Infrastructure.Server.Worker
                     try
                     {
                         networkCommandConnection = NetIncomingMessageNetworkCommand.Translate(msg);
-                        Console.WriteLine(networkCommandConnection?.CommandName);
+                        Logger.LogInformation(networkCommandConnection?.CommandName.ToString());
                     }
                     catch (Exception ex)
                     {
-                        Console.WriteLine(ex);
+                        Logger.LogError(ex.ToString());
                         return;
                     }
 
                     if (msg == null || networkCommandConnection == null)
                     {
-                        Console.WriteLine("Message cannot be translated");
+                        Logger.LogWarning("Message cannot be translated");
                         return;
                     }
 
@@ -213,18 +215,17 @@ namespace Apocalypse.Any.Infrastructure.Server.Worker
                        networkCommandConnection.CommandName != NetworkCommandConstants.UpdateCommand && 
                        networkCommandConnection.CommandName != NetworkCommandConstants.SyncSectorCommand)
                     {
-                        Console.WriteLine($"Command name is not SendPressReleaseCommand, UpdateCommand or ReceiveWorkCommand -> {networkCommandConnection.CommandName}");
+                         Logger.LogWarning($"Command name is not SendPressReleaseCommand, UpdateCommand or ReceiveWorkCommand -> {networkCommandConnection.CommandName}");
                         return;
                     }
 
                     if (msg.Data == null || msg.Data.Length == 0)
                     {
-                        Console.WriteLine("Message data is null or length is zero");
+                         Logger.LogWarning("Message data is null or length is zero");
                         return;
                     }
                     try
                     {
-                        Console.WriteLine("--------------------------");
                         //TODO: Pass a map of states mapped to bytes
 
                         var returningGameObject = NetworkCommandDataConverterService.ConvertToObject(networkCommandConnection);
@@ -240,7 +241,8 @@ namespace Apocalypse.Any.Infrastructure.Server.Worker
                             //ACK Response                                        
                             case int b when b == NetworkCommandConstants.OutOfSyncCommand:
                                 {
-                                    Logger.LogInformation("ACK received!!! got OutOfSync");
+                                    Logger.LogInformation(">>>>>>>>>>>>>>>>>>>>>>>>");
+                                    Logger.LogInformation("OutOfSyncCommand received!!!");
                                     Logger.LogInformation(">>>>>>>>>>>>>>>>>>>>>>>>");
                                     //send first input command
                                     var syncSectorCommand = Output.SendToClient(NetworkCommandConstants.SyncSectorCommand,
@@ -260,20 +262,27 @@ namespace Apocalypse.Any.Infrastructure.Server.Worker
                             //GameStateDataLayer means that the client gets the actual data from the server
                             case GameStateDataLayer gameStateDataLayer when gameStateDataLayer != null && AckReceived:
                                 {
-
                                     //TODO: forward game state of sync client to the local server                                    
                                     Logger.LogInformation("--------#######################--------------");
-                                    Logger.LogInformation("--------#---------------------#--------------");
+                                    Logger.LogInformation("-----++#-------S-Y-N-C---------#++-----------");
                                     Logger.LogInformation("--------#-----ö---------ö-----#--------------");
                                     Logger.LogInformation("--------#----------f----------#--------------");
                                     Logger.LogInformation("--------#-----!!!!!!!!!!!!----#--------------");
                                     Logger.LogInformation("--------#---------------------#--------------");
                                     Logger.LogInformation("--------#######################--------------");
-                                    
+
                                     DataLayer = gameStateDataLayer;
 
                                     break;
                                 }
+
+                            //gets a map of logintoken + latest command without enqueing oneself
+                            case string[] commandsPerLoginToken when commandsPerLoginToken?.Length == 2 && commandsPerLoginToken[0] != LoginToken:
+                            {
+                                Logger.LogInformation($"Enqueue {commandsPerLoginToken[0]} - {commandsPerLoginToken[1]}");
+                                CommandsToLocalServer.Enqueue((commandsPerLoginToken[0], commandsPerLoginToken[1]));
+                                break;
+                            }
                         }
                     }
                     catch (Exception ex)
@@ -297,6 +306,14 @@ namespace Apocalypse.Any.Infrastructure.Server.Worker
             if (AckReceived && SectorChanged)
             {
                 Logger.LogInformation("SECTOR CHANGED!");
+                Logger.LogInformation("--------#######################--------------");
+                Logger.LogInformation("-----++#-S-E-C-T-O-R-C-H-A-G-E-#++-----------");
+                Logger.LogInformation("--------#-----ö---------ö-----#--------------");
+                Logger.LogInformation("--------#----------f----------#--------------");
+                Logger.LogInformation("--------#-----!!!-----!!!!----#--------------");
+                Logger.LogInformation("--------#--------!!!!!--------#--------------");
+                Logger.LogInformation("--------#######################--------------");
+
                 var serverConnection = Client.Connections.FirstOrDefault();
                 var outOfSyncCommand = Output.SendToClient(NetworkCommandConstants.SyncSectorCommand,
                     new ReceiveGameStateDataLayerPartRequest()

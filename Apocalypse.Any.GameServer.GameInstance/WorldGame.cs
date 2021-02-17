@@ -492,7 +492,7 @@ namespace Apocalypse.Any.GameServer.GameInstance
 
             TryLoginToSyncServer();
 
-            GameStateContext.Update();
+            GameStateContext.ForwardIncomingMessagesToHandlers();
             UpdateSectorOfPlayerInsideSyncClient();
             RunSectorOwnerMechanics();
 
@@ -746,65 +746,43 @@ namespace Apocalypse.Any.GameServer.GameInstance
 
             Logger.LogInformation("PASSING DATA LAYER");
 
-            foreach(var sectorStateMachine in GameSectorLayerServices.Values)
-            {
-                foreach(var localPlayer in sectorStateMachine.SharedContext.DataLayer.Players)
-                {                    
-                    foreach(var serverPlayer in SendPressReleaseWorker.DataLayer.Players)
-                    {
-                        if(serverPlayer.LoginToken != localPlayer.LoginToken)
-                            continue;
-                        
-                        Logger.LogInformation("Passing server player data to local player");
-                        //only apply the position and rotation value for testing purpouses
-                        localPlayer.CurrentImage.Position.X = serverPlayer.CurrentImage.Position.X;
-                        localPlayer.CurrentImage.Position.Y = serverPlayer.CurrentImage.Position.Y;
-                        localPlayer.CurrentImage.Rotation.Rotation = serverPlayer.CurrentImage.Rotation.Rotation;
-                        localPlayer.CurrentImage.Path = serverPlayer.CurrentImage.Path;
-                    }                    
-                
-
-                    //we have the players sector. throw everything in the trash and pass the server data
-                    if(SendPressReleaseWorker.LoginToken == localPlayer.LoginToken) {
-                        foreach(var localEnemy in sectorStateMachine.SharedContext.DataLayer.Enemies)
-                        {                    
-                            foreach(var serverEnemy  in SendPressReleaseWorker.DataLayer.Enemies)
-                            {
-                                //Will not match. Every generated enemy will have a local based id
-                                if(localEnemy.Id != serverEnemy.Id)
-                                    continue;
-                                                                                        
-                                //only apply the position and rotation value for testing purpouses
-                                localEnemy.CurrentImage.Position.X = serverEnemy.CurrentImage.Position.X;
-                                localEnemy.CurrentImage.Position.Y = serverEnemy.CurrentImage.Position.Y;
-                                localEnemy.CurrentImage.Rotation.Rotation = serverEnemy.CurrentImage.Rotation.Rotation;
-                                localEnemy.CurrentImage.Path = serverEnemy.CurrentImage.Path;
-                                localEnemy.CurrentImage.Scale = new Vector2(serverEnemy.CurrentImage.Scale.X, serverEnemy.CurrentImage.Scale.Y);
-                            }
-                        }
-
-                        foreach(var localImageData in sectorStateMachine.SharedContext.DataLayer.ImageData)
-                        {                    
-                            foreach(var serverImageData  in SendPressReleaseWorker.DataLayer.ImageData)
-                            {
-                                //Will not match. Every generated enemy will have a local based id
-                                if(localImageData.Id != serverImageData.Id)
-                                    continue;
-                                                                                        
-                                //only apply the position and rotation value for testing purpouses
-                                localImageData.Position.X = serverImageData.Position.X;
-                                localImageData.Position.Y = serverImageData.Position.Y;
-                                localImageData.Rotation.Rotation = serverImageData.Rotation.Rotation;
-                                localImageData.Path = serverImageData.Path;
-                                localImageData.Scale = new Vector2(serverImageData.Scale.X, serverImageData.Scale.Y);
-                            }
-                        }
-
-                        //and so on...
-                    }
-		        }
+            var playerSector = GameSectorLayerServices.Values.FirstOrDefault(s => s.SharedContext.DataLayer.Players.Any(p => p.LoginToken == SendPressReleaseWorker.LoginToken));
+            if(playerSector == null){
+                Logger.LogError("Something is wrong. Player not found. Maybe the player is now in another sector");
+                throw new NotImplementedException();
             }
+
+            var serverPlayersInLocalServer = SendPressReleaseWorker.DataLayer.Players.Where(p => playerSector.SharedContext.DataLayer.Players.Any(localPlayer => localPlayer.LoginToken == p.LoginToken));
+            var serverPlayersNotInLocalServer = SendPressReleaseWorker.DataLayer.Players.Except(serverPlayersInLocalServer);
+
+            foreach(var serverPlayer in serverPlayersInLocalServer)
+            {
+                var localPlayer = playerSector.SharedContext.DataLayer.Players.FirstOrDefault(p => p.LoginToken == serverPlayer.LoginToken);
+
+                Logger.LogInformation("Passing server player data to local player");
+                //only apply the position and rotation value for testing purpouses
+                localPlayer.CurrentImage.Position.X = serverPlayer.CurrentImage.Position.X;
+                localPlayer.CurrentImage.Position.Y = serverPlayer.CurrentImage.Position.Y;
+                localPlayer.CurrentImage.Rotation.Rotation = serverPlayer.CurrentImage.Rotation.Rotation;
+                localPlayer.CurrentImage.Path = serverPlayer.CurrentImage.Path;
+                localPlayer.CurrentImage.Color = Color.Yellow; // for debugging purpouses only               
+
+            }
+
+            foreach(var serverPlayerNotInLocal in serverPlayersNotInLocalServer)
+                playerSector.SharedContext.DataLayer.Players.Add(serverPlayerNotInLocal);
+
+
             SendPressReleaseWorker.NewDataLayer = false;
+        }
+
+        public void DelegateOtherPlayerCommandsToLocalServer() {
+            //TODO: 
+            if(SendPressReleaseWorker.CommandsToLocalServer.Count == 0) return;
+            while(SendPressReleaseWorker.CommandsToLocalServer.TryDequeue(out (string loginToken, string command) nextCommand)){
+                //TODO: get player, add commands and see what happens
+                Logger.LogInformation($"TODO: get player {nextCommand.loginToken}, add {nextCommand.command} and see what happens");
+            }
         }
 
         public bool ForwardServerDataToGame(GameStateData gameStateData)

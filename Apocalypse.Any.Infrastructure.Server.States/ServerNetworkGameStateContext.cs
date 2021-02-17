@@ -1,5 +1,6 @@
 ﻿using Apocalypse.Any.Core.Input;
 using Apocalypse.Any.Domain.Common.Model.Network;
+using Apocalypse.Any.Domain.Common.Network;
 using Apocalypse.Any.Infrastructure.Common.Services.Network;
 using Apocalypse.Any.Infrastructure.Server.Services.Data.Interfaces;
 using Apocalypse.Any.Infrastructure.Server.States.Interfaces;
@@ -74,7 +75,7 @@ namespace Apocalypse.Any.Infrastructure.Server.States
             clientHandlers.TryAdd((byte)ServerInternalGameStates.UpdateDelta, GameStateRegistrar.GetNetworkLayerState((byte)ServerInternalGameStates.UpdateDelta));
         }
 
-        public void Update()
+        public void ForwardIncomingMessagesToHandlers()
         {
             CurrentNetIncomingMessageBusService
             .FetchMessageChunk()
@@ -93,6 +94,8 @@ namespace Apocalypse.Any.Infrastructure.Server.States
                 // });
             });
         }
+
+
 
         public void ChangeHandlerEasier(INetworkLayerState<TWorld> gameState, NetworkCommandConnection networkCommandConnection)
         {

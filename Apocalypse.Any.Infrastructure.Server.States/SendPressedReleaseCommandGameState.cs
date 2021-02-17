@@ -54,7 +54,7 @@ namespace Apocalypse.Any.Infrastructure.Server.States
             {
                 gameStateContext.Logger.LogInformation($"{nameof(SendPressedReleaseCommandGameState<TWorld>)} - Sending ACK for {networkCommandConnectionToHandle.ConnectionId} -> {networkCommandConnectionToHandle.CommandName} {networkCommandConnectionToHandle.CommandArgument}");
                 // var user = ConverterService.ConvertToObject(networkCommandConnectionToHandle) as UserData;
-                
+
                 //send an "ACK" to the worker (client)
                 gameStateContext
                     .CurrentNetOutgoingMessageBusService
@@ -93,7 +93,7 @@ namespace Apocalypse.Any.Infrastructure.Server.States
             if (string.IsNullOrWhiteSpace(command)) return;
 
             gameStateContext.Logger.LogInformation($" {nameof(SendPressedReleaseCommandGameState<TWorld>)} SectorKey given: {clientInputConverted.SectorKey}");
-            
+
             var currentPlayer = gameStateContext
                                         .GameStateRegistrar
                                         .WorldGameStateDataLayer
@@ -101,11 +101,14 @@ namespace Apocalypse.Any.Infrastructure.Server.States
                                         .DataLayer
                                         .Players
                                         .FirstOrDefault(p => p.LoginToken == clientInputConverted.LoginToken);
-            
+
             gameStateContext.Logger.LogWarning(currentPlayer?.ToString());
-            
-                
+
             gameStateContext.Logger.LogInformation($" {nameof(SendPressedReleaseCommandGameState<TWorld>)}. Forwarding Command {command} to sync server {networkCommandConnectionToHandle.ConnectionId}");
+
+            //TODO: forward command to other players
+            gameStateContext.CurrentNetOutgoingMessageBusService.Broadcast(NetworkCommandConstants.LolCommand,new string[] { clientInputConverted.LoginToken, command }, NetDeliveryMethod.ReliableOrdered, 1);
+
             gameStateContext
                 .GameStateRegistrar
                 .WorldGameStateDataLayer
