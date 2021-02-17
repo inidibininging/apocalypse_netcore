@@ -228,14 +228,13 @@ namespace Apocalypse.Any.Infrastructure.Server.Worker
                         //TODO: Pass a map of states mapped to bytes
 
                         var returningGameObject = NetworkCommandDataConverterService.ConvertToObject(networkCommandConnection);
-                        Console.WriteLine(returningGameObject);
+                        // Logger.LogInformation(returningGameObject);
                         switch (returningGameObject)
                         {
                             //Login successful, remember the login token used in sync server
                             case GameStateData gameStateData when !string.IsNullOrWhiteSpace(gameStateData.LoginToken):
                                 LoginToken = gameStateData.LoginToken;
-                                Logger.LogInformation("Login successful. Received game state data and login token");
-                                ;
+                                Logger.LogInformation("Login successful. Received game state data and login token");                                
                                 break;
 
                             //ACK Response                                        
@@ -261,15 +260,16 @@ namespace Apocalypse.Any.Infrastructure.Server.Worker
                             //GameStateDataLayer means that the client gets the actual data from the server
                             case GameStateDataLayer gameStateDataLayer when gameStateDataLayer != null && AckReceived:
                                 {
-                                    
 
                                     //TODO: forward game state of sync client to the local server                                    
+                                    Logger.LogInformation("--------#######################--------------");
                                     Logger.LogInformation("--------#---------------------#--------------");
                                     Logger.LogInformation("--------#-----ö---------ö-----#--------------");
                                     Logger.LogInformation("--------#----------f----------#--------------");
                                     Logger.LogInformation("--------#-----!!!!!!!!!!!!----#--------------");
                                     Logger.LogInformation("--------#---------------------#--------------");
-
+                                    Logger.LogInformation("--------#######################--------------");
+                                    
                                     DataLayer = gameStateDataLayer;
 
                                     break;
@@ -278,27 +278,27 @@ namespace Apocalypse.Any.Infrastructure.Server.Worker
                     }
                     catch (Exception ex)
                     {
-                        Console.WriteLine(ex);
+                        Logger.LogError(ex.ToString(), ex);
                     }
                 });
 
             if (AckReceived && nextCommand != -1)
             {
-                Console.WriteLine($"nextCommand:{nextCommand}");
+                Logger.LogInformation($"nextCommand:{nextCommand}");
                 var serverConnection = Client.Connections.FirstOrDefault();
                 var fakeInput = Output.SendToClient(NetworkCommandConstants.SendPressReleaseCommand,
                     new PressReleaseUpdateData() { Command = nextCommand, LoginToken = LoginToken, SectorKey = LastSectorKey },
                     NetDeliveryMethod.ReliableOrdered, 0, serverConnection); // HARD CODED connection. First one should be the one from the message sending the fake press
-                Console.WriteLine($"Sent command {nextCommand}");
+                Logger.LogInformation($"Sent command {nextCommand}");
             }
 
             //Client knows that the sector changed
             //Tell the sync client "I want all of the new sector"
             if (AckReceived && SectorChanged)
             {
-                Console.WriteLine("SECTOR CHANGED!");
+                Logger.LogInformation("SECTOR CHANGED!");
                 var serverConnection = Client.Connections.FirstOrDefault();
-                var fakeInput = Output.SendToClient(NetworkCommandConstants.SyncSectorCommand,
+                var outOfSyncCommand = Output.SendToClient(NetworkCommandConstants.SyncSectorCommand,
                     new ReceiveGameStateDataLayerPartRequest()
                     {
                         LoginToken = LoginToken,
@@ -307,7 +307,7 @@ namespace Apocalypse.Any.Infrastructure.Server.Worker
                     },
                     NetDeliveryMethod.ReliableOrdered, 0, serverConnection); // HARD CODED connection. First one should be the one from the message sending the fake press
                 SectorChanged = false;
-                Console.WriteLine($"Sent command {nextCommand}");
+                Logger.LogInformation($"Sent command {nextCommand}");
             }
         }
     }

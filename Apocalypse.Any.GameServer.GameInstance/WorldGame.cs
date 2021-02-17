@@ -476,6 +476,14 @@ namespace Apocalypse.Any.GameServer.GameInstance
                 CurrentGameTime = CreateGameTime();
         }
         
+        //this doesnt belong here. Need refactoring
+        private void UpdateSectorOfPlayerInsideSyncClient() {
+            if(ClientConfiguration == null) return;
+            var sectorKV = GameSectorLayerServices.FirstOrDefault(kv => kv.Value.SharedContext.DataLayer.Players.Any(p => p.LoginToken == SendPressReleaseWorker.LoginToken));
+	        if(sectorKV.Value == null) return;
+            SendPressReleaseWorker.LastSectorKey = sectorKV.Key;
+        }
+
         public void Update(GameTime gameTime)
         {
             DelegateSyncServerDataToLocalServer();
@@ -485,7 +493,7 @@ namespace Apocalypse.Any.GameServer.GameInstance
             TryLoginToSyncServer();
 
             GameStateContext.Update();
-
+            UpdateSectorOfPlayerInsideSyncClient();
             RunSectorOwnerMechanics();
 
             var timeToWait = TimeSpan.FromSeconds(ServerConfiguration.ServerUpdateInSeconds);
@@ -531,7 +539,7 @@ namespace Apocalypse.Any.GameServer.GameInstance
             if (!LoggedInToPressRelease && ClientConfiguration != null)
             {
                 var loginAttempt = (SendPressReleaseWorker?.TryLogin()).GetValueOrDefault();
-                Console.WriteLine(loginAttempt);
+                Logger.LogInformation(((int)loginAttempt).ToString());
                 LoggedInToPressRelease = loginAttempt == NetSendResult.Sent;
             }
         }
@@ -568,8 +576,7 @@ namespace Apocalypse.Any.GameServer.GameInstance
             //update last sector where the sync clients player was
             if (SendPressReleaseWorker == null)
                 return;
-            
-            // Console.WriteLine("MATCH!");
+                        
             SendPressReleaseWorker.LastSectorKey = lastSectorOfClient;
             SendPressReleaseWorker.ProcessIncomingMessages(enumerable.Select(cmd => SyncCommandTranslator.Translate(cmd)));
         }
@@ -727,6 +734,10 @@ namespace Apocalypse.Any.GameServer.GameInstance
             });
         }
 
+
+        /// <summary>
+        /// Passes all the data layer data from the SyncServer to the sector of the player
+        /// </summary>
         private void DelegateSyncServerDataToLocalServer() {
             if(ClientConfiguration == null)
                 return;
@@ -735,21 +746,64 @@ namespace Apocalypse.Any.GameServer.GameInstance
 
             Logger.LogInformation("PASSING DATA LAYER");
 
-            foreach(var s in GameSectorLayerServices.Values)
+            foreach(var sectorStateMachine in GameSectorLayerServices.Values)
             {
-                foreach(var player in s.SharedContext.DataLayer.Players)
-                {
-                    Logger.LogInformation("++++++++++++++++++++++++");
-                    Logger.LogInformation(player.LoginToken);
-                    // Logger.LogInformation("++++++++++++++++++++++++");
-                }
-            }
+                foreach(var localPlayer in sectorStateMachine.SharedContext.DataLayer.Players)
+                {                    
+                    foreach(var serverPlayer in SendPressReleaseWorker.DataLayer.Players)
+                    {
+                        if(serverPlayer.LoginToken != localPlayer.LoginToken)
+                            continue;
+                        
+                        Logger.LogInformation("Passing server player data to local player");
+                        //only apply the position and rotation value for testing purpouses
+                        localPlayer.CurrentImage.Position.X = serverPlayer.CurrentImage.Position.X;
+                        localPlayer.CurrentImage.Position.Y = serverPlayer.CurrentImage.Position.Y;
+                        localPlayer.CurrentImage.Rotation.Rotation = serverPlayer.CurrentImage.Rotation.Rotation;
+                        localPlayer.CurrentImage.Path = serverPlayer.CurrentImage.Path;
+                    }                    
+                
 
-            foreach(var player in SendPressReleaseWorker.DataLayer.Players)
-            {
-                Logger.LogInformation(player.LoginToken);
-            }
+                    //we have the players sector. throw everything in the trash and pass the server data
+                    if(SendPressReleaseWorker.LoginToken == localPlayer.LoginToken) {
+                        foreach(var localEnemy in sectorStateMachine.SharedContext.DataLayer.Enemies)
+                        {                    
+                            foreach(var serverEnemy  in SendPressReleaseWorker.DataLayer.Enemies)
+                            {
+                                //Will not match. Every generated enemy will have a local based id
+                                if(localEnemy.Id != serverEnemy.Id)
+                                    continue;
+                                                                                        
+                                //only apply the position and rotation value for testing purpouses
+                                localEnemy.CurrentImage.Position.X = serverEnemy.CurrentImage.Position.X;
+                                localEnemy.CurrentImage.Position.Y = serverEnemy.CurrentImage.Position.Y;
+                                localEnemy.CurrentImage.Rotation.Rotation = serverEnemy.CurrentImage.Rotation.Rotation;
+                                localEnemy.CurrentImage.Path = serverEnemy.CurrentImage.Path;
+                                localEnemy.CurrentImage.Scale = new Vector2(serverEnemy.CurrentImage.Scale.X, serverEnemy.CurrentImage.Scale.Y);
+                            }
+                        }
 
+                        foreach(var localImageData in sectorStateMachine.SharedContext.DataLayer.ImageData)
+                        {                    
+                            foreach(var serverImageData  in SendPressReleaseWorker.DataLayer.ImageData)
+                            {
+                                //Will not match. Every generated enemy will have a local based id
+                                if(localImageData.Id != serverImageData.Id)
+                                    continue;
+                                                                                        
+                                //only apply the position and rotation value for testing purpouses
+                                localImageData.Position.X = serverImageData.Position.X;
+                                localImageData.Position.Y = serverImageData.Position.Y;
+                                localImageData.Rotation.Rotation = serverImageData.Rotation.Rotation;
+                                localImageData.Path = serverImageData.Path;
+                                localImageData.Scale = new Vector2(serverImageData.Scale.X, serverImageData.Scale.Y);
+                            }
+                        }
+
+                        //and so on...
+                    }
+		        }
+            }
             SendPressReleaseWorker.NewDataLayer = false;
         }
 
