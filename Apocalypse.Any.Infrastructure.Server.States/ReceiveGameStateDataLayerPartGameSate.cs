@@ -25,7 +25,6 @@ namespace Apocalypse.Any.Infrastructure.Server.States
 
         public void Handle(INetworkStateContext<TWorld> gameStateContext, NetworkCommandConnection networkCommandConnectionToHandle)
         {
-
             if (networkCommandConnectionToHandle.CommandName != NetworkCommandConstants.SyncSectorCommand)
             {
                 gameStateContext.Logger.LogError($"{nameof(ReceiveGameStateDataLayerPartGameSate<TWorld>)} Command name is not ReceiveWorkCommand. Given: {networkCommandConnectionToHandle.CommandName}");

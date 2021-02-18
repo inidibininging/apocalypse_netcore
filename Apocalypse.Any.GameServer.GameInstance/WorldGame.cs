@@ -133,7 +133,7 @@ namespace Apocalypse.Any.GameServer.GameInstance
             LoggerServiceFactory = new LoggerServiceFactory();
             Logger = LoggerServiceFactory.GetLogger();
             
-            ServerConfiguration = serverConfiguration;
+            ServerConfiguration = serverConfiguration ?? throw new ArgumentNullException(nameof(serverConfiguration));
             ClientConfiguration = clientConfiguration;
 
             InitSerializer(serverConfiguration);
@@ -425,6 +425,7 @@ namespace Apocalypse.Any.GameServer.GameInstance
         /// <param name="serverPort">the server port</param>
         private void CreateServer(string serverPeerName, string serverIp, int serverPort)
         {
+            Logger.LogInformation($"Creating net server with peer name: {serverPeerName}, serverIp: {serverIp}, serverPort: {serverPort}");
             //net incoming message bus service creation
             var serverPeerConfig = new NetPeerConfiguration(serverPeerName)
             {
