@@ -34,10 +34,8 @@ namespace Apocalypse.Any.Infrastructure.Server.Worker
         TImageData>
     {
         private NetClient Client { get; set; }
-        private GameClientConfiguration ClientConfiguration { get; }
-
+        public GameClientConfiguration ClientConfiguration { get; }
         private ILogger<byte> Logger { get; }
-
         private GameStateDataLayer dataLayer;
         public GameStateDataLayer DataLayer
         {
@@ -79,7 +77,7 @@ namespace Apocalypse.Any.Infrastructure.Server.Worker
         {
             ClientConfiguration = configuration;
             Logger = logger;
-            CreateClientAndConnect();
+            Init();
         }
 
         private Type GetSerializer(string serializerType)
@@ -100,14 +98,14 @@ namespace Apocalypse.Any.Infrastructure.Server.Worker
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine("whoops");
-                    Console.WriteLine(ex);
+                    // Console.WriteLine("whoops");
+                    // Console.WriteLine(ex);
                 }
             }
             return null;
         }
 
-        private void CreateClientAndConnect()
+        private void Init()
         {
             Client = new NetClient(
                 new NetPeerConfiguration(ClientConfiguration.ServerPeerName)
@@ -117,7 +115,6 @@ namespace Apocalypse.Any.Infrastructure.Server.Worker
                     AutoFlushSendQueue = true
                 });
             Client.Start();
-            Client.Connect(ClientConfiguration.ServerIp, ClientConfiguration.ServerPort);
 
             var serializerType = GetSerializer(ClientConfiguration.SerializationAdapterType);
             SerializationAdapter = Activator.CreateInstance(serializerType) as IByteArraySerializationAdapter;
@@ -125,6 +122,10 @@ namespace Apocalypse.Any.Infrastructure.Server.Worker
             Output = new NetOutgoingMessageBusService<NetClient>(Client, SerializationAdapter);
             NetworkCommandDataConverterService = new NetworkCommandDataConverterService(SerializationAdapter);
             NetIncomingMessageNetworkCommand = new NetIncomingMessageNetworkCommandConnectionTranslator(new NetworkCommandTranslator(SerializationAdapter));
+        }
+
+        public void Connect() {
+            Client.Connect(ClientConfiguration.ServerIp, ClientConfiguration.ServerPort);
         }
 
         private void TryConnect()
@@ -213,9 +214,10 @@ namespace Apocalypse.Any.Infrastructure.Server.Worker
 
                     if(networkCommandConnection.CommandName != NetworkCommandConstants.SendPressReleaseCommand && 
                        networkCommandConnection.CommandName != NetworkCommandConstants.UpdateCommand && 
-                       networkCommandConnection.CommandName != NetworkCommandConstants.SyncSectorCommand)
+                       networkCommandConnection.CommandName != NetworkCommandConstants.SyncSectorCommand &&
+                       networkCommandConnection.CommandName != NetworkCommandConstants.BroadcastCommand)
                     {
-                         Logger.LogWarning($"Command name is not SendPressReleaseCommand, UpdateCommand or ReceiveWorkCommand -> {networkCommandConnection.CommandName}");
+                         Logger.LogWarning($"Command name is not SendPressReleaseCommand, UpdateCommand, SyncSector or Broadcast -> {networkCommandConnection.CommandName}");
                         return;
                     }
 
@@ -235,7 +237,7 @@ namespace Apocalypse.Any.Infrastructure.Server.Worker
                             //Login successful, remember the login token used in sync server
                             case GameStateData gameStateData when !string.IsNullOrWhiteSpace(gameStateData.LoginToken):
                                 LoginToken = gameStateData.LoginToken;
-                                Logger.LogInformation("Login successful. Received game state data and login token");                                
+                                Logger.LogInformation("Login successful. Received game state data and login token");
                                 break;
 
                             //ACK Response                                        

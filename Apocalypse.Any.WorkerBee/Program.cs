@@ -1,40 +1,45 @@
-﻿using Apocalypse.Any.Domain.Client.Model;
+﻿using Apocalypse.Any.Core.Input.Translator;
+using Apocalypse.Any.Domain.Client.Model;
 using Apocalypse.Any.Domain.Common.Model;
 using Apocalypse.Any.Domain.Common.Model.Network;
 using Apocalypse.Any.Domain.Server.Model;
 using Apocalypse.Any.GameServer.GameInstance;
+using Apocalypse.Any.GameServer.Services;
 using Apocalypse.Any.Infrastructure.Common.Services.Serializer.JsonAdapter;
 using Apocalypse.Any.Infrastructure.Common.Services.Serializer.MsgPackAdapter;
 using Apocalypse.Any.Infrastructure.Common.Services.Serializer.YamlAdapter;
 using Apocalypse.Any.Infrastructure.Server.Worker;
 using System;
+using System.Collections.Generic;
 using System.IO;
 
 namespace Apocalypse.Any.WorkerBee
 {
-    class Program
+    internal static class Program
     {
-        static void Main(string[] args)
+        private static readonly IntCommandStringCommandTranslator Translator = new();
+        private static readonly LoggerServiceFactory LoggerFactory = new();
+        private static void Main(string[] args)
         {
             var yamler = new YamlSerializerAdapter();
 
-            var clientConfig = yamler.DeserializeObject<GameClientConfiguration>(File.ReadAllText(args[0]));
-            var serverConfig = yamler.DeserializeObject<GameServerConfiguration>(File.ReadAllText(args[1]));
-
-            var world = new WorldGame(serverConfig, null);
-            // var dataLayerWorker = new SyncClient<
-            //                             PlayerSpaceship,
-            //                             EnemySpaceship,
-            //                             Item,
-            //                             Projectile,
-            //                             CharacterEntity,
-            //                             CharacterEntity,
-            //                             // ImageData>(clientConfig, world.LoggerServiceFactory.GetLogger());
-            while (true)
-            {
-                world.Update(null);
-                // dataLayerWorker.ProcessIncomingMessages(null);
+            // var serverConfig = yamler.DeserializeObject<GameServerConfiguration>(File.ReadAllText(args[0]));
+            var clientConfig = args.Length > 1 ? yamler.DeserializeObject<GameClientConfiguration>(File.ReadAllText(args[1])) : null;
+            var syncClient = new SyncClient<PlayerSpaceship, EnemySpaceship, Item, Projectile, CharacterEntity, CharacterEntity, ImageData>(clientConfig, LoggerFactory.GetLogger());
+            ConsoleKey nextConsoleKey;
+            while ((nextConsoleKey = System.Console.ReadKey().Key) != ConsoleKey.Escape) {
+                syncClient.ProcessIncomingMessages(new List<int>() { Translator.Translate(ToStringCommand(nextConsoleKey)) });
             }
+        }
+        private static string ToStringCommand(ConsoleKey key) {
+            return key switch
+            {
+                ConsoleKey.W => DefaultKeys.Boost,
+                ConsoleKey.D => DefaultKeys.Right,
+                ConsoleKey.A => DefaultKeys.Left,
+                ConsoleKey.Enter => DefaultKeys.Shoot,
+                _ => null,
+            };
         }
     }
 }

@@ -47,10 +47,12 @@ namespace Apocalypse.Any.Client
 
         protected override void Dispose(bool disposing)
         {
-            LocalServer.OutputDataReceived -= LocalServerOutputDataReceived;
-            LocalServer.Kill();
-            LocalServer.Dispose();
-            LocalServer = null;
+            if(GameContext.SharedContext.Configuration.WithLocalServer){
+                LocalServer.OutputDataReceived -= LocalServerOutputDataReceived;
+                LocalServer.Kill();
+                LocalServer.Dispose();
+                LocalServer = null;
+            }
             base.Dispose(disposing);
         }
 
@@ -79,8 +81,7 @@ namespace Apocalypse.Any.Client
         /// </summary>
         protected override void Initialize()
         {
-            InitLocalGameServer();
-            
+
             // TODO: Add your initialization logic here
             //Services.AddService(new DefaultBusInputRecordService());
             Services.AddService(ScreenService.Instance); //TODO: Need to change this -> referring to a new screen service , not to the  singleton instance
@@ -100,7 +101,8 @@ namespace Apocalypse.Any.Client
             GameContext.GetService.Get(ClientGameScreenBook.Init).Handle(GameContext);
             ScreenService.Instance.Initialize(GameContext.SharedContext);
 
-
+            if(GameContext.SharedContext.Configuration.WithLocalServer)
+                InitLocalGameServer();
         }
 
         /// <summary>

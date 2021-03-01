@@ -18,6 +18,6 @@
         public const int AckCommand = 9;
         public const int OutOfSyncCommand = 10;
 
-        public const int LolCommand = 11;
+        public const int BroadcastCommand = 11;
     }
 }

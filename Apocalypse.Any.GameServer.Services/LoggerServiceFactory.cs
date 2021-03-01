@@ -24,18 +24,6 @@ namespace Apocalypse.Any.GameServer.Services
 
             var services = new ServiceCollection();
 
-            // services.AddSingleton(providers);
-            // services.AddSingleton<ILoggerFactory>(sc =>
-            // {
-            //     var providerCollection = sc.GetService<LoggerProviderCollection>();
-            //     var factory = new SerilogLoggerFactory(null, true, providerCollection);
-            //
-            //     foreach (var provider in sc.GetServices<ILoggerProvider>())
-            //         factory.AddProvider(provider);
-            //
-            //     return factory;
-            // });
-
             services.AddLogging(l => l.AddSerilog());
 
             var serviceProvider = services.BuildServiceProvider();

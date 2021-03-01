@@ -47,6 +47,148 @@ using CommandPressReleaseTranslator = Apocalypse.Any.Core.Input.CommandPressRele
 
 namespace Apocalypse.Any.GameServer.GameInstance
 {
+    public class SyncClientOwner
+    {
+        public SyncClientOwner(SyncClient<PlayerSpaceship, EnemySpaceship, Item, Projectile, CharacterEntity, CharacterEntity, ImageData> syncClient)
+        {
+            SyncClient = syncClient;
+        }
+        private SyncClient<PlayerSpaceship, EnemySpaceship, Item, Projectile, CharacterEntity, CharacterEntity, ImageData> SyncClient
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// Tells if this instance is logged in to a sync server
+        /// </summary>
+        /// <value></value>
+        public bool LoggedInToPressRelease { get; private set; }
+
+        public void Connect() {
+            SyncClient.Connect();
+        }
+
+        public void TryLoginToSyncServer(ILogger<byte> logger)
+        {
+            var loginAttempt = (SyncClient?.TryLogin()).GetValueOrDefault();
+            logger.LogInformation(((int)loginAttempt).ToString());
+            LoggedInToPressRelease = loginAttempt == NetSendResult.Sent;
+        }
+
+        /// <summary>
+        /// Compares a user with the user that plays locally.
+        /// If it matches, the commands of the player (player owned by user) will be delegated to the sync server
+        /// </summary>
+        /// <param name="loginToken">Login token from a player in the sync server</param>
+        /// <param name="commands"></param>
+        public void DelegatePlayerCommandsToSyncServer(int lastSectorOfClient, IEnumerable<string> commands)
+        {
+            // if (string.IsNullOrWhiteSpace(loginToken)
+            //     || commands == null)
+            // {
+            //     return;
+            // }
+
+            if(commands?.Any() != true)
+                return;
+
+            if (!LoggedInToPressRelease || SyncClient.ClientConfiguration == null)
+                return;
+
+            // var user = authenticationService.GetByLoginTokenHack(loginToken);
+
+            // logger.LogInformation($"CHECK - {user.Username} against {ClientConfiguration.User.Username} - {user.Password} against {ClientConfiguration.User.Password}");
+
+            //password will never match because password is encrypted and the client configuration password is not!
+            // if (user.Username != ClientConfiguration.User.Username)
+            //     return;
+
+            // var lastSectorOfClient = GameSectorLayerServices.FirstOrDefault(kv =>
+            //     kv.Value.SharedContext.DataLayer.Players.Any(p => p.LoginToken == loginToken)).Key;
+
+            // //update last sector where the sync clients player was
+            // if (SyncClient == null)
+            //     return;
+
+            SyncClient.LastSectorKey = lastSectorOfClient;
+            SyncClient.ProcessIncomingMessages(commands.Select(cmd => SyncCommandTranslator.Translate(cmd)));
+        }
+
+        /// <summary>
+        /// Passes all the data layer data from the SyncServer to the sector of the player
+        /// </summary>
+        public void DelegateSyncServerDataToLocalServer(IGameSectorLayerService playerSector, ILogger<byte> logger)
+        {
+            if (!SyncClient.NewDataLayer)
+                return;
+
+            logger.LogInformation(nameof(DelegateSyncServerDataToLocalServer));
+
+            // var playerSector = GameSectorLayerServices.Values.FirstOrDefault(s => s.SharedContext.DataLayer.Players.Any(p => p.LoginToken == SyncClient.LoginToken));
+            if (playerSector == null)
+            {
+                logger.LogError("Something is wrong. Player not found. Maybe the player is now in another sector");
+                throw new NotImplementedException();
+            }
+
+            var serverPlayersInLocalServer = SyncClient.DataLayer.Players.Where(p => playerSector.DataLayer.Players.Any(localPlayer => localPlayer.LoginToken == p.LoginToken));
+            var serverPlayersNotInLocalServer = SyncClient.DataLayer.Players.Except(serverPlayersInLocalServer);
+
+            foreach (var serverPlayer in serverPlayersInLocalServer)
+            {
+                var localPlayer = playerSector.DataLayer.Players.FirstOrDefault(p => p.LoginToken == serverPlayer.LoginToken);
+
+                logger.LogInformation("Passing server player data to local player");
+
+                //only apply the position and rotation value for testing purpouses
+                localPlayer.CurrentImage.Position.X = serverPlayer.CurrentImage.Position.X;
+                localPlayer.CurrentImage.Position.Y = serverPlayer.CurrentImage.Position.Y;
+                localPlayer.CurrentImage.Rotation.Rotation = serverPlayer.CurrentImage.Rotation.Rotation;
+                localPlayer.CurrentImage.Path = serverPlayer.CurrentImage.Path;
+                localPlayer.CurrentImage.Color = Color.Yellow; // for debugging purpouses only
+            }
+
+            foreach (var serverPlayerNotInLocal in serverPlayersNotInLocalServer)
+                playerSector.DataLayer.Players.Add(serverPlayerNotInLocal);
+
+
+            SyncClient.NewDataLayer = false;
+        }
+
+        public void DelegateOtherPlayerCommandsToLocalServer(ILogger<byte> logger)
+        {
+            //TODO: 
+            if (SyncClient.CommandsToLocalServer.Count == 0) return;
+            while (SyncClient.CommandsToLocalServer.TryDequeue(out (string loginToken, string command) nextCommand))
+            {
+                //TODO: get player, add commands and see what happens
+                logger.LogInformation($"TODO: get player {nextCommand.loginToken}, add {nextCommand.command} and see what happens");
+            }
+        }
+
+        /// <summary>
+        /// Converts any input to an int command
+        /// </summary>
+        /// <returns></returns>
+        private IntCommandStringCommandTranslator SyncCommandTranslator { get; } = new IntCommandStringCommandTranslator();
+
+        private CommandPressReleaseTranslator PressReleaseTranslator { get; } = new CommandPressReleaseTranslator();
+
+        public string LoginToken {
+            get => SyncClient.LoginToken;
+        }
+
+        //this doesnt belong here. Need refactoring
+        public void UpdateSectorOfPlayerInsideSyncClient(int playerSectorKey)
+        {
+            // var sectorKV = GameSectorLayerServices.FirstOrDefault(kv => kv.Value.SharedContext.DataLayer.Players.Any(p => p.LoginToken == SyncClient.LoginToken));
+            // if (sectorKV.Value == null) return;
+            SyncClient.LastSectorKey = playerSectorKey;
+        }
+
+    }
+
     /// <summary>
     /// This is a wrapper around server game objects
     /// with a list of state machines of sectors
@@ -81,8 +223,6 @@ namespace Apocalypse.Any.GameServer.GameInstance
         private ServerNetworkGameStateContext<WorldGame> GameStateContext { get; set; }
 
         private NetServer Server { get; set; }
-
-
         private NetIncomingMessageBusService<NetServer> ServerInput { get; set; }
         private NetOutgoingMessageBusService<NetServer> ServerOutput { get; set; }
 
@@ -97,51 +237,33 @@ namespace Apocalypse.Any.GameServer.GameInstance
         public PlayerSpaceshipFactory PlayerFactory { get; set; } = new PlayerSpaceshipFactory();
         private IByteArraySerializationAdapter SerializationAdapter { get; set; }
 
-        private GameClientConfiguration ClientConfiguration { get; }
+ 
         #endregion EntityFactories
 
-        #region SyncClient
-        private SyncClient<PlayerSpaceship,EnemySpaceship,Item,Projectile,CharacterEntity,CharacterEntity,ImageData> SendPressReleaseWorker
-        {
-            get;
-            set;
-        }
 
-        /// <summary>
-        /// Tells if this instance is logged in to a sync server
-        /// </summary>
-        /// <value></value>
-        private bool LoggedInToPressRelease { get; set; }
-
-        /// <summary>
-        /// Converts any input to an int command
-        /// </summary>
-        /// <returns></returns>
-        private IntCommandStringCommandTranslator SyncCommandTranslator { get; } = new IntCommandStringCommandTranslator();
-        
-        private CommandPressReleaseTranslator PressReleaseTranslator { get; } = new CommandPressReleaseTranslator();
-        #endregion
-
+        private SyncClientOwner ClientOwner { get; set;}
         #region Logging / Monitoring
 
         private ILogger<byte> Logger { get; }
-        
+
         #endregion
-        
+
+
         public WorldGame(GameServerConfiguration serverConfiguration, GameClientConfiguration clientConfiguration)
         {
             LoggerServiceFactory = new LoggerServiceFactory();
             Logger = LoggerServiceFactory.GetLogger();
-            
+
             ServerConfiguration = serverConfiguration ?? throw new ArgumentNullException(nameof(serverConfiguration));
-            ClientConfiguration = clientConfiguration;
+            ClientOwner = new SyncClientOwner(new SyncClient<PlayerSpaceship, EnemySpaceship, Item, Projectile, CharacterEntity, CharacterEntity, ImageData>(clientConfiguration, Logger));
+            // ClientConfiguration = clientConfiguration;
 
             InitSerializer(serverConfiguration);
-            
+
             InitGameSectorAndSectorStateMachine();
-            
+
             InitAuthenticationService(clientConfiguration);
-            
+
             CreateServer(
                 ServerConfiguration.ServerPeerName,
                 ServerConfiguration.ServerIp,
@@ -152,19 +274,19 @@ namespace Apocalypse.Any.GameServer.GameInstance
 
             //create default starting sector    
             GameSectorRoutePairService = new GameSectorRoutePairService();
-            
+
             BuildSectorGrid();
 
             RunStartingSectorOnce();
 
             InitWorldIO();
-            
+
             //Connection to sync server
-            InitSyncServerIfNeeded();
+            // ClientOwner.InitSyncServerIfNeeded(ServerConfiguration, Logger);
 
             //Language script file
             InitLanguageScript();
-            
+
             CreateGameTimeIfNotExists(null);
 
             RunAllSectorsOnce();
@@ -185,15 +307,12 @@ namespace Apocalypse.Any.GameServer.GameInstance
 
         private void RunAllSectorsOnce()
         {
-            Console.ForegroundColor = ConsoleColor.Green;
-            foreach (var sector in GameSectorLayerServices.Values)
+            foreach (var sector in GameSectorLayerServices)
             {
-                sector.SharedContext.CurrentGameTime = CurrentGameTime;
-                sector.Run(ServerConfiguration.StartupFunction);
-                Console.Write(".");
+                sector.Value.SharedContext.CurrentGameTime = CurrentGameTime;
+                sector.Value.Run(ServerConfiguration.StartupFunction);
+                Logger.LogInformation($"Running {ServerConfiguration.StartupFunction} on {sector.Key}");
             }
-
-            Console.ForegroundColor = ConsoleColor.White;
         }
 
         private void InitLanguageScript()
@@ -201,28 +320,10 @@ namespace Apocalypse.Any.GameServer.GameInstance
             LanguageScriptFileEvaluator languageScriptFileEvaluator = new LanguageScriptFileEvaluator(
                 ServerConfiguration.StartupScript, ServerConfiguration.StartupFunction, ServerConfiguration.RunOperation);
             Console.ForegroundColor = ConsoleColor.Yellow;
-            foreach (var sector in GameSectorLayerServices.Values)
+            foreach (var sector in GameSectorLayerServices)
             {
-                languageScriptFileEvaluator.Evaluate(sector);
-                Console.Write(".");
-            }
-
-            Console.ForegroundColor = ConsoleColor.Yellow;
-
-            Console.WriteLine("runner starting..." + ServerConfiguration.StartupFunction);
-        }
-
-        private void InitSyncServerIfNeeded()
-        {
-            if (ClientConfiguration != null)
-            {
-                SendPressReleaseWorker =
-                    new SyncClient<PlayerSpaceship, EnemySpaceship, Item, Projectile, CharacterEntity, CharacterEntity,
-                        ImageData>(ClientConfiguration, Logger)
-                    {
-                        LastSectorKey = ServerConfiguration.StartingSector
-                    };
-                Logger.LogInformation($"Sync client created for {ClientConfiguration.User}");
+                languageScriptFileEvaluator.Evaluate(sector.Value);
+                Logger.LogInformation($"LanguageScriptFileEvaluator. Evaluated {ServerConfiguration.StartupFunction} on {sector.Value}");
             }
         }
 
@@ -286,12 +387,7 @@ namespace Apocalypse.Any.GameServer.GameInstance
         /// Creates a translator that converts the incoming messages to network command connections / See NetIncomingMessageNetworkCommandConnectionTranslator as an example
         /// </summary>
         /// <returns></returns>
-        private NetIncomingMessageNetworkCommandConnectionTranslator GetCommandTranslators()
-        {
-            var serverTranslator = new NetworkCommandTranslator(SerializationAdapter);
-            var serverMessageTranslator = new NetIncomingMessageNetworkCommandConnectionTranslator(serverTranslator);
-            return serverMessageTranslator;
-        }
+        private NetIncomingMessageNetworkCommandConnectionTranslator GetCommandTranslators() => new NetIncomingMessageNetworkCommandConnectionTranslator(new NetworkCommandTranslator(SerializationAdapter));
 
         /// <summary>
         /// Builds and loads all the sector mechanics
@@ -314,8 +410,6 @@ namespace Apocalypse.Any.GameServer.GameInstance
             var updateSectorStatusMechanic = new UpdateSectorStatusMechanic();
             SectorsOwnerMechanics = new List<ISingleUpdeatableMechanic<IGameSectorsOwner, IGameSectorsOwner>>
             {
-                //routeTrespassingMarker,
-                //playerShifter,
                 cliPassthrough,
                 rediCliPassthrough,
                 transferStuff,
@@ -476,25 +570,20 @@ namespace Apocalypse.Any.GameServer.GameInstance
             if (gameTime == null && CurrentGameTime == null)
                 CurrentGameTime = CreateGameTime();
         }
-        
-        //this doesnt belong here. Need refactoring
-        private void UpdateSectorOfPlayerInsideSyncClient() {
-            if(ClientConfiguration == null) return;
-            var sectorKV = GameSectorLayerServices.FirstOrDefault(kv => kv.Value.SharedContext.DataLayer.Players.Any(p => p.LoginToken == SendPressReleaseWorker.LoginToken));
-	        if(sectorKV.Value == null) return;
-            SendPressReleaseWorker.LastSectorKey = sectorKV.Key;
-        }
+
 
         public void Update(GameTime gameTime)
         {
-            DelegateSyncServerDataToLocalServer();
+            var playerSectorKV = GameSectorLayerServices.FirstOrDefault(sectorKV => sectorKV.Value.SharedContext.DataLayer.Players.Any(p => p.LoginToken == ClientOwner.LoginToken));
+            ClientOwner.DelegateSyncServerDataToLocalServer(playerSectorKV.Value.SharedContext , Logger);
+
             CreateGameTimeIfNotExists(gameTime);
             UpdateGameTime(CurrentGameTime);
 
-            TryLoginToSyncServer();
+            ClientOwner.TryLoginToSyncServer(Logger);
 
             GameStateContext.ForwardIncomingMessagesToHandlers();
-            UpdateSectorOfPlayerInsideSyncClient();
+            ClientOwner.UpdateSectorOfPlayerInsideSyncClient(playerSectorKV.Key);
             RunSectorOwnerMechanics();
 
             var timeToWait = TimeSpan.FromSeconds(ServerConfiguration.ServerUpdateInSeconds);
@@ -534,56 +623,6 @@ namespace Apocalypse.Any.GameServer.GameInstance
             }
         }
 
-        private void TryLoginToSyncServer()
-        {
-            //Try to login to the sync server
-            if (!LoggedInToPressRelease && ClientConfiguration != null)
-            {
-                var loginAttempt = (SendPressReleaseWorker?.TryLogin()).GetValueOrDefault();
-                Logger.LogInformation(((int)loginAttempt).ToString());
-                LoggedInToPressRelease = loginAttempt == NetSendResult.Sent;
-            }
-        }
-
-        /// <summary>
-        /// Compares a user with the user that plays locally.
-        /// If it matches, the commands of the player (player owned by user) will be delegated to the sync server
-        /// </summary>
-        /// <param name="loginToken">Login token from a player in the sync server</param>
-        /// <param name="commands"></param>
-        private void DelegatePlayerCommandsToSyncServer(string loginToken, IEnumerable<string> commands)
-        {
-            if(string.IsNullOrWhiteSpace(loginToken) || commands == null )
-                return;
-            
-            var enumerable = commands as string[] ?? commands.ToArray();
-            if(!enumerable.Any())
-                return;
-            
-            if(!LoggedInToPressRelease || ClientConfiguration == null)
-                return;
-
-            var user = AuthenticationService.GetByLoginTokenHack(loginToken);
-
-           Logger.LogInformation($"CHECK - {user.Username} against {ClientConfiguration.User.Username} - {user.Password} against {ClientConfiguration.User.Password}");
-
-            //password will never match because password is encrypted and the client configuration password is not!
-            if(user.Username != ClientConfiguration.User.Username)
-                return;
-
-            var lastSectorOfClient = GameSectorLayerServices.FirstOrDefault(kv =>
-                kv.Value.SharedContext.DataLayer.Players.Any(p => p.LoginToken == loginToken)).Key;
-            
-            //update last sector where the sync clients player was
-            if (SendPressReleaseWorker == null)
-                return;
-                        
-            SendPressReleaseWorker.LastSectorKey = lastSectorOfClient;
-            SendPressReleaseWorker.ProcessIncomingMessages(enumerable.Select(cmd => SyncCommandTranslator.Translate(cmd)));
-        }
-
-
-
 
         private PlayerSpaceship CreatePlayerSpaceShip(string loginToken)
         {
@@ -618,7 +657,7 @@ namespace Apocalypse.Any.GameServer.GameInstance
                                                 .GroupBy(gs => gs.sectorTag)
                                                 .Where(gameStates => gameStates.Count() > 1)
                                                 .Select(gs => gs.Key);
-                if(problematicGameState.Any())
+                if (problematicGameState.Any())
                 {
                     Logger.LogWarning($"Sectors {string.Join(',', problematicGameState.Select(gs => gs.ToString()))} have more than one gamestate");
                 }
@@ -645,7 +684,7 @@ namespace Apocalypse.Any.GameServer.GameInstance
         public GameStateData RegisterGameStateData(string loginToken)
         {
             Logger.LogInformation($"{nameof(RegisterGameStateData)} in World");
-            
+
             var newPlayer = CreatePlayerSpaceShip(loginToken);
             newPlayer.CurrentImage.Position.X = GameSectorLayerServices[ServerConfiguration.StartingSector].SharedContext.SectorBoundaries.MaxSectorX / 2f;
             newPlayer.CurrentImage.Position.Y = GameSectorLayerServices[ServerConfiguration.StartingSector].SharedContext.SectorBoundaries.MaxSectorY / 2f;
@@ -656,9 +695,9 @@ namespace Apocalypse.Any.GameServer.GameInstance
                     .Players.Add(newPlayer);
 
             FirePlayerRegisteredEvent(newPlayer);
-            
+
             // DelegatePlayerCommandsToSyncServer(loginToken, new List<string>());
-                
+
             return GameSectorLayerServices[ServerConfiguration.StartingSector]
                     .SharedContext
                     .IODataLayer
@@ -678,12 +717,12 @@ namespace Apocalypse.Any.GameServer.GameInstance
                 .Layers
                 .FirstOrDefault(l => l.DisplayName == PlayerRegisteredEventName &&
                                      l.GetValidTypes().Any(t => t == typeof(EventQueueArgument)));
-            if(playerRegisteredEventLayer == null)
+            if (playerRegisteredEventLayer == null)
             {
                 throw new InvalidOperationException($"Cannot use {nameof(FirePlayerRegisteredEvent)}. EventQueue PlayerRegistered doesn't exist");
             }
 
-	        //this needs to be created through a factory
+            //this needs to be created through a factory
             var playerRegisteredEvent = new EventQueueArgument()
             {
                 Id = Guid.NewGuid().ToString(),
@@ -707,16 +746,15 @@ namespace Apocalypse.Any.GameServer.GameInstance
             //build it
             var now = DateTime.Now;
 
-            DelegatePlayerCommandsToSyncServer(
-                updateData.LoginToken, 
-                PressReleaseTranslator.Translate(updateData.Commands));
+
+
+
 
             return GameSectorLayerServices
-                .Values
-                .ToList()
                 .Any(sector =>
             {
                 var currentPlayer = sector
+                                    .Value
                                     .SharedContext
                                     .DataLayer
                                     .Players
@@ -725,7 +763,12 @@ namespace Apocalypse.Any.GameServer.GameInstance
                 if (currentPlayer == null)
                     return false;
 
+                ClientOwner.DelegatePlayerCommandsToSyncServer(
+                sector.Key,
+                updateData.Commands);
+
                 var sent = sector
+                .Value
                 .SharedContext
                 .IODataLayer
                 .ForwardClientDataToGame(updateData);
@@ -736,55 +779,7 @@ namespace Apocalypse.Any.GameServer.GameInstance
         }
 
 
-        /// <summary>
-        /// Passes all the data layer data from the SyncServer to the sector of the player
-        /// </summary>
-        private void DelegateSyncServerDataToLocalServer() {
-            if(ClientConfiguration == null)
-                return;
-            if(!SendPressReleaseWorker.NewDataLayer)
-                return;
 
-            Logger.LogInformation("PASSING DATA LAYER");
-
-            var playerSector = GameSectorLayerServices.Values.FirstOrDefault(s => s.SharedContext.DataLayer.Players.Any(p => p.LoginToken == SendPressReleaseWorker.LoginToken));
-            if(playerSector == null){
-                Logger.LogError("Something is wrong. Player not found. Maybe the player is now in another sector");
-                throw new NotImplementedException();
-            }
-
-            var serverPlayersInLocalServer = SendPressReleaseWorker.DataLayer.Players.Where(p => playerSector.SharedContext.DataLayer.Players.Any(localPlayer => localPlayer.LoginToken == p.LoginToken));
-            var serverPlayersNotInLocalServer = SendPressReleaseWorker.DataLayer.Players.Except(serverPlayersInLocalServer);
-
-            foreach(var serverPlayer in serverPlayersInLocalServer)
-            {
-                var localPlayer = playerSector.SharedContext.DataLayer.Players.FirstOrDefault(p => p.LoginToken == serverPlayer.LoginToken);
-
-                Logger.LogInformation("Passing server player data to local player");
-                //only apply the position and rotation value for testing purpouses
-                localPlayer.CurrentImage.Position.X = serverPlayer.CurrentImage.Position.X;
-                localPlayer.CurrentImage.Position.Y = serverPlayer.CurrentImage.Position.Y;
-                localPlayer.CurrentImage.Rotation.Rotation = serverPlayer.CurrentImage.Rotation.Rotation;
-                localPlayer.CurrentImage.Path = serverPlayer.CurrentImage.Path;
-                localPlayer.CurrentImage.Color = Color.Yellow; // for debugging purpouses only               
-
-            }
-
-            foreach(var serverPlayerNotInLocal in serverPlayersNotInLocalServer)
-                playerSector.SharedContext.DataLayer.Players.Add(serverPlayerNotInLocal);
-
-
-            SendPressReleaseWorker.NewDataLayer = false;
-        }
-
-        public void DelegateOtherPlayerCommandsToLocalServer() {
-            //TODO: 
-            if(SendPressReleaseWorker.CommandsToLocalServer.Count == 0) return;
-            while(SendPressReleaseWorker.CommandsToLocalServer.TryDequeue(out (string loginToken, string command) nextCommand)){
-                //TODO: get player, add commands and see what happens
-                Logger.LogInformation($"TODO: get player {nextCommand.loginToken}, add {nextCommand.command} and see what happens");
-            }
-        }
 
         public bool ForwardServerDataToGame(GameStateData gameStateData)
         {
