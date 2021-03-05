@@ -122,8 +122,9 @@ namespace Apocalypse.Any.GameServer.GameInstance
 
         public void TryLoginToSyncServer(ILogger<byte> logger)
         {
+            if (LoggedInToPressRelease) return;
             var loginAttempt = (SyncClient?.TryLogin()).GetValueOrDefault();
-            logger.LogInformation(((int)loginAttempt).ToString());
+            logger.LogInformation(Enum.GetName(typeof(NetSendResult),loginAttempt));
             LoggedInToPressRelease = loginAttempt == NetSendResult.Sent;
         }
 
@@ -135,11 +136,6 @@ namespace Apocalypse.Any.GameServer.GameInstance
         /// <param name="commands"></param>
         public void DelegatePlayerCommandsToSyncServer(int lastSectorOfClient, IEnumerable<string> commands)
         {
-            // if (string.IsNullOrWhiteSpace(loginToken)
-            //     || commands == null)
-            // {
-            //     return;
-            // }
 
             if (commands?.Any() != true)
                 return;
@@ -147,23 +143,12 @@ namespace Apocalypse.Any.GameServer.GameInstance
             if (!LoggedInToPressRelease || SyncClient.ClientConfiguration == null)
                 return;
 
-            // var user = authenticationService.GetByLoginTokenHack(loginToken);
-
-            // logger.LogInformation($"CHECK - {user.Username} against {ClientConfiguration.User.Username} - {user.Password} against {ClientConfiguration.User.Password}");
-
-            //password will never match because password is encrypted and the client configuration password is not!
-            // if (user.Username != ClientConfiguration.User.Username)
-            //     return;
-
-            // var lastSectorOfClient = GameSectorLayerServices.FirstOrDefault(kv =>
-            //     kv.Value.SharedContext.DataLayer.Players.Any(p => p.LoginToken == loginToken)).Key;
-
-            // //update last sector where the sync clients player was
-            // if (SyncClient == null)
-            //     return;
-
             SyncClient.LastSectorKey = lastSectorOfClient;
-            SyncClient.ProcessIncomingMessages(commands.Select(cmd => SyncCommandTranslator.Translate(cmd)));
+
+
+            var commandsAsPressRelease = PressReleaseTranslator.Translate(commands);
+            
+            SyncClient.ProcessIncomingMessages(commandsAsPressRelease.Select(cmd => SyncCommandTranslator.Translate(cmd)));
         }
 
         /// <summary>
@@ -203,7 +188,7 @@ namespace Apocalypse.Any.GameServer.GameInstance
             foreach (var serverPlayerNotInLocal in serverPlayersNotInLocalServer)
                 playerSector.DataLayer.Players.Add(serverPlayerNotInLocal);
 
-
+            
             SyncClient.NewDataLayer = false;
         }
 

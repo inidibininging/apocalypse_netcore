@@ -140,6 +140,7 @@ namespace Apocalypse.Any.GameServer.GameInstance
             InitWorldIO();
 
             //Connection to sync server
+            ClientOwner.Connect();
             // ClientOwner.InitSyncServerIfNeeded(ServerConfiguration, Logger);
 
             //Language script file
@@ -433,7 +434,7 @@ namespace Apocalypse.Any.GameServer.GameInstance
         public void Update(GameTime gameTime)
         {
             var playerSectorKV = GameSectorLayerServices.FirstOrDefault(sectorKV => sectorKV.Value.SharedContext.DataLayer.Players.Any(p => p.LoginToken == ClientOwner.LoginToken));
-            ClientOwner?.DelegateSyncServerDataToLocalServer(playerSectorKV.Value.SharedContext , Logger);
+            ClientOwner?.DelegateSyncServerDataToLocalServer(playerSectorKV.Value?.SharedContext , Logger);
 
             CreateGameTimeIfNotExists(gameTime);
             UpdateGameTime(CurrentGameTime);
@@ -621,14 +622,17 @@ namespace Apocalypse.Any.GameServer.GameInstance
                 if (currentPlayer == null)
                     return false;
 
-                ClientOwner.DelegatePlayerCommandsToSyncServer(sector.Key, updateData.Commands);
-
                 var sent = sector
                 .Value
                 .SharedContext
                 .IODataLayer
                 .ForwardClientDataToGame(updateData);
 
+
+                // Logger.LogWarning(string.Join(',',updateData.Commands));
+                
+                ClientOwner.DelegatePlayerCommandsToSyncServer(sector.Key, updateData.Commands.Where(cmd => !string.IsNullOrWhiteSpace(cmd)).ToList());
+                
                 SendingDelta = DateTime.Now - now;
                 return sent;
             });

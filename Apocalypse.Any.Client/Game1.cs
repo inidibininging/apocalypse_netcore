@@ -56,6 +56,7 @@ namespace Apocalypse.Any.Client
             base.Dispose(disposing);
         }
 
+        private GameClientConfiguration ClientConfiguration { get; }
         public Game1(GameClientConfiguration gameClientConfiguration) : base()
         {
             SelectStartScene(string.Empty);
@@ -63,7 +64,7 @@ namespace Apocalypse.Any.Client
             Content.RootDirectory = "Content";
             var contextBuilder = new InMemoryGameScreenStorageFactory();
             GameContext = contextBuilder.BuildClientStateMachine(gameClientConfiguration);
-
+            ClientConfiguration = gameClientConfiguration;
         }
 
         private void SelectStartScene(string selection)
@@ -98,11 +99,13 @@ namespace Apocalypse.Any.Client
 
             GameContext.SharedContext = new NetworkGameScreen();
             GameContext.SharedContext.Initialize();
+            if(ClientConfiguration.WithLocalServer)
+                InitLocalGameServer();
+
             GameContext.GetService.Get(ClientGameScreenBook.Init).Handle(GameContext);
             ScreenService.Instance.Initialize(GameContext.SharedContext);
 
-            if(GameContext.SharedContext.Configuration.WithLocalServer)
-                InitLocalGameServer();
+
         }
 
         /// <summary>

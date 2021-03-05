@@ -52,7 +52,7 @@ namespace Apocalypse.Any.Infrastructure.Server.States
             //Then an ACK message will be sent
             if (networkCommandConnectionToHandle.CommandName == NetworkCommandConstants.LoginCommand)
             {
-                gameStateContext.Logger.LogInformation($"{nameof(SendPressedReleaseCommandGameState<TWorld>)} - Sending ACK for {networkCommandConnectionToHandle.ConnectionId} -> {networkCommandConnectionToHandle.CommandName} {networkCommandConnectionToHandle.CommandArgument}");
+                 gameStateContext.Logger.LogInformation($"{nameof(SendPressedReleaseCommandGameState<TWorld>)} - Sending ACK for {networkCommandConnectionToHandle.ConnectionId} -> {networkCommandConnectionToHandle.CommandName} {networkCommandConnectionToHandle.CommandArgument}");
                 // var user = ConverterService.ConvertToObject(networkCommandConnectionToHandle) as UserData;
 
                 //send an "ACK" to the worker (client)
@@ -71,7 +71,7 @@ namespace Apocalypse.Any.Infrastructure.Server.States
             //ReceiveWorkCommand is needed for acquiring parts of the current game state data layer for example the players or enemies
             if (networkCommandConnectionToHandle.CommandName == NetworkCommandConstants.SyncSectorCommand)
             {
-                gameStateContext.Logger.LogInformation($" {nameof(SendPressedReleaseCommandGameState<TWorld>)} - ReceiveWorkCommand {networkCommandConnectionToHandle.ConnectionId}");
+                gameStateContext.Logger.LogInformation($" {nameof(SendPressedReleaseCommandGameState<TWorld>)} - Goes now to ReceiveWorkCommand {networkCommandConnectionToHandle.ConnectionId}");
                 gameStateContext.ChangeHandlerEasier(
                     gameStateContext.GameStateRegistrar.GetNetworkLayerState((byte) ServerInternalGameStates.ReceiveGameStateDataLayerPart),
                     networkCommandConnectionToHandle);
@@ -107,7 +107,7 @@ namespace Apocalypse.Any.Infrastructure.Server.States
             gameStateContext.Logger.LogInformation($" {nameof(SendPressedReleaseCommandGameState<TWorld>)}. Forwarding Command {command} to sync server {networkCommandConnectionToHandle.ConnectionId}");
 
             //TODO: forward command to other players
-            gameStateContext.CurrentNetOutgoingMessageBusService.Broadcast(NetworkCommandConstants.BroadcastCommand, new string[] { clientInputConverted.LoginToken, command }, NetDeliveryMethod.ReliableOrdered, 1);
+            gameStateContext.CurrentNetOutgoingMessageBusService.Broadcast(NetworkCommandConstants.BroadcastCommand, new string[] { clientInputConverted.LoginToken, command }, NetDeliveryMethod.ReliableOrdered, 0);
 
             gameStateContext
                 .GameStateRegistrar

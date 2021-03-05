@@ -45,6 +45,7 @@ namespace Apocalypse.Any.Core.Input
             //merge pressed and released keys into a single list
             var result =  RecordedPressCommand.ToList();
             result.AddRange(releasedKeys);
+            
             return result;
         }
     }

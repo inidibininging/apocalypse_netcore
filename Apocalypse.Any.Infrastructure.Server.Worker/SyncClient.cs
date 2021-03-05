@@ -180,7 +180,7 @@ namespace Apocalypse.Any.Infrastructure.Server.Worker
             TryConnect();
 
             foreach (var cmd in commands) {
-                // Console.WriteLine($"enque:{cmd}");
+                Logger.LogInformation($"Enqueue:{cmd}");
                 CommandsToSyncServer.Enqueue(cmd);
             }
 
@@ -229,7 +229,6 @@ namespace Apocalypse.Any.Infrastructure.Server.Worker
                     try
                     {
                         //TODO: Pass a map of states mapped to bytes
-
                         var returningGameObject = NetworkCommandDataConverterService.ConvertToObject(networkCommandConnection);
                         // Logger.LogInformation(returningGameObject);
                         switch (returningGameObject)
@@ -264,15 +263,9 @@ namespace Apocalypse.Any.Infrastructure.Server.Worker
                             //GameStateDataLayer means that the client gets the actual data from the server
                             case GameStateDataLayer gameStateDataLayer when gameStateDataLayer != null && AckReceived:
                                 {
-                                    //TODO: forward game state of sync client to the local server                                    
-                                    Logger.LogInformation("--------#######################--------------");
-                                    Logger.LogInformation("-----++#-------S-Y-N-C---------#++-----------");
-                                    Logger.LogInformation("--------#-----ö---------ö-----#--------------");
-                                    Logger.LogInformation("--------#----------f----------#--------------");
-                                    Logger.LogInformation("--------#-----!!!!!!!!!!!!----#--------------");
-                                    Logger.LogInformation("--------#---------------------#--------------");
-                                    Logger.LogInformation("--------#######################--------------");
-
+                                    //TODO: forward game state of sync client to the local server
+                                    Logger.LogInformation("SYNC");
+                                    
                                     DataLayer = gameStateDataLayer;
 
                                     break;
@@ -281,7 +274,7 @@ namespace Apocalypse.Any.Infrastructure.Server.Worker
                             //gets a map of logintoken + latest command without enqueing oneself
                             case string[] commandsPerLoginToken when commandsPerLoginToken?.Length == 2 && commandsPerLoginToken[0] != LoginToken:
                             {
-                                Logger.LogInformation($"Enqueue {commandsPerLoginToken[0]} - {commandsPerLoginToken[1]}");
+                                Logger.LogInformation($"LoginToken and Lastest Cmd {commandsPerLoginToken[0]} - {commandsPerLoginToken[1]}");
                                 CommandsToLocalServer.Enqueue((commandsPerLoginToken[0], commandsPerLoginToken[1]));
                                 break;
                             }
