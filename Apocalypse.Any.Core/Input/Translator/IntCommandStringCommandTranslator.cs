@@ -1,3 +1,5 @@
+using System;
+
 namespace Apocalypse.Any.Core.Input.Translator
 {
     /// <summary>
@@ -49,6 +51,7 @@ namespace Apocalypse.Any.Core.Input.Translator
             //Problem. I need to check if the is pressed or not. This should be done by recording the last key pressed and when the input is nothing (-1) -> send a release
             //The behaviour is similar to ProcessPressReleaseState
             //Solved, see CommandPressReleaseTranslator
+            Console.WriteLine($"input to translate:{input}");
             switch (input)
             {
                 case DefaultKeys.Up + DefaultKeys.Press:
@@ -80,6 +83,7 @@ namespace Apocalypse.Any.Core.Input.Translator
                 case DefaultKeys.AltShoot + DefaultKeys.Release:
                     return 13;
                 default:
+                    Console.WriteLine("no translation found");
                     return -1;
             }
         }

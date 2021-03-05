@@ -10,6 +10,7 @@ ServerIp: 127.0.0.1
 ServerPeerName: asteroid
 SerializationAdapterType: Apocalypse.Any.Infrastructure.Common.Services.Serializer.MsgPackAdapter.MsgPackByteArraySerializerAdapter
 ServerPort: 8080
+WithLocalServer: false
 User:
   Username: foo2
   Password: 12345

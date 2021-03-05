@@ -51,7 +51,7 @@ namespace Apocalypse.Any.Infrastructure.Server.States
             }
             if (request.GetProperty == "DataLayer")
             {
-                // gameStateContext.Logger.log($"{nameof(ReceiveGameStateDataLayerPartGameSate<TWorld>)} GetProperty value is empty. Sending the whole game state data layer");
+                gameStateContext.Logger.LogWarning($"{nameof(ReceiveGameStateDataLayerPartGameSate<TWorld>)} GetProperty value is empty. Sending the whole game state data layer");
 
                 var sector = gameStateContext.GameStateRegistrar.WorldGameStateDataLayer.GetSector(request.SectorKey);
 
