@@ -47,7 +47,57 @@ using CommandPressReleaseTranslator = Apocalypse.Any.Core.Input.CommandPressRele
 
 namespace Apocalypse.Any.GameServer.GameInstance
 {
-    public class SyncClientOwner
+    public interface ISyncClientOwner
+    {
+        bool LoggedInToPressRelease { get; }
+        string LoginToken { get; }
+
+        void Connect();
+        void DelegateOtherPlayerCommandsToLocalServer(ILogger<byte> logger);
+        void DelegatePlayerCommandsToSyncServer(int lastSectorOfClient, IEnumerable<string> commands);
+        void DelegateSyncServerDataToLocalServer(IGameSectorLayerService playerSector, ILogger<byte> logger);
+        void TryLoginToSyncServer(ILogger<byte> logger);
+        void UpdateSectorOfPlayerInsideSyncClient(int playerSectorKey);
+    }
+
+    public class NullSyncClientOwner : ISyncClientOwner
+    {
+        public bool LoggedInToPressRelease => false;
+
+        public string LoginToken => String.Empty;
+
+        public void Connect()
+        {
+            
+        }
+
+        public void DelegateOtherPlayerCommandsToLocalServer(ILogger<byte> logger)
+        {
+            
+        }
+
+        public void DelegatePlayerCommandsToSyncServer(int lastSectorOfClient, IEnumerable<string> commands)
+        {
+            
+        }
+
+        public void DelegateSyncServerDataToLocalServer(IGameSectorLayerService playerSector, ILogger<byte> logger)
+        {
+            
+        }
+
+        public void TryLoginToSyncServer(ILogger<byte> logger)
+        {
+            
+        }
+
+        public void UpdateSectorOfPlayerInsideSyncClient(int playerSectorKey)
+        {
+            
+        }
+    }
+
+    public class SyncClientOwner : ISyncClientOwner
     {
         public SyncClientOwner(SyncClient<PlayerSpaceship, EnemySpaceship, Item, Projectile, CharacterEntity, CharacterEntity, ImageData> syncClient)
         {
@@ -65,7 +115,8 @@ namespace Apocalypse.Any.GameServer.GameInstance
         /// <value></value>
         public bool LoggedInToPressRelease { get; private set; }
 
-        public void Connect() {
+        public void Connect()
+        {
             SyncClient.Connect();
         }
 
@@ -90,7 +141,7 @@ namespace Apocalypse.Any.GameServer.GameInstance
             //     return;
             // }
 
-            if(commands?.Any() != true)
+            if (commands?.Any() != true)
                 return;
 
             if (!LoggedInToPressRelease || SyncClient.ClientConfiguration == null)
@@ -175,7 +226,8 @@ namespace Apocalypse.Any.GameServer.GameInstance
 
         private CommandPressReleaseTranslator PressReleaseTranslator { get; } = new CommandPressReleaseTranslator();
 
-        public string LoginToken {
+        public string LoginToken
+        {
             get => SyncClient.LoginToken;
         }
 
@@ -241,7 +293,7 @@ namespace Apocalypse.Any.GameServer.GameInstance
         #endregion EntityFactories
 
 
-        private SyncClientOwner ClientOwner { get; set;}
+        private ISyncClientOwner ClientOwner { get; set;}
         #region Logging / Monitoring
 
         private ILogger<byte> Logger { get; }
@@ -255,7 +307,7 @@ namespace Apocalypse.Any.GameServer.GameInstance
             Logger = LoggerServiceFactory.GetLogger();
 
             ServerConfiguration = serverConfiguration ?? throw new ArgumentNullException(nameof(serverConfiguration));
-            ClientOwner = new SyncClientOwner(new SyncClient<PlayerSpaceship, EnemySpaceship, Item, Projectile, CharacterEntity, CharacterEntity, ImageData>(clientConfiguration, Logger));
+            ClientOwner = clientConfiguration == null ? new NullSyncClientOwner() : new SyncClientOwner(new SyncClient<PlayerSpaceship, EnemySpaceship, Item, Projectile, CharacterEntity, CharacterEntity, ImageData>(clientConfiguration, Logger));
             // ClientConfiguration = clientConfiguration;
 
             InitSerializer(serverConfiguration);
@@ -575,7 +627,7 @@ namespace Apocalypse.Any.GameServer.GameInstance
         public void Update(GameTime gameTime)
         {
             var playerSectorKV = GameSectorLayerServices.FirstOrDefault(sectorKV => sectorKV.Value.SharedContext.DataLayer.Players.Any(p => p.LoginToken == ClientOwner.LoginToken));
-            ClientOwner.DelegateSyncServerDataToLocalServer(playerSectorKV.Value.SharedContext , Logger);
+            ClientOwner.DelegateSyncServerDataToLocalServer(playerSectorKV.Value?.SharedContext , Logger);
 
             CreateGameTimeIfNotExists(gameTime);
             UpdateGameTime(CurrentGameTime);
@@ -745,10 +797,6 @@ namespace Apocalypse.Any.GameServer.GameInstance
         {
             //build it
             var now = DateTime.Now;
-
-
-
-
 
             return GameSectorLayerServices
                 .Any(sector =>

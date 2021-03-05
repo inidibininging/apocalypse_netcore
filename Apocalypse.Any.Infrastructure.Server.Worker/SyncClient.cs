@@ -77,6 +77,7 @@ namespace Apocalypse.Any.Infrastructure.Server.Worker
         {
             ClientConfiguration = configuration;
             Logger = logger;
+            Logger.LogInformation($"Peer:{configuration.ServerPeerName}");
             Init();
         }
 

@@ -21,6 +21,8 @@ namespace Apocalypse.Any.GameServer
             
             var config = yamler.DeserializeObject<GameServerConfiguration>(File.ReadAllText(args[0]));
             GameClientConfiguration possibleSync = null;
+            
+
             if(args.Length > 1)
                 possibleSync = yamler.DeserializeObject<GameClientConfiguration>(File.ReadAllText(args[1]));
 
