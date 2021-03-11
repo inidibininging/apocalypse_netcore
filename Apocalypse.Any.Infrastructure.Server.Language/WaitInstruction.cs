@@ -69,6 +69,9 @@ namespace Apocalypse.Any.Infrastructure.Server.Language
                         //Console.WriteLine("wait instruction found. aborting wait instruction");
                         break;
                     }
+                    if(currentInstruction is ReturnInstruction){
+                        break;
+                    }
                 }
                 //Console.WriteLine("operations after wait were executed");
                 //TODO: this is the behaviour needed for nested functions or IF ELSE Statements right???

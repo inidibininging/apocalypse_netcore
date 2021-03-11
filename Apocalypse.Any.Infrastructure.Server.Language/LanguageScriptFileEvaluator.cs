@@ -20,14 +20,14 @@ namespace Apocalypse.Any.Infrastructure.Server.Language
         }
         public LanguageScriptFileEvaluator Evaluate(IStateMachine<string, IGameSectorLayerService> context)
         {
-            if (!System.IO.File.Exists(FilePath))
+            if (!File.Exists(FilePath))
                 throw new FileNotFoundException("No mechanic specified", FilePath);
             var scriptFileContent = File.ReadAllText(FilePath);
-            
+
             Interpreter.Context = context;
             Interpreter.Run(scriptFileContent);
             Interpreter.Context = null;
-            
+
             return this;
         }
         public void Run(IStateMachine<string, IGameSectorLayerService> context)

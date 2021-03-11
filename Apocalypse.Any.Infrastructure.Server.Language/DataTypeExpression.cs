@@ -13,10 +13,13 @@ namespace Apocalypse.Any.Infrastructure.Server.Language
         {
             while (DataType == LexiconSymbol._0)
             {
-                
                 if (machine.SharedContext.Current == LexiconSymbol.TagDataType ||
-                    machine.SharedContext.Current == LexiconSymbol.NumberDataType)
+                    machine.SharedContext.Current == LexiconSymbol.NumberDataType ||
+                    machine.SharedContext.Current == LexiconSymbol.RefDataType)
+                {
                     DataType = machine.SharedContext.Current;
+                }
+
                 if (!machine.SharedContext.MoveNext())
                     break;
             }

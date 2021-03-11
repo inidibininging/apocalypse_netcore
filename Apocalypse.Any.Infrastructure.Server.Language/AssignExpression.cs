@@ -21,6 +21,9 @@ namespace Apocalypse.Any.Infrastructure.Server.Language
                   machine.SharedContext.Current == LexiconSymbol.TagIdentifier ||
                   machine.SharedContext.Current == LexiconSymbol.TagLetter ||
                   machine.SharedContext.Current == LexiconSymbol.TagDataType ||
+                  machine.SharedContext.Current == LexiconSymbol.RefIdentifier ||
+                  machine.SharedContext.Current == LexiconSymbol.RefLetter ||
+                  machine.SharedContext.Current == LexiconSymbol.RefDataType ||
                   machine.SharedContext.Current == LexiconSymbol.NumberDataType ||
                   machine.SharedContext.Current == LexiconSymbol.SkipMaterial ){
 
@@ -36,9 +39,17 @@ namespace Apocalypse.Any.Infrastructure.Server.Language
                     Left.Handle(machine);
                 }
                 
-                if (machine.SharedContext.Current == LexiconSymbol.TagIdentifier && Left != null)
+                if (machine.SharedContext.Current == LexiconSymbol.TagIdentifier 
+                    && Left != null && DataType?.DataType == LexiconSymbol.TagDataType)
                 {
                     Right = new TagExpression();
+                    Right.Handle(machine);
+                }
+                
+                if (machine.SharedContext.Current == LexiconSymbol.RefIdentifier 
+                    && Left != null && DataType?.DataType == LexiconSymbol.RefDataType)
+                {
+                    Right = new RefExpression();
                     Right.Handle(machine);
                 }
                 

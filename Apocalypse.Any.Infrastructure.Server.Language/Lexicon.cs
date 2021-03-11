@@ -23,6 +23,7 @@ namespace Apocalypse.Any.Infrastructure.Server.Language
         public readonly List<char> Modify = "Mod".ToList();
         public readonly List<char> Set = "Set".ToList();
         public readonly List<char> TagDataType = "Tag".ToList();
+        public readonly List<char> RefDataType = "Ref".ToList();
         public readonly List<char> NumberDataType = "Number".ToList();
         public readonly List<char> Attribute = "Attribute".ToList();
         public readonly List<char> Stats = "Stats".ToList();
@@ -36,6 +37,7 @@ namespace Apocalypse.Any.Infrastructure.Server.Language
         public readonly List<char> DestroyAttribute = "<@".ToList();
         public readonly List<char> ClassNameForAttributes = typeof(CharacterSheet).FullName.ToList();
         public readonly List<char> EntityIdentifier = "#".ToList();
+        public readonly List<char> RefIdentifier = "&".ToList();
         public readonly List<char> TagIdentifier = ".".ToList();
         public readonly List<char> FunctionIdentifier = ":".ToList();
         public readonly List<char> MillisecondsAttribute = "Milliseconds".ToList();
@@ -49,6 +51,7 @@ namespace Apocalypse.Any.Infrastructure.Server.Language
         public readonly List<char> GroupBegin = "(".ToList();
         public readonly List<char> GroupEnd = ")".ToList();
         public readonly List<char> ArgumentSeparator = ",".ToList();
+        public readonly List<char> Return = "Return".ToList();
 
 
         private readonly Dictionary<List<char>,LexiconSymbol> SymbolTable = new Dictionary<List<char>, LexiconSymbol>();
@@ -72,6 +75,7 @@ namespace Apocalypse.Any.Infrastructure.Server.Language
             SymbolTable.Add(EndIf, LexiconSymbol.EndIf);
             
             SymbolTable.Add(TagDataType, LexiconSymbol.TagDataType);
+            SymbolTable.Add(RefDataType, LexiconSymbol.RefDataType);
             SymbolTable.Add(NumberDataType, LexiconSymbol.NumberDataType);
 
             SymbolTable.Add(GroupBegin,LexiconSymbol.GroupBegin);
@@ -92,6 +96,7 @@ namespace Apocalypse.Any.Infrastructure.Server.Language
             SymbolTable.Add(ClassNameForAttributes,LexiconSymbol.Entity);
             SymbolTable.Add(EntityIdentifier,LexiconSymbol.EntityIdentifier);
             SymbolTable.Add(TagIdentifier,LexiconSymbol.TagIdentifier);
+            SymbolTable.Add(RefIdentifier, LexiconSymbol.RefIdentifier);
             SymbolTable.Add(FunctionIdentifier,LexiconSymbol.FunctionIdentifier);
             SymbolTable.Add(ExecuteAttribute,LexiconSymbol.Execute);
             SymbolTable.Add(MillisecondsAttribute,LexiconSymbol.Milliseconds);
@@ -102,6 +107,8 @@ namespace Apocalypse.Any.Infrastructure.Server.Language
             SymbolTable.Add(EveryAttribute,LexiconSymbol.Every);
             SymbolTable.Add(XAttribute, LexiconSymbol.Attribute);
             SymbolTable.Add(YAttribute, LexiconSymbol.Attribute);
+            SymbolTable.Add(Return, LexiconSymbol.Return);
+
             typeof(CharacterSheet).GetProperties().ToList().ForEach(p => SymbolTable.Add(p.Name.ToList(),LexiconSymbol.Attribute));
         }
         public Lexicon()

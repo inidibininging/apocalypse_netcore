@@ -17,7 +17,7 @@ namespace Apocalypse.Any.Infrastructure.Server.Language
         {
             
         }
-        private TagVariable GetVariable(IStateMachine<string, IGameSectorLayerService> machine)
+        private TagVariable GetVariable(VariableExpression variableExpression, IStateMachine<string, IGameSectorLayerService> machine)
         {
             //get the variable out of the function scope 
             var variable = machine
@@ -26,7 +26,7 @@ namespace Apocalypse.Any.Infrastructure.Server.Language
                 .GetLayersByType<TagVariable>()
                 .FirstOrDefault()
                 ?.DataAsEnumerable<TagVariable>()
-                .FirstOrDefault(t => t.Name == Expression.Left.Name &&
+                .FirstOrDefault(t => t.Name == variableExpression.Name &&
                                      t.Scope == Scope?.Expression.Name);
 
             var lastFn = Scope;
@@ -43,23 +43,33 @@ namespace Apocalypse.Any.Infrastructure.Server.Language
                     .LastCaller
                     .Expression
                     .Arguments
-                    .Arguments
-                    .ElementAt(argumentIndex)
+                    .Arguments[argumentIndex]
                     .Name;
                 lastFn = lastFn.LastCaller.Scope;
-                
+
             }
-            if (variable.DataTypeSymbol != LexiconSymbol.TagDataType)
-                throw new InvalidOperationException($"Syntax error. Cannot execute a modify instruction. Data type of variable is not a tag.");
+            if (variable.DataTypeSymbol != LexiconSymbol.TagDataType &&
+                variable.DataTypeSymbol != LexiconSymbol.RefDataType)
+            {
+                throw new InvalidOperationException($"Syntax error. Data type of variable is not a tag or ref.");
+            }
             // Console.WriteLine($"Variable:{variable.Name} Current Value:{variable.Value}");
             // Console.WriteLine(System.Environment.NewLine);
             return variable;
         }
-        
+
         public override void Handle(IStateMachine<string, IGameSectorLayerService> machine)
         {
-            LastEvaluation = Expression.Comparison.ComparisonSymbol == LexiconSymbol.Equal &&
-                GetVariable(machine)?.Value == Expression.Right.Name;
+            var leftVar = GetVariable(Expression.Left, machine);
+            var rightVar = Expression.Right is IdentifierExpression ? GetVariable(Expression.Right, machine) : null;
+
+            LastEvaluation =  leftVar != null &&
+                            Expression.Comparison.ComparisonSymbol == LexiconSymbol.Equal &&
+                            ((leftVar.DataTypeSymbol == LexiconSymbol.TagDataType &&
+                            Expression.Right is TagExpression && leftVar.Value == Expression.Right.Name) ||
+                            (leftVar.DataTypeSymbol == LexiconSymbol.RefDataType &&
+                            Expression.Right is RefExpression && leftVar.Value == Expression.Right.Name) ||
+                            (leftVar != null && rightVar != null && rightVar.DataTypeSymbol == leftVar.DataTypeSymbol && leftVar.Value == rightVar.Value));
 
             EndIfIndex = FunctionIndex;
             var endIfInstructionFound = false;

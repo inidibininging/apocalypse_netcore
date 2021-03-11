@@ -10,7 +10,7 @@ namespace Apocalypse.Any.Infrastructure.Server.Language
     public class FunctionInstruction : AbstractInterpreterInstruction<FunctionExpression>
     {
         public ExecuteInstruction LastCaller { get; set; }
-        
+        public ReturnExpression LastReturnValue {get; set;}
         public FunctionInstruction(Interpreter interpreter, FunctionExpression function, int functionIndex) 
             : base(interpreter, function, functionIndex)
         {
@@ -36,13 +36,13 @@ namespace Apocalypse.Any.Infrastructure.Server.Language
             while(currentInstructionIndex < Owner.Instructions.Count) {
                 var currentInstruction = Owner.Instructions[currentInstructionIndex];
                 // Console.WriteLine(currentInstruction);
-                currentInstructionIndex++;                
+                currentInstructionIndex++;
 
                 if (currentInstruction is FunctionInstruction){
                     // Console.WriteLine("function instruction found. aborting function instruction");
                     break;
                 }
-                
+
                 currentInstruction.Handle(machine);
                 if (currentInstruction is IfInstruction)
                 {
@@ -54,12 +54,14 @@ namespace Apocalypse.Any.Infrastructure.Server.Language
                     // Console.WriteLine("wait instruction found. aborting function instruction");
                     break;
                 }
+                if (currentInstruction is ReturnInstruction)
+                {
+                    break;
+                }
             }
             // Console.WriteLine($"function {Expression.Name} executed");
         }
 
-
-        
         public override string ToString()
         {
             return Expression.Name;

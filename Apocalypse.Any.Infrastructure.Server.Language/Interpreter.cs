@@ -56,6 +56,7 @@ namespace Apocalypse.Any.Infrastructure.Server.Language
                         HandleInstruction<ExecuteExpression, ExecuteInstruction>((s) => s == LexiconSymbol.Execute); //TODO: Fix this 
                         HandleInstruction<FunctionExpression, FunctionInstruction>((s) => s == LexiconSymbol.FunctionIdentifier); //TODO: Fix this
                         HandleInstruction<AssignExpression, AssignInstruction>((s) => s == LexiconSymbol.Set);
+                        HandleInstruction<ReturnExpression, ReturnInstruction>((s) => s == LexiconSymbol.Return);
                         HandleInstruction<WaitExpression, WaitInstruction>((s) => s == LexiconSymbol.Wait);
                         HandleInstruction<ModifyAttributeExpression, ModifyInstruction>((s) => s == LexiconSymbol.Modify);
                     }
@@ -67,7 +68,7 @@ namespace Apocalypse.Any.Infrastructure.Server.Language
             where TExpr : AbstractLanguageExpression, new()
             where TInstr : AbstractInterpreterInstruction<TExpr>
         {
-            if (!symbolPredicate(SharedContext.Current)) 
+            if (!symbolPredicate(SharedContext.Current))
                 return;
             var expr = new TExpr();
             expr.Handle(this);

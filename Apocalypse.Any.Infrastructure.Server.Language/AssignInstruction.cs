@@ -71,9 +71,8 @@ namespace Apocalypse.Any.Infrastructure.Server.Language
                 if (assignmentIndex < 0)
                     throw new InvalidOperationException("Function instruction cannot be found. Assignment must be in a function scope. Are you making an assignment inside a function?");
                 assignmentIndex--;
-            }            
+            }
             var scopeOfAssignment = (Owner.Instructions[assignmentIndex] as FunctionInstruction)?.Expression.Name;
-            
 
             var tagLayer = machine
                 .SharedContext
@@ -107,7 +106,8 @@ namespace Apocalypse.Any.Infrastructure.Server.Language
                     tagValueAssigned = tagVariable.Value;
                 }
 
-                if (Expression.Right is TagExpression)
+
+                if (Expression.Right is TagExpression || Expression.Right is RefExpression)
                 {
                     tagValueAssigned = Expression.Right.Name;
                 }

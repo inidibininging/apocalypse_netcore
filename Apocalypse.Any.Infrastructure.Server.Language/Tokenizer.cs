@@ -35,10 +35,10 @@ namespace Apocalypse.Any.Infrastructure.Server.Language
                 CurrentTokenBuffer = new List<char>();
         }
 
-        private List<Func<LexiconSymbol, 
+        private readonly List<Func<LexiconSymbol, 
             LexiconSymbol, 
             LexiconSymbol,
-            LexiconSymbol>> _rules = new List<Func<LexiconSymbol, LexiconSymbol, LexiconSymbol, LexiconSymbol>>()
+            LexiconSymbol>> _rules = new()
         {
             (singleToken, nowToken, beforeToken) => nowToken == LexiconSymbol.Set ?
                                                     LexiconSymbol.Set :
@@ -111,6 +111,18 @@ namespace Apocalypse.Any.Infrastructure.Server.Language
                                                     LexiconSymbol.FunctionLetter :
                                                     nowToken,
 
+            (singleToken, nowToken, beforeToken) => beforeToken == LexiconSymbol.RefIdentifier &&
+                                                    nowToken == LexiconSymbol.Letter &&
+                                                    singleToken == LexiconSymbol.Letter ?
+                                                    LexiconSymbol.RefLetter :
+                                                    nowToken,
+            
+            (singleToken, nowToken, beforeToken) => beforeToken == LexiconSymbol.RefLetter &&
+                                                    nowToken == LexiconSymbol.Letter &&
+                                                    singleToken == LexiconSymbol.Letter ?
+                                                    LexiconSymbol.RefLetter :
+                                                    nowToken,
+
             (singleToken, nowToken, beforeToken) => beforeToken == LexiconSymbol.TagIdentifier &&
                                                     nowToken == LexiconSymbol.Letter &&
                                                     singleToken == LexiconSymbol.Letter ?
@@ -145,7 +157,7 @@ namespace Apocalypse.Any.Infrastructure.Server.Language
                                                     nowToken == LexiconSymbol.Letter &&
                                                     (singleToken == LexiconSymbol.Letter || singleToken == LexiconSymbol.Digit) ?
                                                     LexiconSymbol.CreatorLetter :
-                                                    nowToken,            
+                                                    nowToken,
 
             (singleToken, nowToken, beforeToken) => beforeToken == LexiconSymbol.Number &&
                                                     nowToken == LexiconSymbol.NotFound &&
@@ -183,7 +195,7 @@ namespace Apocalypse.Any.Infrastructure.Server.Language
                 var singleToken = LanguageTokens.FindLexiconSymbol(convertedCharacter);
 
                 CurrentTokenBuffer.Add(convertedCharacter);
-                
+
                 var validTokenBuffer = LanguageTokens.FindLexiconSymbol(CurrentTokenBuffer);
 
                 var tempValidTokenBuffer = validTokenBuffer;
@@ -195,13 +207,9 @@ namespace Apocalypse.Any.Infrastructure.Server.Language
                 {
                     validTokenBuffer = rulesToApply;
                 }
-                
-                
 
                 if (CurrentTokenBuffer.Count > 0 && validTokenBuffer == LexiconSymbol.Assign)
                     CurrentTokenBuffer.RemoveAt(CurrentTokenBuffer.Count - 1);
-
-                
 
                 CurrentSymbol = validTokenBuffer;
 
