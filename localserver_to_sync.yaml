@@ -12,5 +12,5 @@ SerializationAdapterType: Apocalypse.Any.Infrastructure.Common.Services.Serializ
 ServerPort: 8080
 WithLocalServer: false
 User:
-  Username: foo2
+  Username: sync.test.0
   Password: 12345

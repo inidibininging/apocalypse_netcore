@@ -29,6 +29,8 @@ namespace Apocalypse.Any.Infrastructure.Server.Language
 
             var lastFn = Scope;
             var identifierName = name;
+            
+            // look up the variable inside the function arguments 
             while (variable == null)
             {
                 var argumentIndex = lastFn.GetFunctionArgumentIndex(identifierName);
@@ -61,11 +63,14 @@ namespace Apocalypse.Any.Infrastructure.Server.Language
         
         public override void Handle(IStateMachine<string, IGameSectorLayerService> machine)
         {
-
+            // get assignment
             var assignmentIndex = Owner.Instructions.IndexOf(this as IAbstractInterpreterInstruction<IAbstractLanguageExpression>);
+            
+            // dunno why I made this check
             if(assignmentIndex == -1)
                 throw new InvalidOperationException("Assignment instruction not found. Code was modified");
-
+            
+            // find the owner of the assign instruction
             while ((Owner.Instructions[assignmentIndex] is FunctionInstruction) == false)
             {
                 if (assignmentIndex < 0)
@@ -73,7 +78,8 @@ namespace Apocalypse.Any.Infrastructure.Server.Language
                 assignmentIndex--;
             }
             var scopeOfAssignment = (Owner.Instructions[assignmentIndex] as FunctionInstruction)?.Expression.Name;
-
+            
+            // get the tag layer where the variables are stored
             var tagLayer = machine
                 .SharedContext
                 .DataLayer
@@ -87,29 +93,44 @@ namespace Apocalypse.Any.Infrastructure.Server.Language
             var variable = tagLayer
                 .DataAsEnumerable<TagVariable>()
                 .FirstOrDefault(t => t.Name == Expression.Left.Name &&
-                                     t.Scope == scopeOfAssignment // no scope for now. scope must be implemented in the language first
-                                );
+                                               t.Scope == scopeOfAssignment // no scope for now. scope must be implemented in the language first
+                );
             
+            // if the variable is null, create it 
             if (variable == null)
             {
                 /*
                     if the value of tag variable is a tag. cool assign value.
-                    if the value of tag variable is a variable itself, trace back variable value                     
+                    if the value of tag variable is a variable itself, trace back variable value
+                    if the value of tag variable is an execute expression, trace back execution value
                  */
                 var tagValueAssigned = string.Empty;
-                if (Expression.Right is IdentifierExpression)
-                {
-                    var tagVariable = GetVariable(Expression.Right.Name, machine);
-                    if (tagVariable == null)
-                        throw new ArgumentNullException(nameof(tagVariable),
-                            $"Tag with name {Expression.Right.Name} not found inside {Scope.Expression.Name}");
-                    tagValueAssigned = tagVariable.Value;
-                }
 
-
-                if (Expression.Right is TagExpression || Expression.Right is RefExpression)
+                switch (Expression.Right)
                 {
-                    tagValueAssigned = Expression.Right.Name;
+                    case IdentifierExpression:
+                        var tagVariable = GetVariable(Expression.Right.Name, machine);
+                        if (tagVariable == null)
+                            throw new ArgumentNullException(nameof(tagVariable),
+                                $"Tag with name {Expression.Right.Name} not found inside {Scope.Expression.Name}");
+                        tagValueAssigned = tagVariable.Value;
+                        break;
+                    
+                    case ExecuteExpression:
+                        var exe = new ExecuteInstruction(Owner, Expression.Right as ExecuteExpression, FunctionIndex);
+                        exe.Handle(machine);
+                        
+                        var theFunction = Owner.Instructions.FirstOrDefault(i =>
+                            i is FunctionInstruction functionInstruction &&
+                            functionInstruction?.Expression.Name == this.Expression.Right.Name) as FunctionInstruction;
+                        tagValueAssigned = theFunction?.LastReturnValue.Value.Name;
+                        
+                        break;
+
+                    case TagExpression:
+                    case RefExpression:
+                        tagValueAssigned = Expression.Right.Name;
+                        break;
                 }
 
                 if (string.IsNullOrWhiteSpace(tagValueAssigned))

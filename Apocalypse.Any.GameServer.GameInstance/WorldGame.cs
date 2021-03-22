@@ -236,10 +236,11 @@ namespace Apocalypse.Any.GameServer.GameInstance
         /// <param name="clientConfiguration"></param>
         private void InitAuthenticationService(GameClientConfiguration clientConfiguration)
         {
-            if (clientConfiguration == null)
-                AuthenticationService = new ExampleLoginAndRegistrationService();
-            else
-                AuthenticationService = new ExampleLocalLoginAndRegistrationService();
+            AuthenticationService = new WebAuthenticationClientService(ServerConfiguration.WebAuthenticationServiceUrl);
+            // if (clientConfiguration == null)
+            //     AuthenticationService = new ExampleLoginAndRegistrationService();
+            // else
+            //     AuthenticationService = new ExampleLocalLoginAndRegistrationService();
         }
 
         /// <summary>

@@ -1,4 +1,5 @@
-﻿@model CharacterEntityListViewModel<CharacterEntity>
+﻿@using System.Reflection
+@model CharacterEntityListViewModel<CharacterEntity>
 @{
     ViewData["Title"] = "Sector";
 }
@@ -8,9 +9,10 @@
 <table class="table table-dark">
   <thead>
     <tr>    
-        @foreach (var attribute in typeof(CharacterSheet).GetProperties())
+        @foreach (PropertyInfo attribute in typeof(CharacterSheet).GetProperties())
         {
-            <th scop="col">@attribute.Name</th>
+            var name = attribute.Name;
+            <th scope="col">@name</th>
         }
         
     </tr>

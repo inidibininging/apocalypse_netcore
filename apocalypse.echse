@@ -726,13 +726,17 @@
         !CreateRandomPlanetCommand ( planetSettings )
     EndIf
     
+:returnTest ( void )
+    Return .test
+
 :Main ( args )
-    Set Ref test = &CreateEnemiesBasedOnSettings
-    Set Tag enemySettings = .normal
+    Set Ref test = &OldM
+    Set Tag enemySettings = .normal    
+    Set Tag tester = !returnTest ( enemySettings )
     !test ( enemySettings )
     Return .test
 
-:OldM ( args )    
+:OldM ( args )
    Set Tag citySettings = .true
    Set Tag planetSettings = .high
    Set Tag fogSettings = .true

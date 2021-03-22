@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Apocalypse.Any.Infrastructure.Server.Services.Data;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -26,11 +27,13 @@ namespace Apocalypse.Any.Services.Authentication
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-
+            services.AddTransient<IUserAuthenticationService>(_ => new ExampleLoginAndRegistrationService());
+            services.AddLogging();
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Apocalypse.Any.Services.Authentication", Version = "v1" });
+                c.SwaggerDoc("v3", new OpenApiInfo { Title = "Apocalypse.Any.Services.Authentication", Version = "v3" });
+                c.ResolveConflictingActions(apiDescriptions => apiDescriptions.First());
             });
         }
 
@@ -41,13 +44,13 @@ namespace Apocalypse.Any.Services.Authentication
             {
                 app.UseDeveloperExceptionPage();
                 app.UseSwagger();
-                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Apocalypse.Any.Services.Authentication v1"));
+                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v3/swagger.json", "Apocalypse.Any.Services.Authentication v1"));
             }
 
-            app.UseHttpsRedirection();
+            // app.UseHttpsRedirection();
 
             app.UseRouting();
-
+            
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>

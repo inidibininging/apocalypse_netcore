@@ -6,7 +6,7 @@ MaxPlayers: 4
 RedisHost: 
 RedisPort: 0
 SerializationAdapterType: Apocalypse.Any.Infrastructure.Common.Services.Serializer.MsgPackAdapter.MsgPackByteArraySerializerAdapter
-ServerIp: 127.0.0.1
+ServerIp: 0.0.0.0
 ServerPeerName: asteroid
 ServerPort: 8080
 ServerUpdateInSeconds: 0.0119999997764825821
@@ -15,3 +15,4 @@ StartupFunction: Main
 StartupScript: '/home/develop/src/apocalypse_netcore/apocalypse.echse'
 SectorXSize: 32000
 SectorYSize: 32000
+WebAuthenticationServiceUrl: http://localhost:5000/api/ExampleAuth/

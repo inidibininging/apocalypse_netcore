@@ -14,6 +14,11 @@ namespace Apocalypse.Any.Domain.Server.Model.Network
         CanViewWorldByLoginToken,
 
         /// <summary>
+        /// Can receive work
+        /// </summary>
+        CanReceiveWork,
+        
+        /// <summary>
         /// Can send remote input commands
         /// </summary>
         CanSendRemoteMovementCommands,
@@ -36,11 +41,7 @@ namespace Apocalypse.Any.Domain.Server.Model.Network
         /// <summary>
         /// Can create plural mechanic commands in a game server
         /// </summary>
-        CanSendRemotePluralMechanicCommands,
+        CanSendRemotePluralMechanicCommands
 
-        /// <summary>
-        /// Can receive work
-        /// </summary>
-        CanReceiveWork
     }
 }

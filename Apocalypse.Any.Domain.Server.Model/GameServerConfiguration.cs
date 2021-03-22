@@ -22,5 +22,6 @@ namespace Apocalypse.Any.Domain.Server.Model
         public double ServerUpdateInSeconds { get; set; }
         public int SectorXSize { get; set; }
         public int SectorYSize { get; set; }
+        public string WebAuthenticationServiceUrl { get; set; }
     }
 }

@@ -18,14 +18,20 @@ namespace Apocalypse.Any.Infrastructure.Server.Language
                   machine.SharedContext.Current == LexiconSymbol.Letter || 
                   machine.SharedContext.Current == LexiconSymbol.Identifier || 
                   machine.SharedContext.Current == LexiconSymbol.Assign ||
+                  
                   machine.SharedContext.Current == LexiconSymbol.TagIdentifier ||
                   machine.SharedContext.Current == LexiconSymbol.TagLetter ||
                   machine.SharedContext.Current == LexiconSymbol.TagDataType ||
+                  
                   machine.SharedContext.Current == LexiconSymbol.RefIdentifier ||
                   machine.SharedContext.Current == LexiconSymbol.RefLetter ||
                   machine.SharedContext.Current == LexiconSymbol.RefDataType ||
+                  
+                  machine.SharedContext.Current == LexiconSymbol.Execute ||
+                  machine.SharedContext.Current == LexiconSymbol.ExecuteLetter ||
+
                   machine.SharedContext.Current == LexiconSymbol.NumberDataType ||
-                  machine.SharedContext.Current == LexiconSymbol.SkipMaterial ){
+                  machine.SharedContext.Current == LexiconSymbol.SkipMaterial ) {
 
                 //This is for now the way I can verify if DataType is not set
                 if (DataType == null) {
@@ -50,6 +56,13 @@ namespace Apocalypse.Any.Infrastructure.Server.Language
                     && Left != null && DataType?.DataType == LexiconSymbol.RefDataType)
                 {
                     Right = new RefExpression();
+                    Right.Handle(machine);
+                }
+                
+                if (machine.SharedContext.Current == LexiconSymbol.Execute 
+                    && Left != null && DataType?.DataType == LexiconSymbol.TagDataType)
+                {
+                    Right = new ExecuteExpression();
                     Right.Handle(machine);
                 }
                 

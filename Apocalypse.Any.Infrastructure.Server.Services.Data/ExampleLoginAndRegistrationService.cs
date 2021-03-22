@@ -22,37 +22,52 @@ namespace Apocalypse.Any.Infrastructure.Server.Services.Data
             },
             new UserDataWithLoginToken(){
                 Roles = UserDataRole.CanReceiveWork,
-                Username = "workerbee0",
+                Username = "worker.test.0",
                 Password = "5994471ABB01112AFCC18159F6CC74B4F511B99806DA59B3CAF5A9C173CACFC5",
                 NewInGame = true // password is "12345" unhashed
             },
             new UserDataWithLoginToken(){
                 Roles = UserDataRole.CanViewWorldByLoginToken,
-                Username = "foo0",
+                Username = "remote.test.0",
                 Password = "5994471ABB01112AFCC18159F6CC74B4F511B99806DA59B3CAF5A9C173CACFC5",
                 NewInGame = true // password is "12345" unhashed
             },
             new UserDataWithLoginToken(){
                 Roles = UserDataRole.CanViewWorldByLoginToken,
-                Username = "foo1",
+                Username = "remote.test.1",
                 Password = "5994471ABB01112AFCC18159F6CC74B4F511B99806DA59B3CAF5A9C173CACFC5",
                 NewInGame = true // password is "12345" unhashed
             },
             new UserDataWithLoginToken(){
-                Roles = UserDataRole.CanSendRemoteMovementCommands,
-                Username = "foo2",
+                Roles = UserDataRole.CanViewWorldByLoginToken,
+                Username = "remote.test.2",
+                Password = "5994471ABB01112AFCC18159F6CC74B4F511B99806DA59B3CAF5A9C173CACFC5",
+                NewInGame = true // password is "12345" unhashed
+            },
+            
+            /*
+             * The flag CanSendRemoteMovementCommands will only work if the game client config has "WithLocalServer" turned on.
+             * This is due to the desktop game client.
+             * It requests after a successful login either Update or UpdateDelta.  
+             */ 
+            new UserDataWithLoginToken(){
+                Roles = UserDataRole.CanSendRemoteMovementCommands 
+                        | UserDataRole.CanViewWorldByLoginToken,  
+                Username = "sync.test.0",
                 Password = "5994471ABB01112AFCC18159F6CC74B4F511B99806DA59B3CAF5A9C173CACFC5",
                 NewInGame = true // password is "12345" unhashed
             },
             new UserDataWithLoginToken(){
-                Roles = UserDataRole.CanSendRemoteMovementCommands,
-                Username = "foo3",
+                Roles = UserDataRole.CanSendRemoteMovementCommands 
+                        | UserDataRole.CanViewWorldByLoginToken,
+                Username = "sync.test.1",
                 Password = "5994471ABB01112AFCC18159F6CC74B4F511B99806DA59B3CAF5A9C173CACFC5",
                 NewInGame = true // password is "12345" unhashed
             },
             new UserDataWithLoginToken(){
-                Roles = UserDataRole.CanSendRemoteMovementCommands,
-                        Username = "movement_test",
+                Roles = UserDataRole.CanSendRemoteMovementCommands 
+                        | UserDataRole.CanViewWorldByLoginToken, 
+                Username = "sync.test.2",
                 Password = "5994471ABB01112AFCC18159F6CC74B4F511B99806DA59B3CAF5A9C173CACFC5",
                 NewInGame = true // password is "12345" unhashed
             }
@@ -126,9 +141,6 @@ namespace Apocalypse.Any.Infrastructure.Server.Services.Data
         }
 
         public UserDataWithLoginToken GetByLoginTokenHack(string loginToken)
-            => SampleDataByLoginToken.Find(user => {
-                //Console.WriteLine(user.LoginToken);
-                return user.LoginToken == loginToken;
-            });
+            => SampleDataByLoginToken.Find(user => user.LoginToken == loginToken);
     }
 }
