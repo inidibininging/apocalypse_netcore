@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
@@ -76,12 +77,12 @@ namespace Apocalypse.Any.Infrastructure.Server.Services.Data
             return request.Result;
         }
 
-        public UserDataRole GetRoles(UserData userData)
+        public Dictionary<UserDataRoleSource, UserDataRole> GetRoles(UserData userData)
         {
             var request = GetClient($"{nameof(GetRoles)}", userData, Method.Post);
             request.Wait();
             var roles = request.Result;
-            return _serializerAdapter.DeserializeObject<UserDataRole>(request.Result);
+            return _serializerAdapter.DeserializeObject<Dictionary<UserDataRoleSource, UserDataRole>>(request.Result);
         }
 
         public UserDataWithLoginToken GetByLoginTokenHack(string loginToken)

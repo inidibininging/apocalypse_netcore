@@ -47,7 +47,7 @@ namespace Apocalypse.Any.Infrastructure.Server.Services.Mechanics.CLI
                                 CachedUserDataWithLoginToken[loginToken] =
                                     UserAuthenticationService.GetByLoginTokenHack(loginToken);
                                 return CachedUserDataWithLoginToken[loginToken];
-                            }).Where(user => (user.Roles & UserDataRole.CanSendRemoteStateCommands) != 0)
+                            }).Where(user => user.Roles != null && user.Roles.ContainsKey(UserDataRoleSource.SyncServer) && user.Roles[UserDataRoleSource.SyncServer] == UserDataRole.CanSendRemoteStateCommands)
                             .SelectMany(user => entity.GameSectorLayerServices.Values.Select(
                             gameSector =>
                             {

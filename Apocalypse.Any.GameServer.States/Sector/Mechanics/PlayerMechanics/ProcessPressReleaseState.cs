@@ -4,20 +4,28 @@ using System.Linq;
 using System.Security.Cryptography;
 using Apocalypse.Any.Core.Input;
 using Apocalypse.Any.Core.Input.Translator;
+using Apocalypse.Any.Domain.Server.Model.Network;
 using Apocalypse.Any.Infrastructure.Server.Services.Data.Interfaces;
 using States.Core.Infrastructure.Services;
 
 namespace Apocalypse.Any.GameServer.States.Sector.Mechanics.PlayerMechanics
 {
     /// <summary>
-    /// This state is only for serverside client that get server authorative commands
+    /// This state is only for local servers.
+    /// The local server gets server authoritative commands and transforms it to commands without press / release
+    /// HOW the commands are changed is done in CommandPressReleaseTranslator
     /// </summary>
     public class ProcessPressReleaseState : IState<string, IGameSectorLayerService>
     {
-        public Dictionary<string, List<string>> KeyDownUp { get; set; } = new Dictionary<string, List<string>>();
+        private Dictionary<string, List<string>> KeyDownUp { get; set; } = new();
 
         public void Handle(IStateMachine<string, IGameSectorLayerService> machine)
         {
+            
+            if (machine.SharedContext.IODataLayer.Source == UserDataRoleSource.SyncServer)
+            {
+                return;
+            }
             //TODO:
             //1. get key down and remember
             //2. if release pressed kill it and stop passing releases 

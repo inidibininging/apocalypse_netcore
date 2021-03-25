@@ -29,7 +29,7 @@ namespace Apocalypse.Any.Infrastructure.Server.Adapters.Redis
                 {
                     var gameStateDataCommand = entity.GameSectorLayerServices.Values.SelectMany(s => s.SharedContext.DataLayer.Players.Select(plyr => plyr.LoginToken))
                             .Select(loginToken => AuthenticationService.GetByLoginTokenHack(loginToken))
-                            .Where(user => (user.Roles & UserDataRole.CanSendRemoteStateCommands) != 0)
+                            .Where(user => (user.Roles != null && user.Roles[UserDataRoleSource.SyncServer] == UserDataRole.CanSendRemoteStateCommands))
                             .SelectMany(user => entity.GameSectorLayerServices.Values.Select(
                             gameSector => gameSector.SharedContext.IODataLayer.GetGameStateByLoginToken(user.LoginToken))).FirstOrDefault();
                     if (gameStateDataCommand != null){

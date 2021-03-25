@@ -17,7 +17,7 @@ namespace Apocalypse.Any.WorkerBee
 {
     internal static class Program
     {
-        private static readonly IntCommandStringCommandTranslator Translator = new();
+        private static readonly IntToPressReleaseCommandTranslator Translator = new();
         private static readonly LoggerServiceFactory LoggerFactory = new();
         private static void Main(string[] args)
         {
@@ -34,10 +34,12 @@ namespace Apocalypse.Any.WorkerBee
         private static string ToStringCommand(ConsoleKey key) {
             return key switch
             {
-                ConsoleKey.W => DefaultKeys.Boost,
+                ConsoleKey.W => DefaultKeys.Up,
+                ConsoleKey.S => DefaultKeys.Down,
                 ConsoleKey.D => DefaultKeys.Right,
                 ConsoleKey.A => DefaultKeys.Left,
                 ConsoleKey.Enter => DefaultKeys.Shoot,
+                ConsoleKey.Backspace => DefaultKeys.Boost,
                 _ => null,
             };
         }

@@ -11,35 +11,46 @@ namespace Apocalypse.Any.Infrastructure.Server.Services.Data
     public class ExampleLoginAndRegistrationService
         : IUserAuthenticationService
     {
-        private List<UserDataWithLoginToken> SampleDataByLoginToken { get; } = new List<UserDataWithLoginToken>()
+        private List<UserDataWithLoginToken> SampleDataByLoginToken { get; } = new()
         {
             new UserDataWithLoginToken(){
-                Roles = UserDataRole.CanViewWorldByLoginToken
-                        | UserDataRole.CanSendRemoteStateCommands,
+                Roles = new Dictionary<UserDataRoleSource, UserDataRole>(){ 
+                            { UserDataRoleSource.LocalServer, UserDataRole.CanViewWorldByLoginToken },
+                            { UserDataRoleSource.SyncServer, UserDataRole.CanSendRemoteStateCommands },
+                },
                 Username = "admin",
                 Password = "5994471ABB01112AFCC18159F6CC74B4F511B99806DA59B3CAF5A9C173CACFC5",
                 NewInGame = true // password is "12345" unhashed
             },
             new UserDataWithLoginToken(){
-                Roles = UserDataRole.CanReceiveWork,
+                Roles = new Dictionary<UserDataRoleSource, UserDataRole>(){
+                    // { UserDataRoleSource.LocalServer, UserDataRole.CanSendRemoteStateCommands },
+                    { UserDataRoleSource.SyncServer, UserDataRole.CanReceiveWork },
+                },
                 Username = "worker.test.0",
                 Password = "5994471ABB01112AFCC18159F6CC74B4F511B99806DA59B3CAF5A9C173CACFC5",
                 NewInGame = true // password is "12345" unhashed
             },
             new UserDataWithLoginToken(){
-                Roles = UserDataRole.CanViewWorldByLoginToken,
+                Roles = new Dictionary<UserDataRoleSource, UserDataRole>(){ 
+                    { UserDataRoleSource.SyncServer, UserDataRole.CanViewWorldByLoginToken },
+                },
                 Username = "remote.test.0",
                 Password = "5994471ABB01112AFCC18159F6CC74B4F511B99806DA59B3CAF5A9C173CACFC5",
                 NewInGame = true // password is "12345" unhashed
             },
             new UserDataWithLoginToken(){
-                Roles = UserDataRole.CanViewWorldByLoginToken,
+                Roles = new Dictionary<UserDataRoleSource, UserDataRole>(){ 
+                    { UserDataRoleSource.SyncServer, UserDataRole.CanViewWorldByLoginToken },
+                },
                 Username = "remote.test.1",
                 Password = "5994471ABB01112AFCC18159F6CC74B4F511B99806DA59B3CAF5A9C173CACFC5",
                 NewInGame = true // password is "12345" unhashed
             },
             new UserDataWithLoginToken(){
-                Roles = UserDataRole.CanViewWorldByLoginToken,
+                Roles = new Dictionary<UserDataRoleSource, UserDataRole>(){ 
+                    { UserDataRoleSource.SyncServer, UserDataRole.CanViewWorldByLoginToken },
+                },
                 Username = "remote.test.2",
                 Password = "5994471ABB01112AFCC18159F6CC74B4F511B99806DA59B3CAF5A9C173CACFC5",
                 NewInGame = true // password is "12345" unhashed
@@ -51,22 +62,28 @@ namespace Apocalypse.Any.Infrastructure.Server.Services.Data
              * It requests after a successful login either Update or UpdateDelta.  
              */ 
             new UserDataWithLoginToken(){
-                Roles = UserDataRole.CanSendRemoteMovementCommands 
-                        | UserDataRole.CanViewWorldByLoginToken,  
+                Roles = new Dictionary<UserDataRoleSource, UserDataRole>(){ 
+                    { UserDataRoleSource.LocalServer, UserDataRole.CanViewWorldByLoginToken },
+                    { UserDataRoleSource.SyncServer, UserDataRole.CanSendRemoteMovementCommands },
+                },
                 Username = "sync.test.0",
                 Password = "5994471ABB01112AFCC18159F6CC74B4F511B99806DA59B3CAF5A9C173CACFC5",
                 NewInGame = true // password is "12345" unhashed
             },
             new UserDataWithLoginToken(){
-                Roles = UserDataRole.CanSendRemoteMovementCommands 
-                        | UserDataRole.CanViewWorldByLoginToken,
+                Roles = new Dictionary<UserDataRoleSource, UserDataRole>(){ 
+                    { UserDataRoleSource.LocalServer, UserDataRole.CanViewWorldByLoginToken },
+                    { UserDataRoleSource.SyncServer, UserDataRole.CanSendRemoteMovementCommands },
+                },
                 Username = "sync.test.1",
                 Password = "5994471ABB01112AFCC18159F6CC74B4F511B99806DA59B3CAF5A9C173CACFC5",
                 NewInGame = true // password is "12345" unhashed
             },
             new UserDataWithLoginToken(){
-                Roles = UserDataRole.CanSendRemoteMovementCommands 
-                        | UserDataRole.CanViewWorldByLoginToken, 
+                Roles = new Dictionary<UserDataRoleSource, UserDataRole>(){ 
+                    { UserDataRoleSource.LocalServer, UserDataRole.CanViewWorldByLoginToken },
+                    { UserDataRoleSource.SyncServer, UserDataRole.CanSendRemoteMovementCommands },
+                },
                 Username = "sync.test.2",
                 Password = "5994471ABB01112AFCC18159F6CC74B4F511B99806DA59B3CAF5A9C173CACFC5",
                 NewInGame = true // password is "12345" unhashed
@@ -122,7 +139,7 @@ namespace Apocalypse.Any.Infrastructure.Server.Services.Data
             return userDataWithLoginToken.LoginToken;
         }
 
-        public UserDataRole GetRoles(UserData userData)
+        public Dictionary<UserDataRoleSource, UserDataRole> GetRoles(UserData userData)
         {
             if (string.IsNullOrWhiteSpace(userData.Password))
                 throw new ArgumentNullException("Password");

@@ -42,7 +42,6 @@ namespace Apocalypse.Any.GameServer.States.Sector.Storage
         private const string DropPlayerItemDialogName = "DropPlayerItemDialogEvent";
         private const string PlayerRegisteredEventName = "PlayerRegisteredEvent";
         private const string DefaultSectorBank = "DefaultBank";
-
         private const string TagNameForDeactivatingMechanics = "NoPlayerInDistance";
         public IStateMachine<string, IGameSectorLayerService> BuildStateMachine(GameServerConfiguration gameServerConfiguration)
         {
@@ -348,6 +347,7 @@ namespace Apocalypse.Any.GameServer.States.Sector.Storage
                         }
                     })));
 
+            
             //main loop
             inMemoryStorage.Add(ServerGameSectorNewBook.RunAsDefaultSector, new RoutineState<string, IGameSectorLayerService>()
             {

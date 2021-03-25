@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Apocalypse.Any.Domain.Common.Model.Network;
 using Apocalypse.Any.Domain.Server.Model.Network;
 using Apocalypse.Any.Infrastructure.Server.Services.Data;
@@ -19,9 +20,9 @@ namespace Apocalypse.Any.Services.Authentication.Controllers
         }
 
         [HttpPost]
-        public UserDataRole GetRoles(UserData userData)
+        public Dictionary<UserDataRoleSource, UserDataRole> GetRoles(UserData userData)
         {
-            var result = _authenticationService.GetRoles(userData);
+            var result = _authenticationService.GetRoles(userData) ?? new Dictionary<UserDataRoleSource, UserDataRole>();
             _logger.LogInformation($"{nameof(GetRoles)} {result.ToString()}");
             return result;
         } 

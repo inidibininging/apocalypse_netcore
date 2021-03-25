@@ -10,7 +10,7 @@ namespace Apocalypse.Any.Core.Input
     /// </summary>
     public class CommandPressReleaseTranslator : IInputTranslator<IEnumerable<string>, IEnumerable<string>>
     {
-        private List<string> RecordedPressCommand { get; set; } = new List<string>();
+        private List<string> RecordedPressCommand { get; set; } = new();
 
         /// <summary>
         /// Translates any input into input + press key and any old input that is not given as my_old_input + released
@@ -19,12 +19,19 @@ namespace Apocalypse.Any.Core.Input
         /// <returns></returns>
         public IEnumerable<string> Translate(IEnumerable<string> input)
         {
+            
             var newInputWithPress = input?.Count() == 0
                 ? Array.Empty<string>()
                 : input.Select(cmd => cmd + DefaultKeys.Press);
 
             //no recorded inputs => save input if not empty and return any keys with "+press"
-            if(RecordedPressCommand.Count == 0 && input.Any()) {
+            if(RecordedPressCommand.Count == 0 && input.Any())
+            {
+                Console.WriteLine("No Input, new Input");
+                foreach (var cmd in newInputWithPress)
+                {
+                    Console.WriteLine(cmd);
+                }
                 //doubled to list because we dont want to have the recorded press commands modified outside of this class
                 return RecordedPressCommand = newInputWithPress.ToList();
             }
@@ -33,7 +40,7 @@ namespace Apocalypse.Any.Core.Input
             //DefaultKeys CANNOT contain other commands : press or release. A TODO
             var keysNotInNewInput = RecordedPressCommand.Except(newInputWithPress);
             var releasedKeys = keysNotInNewInput.Select(cmd => cmd.Replace(DefaultKeys.Press, DefaultKeys.Release));
-
+            
             //pressed keys are the same
             if(!releasedKeys.Any()) {
                 return Array.Empty<string>();

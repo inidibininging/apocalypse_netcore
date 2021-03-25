@@ -148,7 +148,7 @@ namespace Apocalypse.Any.GameServer.GameInstance
 
             var commandsAsPressRelease = PressReleaseTranslator.Translate(commands);
             
-            SyncClient.ProcessIncomingMessages(commandsAsPressRelease.Select(cmd => SyncCommandTranslator.Translate(cmd)));
+            SyncClient.ProcessIncomingMessages(commandsAsPressRelease.Select(cmd => SyncToPressReleaseCommandTranslator.Translate(cmd)));
         }
 
         /// <summary>
@@ -207,7 +207,7 @@ namespace Apocalypse.Any.GameServer.GameInstance
         /// Converts any input to an int command
         /// </summary>
         /// <returns></returns>
-        private IntCommandStringCommandTranslator SyncCommandTranslator { get; } = new IntCommandStringCommandTranslator();
+        private IntToPressReleaseCommandTranslator SyncToPressReleaseCommandTranslator { get; } = new IntToPressReleaseCommandTranslator();
 
         private CommandPressReleaseTranslator PressReleaseTranslator { get; } = new CommandPressReleaseTranslator();
 

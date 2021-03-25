@@ -173,82 +173,88 @@ namespace Apocalypse.Any.Infrastructure.Server.Worker
         }
 
         private bool AckReceived {get; set;} = false;
-        public Queue<int> CommandsToSyncServer { get; set; } = new Queue<int>();
+        // public Queue<int> CommandsToSyncServer { get; set; } = new Queue<int>();
         public Queue<(string loginToken, string command)> CommandsToLocalServer { get; set; } = new Queue<(string loginToken, string command)>();
 
         public void ProcessIncomingMessages(IEnumerable<int> commands)
         {
             TryConnect();
 
-            foreach (var cmd in commands) {
-                Logger.LogInformation($"Enqueue:{cmd}");
-                CommandsToSyncServer.Enqueue(cmd);
-            }
+            foreach (var cmd in commands)
+            {
 
-            var nextCommand = CommandsToSyncServer.Count == 0 ? -1 : CommandsToSyncServer.Dequeue();
-            var dataInputs = Input
-                            .FetchMessageChunk()
-                            .Where(msg => msg.MessageType == NetIncomingMessageType.Data);
 
-            dataInputs
-                .ToList()
-                // why do I receive gamestate data?? => because a player needs to be physically bound to a game .else other mechanics depending on getting the players game state for every registered player will fail.               
-                .ForEach(msg =>
-                {
-                    NetworkCommandConnection networkCommandConnection = null;
-                    try
-                    {
-                        networkCommandConnection = NetIncomingMessageNetworkCommand.Translate(msg);
-                        Logger.LogInformation(networkCommandConnection?.CommandName.ToString());
-                    }
-                    catch (Exception ex)
-                    {
-                        Logger.LogError(ex.ToString());
-                        return;
-                    }
+                var nextCommand = cmd;//CommandsToSyncServer.Count == 0 ? -1 : CommandsToSyncServer.Dequeue();
+                var dataInputs = Input
+                    .FetchMessageChunk()
+                    .Where(msg => msg.MessageType == NetIncomingMessageType.Data);
 
-                    if (msg == null || networkCommandConnection == null)
+                dataInputs
+                    .ToList()
+                    // why do I receive gamestate data?? => because a player needs to be physically bound to a game .else other mechanics depending on getting the players game state for every registered player will fail.               
+                    .ForEach(msg =>
                     {
-                        Logger.LogWarning("Message cannot be translated");
-                        return;
-                    }
-
-                    if(networkCommandConnection.CommandName != NetworkCommandConstants.SendPressReleaseCommand && 
-                       networkCommandConnection.CommandName != NetworkCommandConstants.UpdateCommand && 
-                       networkCommandConnection.CommandName != NetworkCommandConstants.SyncSectorCommand &&
-                       networkCommandConnection.CommandName != NetworkCommandConstants.BroadcastCommand)
-                    {
-                         Logger.LogWarning($"Command name is not SendPressReleaseCommand, UpdateCommand, SyncSector or Broadcast -> {networkCommandConnection.CommandName}");
-                        return;
-                    }
-
-                    if (msg.Data == null || msg.Data.Length == 0)
-                    {
-                         Logger.LogWarning("Message data is null or length is zero");
-                        return;
-                    }
-                    try
-                    {
-                        //TODO: Pass a map of states mapped to bytes
-                        var returningGameObject = NetworkCommandDataConverterService.ConvertToObject(networkCommandConnection);
-                        // Logger.LogInformation(returningGameObject);
-                        switch (returningGameObject)
+                        NetworkCommandConnection networkCommandConnection = null;
+                        try
                         {
-                            //Login successful, remember the login token used in sync server
-                            case GameStateData gameStateData when !string.IsNullOrWhiteSpace(gameStateData.LoginToken):
-                                LoginToken = gameStateData.LoginToken;
-                                Logger.LogInformation("Login successful. Received game state data and login token");
-                                break;
+                            networkCommandConnection = NetIncomingMessageNetworkCommand.Translate(msg);
+                            Logger.LogInformation(networkCommandConnection?.CommandName.ToString());
+                        }
+                        catch (Exception ex)
+                        {
+                            Logger.LogError(ex.ToString());
+                            return;
+                        }
 
-                            //ACK Response                                        
-                            case int b when b == NetworkCommandConstants.OutOfSyncCommand:
+                        if (msg == null || networkCommandConnection == null)
+                        {
+                            Logger.LogWarning("Message cannot be translated");
+                            return;
+                        }
+
+                        if (networkCommandConnection.CommandName != NetworkCommandConstants.SendPressReleaseCommand &&
+                            networkCommandConnection.CommandName != NetworkCommandConstants.UpdateCommand &&
+                            networkCommandConnection.CommandName != NetworkCommandConstants.UpdateCommandDelta &&
+                            networkCommandConnection.CommandName != NetworkCommandConstants.SyncSectorCommand &&
+                            networkCommandConnection.CommandName != NetworkCommandConstants.BroadcastCommand)
+                        {
+                            Logger.LogWarning(
+                                $"Command name is not SendPressReleaseCommand, UpdateCommand, SyncSector or Broadcast -> {networkCommandConnection.CommandName}");
+                            return;
+                        }
+
+                        if (msg.Data == null || msg.Data.Length == 0)
+                        {
+                            Logger.LogWarning("Message data is null or length is zero");
+                            return;
+                        }
+
+                        try
+                        {
+                            //TODO: Pass a map of states mapped to bytes
+                            var returningGameObject =
+                                NetworkCommandDataConverterService.ConvertToObject(networkCommandConnection);
+                            // Logger.LogInformation(returningGameObject);
+                            switch (returningGameObject)
+                            {
+                                //Login successful, remember the login token used in sync server
+                                case GameStateData gameStateData
+                                    when !string.IsNullOrWhiteSpace(gameStateData.LoginToken):
+                                    LoginToken = gameStateData.LoginToken;
+                                    Logger.LogInformation("Login successful. Received game state data and login token");
+                                    break;
+
+                                //ACK Response                                        
+                                case int b when b == NetworkCommandConstants.OutOfSyncCommand:
                                 {
                                     Logger.LogInformation(">>>>>>>>>>>>>>>>>>>>>>>>");
                                     Logger.LogInformation("OutOfSyncCommand received!!!");
                                     Logger.LogInformation(">>>>>>>>>>>>>>>>>>>>>>>>");
                                     //send first input command
-                                    var syncSectorCommand = Output.SendToClient(NetworkCommandConstants.SyncSectorCommand,
-                                        new ReceiveGameStateDataLayerPartRequest() {
+                                    var syncSectorCommand = Output.SendToClient(
+                                        NetworkCommandConstants.SyncSectorCommand,
+                                        new ReceiveGameStateDataLayerPartRequest()
+                                        {
                                             GetProperty = "DataLayer",
                                             SectorKey = LastSectorKey,
                                             // Command = Commands.Count == 0 ? -1 : Commands.Dequeue(),
@@ -261,66 +267,73 @@ namespace Apocalypse.Any.Infrastructure.Server.Worker
                                     break;
                                 }
 
-                            //GameStateDataLayer means that the client gets the actual data from the server
-                            case GameStateDataLayer gameStateDataLayer when gameStateDataLayer != null && AckReceived:
+                                //GameStateDataLayer means that the client gets the actual data from the server
+                                case GameStateDataLayer gameStateDataLayer
+                                    when gameStateDataLayer != null && AckReceived:
                                 {
                                     //TODO: forward game state of sync client to the local server
                                     Logger.LogInformation("SYNC");
-                                    
+
                                     DataLayer = gameStateDataLayer;
 
                                     break;
                                 }
 
-                            //gets a map of logintoken + latest command without enqueing oneself
-                            case string[] commandsPerLoginToken when commandsPerLoginToken?.Length == 2 && commandsPerLoginToken[0] != LoginToken:
-                            {
-                                Logger.LogInformation($"LoginToken and Lastest Cmd {commandsPerLoginToken[0]} - {commandsPerLoginToken[1]}");
-                                CommandsToLocalServer.Enqueue((commandsPerLoginToken[0], commandsPerLoginToken[1]));
-                                break;
+                                //gets a map of logintoken + latest command without enqueing oneself
+                                case string[] commandsPerLoginToken when commandsPerLoginToken?.Length == 2 &&
+                                                                         commandsPerLoginToken[0] != LoginToken:
+                                {
+                                    Logger.LogInformation(
+                                        $"LoginToken and Lastest Cmd {commandsPerLoginToken[0]} - {commandsPerLoginToken[1]}");
+                                    CommandsToLocalServer.Enqueue((commandsPerLoginToken[0], commandsPerLoginToken[1]));
+                                    break;
+                                }
                             }
                         }
-                    }
-                    catch (Exception ex)
-                    {
-                        Logger.LogError(ex.ToString(), ex);
-                    }
-                });
+                        catch (Exception ex)
+                        {
+                            Logger.LogError(ex.ToString(), ex);
+                        }
+                    });
 
-            if (AckReceived && nextCommand != -1)
-            {
-                Logger.LogInformation($"nextCommand:{nextCommand}");
-                var serverConnection = Client.Connections.FirstOrDefault();
-                var fakeInput = Output.SendToClient(NetworkCommandConstants.SendPressReleaseCommand,
-                    new PressReleaseUpdateData() { Command = nextCommand, LoginToken = LoginToken, SectorKey = LastSectorKey },
-                    NetDeliveryMethod.ReliableOrdered, 0, serverConnection); // HARD CODED connection. First one should be the one from the message sending the fake press
-                Logger.LogInformation($"Sent command {nextCommand}");
-            }
+                if (AckReceived && nextCommand != -1)
+                {
+                    Logger.LogInformation($"nextCommand:{nextCommand}");
+                    var serverConnection = Client.Connections.FirstOrDefault();
+                    var fakeInput = Output.SendToClient(NetworkCommandConstants.SendPressReleaseCommand,
+                        new PressReleaseUpdateData()
+                            {Command = nextCommand, LoginToken = LoginToken, SectorKey = LastSectorKey},
+                        NetDeliveryMethod.ReliableOrdered, 0,
+                        serverConnection); // HARD CODED connection. First one should be the one from the message sending the fake press
+                    Logger.LogInformation($"Sent command {nextCommand}");
+                }
 
-            //Client knows that the sector changed
-            //Tell the sync client "I want all of the new sector"
-            if (AckReceived && SectorChanged)
-            {
-                Logger.LogInformation("SECTOR CHANGED!");
-                Logger.LogInformation("--------#######################--------------");
-                Logger.LogInformation("-----++#-S-E-C-T-O-R-C-H-A-G-E-#++-----------");
-                Logger.LogInformation("--------#-----ö---------ö-----#--------------");
-                Logger.LogInformation("--------#----------f----------#--------------");
-                Logger.LogInformation("--------#-----!!!-----!!!!----#--------------");
-                Logger.LogInformation("--------#--------!!!!!--------#--------------");
-                Logger.LogInformation("--------#######################--------------");
+                //Client knows that the sector changed
+                //Tell the sync client "I want all of the new sector"
+                if (AckReceived && SectorChanged)
+                {
+                    Logger.LogInformation("SECTOR CHANGED!");
+                    Logger.LogInformation("--------#######################--------------");
+                    Logger.LogInformation("-----++#-S-E-C-T-O-R-C-H-A-G-E-#++-----------");
+                    Logger.LogInformation("--------#-----ö---------ö-----#--------------");
+                    Logger.LogInformation("--------#----------f----------#--------------");
+                    Logger.LogInformation("--------#-----!!!-----!!!!----#--------------");
+                    Logger.LogInformation("--------#--------!!!!!--------#--------------");
+                    Logger.LogInformation("--------#######################--------------");
 
-                var serverConnection = Client.Connections.FirstOrDefault();
-                var outOfSyncCommand = Output.SendToClient(NetworkCommandConstants.SyncSectorCommand,
-                    new ReceiveGameStateDataLayerPartRequest()
-                    {
-                        LoginToken = LoginToken,
-                        SectorKey = LastSectorKey,
-                        GetProperty = "DataLayer" // If property is given, a part of the sector will be sent
-                    },
-                    NetDeliveryMethod.ReliableOrdered, 0, serverConnection); // HARD CODED connection. First one should be the one from the message sending the fake press
-                SectorChanged = false;
-                Logger.LogInformation($"Sent command {nextCommand}");
+                    var serverConnection = Client.Connections.FirstOrDefault();
+                    var outOfSyncCommand = Output.SendToClient(NetworkCommandConstants.SyncSectorCommand,
+                        new ReceiveGameStateDataLayerPartRequest()
+                        {
+                            LoginToken = LoginToken,
+                            SectorKey = LastSectorKey,
+                            GetProperty = "DataLayer" // If property is given, a part of the sector will be sent
+                        },
+                        NetDeliveryMethod.ReliableOrdered, 0,
+                        serverConnection); // HARD CODED connection. First one should be the one from the message sending the fake press
+                    SectorChanged = false;
+                    Logger.LogInformation($"Sent command {nextCommand}");
+                }
             }
         }
     }

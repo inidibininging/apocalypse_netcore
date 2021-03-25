@@ -1,4 +1,5 @@
 ﻿using Apocalypse.Any.Domain.Common.Model.Network;
+using Apocalypse.Any.Domain.Server.Model.Network;
 
 namespace Apocalypse.Any.Infrastructure.Server.Services.Data.Interfaces
 {
@@ -9,5 +10,6 @@ namespace Apocalypse.Any.Infrastructure.Server.Services.Data.Interfaces
         : IWorldGameStateDataInputLayer<GameStateData>,
         IWorldGameStateDataOutputLayer<GameStateData, GameStateUpdateData>
     {
+        UserDataRoleSource Source { get; }
     }
 }

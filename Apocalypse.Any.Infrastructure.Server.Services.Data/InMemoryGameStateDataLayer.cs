@@ -5,6 +5,7 @@ using Apocalypse.Any.Domain.Common.Model;
 using Apocalypse.Any.Domain.Common.Model.Network;
 using Apocalypse.Any.Domain.Common.Network;
 using Apocalypse.Any.Domain.Server.Model.Interfaces;
+using Apocalypse.Any.Domain.Server.Model.Network;
 using Apocalypse.Any.Infrastructure.Server.Services.Data.Interfaces;
 
 namespace Apocalypse.Any.Infrastructure.Server.Services.Data
@@ -99,5 +100,6 @@ namespace Apocalypse.Any.Infrastructure.Server.Services.Data
             });
         }
 
+        public UserDataRoleSource Source { get; }
     }
 }

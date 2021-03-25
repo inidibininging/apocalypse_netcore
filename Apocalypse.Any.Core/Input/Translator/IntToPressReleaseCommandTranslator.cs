@@ -5,12 +5,13 @@ namespace Apocalypse.Any.Core.Input.Translator
     /// <summary>
     /// Translates any input command with press or release to an int and vice versa
     /// </summary>
-    public class IntCommandStringCommandTranslator : 
+    public class IntToPressReleaseCommandTranslator : 
         IInputTranslator<int, string>, 
         IInputTranslator<string, int>
     {
         public string Translate(int input)
         {
+            // Console.WriteLine($"string to int input to translate:{input}");
             switch (input)
             {
                 case 0:
@@ -51,7 +52,7 @@ namespace Apocalypse.Any.Core.Input.Translator
             //Problem. I need to check if the is pressed or not. This should be done by recording the last key pressed and when the input is nothing (-1) -> send a release
             //The behaviour is similar to ProcessPressReleaseState
             //Solved, see CommandPressReleaseTranslator
-            Console.WriteLine($"input to translate:{input}");
+            // Console.WriteLine($"int to string input to translate:{input}");
             switch (input)
             {
                 case DefaultKeys.Up + DefaultKeys.Press:

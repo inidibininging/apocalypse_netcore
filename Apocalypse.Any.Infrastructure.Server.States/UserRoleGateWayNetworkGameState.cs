@@ -20,6 +20,7 @@ namespace Apocalypse.Any.Infrastructure.Server.States
 
         private Dictionary<UserDataRole, byte> Routes { get; set; } = new Dictionary<UserDataRole, byte>()
         {
+            { UserDataRole.Unset, (byte)ServerInternalGameStates.Error },
             { UserDataRole.CanReceiveWork, (byte)ServerInternalGameStates.ReceiveWork },
             { UserDataRole.CanSendRemoteStateCommands, (byte)ServerInternalGameStates.CLIPassthrough },
             { UserDataRole.CanSendRemoteMovementCommands, (byte)ServerInternalGameStates.SendPressedRelease },
@@ -50,7 +51,12 @@ namespace Apocalypse.Any.Infrastructure.Server.States
             //Actual router. Only one state will fire. See that the order of the entries in Router also provides the priority. 
             //TODO: this should be a feature/library in the future
             var userRoles = UserDataRoleService.GetRoles(convertedInstance as UserData);
-            var userRolesHandler = gameStateContext.GameStateRegistrar.GetNetworkLayerState((byte)Routes.FirstOrDefault(kv => userRoles.HasFlag(kv.Key)).Value);
+            
+            var routeDesired = Routes.FirstOrDefault(kv =>
+                userRoles.ContainsKey(gameStateContext.GameStateRegistrar.WorldGameStateDataLayer.Source) &&
+                userRoles[gameStateContext.GameStateRegistrar.WorldGameStateDataLayer.Source] == kv.Key);
+
+            var userRolesHandler = gameStateContext.GameStateRegistrar.GetNetworkLayerState(routeDesired.Value);
             
             gameStateContext.Logger.Log(LogLevel.Information, $"{nameof(UserRoleGateWayNetworkGameState<TWorld>)} performing ChangeHandlerEasier {userRolesHandler}");
             gameStateContext.ChangeHandlerEasier(userRolesHandler, networkCommandConnectionToHandle);

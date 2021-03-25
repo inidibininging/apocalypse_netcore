@@ -115,7 +115,7 @@ namespace Apocalypse.Any.GameServer.GameInstance
             ServerConfiguration = serverConfiguration ?? throw new ArgumentNullException(nameof(serverConfiguration));
 
             ClientOwner = clientConfiguration == null ? new NullSyncClientOwner() : new SyncClientOwner(new SyncClient<PlayerSpaceship, EnemySpaceship, Item, Projectile, CharacterEntity, CharacterEntity, ImageData>(clientConfiguration, Logger));
-
+            Source = clientConfiguration == null ? UserDataRoleSource.SyncServer : UserDataRoleSource.LocalServer;
             InitSerializer(serverConfiguration);
 
             InitGameSectorAndSectorStateMachine();
@@ -535,7 +535,7 @@ namespace Apocalypse.Any.GameServer.GameInstance
 
             var userGameStateData = RegisterGameStateData(loginToken);
 
-            if ((user.Roles & UserDataRole.CanSendRemoteStateCommands) != 0)
+            if (user.Roles != null && user.Roles.ContainsKey(this.Source) && user.Roles[this.Source].HasFlag(UserDataRole.CanSendRemoteStateCommands))
             {
                 //offer the player remote control on the server :) ... or :(
                 userGameStateData.Metadata = new IdentifiableNetworkCommand() { CommandName = CLINetworkCommandConstants.WaitForSignalCommand };
@@ -681,5 +681,6 @@ namespace Apocalypse.Any.GameServer.GameInstance
         }
 
         public IGameSectorLayerService GetSector(int sectorIdentifier) => GameSectorLayerServices[sectorIdentifier].SharedContext;
+        public UserDataRoleSource Source { get; }
     }
 }

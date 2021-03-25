@@ -33,7 +33,7 @@ namespace Apocalypse.Any.Infrastructure.Server.States
                 userData = CurrentNetworkCommandToFullUserDataTranslator.Translate(networkCommandConnectionToHandle);
 
                 //check permissions
-                if (!userData.Roles.HasFlag(UserDataRole.CanSendRemoteStateCommands))
+                if (userData.Roles == null || !userData.Roles[UserDataRoleSource.SyncServer].HasFlag(UserDataRole.CanSendRemoteStateCommands))
                 {
                     gameStateContext.ChangeHandlerEasier(gameStateContext.GameStateRegistrar.GetNetworkLayerState((byte)ServerInternalGameStates.Error), networkCommandConnectionToHandle);
                     return;

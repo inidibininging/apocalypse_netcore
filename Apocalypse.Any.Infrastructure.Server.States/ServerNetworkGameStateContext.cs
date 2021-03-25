@@ -99,7 +99,7 @@ namespace Apocalypse.Any.Infrastructure.Server.States
 
         public void ChangeHandlerEasier(INetworkLayerState<TWorld> gameState, NetworkCommandConnection networkCommandConnection)
         {
-            // Logger.LogDebug(networkCommandConnection.CommandName.ToString());
+            Logger.LogDebug($"{gameState.ToString()} - {networkCommandConnection.Connection.Statistics}" );
             this[networkCommandConnection.Connection.RemoteUniqueIdentifier] = gameState;
         }
 
