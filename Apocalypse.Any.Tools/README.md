@@ -3,10 +3,15 @@
 ALL OF THESE SCRIPTS ARE LINUX-ONLY
 
 ---
-###  rsync_content.sh
+## install_mgcb.sh
 
-copies all built content files to the Debug content folder. This is hard coded and only for me. If someone feels bad because of this. ... change it
+installs mgcb tool
 
-### rebuild_content.sh
+## build_vars.sh
 
-rebuilds the content with MGCB
+builds all needed variables for all paths needed. This script should ONLY RUN FROM INSIDE THIS FOLDER
+
+## rebuild_content_new.sh
+
+rebuilds content for the desktop client and 
+copies all built content files to the Debug content folder. This is hard coded and only for me
