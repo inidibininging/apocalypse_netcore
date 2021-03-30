@@ -49,6 +49,10 @@ namespace Apocalypse.Any.Infrastructure.Server.States
                 gameStateContext.Logger.LogError($"{nameof(ReceiveGameStateDataLayerPartGameSate<TWorld>)} Sector key given is invalid");
                 return;
             }
+
+
+            //how about putting players pos as a request here?
+
             if (request.GetProperty == "DataLayer")
             {
                 gameStateContext.Logger.LogWarning($"{nameof(ReceiveGameStateDataLayerPartGameSate<TWorld>)} GetProperty value is empty. Sending the whole game state data layer");

@@ -17,7 +17,7 @@ namespace Apocalypse.Any.WorkerBee
 {
     internal static class Program
     {
-        private static readonly IntToPressReleaseCommandTranslator Translator = new();
+        private static readonly IntToStringCommandTranslator Translator = new();
         private static readonly LoggerServiceFactory LoggerFactory = new();
         private static void Main(string[] args)
         {
