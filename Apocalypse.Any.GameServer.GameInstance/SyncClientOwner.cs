@@ -44,6 +44,7 @@ using Apocalypse.Any.Core.Input.Translator;
 using Apocalypse.Any.Infrastructure.Server.Services.Data;
 using Apocalypse.Any.Infrastructure.Server.Services.Network;
 using CommandPressReleaseTranslator = Apocalypse.Any.Core.Input.CommandPressReleaseTranslator;
+using Apocalypse.Any.Core.Input;
 
 namespace Apocalypse.Any.GameServer.GameInstance
 {
@@ -207,7 +208,7 @@ namespace Apocalypse.Any.GameServer.GameInstance
         /// Converts any input to an int command
         /// </summary>
         /// <returns></returns>
-        private IntToPressReleaseCommandTranslator SyncToPressReleaseCommandTranslator { get; } = new IntToPressReleaseCommandTranslator();
+        private IInputTranslator<string,int> SyncToPressReleaseCommandTranslator { get; } = new IntToStringCommandTranslator();
 
         private CommandPressReleaseTranslator PressReleaseTranslator { get; } = new CommandPressReleaseTranslator();
 
