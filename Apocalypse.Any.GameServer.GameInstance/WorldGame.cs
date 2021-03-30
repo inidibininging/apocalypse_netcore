@@ -1,4 +1,5 @@
 using Apocalypse.Any.Core;
+using Apocalypse.Any.Core.Input;
 using Apocalypse.Any.Core.Utilities;
 using Apocalypse.Any.Domain.Common.Mechanics;
 using Apocalypse.Any.Domain.Common.Model;
@@ -114,7 +115,12 @@ namespace Apocalypse.Any.GameServer.GameInstance
             Logger = LoggerServiceFactory.GetLogger();
             ServerConfiguration = serverConfiguration ?? throw new ArgumentNullException(nameof(serverConfiguration));
 
-            ClientOwner = clientConfiguration == null ? new NullSyncClientOwner() : new SyncClientOwner(new SyncClient<PlayerSpaceship, EnemySpaceship, Item, Projectile, CharacterEntity, CharacterEntity, ImageData>(clientConfiguration, Logger));
+            ClientOwner = clientConfiguration == null 
+                            ? new NullSyncClientOwner() 
+                            : new SyncClientOwner(
+                                new SyncClient<PlayerSpaceship, EnemySpaceship, Item, Projectile, CharacterEntity, CharacterEntity, ImageData>(clientConfiguration, Logger), 
+                                new NullCommandPressReleaseTranslator());
+
             Source = clientConfiguration == null ? UserDataRoleSource.SyncServer : UserDataRoleSource.LocalServer;
             InitSerializer(serverConfiguration);
 

@@ -5,7 +5,7 @@ namespace Apocalypse.Any.Core.Input.Translator
     public class IntToStringCommandTranslator 
         : IInputTranslator<int, string>, IInputTranslator<string, int>
     {
-public string Translate(int input)
+        public string Translate(int input)
         {
             // Console.WriteLine($"string to int input to translate:{input}");
             switch (input)

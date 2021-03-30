@@ -43,7 +43,6 @@ using Apocalypse.Any.Infrastructure.Server.Worker;
 using Apocalypse.Any.Core.Input.Translator;
 using Apocalypse.Any.Infrastructure.Server.Services.Data;
 using Apocalypse.Any.Infrastructure.Server.Services.Network;
-using CommandPressReleaseTranslator = Apocalypse.Any.Core.Input.CommandPressReleaseTranslator;
 using Apocalypse.Any.Core.Input;
 
 namespace Apocalypse.Any.GameServer.GameInstance
@@ -100,9 +99,11 @@ namespace Apocalypse.Any.GameServer.GameInstance
 
     public class SyncClientOwner : ISyncClientOwner
     {
-        public SyncClientOwner(SyncClient<PlayerSpaceship, EnemySpaceship, Item, Projectile, CharacterEntity, CharacterEntity, ImageData> syncClient)
+        public SyncClientOwner(SyncClient<PlayerSpaceship, EnemySpaceship, Item, Projectile, CharacterEntity, CharacterEntity, ImageData> syncClient,
+                               IInputTranslator<IEnumerable<string>, IEnumerable<string>>  pressReleaseTranslator)
         {
             SyncClient = syncClient;
+            PressReleaseTranslator = pressReleaseTranslator;
         }
         private SyncClient<PlayerSpaceship, EnemySpaceship, Item, Projectile, CharacterEntity, CharacterEntity, ImageData> SyncClient
         {
@@ -210,7 +211,7 @@ namespace Apocalypse.Any.GameServer.GameInstance
         /// <returns></returns>
         private IInputTranslator<string,int> SyncToPressReleaseCommandTranslator { get; } = new IntToStringCommandTranslator();
 
-        private CommandPressReleaseTranslator PressReleaseTranslator { get; } = new CommandPressReleaseTranslator();
+        private IInputTranslator<IEnumerable<string>, IEnumerable<string>> PressReleaseTranslator { get; }
 
         public string LoginToken
         {
