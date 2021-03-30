@@ -299,7 +299,7 @@ namespace Apocalypse.Any.GameServer.GameInstance
         /// <summary>
         /// Builds a looping grid out of sectors. By default is 4x4 = 16 Sectors
         /// </summary>
-        private void BuildSectorGrid(int size = 4)
+        private void BuildSectorGrid(int size = 2)
         {
             var columnCount = size;
             var rowCount = size;

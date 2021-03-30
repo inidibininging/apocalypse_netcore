@@ -27,11 +27,6 @@ namespace Apocalypse.Any.Core.Input
             //no recorded inputs => save input if not empty and return any keys with "+press"
             if(RecordedPressCommand.Count == 0 && input.Any())
             {
-                Console.WriteLine("No Input, new Input");
-                foreach (var cmd in newInputWithPress)
-                {
-                    Console.WriteLine(cmd);
-                }
                 //doubled to list because we dont want to have the recorded press commands modified outside of this class
                 return RecordedPressCommand = newInputWithPress.ToList();
             }
