@@ -628,14 +628,13 @@ namespace Apocalypse.Any.GameServer.GameInstance
                     return false;
 
                 var sent = sector
-                .Value
-                .SharedContext
-                .IODataLayer
-                .ForwardClientDataToGame(updateData);
+                            .Value
+                            .SharedContext
+                            .IODataLayer
+                            .ForwardClientDataToGame(updateData);
 
 
                 // Logger.LogWarning(string.Join(',',updateData.Commands));
-                
                 ClientOwner.DelegatePlayerCommandsToSyncServer(sector.Key, updateData.Commands.Where(cmd => !string.IsNullOrWhiteSpace(cmd)).ToList());
                 
                 SendingDelta = DateTime.Now - now;

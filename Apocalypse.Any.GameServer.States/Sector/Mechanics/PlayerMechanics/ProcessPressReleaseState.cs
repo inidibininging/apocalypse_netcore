@@ -31,7 +31,7 @@ namespace Apocalypse.Any.GameServer.States.Sector.Mechanics.PlayerMechanics
             //2. if release pressed kill it and stop passing releases 
             //3. keep executing the pressed keys
             foreach (var player in machine.SharedContext.DataLayer.Players)
-            {
+            {   
                 var playerGameStateData = machine.SharedContext.IODataLayer.GetGameStateByLoginToken(player.LoginToken);
 
                 if (!KeyDownUp.ContainsKey(player.LoginToken) || KeyDownUp[player.LoginToken] == null)
@@ -77,6 +77,8 @@ namespace Apocalypse.Any.GameServer.States.Sector.Mechanics.PlayerMechanics
                     }
 
                 }
+                
+                KeyDownUp[player.LoginToken].Clear();
             }
 
         }
