@@ -107,6 +107,7 @@ namespace Apocalypse.Any.Infrastructure.Server.States
             gameStateContext.Logger.LogInformation($" {nameof(SendPressedReleaseCommandGameState<TWorld>)}. Forwarding Command {command} to sync server {networkCommandConnectionToHandle.ConnectionId}");
 
             //TODO: forward command to other players
+            gameStateContext.Logger.LogWarning($"BROADCAST {command}");
             gameStateContext.CurrentNetOutgoingMessageBusService.Broadcast(NetworkCommandConstants.BroadcastCommand, new string[] { clientInputConverted.LoginToken, command }, NetDeliveryMethod.ReliableOrdered, 0);
 
             gameStateContext

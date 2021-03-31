@@ -75,7 +75,8 @@ namespace Apocalypse.Any.GameServer.States.Sector.Storage
             inMemoryStorage.Add(nameof(AddDroppedItemsAsCurrencyToPlayersBankState), new AddDroppedItemsAsCurrencyToPlayersBankState(new ShortCounterThreshold()));
             inMemoryStorage.Add(nameof(CreateOrUpdateItemDialogRelationsState), new CreateOrUpdateItemDialogRelationsState(DropPlayerItemDialogName));
             inMemoryStorage.Add(nameof(CreatePlayerSelectsItemDialogEventState), new CreatePlayerSelectsItemDialogEventState(DropPlayerItemDialogName));
-
+            inMemoryStorage.Add(nameof(CleanPlayerCommandsState), new CleanPlayerCommandsState());
+            
             inMemoryStorage.Add("BuildPlayerDialogService",
                 new CommandStateActionDelegate<string, IGameSectorLayerService>(
                     new Action<IStateMachine<string, IGameSectorLayerService>>((machine) =>
@@ -172,7 +173,7 @@ namespace Apocalypse.Any.GameServer.States.Sector.Storage
             inMemoryStorage.Add(nameof(CreateRandomMiniCityCommand), new CreateRandomMiniCityCommand());
 
             inMemoryStorage.Add(nameof(UpdateProjectileMechanicsState), new UpdateProjectileMechanicsState());
-            
+
             //Applies all enemy mechanisc to every enemy if the enemy is in players distance
             inMemoryStorage.Add("UpdateEnemyMechanics", new CommandStateActionDelegate<string, IGameSectorLayerService>(
                     new Action<IStateMachine<string, IGameSectorLayerService>>((machine) =>
@@ -363,7 +364,8 @@ namespace Apocalypse.Any.GameServer.States.Sector.Storage
                     nameof(ProcessRotationMapsForPlayerMechanicsState),
                     nameof(ProcessShootingForPlayerMechanicsState),
                     nameof(ProcessThrustForPlayerMechanicsState),
-                    nameof(ProcessPressReleaseState),
+                    // nameof(ProcessPressReleaseState),
+                    nameof(CleanPlayerCommandsState),
                     
                     //projectiles
                     nameof(UpdateProjectileMechanicsState),
