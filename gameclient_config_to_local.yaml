@@ -10,7 +10,7 @@ ServerIp: 127.0.0.1
 ServerPeerName: asteroid
 SerializationAdapterType: Apocalypse.Any.Infrastructure.Common.Services.Serializer.MsgPackAdapter.MsgPackByteArraySerializerAdapter
 ServerPort: 8079
-WithLocalServer: false
+WithLocalServer: true
 User:
-  Username: sync.test.0
+  Username: sync.test.1
   Password: 12345

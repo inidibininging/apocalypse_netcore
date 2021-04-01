@@ -1,4 +1,5 @@
 using System.Collections.Concurrent;
+using System.Linq;
 using System.Reflection.Metadata;
 using Apocalypse.Any.Domain.Common.Model;
 using Apocalypse.Any.Domain.Common.Model.Network;
@@ -8,6 +9,7 @@ using Apocalypse.Any.Infrastructure.Common.Services.Network;
 using Apocalypse.Any.Infrastructure.Server.Services.Data;
 using Apocalypse.Any.Infrastructure.Server.Services.Data.Interfaces;
 using Apocalypse.Any.Infrastructure.Server.States.Interfaces;
+using Lidgren.Network;
 using Microsoft.Extensions.Logging;
 
 namespace Apocalypse.Any.Infrastructure.Server.States
@@ -51,7 +53,37 @@ namespace Apocalypse.Any.Infrastructure.Server.States
             }
 
 
-            //how about putting players pos as a request here?
+            //get players position based on its login token and sector. 
+            //if the players sector differs between the local server and sync server, the sync server will send an out of sync command to the client
+            if (request.GetProperty == "PlayerPos")
+            {
+                gameStateContext.Logger.LogWarning($"{nameof(ReceiveGameStateDataLayerPartGameSate<TWorld>)} PlayerPos. Sending Player pos...");
+                var sector = gameStateContext.GameStateRegistrar.WorldGameStateDataLayer.GetSector(request.SectorKey);
+
+                var player = sector.DataLayer.Players.FirstOrDefault(p => p.LoginToken == request.LoginToken);
+
+                if (player == null) {
+                    gameStateContext
+                    .CurrentNetOutgoingMessageBusService
+                    .SendToClient(NetworkCommandConstants.SendPressReleaseCommand,
+                        NetworkCommandConstants.OutOfSyncCommand, //Tells the sync client that is is out of sync. Next logical step should be ReceiveGameStateDataLayerPartGameSate
+                        NetDeliveryMethod.ReliableOrdered,
+                        0,
+                        networkCommandConnectionToHandle.Connection
+                    );
+                    return;
+                }
+                else {
+                    gameStateContext
+                        .CurrentNetOutgoingMessageBusService
+                        .SendToClient(NetworkCommandConstants.SyncSectorCommand,
+                            player.CurrentImage.Position,
+                            NetDeliveryMethod.ReliableOrdered,
+                            0,
+                            networkCommandConnectionToHandle.Connection);
+                    return;
+                }
+            }
 
             if (request.GetProperty == "DataLayer")
             {
@@ -74,7 +106,7 @@ namespace Apocalypse.Any.Infrastructure.Server.States
                     .CurrentNetOutgoingMessageBusService
                     .SendToClient(NetworkCommandConstants.SyncSectorCommand,
                         dataLayer,
-                        Lidgren.Network.NetDeliveryMethod.ReliableOrdered,
+                        NetDeliveryMethod.ReliableOrdered,
                         0,
                         networkCommandConnectionToHandle.Connection);
                 return;
@@ -106,7 +138,7 @@ namespace Apocalypse.Any.Infrastructure.Server.States
                 .CurrentNetOutgoingMessageBusService
                 .SendToClient(NetworkCommandConstants.SyncSectorCommand,
                     content,
-                    Lidgren.Network.NetDeliveryMethod.ReliableOrdered,
+                    NetDeliveryMethod.ReliableOrdered,
                     0,
                     networkCommandConnectionToHandle.Connection);
             

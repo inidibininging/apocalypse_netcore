@@ -61,6 +61,11 @@
         /// <summary>
         /// Sends a specific part of a game state data layer
         /// </summary>
-        ReceiveGameStateDataLayerPart = 12
-    };
+        ReceiveGameStateDataLayerPart = 12,
+
+        /// <summary>
+        /// Used for synching server-side
+        /// </summary>
+        PlayerPositionSync = 13
+    }
 }

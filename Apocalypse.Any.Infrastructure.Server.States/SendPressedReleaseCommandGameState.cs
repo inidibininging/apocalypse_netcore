@@ -9,7 +9,7 @@ using Apocalypse.Any.Infrastructure.Server.Services.Data.Interfaces;
 using Apocalypse.Any.Infrastructure.Server.States.Interfaces;
 using Lidgren.Network;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
+
 
 namespace Apocalypse.Any.Infrastructure.Server.States
 {
@@ -36,6 +36,9 @@ namespace Apocalypse.Any.Infrastructure.Server.States
         {
             gameStateContext.Logger.LogInformation($" {nameof(SendPressedReleaseCommandGameState<TWorld>)}. Handler");
 
+
+            // At this point, the UserRoleGateway has set the Handler to this class
+            // In a way, the code below acts as a gateway to either Error, PlayerPositionSynchronizerGameState and ReceiveGameStateDataLayerPart 
             //get player login token
             //Route to error
             if (string.IsNullOrWhiteSpace(networkCommandConnectionToHandle.CommandArgument))
@@ -55,7 +58,7 @@ namespace Apocalypse.Any.Infrastructure.Server.States
                  gameStateContext.Logger.LogInformation($"{nameof(SendPressedReleaseCommandGameState<TWorld>)} - Sending ACK for {networkCommandConnectionToHandle.ConnectionId} -> {networkCommandConnectionToHandle.CommandName} {networkCommandConnectionToHandle.CommandArgument}");
                 // var user = ConverterService.ConvertToObject(networkCommandConnectionToHandle) as UserData;
 
-                //send an "ACK" to the worker (client)
+                //send an "ACK" to the local server
                 gameStateContext
                     .CurrentNetOutgoingMessageBusService
                     .SendToClient(NetworkCommandConstants.SendPressReleaseCommand,
@@ -78,6 +81,18 @@ namespace Apocalypse.Any.Infrastructure.Server.States
                 gameStateContext[networkCommandConnectionToHandle.ConnectionId].Handle(gameStateContext, networkCommandConnectionToHandle);
                 return;
             }
+
+
+            if (networkCommandConnectionToHandle.CommandName == NetworkCommandConstants.PlayerPositionSync){
+                //TODO: TEST THIS
+                gameStateContext.Logger.LogInformation($" {nameof(SendPressedReleaseCommandGameState<TWorld>)} - Goes now to PlayerPositionSync {networkCommandConnectionToHandle.ConnectionId}");
+                gameStateContext.ChangeHandlerEasier(
+                    gameStateContext.GameStateRegistrar.GetNetworkLayerState((byte) ServerInternalGameStates.PlayerPositionSync),
+                    networkCommandConnectionToHandle);
+                gameStateContext[networkCommandConnectionToHandle.ConnectionId].Handle(gameStateContext, networkCommandConnectionToHandle);
+                return;
+            }
+
 
             if (networkCommandConnectionToHandle.CommandName != NetworkCommandConstants.SendPressReleaseCommand)
             {
