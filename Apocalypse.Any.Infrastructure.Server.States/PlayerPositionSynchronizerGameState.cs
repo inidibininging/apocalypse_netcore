@@ -49,6 +49,7 @@ namespace Apocalypse.Any.Infrastructure.Server.States
                 // If the sector was not found, the sync server and local server have not the same data. Maybe a hack / mod ?       
                 if(playersSector == null)
                 {
+                    gameStateContext.Logger.LogWarning($"{nameof(PlayerPositionSynchronizerGameState<TWorld>)} SOMETHING IS WRONG. KICKING PLAYER {networkCommandConnectionToHandle.ConnectionId}");
                     //Le kick ...
                     gameStateContext.Logger.LogError($"{nameof(PlayerPositionSynchronizerGameState<TWorld>)} Command name is PlayerPositionSync but the sector requested was not found on the local server. WHAT ARE YOU DOING?");
                     var back = gameStateContext.GameStateRegistrar.GetNetworkLayerState((byte)ServerInternalGameStates.Error);
@@ -60,6 +61,7 @@ namespace Apocalypse.Any.Infrastructure.Server.States
                 // or because the sync server and local server are not in sync e.g player joined the game recently
                 var player = playersSector.DataLayer.Players.FirstOrDefault(p => playerPositionUpdate.LoginToken == p.LoginToken);
                 if(player == null) {
+                    gameStateContext.Logger.LogWarning($"{nameof(PlayerPositionSynchronizerGameState<TWorld>)} PLAYER IS NULL {networkCommandConnectionToHandle.ConnectionId}");
                     gameStateContext
                     .CurrentNetOutgoingMessageBusService
                     .SendToClient(NetworkCommandConstants.SendPressReleaseCommand,
@@ -75,9 +77,10 @@ namespace Apocalypse.Any.Infrastructure.Server.States
                 const float errorMargin = 1;
                 var xErrorMargin = MathF.Abs(player.CurrentImage.Position.X - playerPositionUpdate.X);
                 var yErrorMargin = MathF.Abs(player.CurrentImage.Position.Y - playerPositionUpdate.Y);
-                gameStateContext.Logger.LogInformation($"Error margin: X: {xErrorMargin} Y {yErrorMargin}");
+                var rErrorMargin = MathF.Abs(player.CurrentImage.Rotation.Rotation - playerPositionUpdate.R);
+                gameStateContext.Logger.LogInformation($"Error margin: X: {xErrorMargin} Y {yErrorMargin} R {rErrorMargin}");
 
-                if(xErrorMargin > errorMargin || yErrorMargin > errorMargin) {
+                if(xErrorMargin > errorMargin || yErrorMargin > errorMargin || rErrorMargin > errorMargin) {
                     gameStateContext
                     .CurrentNetOutgoingMessageBusService
                     .SendToClient(NetworkCommandConstants.SendPressReleaseCommand,
@@ -89,17 +92,14 @@ namespace Apocalypse.Any.Infrastructure.Server.States
                     return;
                 }
                 else {
-                    // pass local client data from local server to sync server. Is this really a good idea?
+                    // pass local client data from local server to sync server. Is this REALLY a good idea?
                     player.CurrentImage.Position.X = playerPositionUpdate.X;
                     player.CurrentImage.Position.Y = playerPositionUpdate.Y;
+                    player.CurrentImage.Rotation.Rotation = playerPositionUpdate.R;
                 }
                 return;
             }
 
-            // If 
-            if(gameStateContext.GameStateRegistrar.WorldGameStateDataLayer.Source == UserDataRoleSource.SyncServer) {
-                return;
-            }
 
             if(playerPositionUpdate == null) {
                 gameStateContext.Logger.LogError($"{nameof(PlayerPositionSynchronizerGameState<TWorld>)} Cannot convert players position. Given Command: {networkCommandConnectionToHandle.CommandName} CommandArgument: {networkCommandConnectionToHandle.CommandArgument}. Going back to SendPressedRelease");

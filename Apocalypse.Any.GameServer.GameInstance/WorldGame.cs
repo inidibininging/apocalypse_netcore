@@ -637,6 +637,7 @@ namespace Apocalypse.Any.GameServer.GameInstance
                 // Logger.LogWarning(string.Join(',',updateData.Commands));
                 ClientOwner.DelegatePlayerCommandsToSyncServer(sector.Key, updateData.Commands.Where(cmd => !string.IsNullOrWhiteSpace(cmd)).ToList());
                 
+
                 SendingDelta = DateTime.Now - now;
                 return sent;
             });

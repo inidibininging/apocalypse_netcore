@@ -47,6 +47,18 @@ namespace Apocalypse.Any.Infrastructure.Server.Worker
                 NewDataLayer = true;
             }
         }
+        private PlayerPositionUpdateData playerPositionUpdateData;
+        public PlayerPositionUpdateData PlayerPositionUpdateData
+        {
+            get {
+                return playerPositionUpdateData;
+            }
+            private set {
+                playerPositionUpdateData = value;
+                NewPlayerPosition = true;
+            }
+        }
+
 
         private NetIncomingMessageBusService<NetClient> Input { get; set; }
         private NetOutgoingMessageBusService<NetClient> Output { get; set; } // not in use for now cause it doesnt work? WHY?
@@ -72,6 +84,7 @@ namespace Apocalypse.Any.Infrastructure.Server.Worker
 
         public bool SectorChanged { get; set; } = false;
         public bool NewDataLayer { get; set; } = false;
+        public bool NewPlayerPosition { get; set; } = false;
 
         public SyncClient(GameClientConfiguration configuration, ILogger<byte> logger)
         {
@@ -176,8 +189,11 @@ namespace Apocalypse.Any.Infrastructure.Server.Worker
         // public Queue<int> CommandsToSyncServer { get; set; } = new Queue<int>();
         public Queue<(string loginToken, string command)> CommandsToLocalServer { get; set; } = new Queue<(string loginToken, string command)>();
 
-        public void ProcessIncomingMessages(IEnumerable<int> commands)
+        public void ProcessIncomingMessages(IEnumerable<int> commands)        
         {
+            // what is wrong with this function?
+            // it fullfills more than one purpouse
+            // it is used by another classes considering that fullfilss more than one purouse            
             TryConnect();
 
             foreach (var cmd in commands)
@@ -216,6 +232,7 @@ namespace Apocalypse.Any.Infrastructure.Server.Worker
                             networkCommandConnection.CommandName != NetworkCommandConstants.UpdateCommand &&
                             networkCommandConnection.CommandName != NetworkCommandConstants.UpdateCommandDelta &&
                             networkCommandConnection.CommandName != NetworkCommandConstants.SyncSectorCommand &&
+                            networkCommandConnection.CommandName != NetworkCommandConstants.PlayerPositionSync &&
                             networkCommandConnection.CommandName != NetworkCommandConstants.BroadcastCommand)
                         {
                             Logger.LogWarning(
@@ -288,6 +305,14 @@ namespace Apocalypse.Any.Infrastructure.Server.Worker
                                     CommandsToLocalServer.Enqueue((commandsPerLoginToken[0], commandsPerLoginToken[1]));
                                     break;
                                 }
+
+                                //gets a map of logintoken + latest command without enqueing oneself
+                                case PlayerPositionUpdateData playerPositionUpdateData:
+                                {
+                                    Logger.LogInformation($"PLAYER POSITION UPDATE");
+                                    PlayerPositionUpdateData = playerPositionUpdateData;
+                                    break;
+                                }
                             }
                         }
                         catch (Exception ex)
@@ -305,6 +330,7 @@ namespace Apocalypse.Any.Infrastructure.Server.Worker
                             {Command = nextCommand, LoginToken = LoginToken, SectorKey = LastSectorKey},
                         NetDeliveryMethod.ReliableOrdered, 0,
                         serverConnection); // HARD CODED connection. First one should be the one from the message sending the fake press
+                    
                     Logger.LogInformation($"Sent command {nextCommand}");
                 }
 

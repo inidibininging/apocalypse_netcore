@@ -55,6 +55,7 @@ namespace Apocalypse.Any.GameServer.GameInstance
         void Connect();
         void DelegateOtherPlayerCommandsToLocalServer(ILogger<byte> logger);
         void DelegatePlayerCommandsToSyncServer(int lastSectorOfClient, IEnumerable<string> commands);
+        void DelegatePlayerPositionToSyncServer(PlayerPositionUpdateData playerPositionUpdateData);
         void DelegateSyncServerDataToLocalServer(IGameSectorLayerService playerSector, ILogger<byte> logger);
         void TryLoginToSyncServer(ILogger<byte> logger);
         void UpdateSectorOfPlayerInsideSyncClient(int playerSectorKey);
@@ -79,6 +80,10 @@ namespace Apocalypse.Any.GameServer.GameInstance
         public void DelegatePlayerCommandsToSyncServer(int lastSectorOfClient, IEnumerable<string> commands)
         {
             
+        }
+
+        public void DelegatePlayerPositionToSyncServer(PlayerPositionUpdateData playerPositionUpdateData)
+        {
         }
 
         public void DelegateSyncServerDataToLocalServer(IGameSectorLayerService playerSector, ILogger<byte> logger)

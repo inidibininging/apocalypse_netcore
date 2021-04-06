@@ -83,7 +83,8 @@ namespace Apocalypse.Any.Infrastructure.Server.States
             }
 
 
-            if (networkCommandConnectionToHandle.CommandName == NetworkCommandConstants.PlayerPositionSync){
+            if (networkCommandConnectionToHandle.CommandName == NetworkCommandConstants.PlayerPositionSync)
+            {
                 //TODO: TEST THIS
                 gameStateContext.Logger.LogInformation($" {nameof(SendPressedReleaseCommandGameState<TWorld>)} - Goes now to PlayerPositionSync {networkCommandConnectionToHandle.ConnectionId}");
                 gameStateContext.ChangeHandlerEasier(
