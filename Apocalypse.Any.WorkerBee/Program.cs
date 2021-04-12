@@ -28,6 +28,7 @@ namespace Apocalypse.Any.WorkerBee
             var syncClient = new SyncClient<PlayerSpaceship, EnemySpaceship, Item, Projectile, CharacterEntity, CharacterEntity, ImageData>(clientConfig, LoggerFactory.GetLogger());
             ConsoleKey nextConsoleKey;
             while ((nextConsoleKey = System.Console.ReadKey().Key) != ConsoleKey.Escape) {
+                
                 syncClient.ProcessIncomingMessages(new List<int>() { Translator.Translate(ToStringCommand(nextConsoleKey)) });
             }
         }

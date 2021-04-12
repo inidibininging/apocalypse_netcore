@@ -11,6 +11,7 @@ ServerPeerName: asteroid
 SerializationAdapterType: Apocalypse.Any.Infrastructure.Common.Services.Serializer.MsgPackAdapter.MsgPackByteArraySerializerAdapter
 ServerPort: 8080
 WithLocalServer: false
+LocalServerPath: 
 User:
   Username: remote.test.0
   Password: 12345

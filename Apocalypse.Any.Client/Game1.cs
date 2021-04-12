@@ -27,7 +27,7 @@ namespace Apocalypse.Any.Client
         
         private void InitLocalGameServer()
         {
-            const string apocalypseNetCorePath = "/home/develop/src/apocalypse_netcore/";
+            string apocalypseNetCorePath = ClientConfiguration.LocalServerPath;
             string pathToLocalServerConfig = $"{apocalypseNetCorePath}localserver_config.yaml";
             string pathToSyncServerConfig = $"{apocalypseNetCorePath}localserver_to_sync.yaml";
             string localGameServer = $"{apocalypseNetCorePath}Apocalypse.Any.GameServer/bin/Debug/net5.0/Apocalypse.Any.GameServer.dll";

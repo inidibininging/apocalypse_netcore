@@ -127,6 +127,12 @@ namespace Apocalypse.Any.GameServer.GameInstance
             SyncClient.Connect();
         }
 
+
+        public void DelegatePlayerPositionToSyncServer(PlayerPositionUpdateData playerPositionData)
+        {
+            SyncClient.PlayerPositionUpdateData = playerPositionData;
+        }
+
         public void TryLoginToSyncServer(ILogger<byte> logger)
         {
             if (LoggedInToPressRelease) return;

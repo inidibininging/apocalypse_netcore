@@ -438,12 +438,27 @@ namespace Apocalypse.Any.GameServer.GameInstance
         }
 
 
+        private Player GetLocalPlayer() =>
+            GameSectorLayerServices
+                .Values
+                .Select(s => s
+                .SharedContext
+                .DataLayer
+                .Players
+                .FirstOrDefault(p => p.LoginToken == ClientOwner?.LoginToken))
+                .FirstOrDefault(p => p != null);
+        private PlayerPositionUpdateData GetLocalPlayerPositionUpdateData(Player p) =>
+            new () {
+                X = p.CurrentImage.Position.X,
+                Y = p.CurrentImage.Position.Y,
+                R = p.CurrentImage.Rotation.Rotation
+            };
+
         public void Update(GameTime gameTime)
         {
             var playerSectorKV = GameSectorLayerServices.FirstOrDefault(sectorKV => sectorKV.Value.SharedContext.DataLayer.Players.Any(p => p.LoginToken == ClientOwner.LoginToken));
 
             ClientOwner?.DelegateSyncServerDataToLocalServer(playerSectorKV.Value?.SharedContext , Logger);
-
 
             CreateGameTimeIfNotExists(gameTime);
             UpdateGameTime(CurrentGameTime);
@@ -453,6 +468,13 @@ namespace Apocalypse.Any.GameServer.GameInstance
             GameStateContext.ForwardIncomingMessagesToHandlers();
             ClientOwner?.UpdateSectorOfPlayerInsideSyncClient(playerSectorKV.Key);
             RunSectorOwnerMechanics();
+            
+            //totally random frequenced check for player position data
+            if(Source == UserDataRoleSource.LocalServer && 
+                gameTime.TotalGameTime.TotalSeconds % 8 == 0) {
+                var playerPositionData = GetLocalPlayerPositionUpdateData(GetLocalPlayer());
+                ClientOwner?.DelegatePlayerPositionToSyncServer(playerPositionData);
+            }
 
             var timeToWait = TimeSpan.FromSeconds(ServerConfiguration.ServerUpdateInSeconds);
 

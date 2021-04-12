@@ -53,7 +53,7 @@ namespace Apocalypse.Any.Infrastructure.Server.Worker
             get {
                 return playerPositionUpdateData;
             }
-            private set {
+            set {
                 playerPositionUpdateData = value;
                 NewPlayerPosition = true;
             }
@@ -359,6 +359,18 @@ namespace Apocalypse.Any.Infrastructure.Server.Worker
                         serverConnection); // HARD CODED connection. First one should be the one from the message sending the fake press
                     SectorChanged = false;
                     Logger.LogInformation($"Sent command {nextCommand}");
+                }
+
+                //sends the new player position to the sync server
+                if(NewPlayerPosition && PlayerPositionUpdateData != null) {
+                    var serverConnection = Client.Connections.FirstOrDefault();
+                    Output.SendToClient(NetworkCommandConstants.PlayerPositionSync, 
+                                PlayerPositionUpdateData, 
+                                NetDeliveryMethod.ReliableOrdered, 
+                                0, 
+                                serverConnection);
+                    NewPlayerPosition = false;
+                    Logger.LogInformation($"Sending player position");
                 }
             }
         }

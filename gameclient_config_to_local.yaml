@@ -11,6 +11,7 @@ ServerPeerName: asteroid
 SerializationAdapterType: Apocalypse.Any.Infrastructure.Common.Services.Serializer.MsgPackAdapter.MsgPackByteArraySerializerAdapter
 ServerPort: 8079
 WithLocalServer: true
+LocalServerPath: /home/develop/src/apocalypse_netcore/
 User:
   Username: sync.test.1
   Password: 12345
