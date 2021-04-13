@@ -45,7 +45,7 @@ namespace Apocalypse.Any.Infrastructure.Server.States
             // TODO: Forwarding someone players pos in the game can be exploited for now because there is no check for the senders data
             if(gameStateContext.GameStateRegistrar.WorldGameStateDataLayer.Source == UserDataRoleSource.SyncServer) {
                 var playersSector = gameStateContext.GameStateRegistrar.WorldGameStateDataLayer.GetSector(playerPositionUpdate.SectorKey);
-
+                gameStateContext.Logger.LogInformation($"POSITION DATA = SECTOR:{playerPositionUpdate.SectorKey}, LOGINTOKEN: {playerPositionUpdate.LoginToken} POS:{playerPositionUpdate.X},{playerPositionUpdate.Y},{playerPositionUpdate.R}");
                 // If the sector was not found, the sync server and local server have not the same data. Maybe a hack / mod ?       
                 if(playersSector == null)
                 {
@@ -81,6 +81,7 @@ namespace Apocalypse.Any.Infrastructure.Server.States
                 gameStateContext.Logger.LogInformation($"Error margin: X: {xErrorMargin} Y {yErrorMargin} R {rErrorMargin}");
 
                 if(xErrorMargin > errorMargin || yErrorMargin > errorMargin || rErrorMargin > errorMargin) {
+                    gameStateContext.Logger.LogWarning("OH OH ... error margin reached");
                     gameStateContext
                     .CurrentNetOutgoingMessageBusService
                     .SendToClient(NetworkCommandConstants.SendPressReleaseCommand,

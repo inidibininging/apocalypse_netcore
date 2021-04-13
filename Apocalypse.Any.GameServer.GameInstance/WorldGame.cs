@@ -447,8 +447,12 @@ namespace Apocalypse.Any.GameServer.GameInstance
                 .Players
                 .FirstOrDefault(p => p.LoginToken == ClientOwner?.LoginToken))
                 .FirstOrDefault(p => p != null);
-        private PlayerPositionUpdateData GetLocalPlayerPositionUpdateData(Player p) =>
-            new () {
+        private PlayerPositionUpdateData GetLocalPlayerPositionUpdateData(Player p, int sectorId) =>
+            p == null 
+            ? new () 
+            : new () {
+                LoginToken = p.LoginToken,
+                SectorKey = sectorId, 
                 X = p.CurrentImage.Position.X,
                 Y = p.CurrentImage.Position.Y,
                 R = p.CurrentImage.Rotation.Rotation
@@ -466,13 +470,16 @@ namespace Apocalypse.Any.GameServer.GameInstance
             ClientOwner?.TryLoginToSyncServer(Logger);
 
             GameStateContext.ForwardIncomingMessagesToHandlers();
+
             ClientOwner?.UpdateSectorOfPlayerInsideSyncClient(playerSectorKV.Key);
+            
             RunSectorOwnerMechanics();
             
             //totally random frequenced check for player position data
-            if(Source == UserDataRoleSource.LocalServer && 
-                gameTime.TotalGameTime.TotalSeconds % 8 == 0) {
-                var playerPositionData = GetLocalPlayerPositionUpdateData(GetLocalPlayer());
+            if(Source == UserDataRoleSource.LocalServer 
+                && TotalRealTime.TotalSeconds % 3 < 1) {
+                Logger.LogWarning("DelegatePlayerPositionToSyncServer");                  
+                var playerPositionData = GetLocalPlayerPositionUpdateData(GetLocalPlayer(), playerSectorKV.Key);
                 ClientOwner?.DelegatePlayerPositionToSyncServer(playerPositionData);
             }
 
@@ -708,7 +715,12 @@ namespace Apocalypse.Any.GameServer.GameInstance
             // Logger.LogInformation(message);
         }
 
-        public IGameSectorLayerService GetSector(int sectorIdentifier) => GameSectorLayerServices[sectorIdentifier].SharedContext;
+        public IGameSectorLayerService GetSector(int sectorIdentifier){
+          Logger.LogInformation($"Sectors:{string.Join(' ', GameSectorLayerServices.Keys.Select(k => k.ToString()))}");   
+          if(!GameSectorLayerServices.ContainsKey(sectorIdentifier))
+            return null;
+          return GameSectorLayerServices[sectorIdentifier].SharedContext;
+        }
         public UserDataRoleSource Source { get; }
     }
 }

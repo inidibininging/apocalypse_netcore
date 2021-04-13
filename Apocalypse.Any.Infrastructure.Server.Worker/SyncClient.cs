@@ -68,7 +68,7 @@ namespace Apocalypse.Any.Infrastructure.Server.Worker
 
         public string LoginToken { get; private set; }
 
-        private int lastSectorKey = -1;
+        private int lastSectorKey = 1;
         public int LastSectorKey
         {
             get

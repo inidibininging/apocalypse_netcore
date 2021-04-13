@@ -54,6 +54,9 @@ namespace Apocalypse.Any.GameServer.Services
             InternalGameStates.GetOrAdd((byte)ServerInternalGameStates.ReceiveWork, new ReceiveWorkNetworkGameState<TWorld>(new NetworkCommandDataConverterService(SerializationAdapter)));
             InternalGameStates.GetOrAdd((byte)ServerInternalGameStates.ReceiveGameStateDataLayerPart, new ReceiveGameStateDataLayerPartGameSate<TWorld>(new NetworkCommandDataConverterService(SerializationAdapter)));
             InternalGameStates.GetOrAdd((byte)ServerInternalGameStates.SendPressedRelease, new SendPressedReleaseCommandGameState<TWorld>(new NetworkCommandDataConverterService(SerializationAdapter), new IntToStringCommandTranslator()));
+            InternalGameStates.GetOrAdd((byte)ServerInternalGameStates.PlayerPositionSync, new PlayerPositionSynchronizerGameState<TWorld>(new NetworkCommandDataConverterService(SerializationAdapter)));
+
+ 
             InternalGameStates.GetOrAdd((byte)ServerInternalGameStates.UserRoleGateWay, new UserRoleGateWayNetworkGameState<TWorld>(RoleService, new NetworkCommandDataConverterService(SerializationAdapter)));
             InternalGameStates.GetOrAdd((byte)ServerInternalGameStates.Error, new ErrorNetworkGameState<TWorld>());
              
