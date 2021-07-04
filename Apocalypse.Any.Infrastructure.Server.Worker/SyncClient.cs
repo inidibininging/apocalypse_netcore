@@ -16,6 +16,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Apocalypse.Any.Domain.Server.Model;
 using Apocalypse.Any.Infrastructure.Server.Services.Network;
+using Echse.Net.Serialization;
 using Microsoft.Extensions.Logging;
 
 namespace Apocalypse.Any.Infrastructure.Server.Worker

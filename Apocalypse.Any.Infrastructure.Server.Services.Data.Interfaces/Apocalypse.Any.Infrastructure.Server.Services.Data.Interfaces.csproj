@@ -9,7 +9,8 @@
     <ProjectReference Include="..\Apocalypse.Any.Domain.Server.Model.Network\Apocalypse.Any.Domain.Server.Model.Network.csproj" />
     <ProjectReference Include="..\Apocalypse.Any.Infrastructure.Server.PubSub.Interfaces\Apocalypse.Any.Infrastructure.Server.PubSub.Interfaces.csproj" />
     <ProjectReference Include="..\Apocalypse.Any.Infrastructure.Server.Services.Mechanics.Interfaces\Apocalypse.Any.Infrastructure.Server.Services.Mechanics.Interfaces.csproj" />
-    <ProjectReference Include="..\States\States.Core\States.Core.csproj" />
+    <ProjectReference Include="..\echse_net\echse\Echse.Domain\Echse.Domain.csproj" />
+    <ProjectReference Include="..\echse_net\echse\states\States.Core\States.Core.csproj" />
   </ItemGroup>
 
   <ItemGroup>

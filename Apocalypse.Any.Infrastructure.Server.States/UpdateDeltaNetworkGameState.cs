@@ -14,6 +14,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Xml.Serialization;
+using Echse.Net.Serialization;
 
 namespace Apocalypse.Any.Infrastructure.Server.States
 {

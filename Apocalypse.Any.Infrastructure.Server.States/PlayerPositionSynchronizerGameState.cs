@@ -26,17 +26,21 @@ namespace Apocalypse.Any.Infrastructure.Server.States
             ConverterService = converterService;
         }
 
+        private bool GoBackIfNotsendPositionSync(INetworkStateContext<TWorld> gameStateContext, NetworkCommandConnection networkCommandConnectionToHandle){
+            if(networkCommandConnectionToHandle.CommandName != NetworkCommandConstants.PlayerPositionSync)                
+                return false;            
+            gameStateContext.Logger.LogError($"{nameof(PlayerPositionSynchronizerGameState<TWorld>)} Command name is not PlayerPositionSync. Given: {networkCommandConnectionToHandle.CommandName}. Going back to SendPressedRelease");
+            var back = gameStateContext.GameStateRegistrar.GetNetworkLayerState((byte)ServerInternalGameStates.SendPressedRelease);
+            gameStateContext.ChangeHandlerEasier(back, networkCommandConnectionToHandle);
+            return true;
+        }
         public void Handle(INetworkStateContext<TWorld> gameStateContext, NetworkCommandConnection networkCommandConnectionToHandle)
         {
             // This state should only handle the check of players position by its login token. 
             // This state routes back to sendpressrelease if the command name entered is not PlayerPositionSync
             // Otherwise it will cause an unexpected behaviour
-            if(networkCommandConnectionToHandle.CommandName != NetworkCommandConstants.PlayerPositionSync){
-                gameStateContext.Logger.LogError($"{nameof(PlayerPositionSynchronizerGameState<TWorld>)} Command name is not PlayerPositionSync. Given: {networkCommandConnectionToHandle.CommandName}. Going back to SendPressedRelease");
-                var back = gameStateContext.GameStateRegistrar.GetNetworkLayerState((byte)ServerInternalGameStates.SendPressedRelease);
-                gameStateContext.ChangeHandlerEasier(back, networkCommandConnectionToHandle);
+            if(GoBackIfNotsendPositionSync(gameStateContext, networkCommandConnectionToHandle))
                 return;
-            }
 
             var playerPositionUpdate = ConverterService.ConvertToObject(networkCommandConnectionToHandle) as PlayerPositionUpdateData;
 
@@ -94,6 +98,7 @@ namespace Apocalypse.Any.Infrastructure.Server.States
                 }
                 else {
                     // pass local client data from local server to sync server. Is this REALLY a good idea?
+                    gameStateContext.Logger.LogInformation($"No Error margin: X: {playerPositionUpdate.X} Y {playerPositionUpdate.Y} R {playerPositionUpdate.R}");
                     player.CurrentImage.Position.X = playerPositionUpdate.X;
                     player.CurrentImage.Position.Y = playerPositionUpdate.Y;
                     player.CurrentImage.Rotation.Rotation = playerPositionUpdate.R;
@@ -101,15 +106,12 @@ namespace Apocalypse.Any.Infrastructure.Server.States
                 return;
             }
 
-
             if(playerPositionUpdate == null) {
                 gameStateContext.Logger.LogError($"{nameof(PlayerPositionSynchronizerGameState<TWorld>)} Cannot convert players position. Given Command: {networkCommandConnectionToHandle.CommandName} CommandArgument: {networkCommandConnectionToHandle.CommandArgument}. Going back to SendPressedRelease");
                 var back = gameStateContext.GameStateRegistrar.GetNetworkLayerState((byte)ServerInternalGameStates.SendPressedRelease);
                 gameStateContext.ChangeHandlerEasier(back, networkCommandConnectionToHandle);
                 return;
             }
-
-
         }
     }
 }

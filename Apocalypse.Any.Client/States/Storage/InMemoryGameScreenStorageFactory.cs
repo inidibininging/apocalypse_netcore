@@ -26,6 +26,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Apocalypse.Any.Constants;
 using Apocalypse.Any.Domain.Common.Drawing.UI;
+using Echse.Net.Serialization;
 
 namespace Apocalypse.Any.Client.States.Storage
 {

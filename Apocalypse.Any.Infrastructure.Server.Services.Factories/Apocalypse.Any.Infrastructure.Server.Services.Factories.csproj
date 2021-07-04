@@ -16,6 +16,7 @@
     <ProjectReference Include="..\Apocalypse.Any.Infrastructure.Server.Services.Data.Interfaces\Apocalypse.Any.Infrastructure.Server.Services.Data.Interfaces.csproj" />
     <ProjectReference Include="..\Apocalypse.Any.Infrastructure.Server.Services.Mechanics.Interfaces\Apocalypse.Any.Infrastructure.Server.Services.Mechanics.Interfaces.csproj" />
     <ProjectReference Include="..\Apocalypse.Any.Infrastructure.Server.Services.Transformations\Apocalypse.Any.Infrastructure.Server.Services.Transformations.csproj" />
+    <ProjectReference Include="..\echse_net\Echse.Net.Serialization\Echse.Net.Serialization.csproj" />
   </ItemGroup>
 
   <ItemGroup>

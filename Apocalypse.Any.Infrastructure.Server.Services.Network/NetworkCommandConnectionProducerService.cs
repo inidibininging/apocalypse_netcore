@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Apocalypse.Any.Core.Input;
 using Apocalypse.Any.Domain.Common.Model.Network;
 using Apocalypse.Any.Infrastructure.Common.Services.Network;
@@ -13,12 +15,12 @@ namespace Apocalypse.Any.Infrastructure.Server.Services.Network
     {
         private Lazy<ConcurrentQueue<NetworkCommandConnection>> NetworkCommandConnectionQueue { get; set; } = new Lazy<ConcurrentQueue<NetworkCommandConnection>>(true);
         private IInputTranslator<NetIncomingMessage, NetworkCommandConnection> IncomingMessageToNetworkCommandConnectionTranslator { get; set; }
-        private NetIncomingMessageBusService<TNetPeer> NetIncomingMessageBusService { get; set; }
+        // private NetIncomingMessageBusService<TNetPeer> NetIncomingMessageBusService { get; set; }
         private bool KeepProducing { get; set; }
         private bool KeepNotifyingConsumers { get; set; }
 
         public NetworkCommandConnectionProducerService(
-            NetIncomingMessageBusService<TNetPeer> netIncomingMessageBusService,
+            // NetIncomingMessageBusService<TNetPeer> netIncomingMessageBusService,
             IInputTranslator<NetIncomingMessage, NetworkCommandConnection> incomingMessageToNetworkCommandConnectionTranslator
             )
         {
@@ -26,48 +28,59 @@ namespace Apocalypse.Any.Infrastructure.Server.Services.Network
                 throw new ArgumentNullException(nameof(incomingMessageToNetworkCommandConnectionTranslator));
             IncomingMessageToNetworkCommandConnectionTranslator = incomingMessageToNetworkCommandConnectionTranslator;
 
-            if (netIncomingMessageBusService == null)
-                throw new ArgumentNullException(nameof(netIncomingMessageBusService));
-            NetIncomingMessageBusService = netIncomingMessageBusService;
+            // if (netIncomingMessageBusService == null)
+            //     throw new ArgumentNullException(nameof(netIncomingMessageBusService));
+            // NetIncomingMessageBusService = netIncomingMessageBusService;
         }
 
-        public void StartProducing()
+        private void StartProducing()
         {
             if (KeepProducing)
                 return;
             KeepProducing = true;
-            Produce();
         }
 
-        public void StopProducing()
+        private void StopProducing()
         {
             KeepProducing = false;
         }
 
-        private void Produce()
+        public async void ProduceStepAsync(IEnumerable<NetIncomingMessage> messageChunk) 
         {
-            while (KeepProducing)
-            {
-                var messageChunk = NetIncomingMessageBusService.FetchMessageChunk();
-                if (messageChunk != null)
-                    continue;
-
-                messageChunk.ToList().ForEach(message =>
+            if(KeepProducing)
+                return;
+            StartProducing();
+            List<NetIncomingMessage> messageChunkCopy;
+            lock(messageChunk){
+                messageChunkCopy = messageChunk.ToList();
+            }            
+            if (messageChunk == null)
+                return;
+            
+            await Task.Run(() => {
+                messageChunkCopy.ForEach(message =>
                 {
                     var translatedMessage = IncomingMessageToNetworkCommandConnectionTranslator.Translate(message);
                     if (translatedMessage == null)
                         return;
                     NetworkCommandConnectionQueue.Value.Enqueue(translatedMessage);
                 });
-            }
+            });  
+            StopProducing();          
+        }
+        public void InjectMessageManually(NetIncomingMessage message){
+            var translatedMessage = IncomingMessageToNetworkCommandConnectionTranslator.Translate(message);
+            if (translatedMessage == null)
+                return;
+            NetworkCommandConnectionQueue.Value.Enqueue(translatedMessage);
         }
 
-        public void StartNotifyingConsumers()
+        public async void StartNotifyingConsumersAsync()
         {
             if (KeepNotifyingConsumers)
                 return;
             KeepNotifyingConsumers = true;
-            NotifyConsumers();
+            await Task.Run(() => NotifyConsumers());
         }
 
         public void StopNotifyingConsumers()

@@ -3,11 +3,13 @@ using Apocalypse.Any.Domain.Common.Model.Network;
 using Apocalypse.Any.Domain.Common.Network;
 using Apocalypse.Any.Infrastructure.Common.Services.Network;
 using Apocalypse.Any.Infrastructure.Server.Services.Data.Interfaces;
+using Apocalypse.Any.Infrastructure.Server.Services.Network;
 using Apocalypse.Any.Infrastructure.Server.States.Interfaces;
 using Lidgren.Network;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -48,15 +50,15 @@ namespace Apocalypse.Any.Infrastructure.Server.States
         }
 
         public ServerNetworkGameStateContext(
-            NetIncomingMessageBusService<NetServer> netIncomingMessageBusService,
+            // NetIncomingMessageBusService<NetServer> netIncomingMessageBusService,
             NetOutgoingMessageBusService<NetServer> netOutgoingMessageBusService,
             IInputTranslator<NetIncomingMessage, NetworkCommandConnection> networkCommandServerTranslator,
             IGameStateService<byte,TWorld> gameStateService,
             ILogger<byte> logger)
         {
-            CurrentNetIncomingMessageBusService = netIncomingMessageBusService ?? throw new ArgumentNullException(nameof(netIncomingMessageBusService));
+            // CurrentNetIncomingMessageBusService = netIncomingMessageBusService ?? throw new ArgumentNullException(nameof(netIncomingMessageBusService));
             CurrentNetOutgoingMessageBusService = netOutgoingMessageBusService ?? throw new ArgumentNullException(nameof(netOutgoingMessageBusService));
-            CurrentNetworkCommandServerTranslator = networkCommandServerTranslator ?? throw new ArgumentNullException(nameof(networkCommandServerTranslator));
+            CurrentNetworkCommandServerTranslator = networkCommandServerTranslator ?? throw new ArgumentNullException(nameof(networkCommandServerTranslator));            
             GameStateRegistrar = gameStateService ?? throw new ArgumentNullException(nameof(gameStateService));
             Logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
@@ -75,23 +77,18 @@ namespace Apocalypse.Any.Infrastructure.Server.States
             clientHandlers.TryAdd((byte)ServerInternalGameStates.UpdateDelta, GameStateRegistrar.GetNetworkLayerState((byte)ServerInternalGameStates.UpdateDelta));
         }
 
-        public void ForwardIncomingMessagesToHandlers()
-        {
-            CurrentNetIncomingMessageBusService
-            .FetchMessageChunk()
-            .ToList()
-            .ForEach(message =>
+        public void ForwardIncomingMessagesToHandlers(List<NetIncomingMessage> messageChunk)
+        {          
+            messageChunk?
+            .ForEach(message => 
             {
-                // Task.Factory.StartNew(() =>
-                // {
-                    //Important note: The server will try to establish a connection externally. If the connection doesnt work it depends on a fail net connection.
-                    //For example: I had huge problems connecting after recognizing that the client and server didnt connect cuz my wifi was broken. -.-
-                    if (message.MessageType == NetIncomingMessageType.Data)
-                    {
-                        var networkCommandConnection = CurrentNetworkCommandServerTranslator.Translate(message);
-                        this[networkCommandConnection.Connection.RemoteUniqueIdentifier].Handle(this, networkCommandConnection);
-                    }
-                // });
+                //Important note: The server will try to establish a connection externally. If the connection doesnt work it depends on a fail net connection.
+                //For example: I had huge problems connecting after recognizing that the client and server didnt connect cuz my wifi was broken. -.-
+                if (message.MessageType == NetIncomingMessageType.Data)
+                {
+                    var networkCommandConnection = CurrentNetworkCommandServerTranslator.Translate(message);
+                    this[networkCommandConnection.Connection.RemoteUniqueIdentifier].Handle(this, networkCommandConnection);
+                }
             });
         }
 
@@ -103,5 +100,6 @@ namespace Apocalypse.Any.Infrastructure.Server.States
             this[networkCommandConnection.Connection.RemoteUniqueIdentifier] = gameState;
         }
 
+        
     }
 }

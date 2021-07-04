@@ -399,12 +399,13 @@ namespace Apocalypse.Any.GameServer.States.Sector.Storage
                     // nameof(SectorCsvLoggerState)
                  }
             });
-
-            var getDelegation = new GetGameSectorNewDelegate(() => inMemoryStorage);
-            var setDelegation = new SetGameSectorNewDelegate(() => inMemoryStorage);
-            var newDelegation = new NewGameSectorNewDelegate(() => inMemoryStorage);
+            return new GenericStateMachine(inMemoryStorage, () => Guid.NewGuid().ToString());
             
-            return new GameSectorContext(getDelegation, setDelegation, newDelegation);
+            // var getDelegation = new GetGameSectorNewDelegate(() => inMemoryStorage);
+            // var setDelegation = new SetGameSectorNewDelegate(() => inMemoryStorage);
+            // var newDelegation = new NewGameSectorNewDelegate(() => inMemoryStorage);
+            //
+            // return new GameSectorContext(getDelegation, setDelegation, newDelegation);
         }
     }
 }

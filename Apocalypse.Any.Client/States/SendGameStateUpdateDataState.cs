@@ -11,6 +11,7 @@ using System;
 using System.CodeDom;
 using System.Collections.Generic;
 using System.Linq;
+using Echse.Net.Serialization;
 
 namespace Apocalypse.Any.Client.States
 {

@@ -1,5 +1,6 @@
 using System;
 using Apocalypse.Any.Infrastructure.Common.Services.Serializer.Interfaces;
+using Echse.Net.Serialization;
 using Lidgren.Network;
 
 namespace Apocalypse.Any.Infrastructure.Common.Services.Network

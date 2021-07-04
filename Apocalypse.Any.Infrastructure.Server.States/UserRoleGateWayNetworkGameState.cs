@@ -23,7 +23,7 @@ namespace Apocalypse.Any.Infrastructure.Server.States
             { UserDataRole.Unset, (byte)ServerInternalGameStates.Error },
             { UserDataRole.CanReceiveWork, (byte)ServerInternalGameStates.ReceiveWork },
             { UserDataRole.CanSendRemoteStateCommands, (byte)ServerInternalGameStates.CLIPassthrough },
-            { UserDataRole.CanSendRemoteMovementCommands, (byte)ServerInternalGameStates.SendPressedRelease },
+            { UserDataRole.CanSendRemoteMovementCommands, (byte)ServerInternalGameStates.SendPressedRelease },            
             { UserDataRole.CanViewWorldByLoginToken, (byte)ServerInternalGameStates.Update },
         };
 

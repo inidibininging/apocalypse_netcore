@@ -9,6 +9,7 @@ using Apocalypse.Any.Infrastructure.Server.States.Translators;
 using System;
 using System.Collections.Concurrent;
 using Apocalypse.Any.Core.Input.Translator;
+using Echse.Net.Serialization;
 
 namespace Apocalypse.Any.GameServer.Services
 {

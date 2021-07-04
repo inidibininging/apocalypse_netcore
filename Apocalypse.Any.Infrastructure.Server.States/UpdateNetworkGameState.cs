@@ -6,6 +6,7 @@ using Apocalypse.Any.Infrastructure.Server.Services.Data.Interfaces;
 using Apocalypse.Any.Infrastructure.Server.States.Interfaces;
 using Newtonsoft.Json;
 using System;
+using Echse.Net.Serialization;
 using Microsoft.Extensions.Logging;
 
 namespace Apocalypse.Any.Infrastructure.Server.States

@@ -8,6 +8,7 @@ using Apocalypse.Any.Infrastructure.Server.Services.Data.Interfaces;
 using Newtonsoft.Json;
 using System;
 using System.Linq;
+using Echse.Net.Serialization;
 
 namespace Apocalypse.Any.Infrastructure.Server.States.Translators
 {

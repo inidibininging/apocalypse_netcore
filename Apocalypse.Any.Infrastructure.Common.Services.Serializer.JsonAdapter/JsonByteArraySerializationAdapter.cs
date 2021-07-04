@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Echse.Net.Serialization;
 
 namespace Apocalypse.Any.Infrastructure.Common.Services.Serializer.JsonAdapter
 {

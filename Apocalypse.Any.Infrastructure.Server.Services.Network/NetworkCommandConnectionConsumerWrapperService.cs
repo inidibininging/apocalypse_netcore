@@ -15,7 +15,7 @@ namespace Apocalypse.Any.Infrastructure.Server.Services.Network
         }
 
         public void Dispose()
-        {
+        {            
             Observer = null;
         }
 

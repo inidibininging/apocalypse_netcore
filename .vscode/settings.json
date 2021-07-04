@@ -1,3 +1,6 @@
 {
-    "zenMode.hideLineNumbers": false
+    "zenMode.hideLineNumbers": false,
+    "editor.fontFamily": "'Jetbrains Mono Bold', 'Jetbrains Mono'', monospace, 'Jetbrains Mono''",
+    "editor.inlineHints.fontFamily": "'Jetbrains Mono', 'monospace', monospace, 'Droid Sans Fallback'",
+    "editor.fontSize": 18
 }

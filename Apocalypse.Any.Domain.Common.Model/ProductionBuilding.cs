@@ -6,6 +6,5 @@ namespace Apocalypse.Any.Domain.Common.Model
 {
     public class ProductionBuilding<TCurrency> : EconomicCharacterEntity<TCurrency>
     {
-        public TimeSpan ProductionTime { get; set; }
     }
 }

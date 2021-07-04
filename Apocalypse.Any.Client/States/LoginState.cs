@@ -7,6 +7,7 @@ using Newtonsoft.Json;
 using States.Core.Infrastructure.Services;
 using System;
 using System.Threading.Tasks;
+using Echse.Net.Serialization;
 
 namespace Apocalypse.Any.Client.States
 {

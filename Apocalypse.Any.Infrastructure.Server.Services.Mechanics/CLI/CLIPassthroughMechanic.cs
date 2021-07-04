@@ -1,13 +1,14 @@
 ﻿using Apocalypse.Any.Domain.Server.Model.Network;
-using Apocalypse.Any.Infrastructure.Server.Language;
 using Apocalypse.Any.Infrastructure.Server.Services.Data.Interfaces;
 using Apocalypse.Any.Infrastructure.Server.Services.Mechanics.Sector.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Apocalypse.Any.Core.Utilities;
 using Apocalypse.Any.Infrastructure.Server.Services.Data;
+using Echse.Domain;
+using Echse.Language;
+using States.Core.Infrastructure.Services;
 
 namespace Apocalypse.Any.Infrastructure.Server.Services.Mechanics.CLI
 {
@@ -65,12 +66,13 @@ namespace Apocalypse.Any.Infrastructure.Server.Services.Mechanics.CLI
             {
                 gameStateDataCommand.ForEach(cmd =>
                 {
-                    foreach (var gameSector in entity.GameSectorLayerServices.Values)
+                    foreach (IStateMachine<string, IEchseContext> gameSector in entity.GameSectorLayerServices.Values)
                     {
                         try{
                             gameSector.GetService.Get(cmd).Handle(gameSector);
                         }
                         catch(Exception ex){
+                            
                             CommandInterpreter.Context = gameSector;
                             CommandInterpreter.Run(cmd);
                             CommandInterpreter.Context = null;

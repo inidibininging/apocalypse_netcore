@@ -4,6 +4,7 @@ using Apocalypse.Any.Domain.Common.Model.Network;
 using Apocalypse.Any.Domain.Common.Network;
 using Apocalypse.Any.Infrastructure.Common.Services.Serializer.Interfaces;
 using Apocalypse.Any.Infrastructure.Server.Services.Data.Interfaces;
+using Echse.Net.Serialization;
 
 namespace Apocalypse.Any.Infrastructure.Server.Services.Network
 {

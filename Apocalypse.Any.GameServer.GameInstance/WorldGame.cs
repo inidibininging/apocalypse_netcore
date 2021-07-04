@@ -17,7 +17,6 @@ using Apocalypse.Any.Infrastructure.Common.Services.Network;
 using Apocalypse.Any.Infrastructure.Common.Services.Serializer.Interfaces;
 using Apocalypse.Any.Infrastructure.Common.Services.Serializer.YamlAdapter;
 using Apocalypse.Any.Infrastructure.Server.Adapters.Redis;
-using Apocalypse.Any.Infrastructure.Server.Language;
 using Apocalypse.Any.Infrastructure.Server.PubSub;
 using Apocalypse.Any.Infrastructure.Server.PubSub.Interfaces;
 using Apocalypse.Any.Infrastructure.Server.Services.Data.Interfaces;
@@ -44,6 +43,11 @@ using Apocalypse.Any.Infrastructure.Server.Worker;
 using Apocalypse.Any.Core.Input.Translator;
 using Apocalypse.Any.Infrastructure.Server.Services.Data;
 using Apocalypse.Any.Infrastructure.Server.Services.Network;
+using Echse.Domain;
+using Echse.Language;
+using Echse.Net.Serialization;
+using States.Core.Common;
+using States.Core.Common.Delegation;
 using CommandPressReleaseTranslator = Apocalypse.Any.Core.Input.CommandPressReleaseTranslator;
 
 namespace Apocalypse.Any.GameServer.GameInstance
@@ -86,6 +90,7 @@ namespace Apocalypse.Any.GameServer.GameInstance
         private NetIncomingMessageBusService<NetServer> ServerInput { get; set; }
         private NetOutgoingMessageBusService<NetServer> ServerOutput { get; set; }
 
+        private NetworkCommandConnectionProducerService<NetServer> Dispatcher { get; set; }
         private IUserAuthenticationService AuthenticationService { get; set; }
 
         public GameServerConfiguration ServerConfiguration { get; set; }
@@ -185,6 +190,7 @@ namespace Apocalypse.Any.GameServer.GameInstance
             LanguageScriptFileEvaluator languageScriptFileEvaluator = new LanguageScriptFileEvaluator(
                 ServerConfiguration.StartupScript, ServerConfiguration.StartupFunction, ServerConfiguration.RunOperation);
             Console.ForegroundColor = ConsoleColor.Yellow;
+            
             foreach (var sector in GameSectorLayerServices)
             {
                 languageScriptFileEvaluator.Evaluate(sector.Value);
@@ -203,7 +209,7 @@ namespace Apocalypse.Any.GameServer.GameInstance
             //translator
             var serverMessageTranslator = GetCommandTranslators();
             GameStateContext = new ServerNetworkGameStateContext<WorldGame>(
-                ServerInput,
+                // ServerInput,
                 ServerOutput,
                 serverMessageTranslator,
                 serverStateDataLayer,
@@ -397,6 +403,7 @@ namespace Apocalypse.Any.GameServer.GameInstance
             Server = new NetServer(serverPeerConfig);
             ServerInput = new NetIncomingMessageBusService<NetServer>(Server);
             ServerOutput = new NetOutgoingMessageBusService<NetServer>(Server, SerializationAdapter);
+            Dispatcher = new NetworkCommandConnectionProducerService<NetServer>(GetCommandTranslators());
             Server.Start();
             Logger.LogInformation(Server.ToString());
         }
@@ -469,15 +476,18 @@ namespace Apocalypse.Any.GameServer.GameInstance
 
             ClientOwner?.TryLoginToSyncServer(Logger);
 
-            GameStateContext.ForwardIncomingMessagesToHandlers();
+            var messageChunk = ServerInput.FetchMessageChunk();
+            GameStateContext.ForwardIncomingMessagesToHandlers(messageChunk);
+            Dispatcher.ProduceStepAsync(messageChunk);
 
             ClientOwner?.UpdateSectorOfPlayerInsideSyncClient(playerSectorKV.Key);
             
             RunSectorOwnerMechanics();
             
             //totally random frequenced check for player position data
-            if(Source == UserDataRoleSource.LocalServer 
-                && TotalRealTime.TotalSeconds % 3 < 1) {
+            if(Source == UserDataRoleSource.LocalServer)
+                //&& TotalRealTime.TotalSeconds % 3 < 1) 
+            {
                 Logger.LogWarning("DelegatePlayerPositionToSyncServer");                  
                 var playerPositionData = GetLocalPlayerPositionUpdateData(GetLocalPlayer(), playerSectorKV.Key);
                 ClientOwner?.DelegatePlayerPositionToSyncServer(playerPositionData);

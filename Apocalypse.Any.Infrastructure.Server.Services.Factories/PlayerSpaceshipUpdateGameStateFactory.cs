@@ -10,6 +10,7 @@ using Apocalypse.Any.Domain.Server.Sector.Model;
 using Apocalypse.Any.Infrastructure.Common.Services.Serializer.Interfaces;
 using Apocalypse.Any.Infrastructure.Server.Services.Data.Interfaces;
 using Apocalypse.Any.Infrastructure.Server.Services.Transformations;
+using Echse.Net.Serialization;
 using Microsoft.Xna.Framework;
 
 namespace Apocalypse.Any.Infrastructure.Server.Services.Factories

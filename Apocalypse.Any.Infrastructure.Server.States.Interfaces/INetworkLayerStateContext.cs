@@ -3,6 +3,7 @@ using Apocalypse.Any.Infrastructure.Common.Services.Network;
 using Apocalypse.Any.Infrastructure.Server.Services.Data.Interfaces;
 using Lidgren.Network;
 using Microsoft.Extensions.Logging;
+using System.Collections.Generic;
 
 namespace Apocalypse.Any.Infrastructure.Server.States.Interfaces
 {
@@ -24,7 +25,7 @@ namespace Apocalypse.Any.Infrastructure.Server.States.Interfaces
 
         ILogger<byte> Logger { get;  }
 
-        void ForwardIncomingMessagesToHandlers();
+        void ForwardIncomingMessagesToHandlers(List<NetIncomingMessage> messageChunk);
 
         void ChangeHandlerEasier(INetworkLayerState<TWorld> gameState, NetworkCommandConnection networkCommandConnection);
     }
