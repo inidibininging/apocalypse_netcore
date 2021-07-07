@@ -1,11 +1,11 @@
+using System;
 using Apocalypse.Any.Client.Screens;
 using States.Core.Infrastructure.Services;
-using System;
 
 namespace Apocalypse.Any.Client.States
 {
     /// <summary>
-    /// Reads console user input and passes it to the connection variables
+    ///     Reads console user input and passes it to the connection variables
     /// </summary>
     public class ReadServerDataFromConsoleState : IState<string, INetworkGameScreen>
     {
@@ -15,7 +15,7 @@ namespace Apocalypse.Any.Client.States
             machine.SharedContext.Configuration.ServerIp = Console.ReadLine();
 
             Console.WriteLine("Port:");
-            int port = 8080;
+            var port = 8080;
             int.TryParse(Console.ReadLine(), out port);
             machine.SharedContext.Configuration.ServerPort = port;
 

@@ -20,7 +20,9 @@ using Apocalypse.Any.Infrastructure.Server.Services.Factories;
 using Apocalypse.Any.Infrastructure.Server.Services.Mechanics;
 using Apocalypse.Any.Infrastructure.Server.Services.Mechanics.ProjectileMechanics;
 using Apocalypse.Any.Infrastructure.Server.States.Interfaces;
+using Echse.Net.Serialization;
 using States.Core.Common;
+using States.Core.Common.Delegation;
 using States.Core.Infrastructure.Services;
 using System;
 using System.Collections.Generic;
@@ -399,7 +401,7 @@ namespace Apocalypse.Any.GameServer.States.Sector.Storage
                     // nameof(SectorCsvLoggerState)
                  }
             });
-            return new GenericStateMachine(inMemoryStorage, () => Guid.NewGuid().ToString());
+            return new GenericStateMachine<string, IGameSectorLayerService>(inMemoryStorage, () => Guid.NewGuid().ToString());
             
             // var getDelegation = new GetGameSectorNewDelegate(() => inMemoryStorage);
             // var setDelegation = new SetGameSectorNewDelegate(() => inMemoryStorage);

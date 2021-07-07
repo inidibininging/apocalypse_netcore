@@ -1,6 +1,7 @@
 using System;
 using Apocalypse.Any.Domain.Common.Model;
-using Apocalypse.Any.Domain.Common.Model.Language;
+using Echse.Language;
+using Echse.Domain;
 using Apocalypse.Any.Domain.Common.Model.Network;
 using Apocalypse.Any.Domain.Server.Model.Interfaces;
 using Apocalypse.Any.GameServer.Domain;

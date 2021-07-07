@@ -13,7 +13,7 @@ namespace Apocalypse.Any.Client.States
                 machine.SharedContext.Configuration.ServerIp = "127.0.0.1";
             if (machine.SharedContext.Configuration.ServerPort == 0)
                 machine.SharedContext.Configuration.ServerPort = 8080;
-            machine.SharedContext.Configuration.User = new UserData()
+            machine.SharedContext.Configuration.User = new UserData
             {
                 Username = $"foo{Randomness.Instance.From(1, 3)}",
                 Password = "12345"

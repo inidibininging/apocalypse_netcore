@@ -193,7 +193,8 @@ namespace Apocalypse.Any.GameServer.GameInstance
             
             foreach (var sector in GameSectorLayerServices)
             {
-                languageScriptFileEvaluator.Evaluate(sector.Value);
+                var machineBridge = new EchseStateMachineBridge<IGameSectorLayerService>(sector.Value);
+                languageScriptFileEvaluator.Evaluate(machineBridge);
                 Logger.LogInformation($"LanguageScriptFileEvaluator. Evaluated {ServerConfiguration.StartupFunction} on {sector.Value}");
             }
         }

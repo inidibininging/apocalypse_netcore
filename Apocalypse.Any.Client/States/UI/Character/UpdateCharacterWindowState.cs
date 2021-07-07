@@ -1,33 +1,23 @@
+using System;
+using System.Linq;
 using Apocalypse.Any.Client.Screens;
+using Apocalypse.Any.Constants;
 using Apocalypse.Any.Core.FXBehaviour;
 using Apocalypse.Any.Core.Input.Translator;
 using Apocalypse.Any.Domain.Common.Network;
 using Microsoft.Xna.Framework;
 using States.Core.Infrastructure.Services;
-using System;
-using System.Linq;
-using Apocalypse.Any.Constants;
 
 namespace Apocalypse.Any.Client.States.UI.Character
 {
     public class UpdateCharacterWindowState : IState<string, INetworkGameScreen>
     {
-        public FadeToBehaviour FadeTo { get; set; }
-
         public UpdateCharacterWindowState(FadeToBehaviour fadeToBehaviour)
         {
             FadeTo = fadeToBehaviour ?? throw new ArgumentNullException(nameof(fadeToBehaviour));
         }
 
-        private ImageClient GetPlayerImage(IStateMachine<string, INetworkGameScreen> machine)
-        {
-            return machine.SharedContext.Images.Where(oldImg => oldImg.ServerData.Id == machine.SharedContext.PlayerImageId).FirstOrDefault();
-        }
-
-        private float StatInPercentage(int currentPercentage, int maxPercentage)
-        {
-            return (float)currentPercentage / (float)maxPercentage;
-        }
+        public FadeToBehaviour FadeTo { get; set; }
 
         public void Handle(IStateMachine<string, INetworkGameScreen> machine)
         {
@@ -43,32 +33,32 @@ namespace Apocalypse.Any.Client.States.UI.Character
                 return;
 
             if (machine.SharedContext.InputService.InputNow.ToList().Contains(DefaultKeys.CloseCharacter))
-            {
                 machine.SharedContext.CharacterWindow.IsVisible = false;
-            }
 
             if (machine.SharedContext.InputService.InputNow.ToList().Contains(DefaultKeys.OpenCharacter))
-            {
                 machine.SharedContext.CharacterWindow.IsVisible = true;
-            }
 
             if (machine.SharedContext.CharacterWindow.IsVisible)
             {
-                FadeTo.Update(machine.SharedContext.HealthImage.Alpha, 1, 0.1f);
-                FadeTo.Update(machine.SharedContext.SpeedImage.Alpha, 1, 0.1f);
-                FadeTo.Update(machine.SharedContext.StrenghImage.Alpha, 1, 0.1f);
-                FadeTo.Update(machine.SharedContext.DialogImage.Alpha, 1, 0.1f);
+                FadeTo.Update(machine.SharedContext.HealthImage.Alpha, 1);
+                FadeTo.Update(machine.SharedContext.SpeedImage.Alpha, 1);
+                FadeTo.Update(machine.SharedContext.StrenghImage.Alpha, 1);
+                FadeTo.Update(machine.SharedContext.DialogImage.Alpha, 1);
             }
             else
             {
-                FadeTo.Update(machine.SharedContext.HealthImage.Alpha, 0, 0.1f);
-                FadeTo.Update(machine.SharedContext.SpeedImage.Alpha, 0, 0.1f);
-                FadeTo.Update(machine.SharedContext.StrenghImage.Alpha, 0, 0.1f);
-                FadeTo.Update(machine.SharedContext.DialogImage.Alpha, 0, 0.1f);
+                FadeTo.Update(machine.SharedContext.HealthImage.Alpha, 0);
+                FadeTo.Update(machine.SharedContext.SpeedImage.Alpha, 0);
+                FadeTo.Update(machine.SharedContext.StrenghImage.Alpha, 0);
+                FadeTo.Update(machine.SharedContext.DialogImage.Alpha, 0);
             }
 
-            machine.SharedContext.CharacterWindow.Position.X = MathHelper.Lerp(machine.SharedContext.CharacterWindow.Position.X, machine.SharedContext.CursorImage.Position.X - 128, 0.1f);
-            machine.SharedContext.CharacterWindow.Position.Y = MathHelper.Lerp(machine.SharedContext.CharacterWindow.Position.Y, machine.SharedContext.CursorImage.Position.Y - 128, 0.1f);
+            machine.SharedContext.CharacterWindow.Position.X = MathHelper.Lerp(
+                machine.SharedContext.CharacterWindow.Position.X, machine.SharedContext.CursorImage.Position.X - 128,
+                0.1f);
+            machine.SharedContext.CharacterWindow.Position.Y = MathHelper.Lerp(
+                machine.SharedContext.CharacterWindow.Position.Y, machine.SharedContext.CursorImage.Position.Y - 128,
+                0.1f);
 
             var money = machine.SharedContext.LastMetadataBag?.MoneyCount.ToString();
             machine.SharedContext.MoneyCount = money;
@@ -114,14 +104,10 @@ namespace Apocalypse.Any.Client.States.UI.Character
             if (!string.IsNullOrWhiteSpace(machine.SharedContext.LastMetadataBag?.ServerEventName))
             {
                 if (machine.SharedContext.LastMetadataBag?.ServerEventName == "Dialog")
-                {
                     machine.SharedContext.DialogImage.SelectedFrame = (ImagePaths.HUDFrame, 8, 8);
-                }
                 if (machine.SharedContext.LastMetadataBag?.ServerEventName == "Enemies")
-                {
                     machine.SharedContext.DialogImage.SelectedFrame = (ImagePaths.HUDFrame, 7, 8);
-                }
-            }                
+            }
             else
             {
                 machine.SharedContext.DialogImage.SelectedFrame = (ImagePaths.HUDFrame, 0, 1);
@@ -201,6 +187,17 @@ namespace Apocalypse.Any.Client.States.UI.Character
 
             if (strengthPercentage <= 0.1f)
                 machine.SharedContext.StrenghImage.SelectedFrame = (ImagePaths.HUDFrame, 7, 4);
+        }
+
+        private ImageClient GetPlayerImage(IStateMachine<string, INetworkGameScreen> machine)
+        {
+            return machine.SharedContext.Images
+                .Where(oldImg => oldImg.ServerData.Id == machine.SharedContext.PlayerImageId).FirstOrDefault();
+        }
+
+        private float StatInPercentage(int currentPercentage, int maxPercentage)
+        {
+            return currentPercentage / (float) maxPercentage;
         }
     }
 }

@@ -1,52 +1,25 @@
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using Apocalypse.Any.Client.States;
 using Apocalypse.Any.Core;
 using Apocalypse.Any.Core.Drawing;
 using Apocalypse.Any.Domain.Common.Model.Network;
 using Apocalypse.Any.Domain.Common.Network;
-using Apocalypse.Any.Infrastructure.Common.Services.Serializer.Interfaces;
+using Echse.Net.Serialization;
 using Lidgren.Network;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
-using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using Echse.Net.Serialization;
 
 namespace Apocalypse.Any.Client.GameInstance
 {
     public class ClientWorldGame : IUpdateableLite, IVisualGameObject
     {
-        public NetClient Client { get; set; }
-
-        public ClientGameContext GameStateContext { get; set; }
-
-        public string ServerIp { get; set; }
-        public int ServerPort { get; set; }
-        public UserData User { get; set; }
-        public List<string> Messages { get; set; } = new List<string>();
-        public int LoginTries { get; set; } = 0;
-        public int SecondsToNextLoginTry { get; set; } = 1;
-        public IByteArraySerializationAdapter SerializationAdapter { get; }
-
         public ClientWorldGame(IByteArraySerializationAdapter serializationAdapter)
         {
-            SerializationAdapter = serializationAdapter ?? throw new ArgumentNullException(nameof(serializationAdapter));
-        }
-        private NetOutgoingMessage CreateMessage<T>(byte commandName, T instanceToSend)
-        {
-            var msg = Client.CreateMessage();
-            msg.Write(SerializationAdapter.SerializeObject
-                    (
-                        new NetworkCommand()
-                        {
-                            CommandName = commandName,
-                            CommandArgument = typeof(T).FullName,
-                            Data = SerializationAdapter.SerializeObject(instanceToSend)
-                        }
-                    ));
-            return msg;
+            SerializationAdapter =
+                serializationAdapter ?? throw new ArgumentNullException(nameof(serializationAdapter));
         }
 
         public ClientWorldGame(string ip, int port, UserData loginData)
@@ -54,6 +27,23 @@ namespace Apocalypse.Any.Client.GameInstance
             ServerIp = ip;
             ServerPort = port;
             User = loginData;
+        }
+
+        public NetClient Client { get; set; }
+
+        public ClientGameContext GameStateContext { get; set; }
+
+        public string ServerIp { get; set; }
+        public int ServerPort { get; set; }
+        public UserData User { get; set; }
+        public List<string> Messages { get; set; } = new();
+        public int LoginTries { get; set; }
+        public int SecondsToNextLoginTry { get; set; } = 1;
+        public IByteArraySerializationAdapter SerializationAdapter { get; }
+
+        public void Update(GameTime gameTime)
+        {
+            throw new NotImplementedException();
         }
 
         public void Draw(SpriteBatch spriteBatch)
@@ -74,7 +64,7 @@ namespace Apocalypse.Any.Client.GameInstance
 
             Client.Start();
             Client.Connect(ServerIp, ServerPort);
-            NetSendResult res = NetSendResult.FailedNotConnected;
+            var res = NetSendResult.FailedNotConnected;
 
             Messages.Add("Start status");
             //send login
@@ -82,11 +72,11 @@ namespace Apocalypse.Any.Client.GameInstance
             {
                 Messages.Add($"Sending.Try Nr:{LoginTries}");
                 res = Client.SendMessage
-                    (
-                        CreateMessage(NetworkCommandConstants.LoginCommand,
-                                        serializedUsr),
-                                        NetDeliveryMethod.ReliableOrdered
-                    );
+                (
+                    CreateMessage(NetworkCommandConstants.LoginCommand,
+                        serializedUsr),
+                    NetDeliveryMethod.ReliableOrdered
+                );
 
                 Messages.Add($"Wait {SecondsToNextLoginTry} seconds...");
                 Task.Delay(TimeSpan.FromSeconds(SecondsToNextLoginTry)).Wait();
@@ -104,9 +94,19 @@ namespace Apocalypse.Any.Client.GameInstance
             throw new NotImplementedException();
         }
 
-        public void Update(GameTime gameTime)
+        private NetOutgoingMessage CreateMessage<T>(byte commandName, T instanceToSend)
         {
-            throw new NotImplementedException();
+            var msg = Client.CreateMessage();
+            msg.Write(SerializationAdapter.SerializeObject
+            (
+                new NetworkCommand
+                {
+                    CommandName = commandName,
+                    CommandArgument = typeof(T).FullName,
+                    Data = SerializationAdapter.SerializeObject(instanceToSend)
+                }
+            ));
+            return msg;
         }
     }
 }

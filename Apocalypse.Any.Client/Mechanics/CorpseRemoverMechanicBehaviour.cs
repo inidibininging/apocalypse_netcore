@@ -1,9 +1,9 @@
-﻿using Apocalypse.Any.Core;
+﻿using System.Linq;
+using Apocalypse.Any.Core;
 using Apocalypse.Any.Core.Behaviour;
 using Apocalypse.Any.Core.LivingObject;
 using Apocalypse.Any.Core.Screen;
 using Microsoft.Xna.Framework;
-using System.Linq;
 
 namespace Apocalypse.Any.Client.Mechanics
 {
@@ -16,12 +16,12 @@ namespace Apocalypse.Any.Client.Mechanics
         public override void Update(GameTime gameTime)
         {
             (from lo in Target.AllOfType<ILivingObject>()
-             where lo.GetLivingState() == LivingObjectState.Dead
-             select lo).ToList().ForEach(obj =>
-             {
-                 obj.UnloadContent();
-                 Target.Remove(obj);
-             });
+                where lo.GetLivingState() == LivingObjectState.Dead
+                select lo).ToList().ForEach(obj =>
+            {
+                obj.UnloadContent();
+                Target.Remove(obj);
+            });
             base.Update(gameTime);
         }
     }

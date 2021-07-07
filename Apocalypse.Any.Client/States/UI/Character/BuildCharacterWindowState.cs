@@ -1,13 +1,12 @@
-using System.Collections.Generic;
+using System.Linq;
 using Apocalypse.Any.Client.Screens;
+using Apocalypse.Any.Constants;
 using Apocalypse.Any.Core.Behaviour;
 using Apocalypse.Any.Core.Text;
 using Apocalypse.Any.Domain.Common.Drawing.UI;
 using Apocalypse.Any.Domain.Common.DrawingOrder;
 using Microsoft.Xna.Framework;
 using States.Core.Infrastructure.Services;
-using System.Linq;
-using Apocalypse.Any.Constants;
 
 namespace Apocalypse.Any.Client.States.UI.Character
 {
@@ -15,7 +14,8 @@ namespace Apocalypse.Any.Client.States.UI.Character
     {
         public void Handle(IStateMachine<string, INetworkGameScreen> machine)
         {
-            foreach (var kv in machine.SharedContext.GameSheet.Frames.Where(frameKV => frameKV.Key.frame == ImagePaths.HUDFrame))
+            foreach (var kv in machine.SharedContext.GameSheet.Frames.Where(frameKV =>
+                frameKV.Key.frame == ImagePaths.HUDFrame))
             {
                 machine.SharedContext.HealthImage.SpriteSheetRectangle.Add(kv.Key, kv.Value);
                 machine.SharedContext.SpeedImage.SpriteSheetRectangle.Add(kv.Key, kv.Value);
@@ -47,14 +47,20 @@ namespace Apocalypse.Any.Client.States.UI.Character
             machine.SharedContext.DialogImage.Color = Color.BlueViolet;
             machine.SharedContext.MoneyCount.Color = Color.Yellow;
 
-            machine.SharedContext.HealthImage.LayerDepth = machine.SharedContext.CharacterWindow.LayerDepth + DrawingPlainOrder.PlainStep;
-            machine.SharedContext.SpeedImage.LayerDepth = machine.SharedContext.CharacterWindow.LayerDepth + DrawingPlainOrder.PlainStep;
-            machine.SharedContext.StrenghImage.LayerDepth = machine.SharedContext.CharacterWindow.LayerDepth + DrawingPlainOrder.PlainStep;
-            machine.SharedContext.DialogImage.LayerDepth = machine.SharedContext.CharacterWindow.LayerDepth + DrawingPlainOrder.PlainStep;
-            machine.SharedContext.MoneyCount.LayerDepth = machine.SharedContext.CharacterWindow.LayerDepth + DrawingPlainOrder.PlainStep;
-            
+            machine.SharedContext.HealthImage.LayerDepth =
+                machine.SharedContext.CharacterWindow.LayerDepth + DrawingPlainOrder.PlainStep;
+            machine.SharedContext.SpeedImage.LayerDepth =
+                machine.SharedContext.CharacterWindow.LayerDepth + DrawingPlainOrder.PlainStep;
+            machine.SharedContext.StrenghImage.LayerDepth =
+                machine.SharedContext.CharacterWindow.LayerDepth + DrawingPlainOrder.PlainStep;
+            machine.SharedContext.DialogImage.LayerDepth =
+                machine.SharedContext.CharacterWindow.LayerDepth + DrawingPlainOrder.PlainStep;
+            machine.SharedContext.MoneyCount.LayerDepth =
+                machine.SharedContext.CharacterWindow.LayerDepth + DrawingPlainOrder.PlainStep;
+
             //TODO: can cause maybe a bug.
-            machine.SharedContext.Add("testButton",new ApocalypseButton<string>(machine.SharedContext.GameSheet.Frames));
+            machine.SharedContext.Add("testButton",
+                new ApocalypseButton<string>(machine.SharedContext.GameSheet.Frames));
         }
     }
 }

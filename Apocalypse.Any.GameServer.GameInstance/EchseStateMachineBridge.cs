@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Echse.Domain;
+using States.Core.Common.Delegation;
 using States.Core.Infrastructure.Services;
 
 namespace Apocalypse.Any.GameServer.GameInstance
@@ -11,22 +12,28 @@ namespace Apocalypse.Any.GameServer.GameInstance
     {
         private readonly IStateMachine<string, TContext> _stateMachine;
 
-        EchseStateMachineBridge(IStateMachine<string, TContext> stateMachine)
+        public EchseStateMachineBridge(IStateMachine<string, TContext> stateMachine)
         {
             _stateMachine = stateMachine;
         }
 
         public void Run(string key)
         {
-            throw new NotImplementedException();
+            _stateMachine.Run(key);
         }
 
         public IStateGetService<string, IEchseContext> GetService => _stateMachine.GetService as IStateGetService<string, IEchseContext>;
-        public IStateSetService<string, IEchseContext> SetService => _stateMachine.SetService;
-        public IStateNewService<string, IEchseContext> NewService => _stateMachine.NewService;
-        
-        public string SharedIdentifier { get; }
-        public IEchseContext SharedContext { get; set; }
-        public IReadOnlyDictionary<string, TimeSpan> TimeLog { get; }
+        public IStateSetService<string, IEchseContext> SetService => _stateMachine.SetService as IStateSetService<string, IEchseContext>;
+        public IStateNewService<string, IEchseContext> NewService => _stateMachine.NewService as IStateNewService<string, IEchseContext>;
+
+        public string SharedIdentifier => _stateMachine.SharedIdentifier;
+
+        public IEchseContext SharedContext
+        {
+            get => _stateMachine.SharedContext;
+            set => throw new NotSupportedException();
+        }
+
+        public IReadOnlyDictionary<string, TimeSpan> TimeLog => _stateMachine.TimeLog;
     }
 }

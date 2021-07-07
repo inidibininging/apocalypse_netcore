@@ -1,6 +1,6 @@
 {
     "zenMode.hideLineNumbers": false,
-    "editor.fontFamily": "'Jetbrains Mono Bold', 'Jetbrains Mono'', monospace, 'Jetbrains Mono''",
+    "editor.fontFamily": "'PxPlus IBM VGA 9x16'",
     "editor.inlineHints.fontFamily": "'Jetbrains Mono', 'monospace', monospace, 'Droid Sans Fallback'",
-    "editor.fontSize": 18
+    "editor.fontSize": 24
 }

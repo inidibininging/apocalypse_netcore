@@ -1,6 +1,6 @@
+using System;
 using Apocalypse.Any.Client.Screens;
 using States.Core.Infrastructure.Services;
-using System;
 
 namespace Apocalypse.Any.Client.States
 {

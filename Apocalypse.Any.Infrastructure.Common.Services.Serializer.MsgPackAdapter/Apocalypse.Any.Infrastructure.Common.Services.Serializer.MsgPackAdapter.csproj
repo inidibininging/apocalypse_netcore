@@ -10,7 +10,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Apocalypse.Any.Infrastructure.Common.Services.Serializer.Interfaces\Apocalypse.Any.Infrastructure.Common.Services.Serializer.Interfaces.csproj" />
+    <ProjectReference Include="..\echse_net\Echse.Net.Serialization\Echse.Net.Serialization.csproj" />
   </ItemGroup>
 
 </Project>
