@@ -15,6 +15,7 @@ namespace Apocalypse.Any.Client.States.Services
         }
 
         private Func<Dictionary<string, IState<string, INetworkGameScreen>>> GetDelegate { get; }
+        public IEnumerable<string> States => GetDelegate().Keys;
 
         public IState<string, INetworkGameScreen> Get(string identifier)
         {
@@ -24,6 +25,14 @@ namespace Apocalypse.Any.Client.States.Services
         public bool HasState(string identifier)
         {
             return GetDelegate().ContainsKey(identifier);
+        }
+
+        public IStateGetService<string, INetworkGameScreen> As<TSharedContextConverted>() where TSharedContextConverted : INetworkGameScreen
+        {
+            return new GetNetworkGameScreenDelegate
+            (
+                GetDelegate
+            );
         }
     }
 }
