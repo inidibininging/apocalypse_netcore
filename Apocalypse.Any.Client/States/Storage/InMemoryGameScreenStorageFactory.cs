@@ -4,7 +4,7 @@ using System.Linq;
 using Apocalypse.Any.Client.GameObjects.Scene;
 using Apocalypse.Any.Client.Screens;
 using Apocalypse.Any.Client.Services;
-using Apocalypse.Any.Client.States.Services;
+
 using Apocalypse.Any.Client.States.UI.Character;
 using Apocalypse.Any.Client.States.UI.Chat;
 using Apocalypse.Any.Client.States.UI.Dialog;
@@ -24,6 +24,7 @@ using Echse.Net.Serialization;
 using Lidgren.Network;
 using Microsoft.Xna.Framework;
 using States.Core.Common;
+using States.Core.Common.Delegation;
 using States.Core.Infrastructure.Services;
 
 namespace Apocalypse.Any.Client.States.Storage
@@ -260,9 +261,11 @@ namespace Apocalypse.Any.Client.States.Storage
             inMemoryStorage.Add(ClientGameScreenBook.UpdateCharacterWindow,
                 new UpdateCharacterWindowState(new FadeToBehaviour()));
 
-            var getDelegation = new GetNetworkGameScreenDelegate(() => inMemoryStorage);
-            var setDelegation = new SetNetworkGameScreenDelegate(() => inMemoryStorage);
-            var newDelegation = new NewNetworkGameScreenDelegate(() => inMemoryStorage);
+            var getDelegation = new DictionaryGetStateDelegationService<string, INetworkGameScreen>(() => inMemoryStorage);
+            var setDelegation = new DictionarySetStateDelegationService<string, INetworkGameScreen>(() => inMemoryStorage, 
+            (identifier, newState) => inMemoryStorage[identifier] = newState);
+            var newDelegation = new DictionaryNewStateDelegationService<string, INetworkGameScreen>(() => inMemoryStorage, () => Guid.NewGuid().ToString(), 
+            (identifier, newState) => inMemoryStorage[identifier] = newState);
             return new ClientGameContext(getDelegation, setDelegation, newDelegation);
         }
     }
