@@ -5,6 +5,7 @@ using Apocalypse.Any.Core.Input.Translator;
 using Apocalypse.Any.Core.Services;
 using Microsoft.Xna.Framework.Input;
 using States.Core.Infrastructure.Services;
+using Echse.Net.Domain;
 
 namespace Apocalypse.Any.Client.States
 {

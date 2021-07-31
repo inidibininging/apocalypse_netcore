@@ -24,6 +24,7 @@
     <ProjectReference Include="..\Apocalypse.Any.Collections\Apocalypse.Any.Core.Collections.csproj" />
     <ProjectReference Include="..\Apocalypse.Any.Constants\Apocalypse.Any.Constants.csproj" />
     <ProjectReference Include="..\Apocalypse.Any.Domain.Common.DrawingOrder\Apocalypse.Any.Domain.Common.DrawingOrder.csproj" />
+    <ProjectReference Include="..\echse_net\Echse.Net.Domain\Echse.Net.Domain.csproj" />
   </ItemGroup>
 
 </Project>

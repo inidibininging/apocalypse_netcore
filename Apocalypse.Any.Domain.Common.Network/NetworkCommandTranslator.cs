@@ -5,6 +5,7 @@ using Apocalypse.Any.Infrastructure.Common.Services.Serializer.Interfaces;
 using Newtonsoft.Json;
 using System;
 using Echse.Net.Serialization;
+using Echse.Net.Domain;
 
 namespace Apocalypse.Any.Domain.Common.Network
 {

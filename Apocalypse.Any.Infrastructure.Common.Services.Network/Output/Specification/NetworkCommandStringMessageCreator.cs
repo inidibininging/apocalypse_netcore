@@ -2,6 +2,7 @@
 using Apocalypse.Any.Domain.Common.Model.Network;
 using Apocalypse.Any.Infrastructure.Common.Services.Network.Interfaces;
 using Apocalypse.Any.Infrastructure.Common.Services.Serializer.Interfaces;
+using Echse.Net.Domain;
 using Lidgren.Network;
 using Microsoft.Xna.Framework;
 using System;

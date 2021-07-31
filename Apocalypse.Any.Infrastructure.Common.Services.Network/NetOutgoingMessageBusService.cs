@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Security;
 using Echse.Net.Serialization;
+using Echse.Net.Domain;
 
 namespace Apocalypse.Any.Infrastructure.Common.Services.Network
 {

@@ -5,6 +5,7 @@ using System;
 using System.Linq;
 using System.Collections.Generic;
 using System.Text;
+using Echse.Net.Domain;
 
 namespace Apocalypse.Any.Infrastructure.Common.Services.Network
 {

@@ -1,5 +1,6 @@
 ﻿using Apocalypse.Any.Core.Input;
 using Apocalypse.Any.Core.Input.Translator;
+using Echse.Net.Domain;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using System;

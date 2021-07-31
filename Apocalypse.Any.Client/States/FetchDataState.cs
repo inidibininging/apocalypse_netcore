@@ -6,6 +6,7 @@ using Apocalypse.Any.Domain.Common.Network;
 using Apocalypse.Any.Infrastructure.Common.Services.Data.Interfaces;
 using Apocalypse.Any.Infrastructure.Common.Services.Network.Interfaces;
 using Echse.Net.Serialization;
+using Echse.Net.Domain;
 using Lidgren.Network;
 using States.Core.Infrastructure.Services;
 

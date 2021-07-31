@@ -88,7 +88,12 @@ namespace Apocalypse.Any.Infrastructure.Server.Services.Data
         public UserDataWithLoginToken GetByLoginTokenHack(string loginToken)
         {
             var request = GetClient(nameof(GetByLoginTokenHack), new LoginTokenHolder() { LoginToken =  loginToken } , Method.Post);
+            
             request.Wait();
+            if(request.IsFaulted)
+            {
+                Console.WriteLine("Something bad happend while GetByLoginTokenHack");
+            }
             return _serializerAdapter.DeserializeObject<UserDataWithLoginToken>(request.Result);
         }
         

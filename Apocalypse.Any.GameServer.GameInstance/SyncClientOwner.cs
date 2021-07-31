@@ -12,6 +12,7 @@ using Apocalypse.Any.Domain.Server.Sector.Model;
 using Apocalypse.Any.GameServer.Services;
 using Apocalypse.Any.GameServer.States.Sector;
 using Apocalypse.Any.GameServer.States.Sector.Storage;
+using Echse.Net.Domain;
 using Apocalypse.Any.Infrastructure.Common.Services.Network;
 using Apocalypse.Any.Infrastructure.Common.Services.Serializer.Interfaces;
 using Apocalypse.Any.Infrastructure.Common.Services.Serializer.YamlAdapter;

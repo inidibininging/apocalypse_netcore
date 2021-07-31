@@ -6,6 +6,7 @@ using Apocalypse.Any.Domain.Server.Model.Interfaces;
 using Apocalypse.Any.Infrastructure.Common.Services.Network;
 using Apocalypse.Any.Infrastructure.Common.Services.Serializer.Interfaces;
 using Lidgren.Network;
+using Echse.Net.Domain;
 using System;
 using System.Collections.Generic;
 using System.IO;

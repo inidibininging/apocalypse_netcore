@@ -1,4 +1,5 @@
-﻿using Lidgren.Network;
+﻿using Echse.Net.Domain;
+using Lidgren.Network;
 
 namespace Apocalypse.Any.Domain.Common.Model.Network
 {

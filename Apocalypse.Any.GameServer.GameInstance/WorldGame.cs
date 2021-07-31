@@ -44,6 +44,7 @@ using Apocalypse.Any.Core.Input.Translator;
 using Apocalypse.Any.Infrastructure.Server.Services.Data;
 using Apocalypse.Any.Infrastructure.Server.Services.Network;
 using Echse.Domain;
+using Echse.Net.Domain;
 using Echse.Language;
 using Echse.Net.Serialization;
 using States.Core.Common;
@@ -509,8 +510,8 @@ namespace Apocalypse.Any.GameServer.GameInstance
                                  sector.SharedContext.DataLayer.Players.Any()))
             {
                 sector.SharedContext.CurrentGameTime = CurrentGameTime;
-                Task.Factory.StartNew(() =>
-                {
+                // Task.Factory.StartNew(() =>
+                // {
                     sector
                         .SharedContext
                         .EventDispatcher
@@ -519,7 +520,7 @@ namespace Apocalypse.Any.GameServer.GameInstance
                         .GetService
                         .Get(ServerConfiguration.RunOperation)
                         .Handle(sector);
-                });
+                // });
             }
         }
 

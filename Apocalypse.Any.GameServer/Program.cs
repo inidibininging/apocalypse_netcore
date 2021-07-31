@@ -4,8 +4,6 @@ using Apocalypse.Any.GameServer.GameInstance;
 using Apocalypse.Any.Infrastructure.Common.Services.Serializer.JsonAdapter;
 using Apocalypse.Any.Infrastructure.Common.Services.Serializer.MsgPackAdapter;
 using Apocalypse.Any.Infrastructure.Common.Services.Serializer.YamlAdapter;
-using Apocalypse.Any.Infrastructure.Server.States.Interfaces;
-using Newtonsoft.Json;
 using System;
 using System.IO;
 

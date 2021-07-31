@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Apocalypse.Any.Core.Input.Translator;
+using Echse.Net.Domain;
 
 namespace Apocalypse.Any.Core.Input
 {

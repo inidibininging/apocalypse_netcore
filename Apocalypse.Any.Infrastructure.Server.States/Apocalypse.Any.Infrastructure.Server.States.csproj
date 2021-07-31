@@ -12,6 +12,7 @@
     <ProjectReference Include="..\Apocalypse.Any.Infrastructure.Server.Services.Data\Apocalypse.Any.Infrastructure.Server.Services.Data.csproj" />
     <ProjectReference Include="..\Apocalypse.Any.Infrastructure.Server.States.Interfaces\Apocalypse.Any.Infrastructure.Server.States.Interfaces.csproj" />
     <ProjectReference Include="..\Apocalypse.Any.Infrastructure.Server.Services.Network\Apocalypse.Any.Infrastructure.Server.Services.Network.csproj" />
+    <ProjectReference Include="..\echse_net\Echse.Net.Domain\Echse.Net.Domain.csproj" />
   </ItemGroup>
 
   <ItemGroup>

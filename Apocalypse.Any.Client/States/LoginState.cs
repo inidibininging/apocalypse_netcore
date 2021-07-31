@@ -5,6 +5,7 @@ using Apocalypse.Any.Domain.Common.Model.Network;
 using Apocalypse.Any.Domain.Common.Network;
 using Echse.Net.Serialization;
 using Lidgren.Network;
+using Echse.Net.Domain;
 using States.Core.Infrastructure.Services;
 
 namespace Apocalypse.Any.Client.States

@@ -1,4 +1,5 @@
 using Apocalypse.Any.Core.Model;
+using Echse.Net.Domain;
 
 namespace Apocalypse.Any.Domain.Common.Model.Network
 {

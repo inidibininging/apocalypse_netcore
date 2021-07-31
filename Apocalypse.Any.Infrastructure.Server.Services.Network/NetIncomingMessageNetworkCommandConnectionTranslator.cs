@@ -2,6 +2,7 @@
 using Apocalypse.Any.Core.Input;
 using Apocalypse.Any.Domain.Common.Model.Network;
 using Apocalypse.Any.Domain.Common.Network;
+using Echse.Net.Domain;
 using Lidgren.Network; //using Apocalypse.Any.Domain.Server.Model.Network;
 
 namespace Apocalypse.Any.Infrastructure.Server.Services.Network
@@ -22,24 +23,38 @@ namespace Apocalypse.Any.Infrastructure.Server.Services.Network
         {
             if (input == null)
                 return null;
-            
-            var messageAsBytes = input.ReadBytes(input.LengthBytes);
-            if (messageAsBytes == null || messageAsBytes?.Length == 0)
+            if (input.MessageType != NetIncomingMessageType.Data)
             {
-                //TODO: return a network command connection as error
+                throw new ArgumentException($"Message received cannot be converted. The message type is not data: {input.MessageType}");
+            }
+
+            try
+            {
+                var messageAsBytes = input.ReadBytes(input.LengthBytes);
+
+                if (messageAsBytes == null || messageAsBytes?.Length == 0)
+                {
+                    //TODO: return a network command connection as error
+                    return null;
+                }
+                NetworkCommand networkCommand = IncomingMessageTranslator.Translate(messageAsBytes);
+                NetworkCommandConnection networkCommandConnection = new NetworkCommandConnection();
+
+                //Conversion to network command on server
+                networkCommandConnection.Connection = input.SenderConnection;
+                networkCommandConnection.CommandArgument = networkCommand.CommandArgument;
+                networkCommandConnection.CommandName = networkCommand.CommandName;
+                networkCommandConnection.Data = networkCommand.Data;
+
+                return networkCommandConnection;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message?.ToString());
                 return null;
             }
 
-            NetworkCommand networkCommand = IncomingMessageTranslator.Translate(messageAsBytes);
-            NetworkCommandConnection networkCommandConnection = new NetworkCommandConnection();
 
-            //Conversion to network command on server
-            networkCommandConnection.Connection = input.SenderConnection;
-            networkCommandConnection.CommandArgument = networkCommand.CommandArgument;
-            networkCommandConnection.CommandName = networkCommand.CommandName;
-            networkCommandConnection.Data = networkCommand.Data;
-
-            return networkCommandConnection;
         }
     }
 }

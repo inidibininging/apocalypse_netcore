@@ -7,6 +7,7 @@ using Apocalypse.Any.Core.Input;
 using Apocalypse.Any.Domain.Common.Model.Network;
 using Apocalypse.Any.Infrastructure.Common.Services.Network;
 using Lidgren.Network;
+using Echse.Net.Domain;
 
 namespace Apocalypse.Any.Infrastructure.Server.Services.Network
 {
@@ -59,7 +60,9 @@ namespace Apocalypse.Any.Infrastructure.Server.Services.Network
             
             await Task.Run(() => {
                 messageChunkCopy.ForEach(message =>
-                {
+                {              
+                    if (message.MessageType != NetIncomingMessageType.Data)
+                        return;
                     var translatedMessage = IncomingMessageToNetworkCommandConnectionTranslator.Translate(message);
                     if (translatedMessage == null)
                         return;

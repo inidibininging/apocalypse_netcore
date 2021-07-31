@@ -1,4 +1,5 @@
 ﻿using System;
+using Echse.Net.Domain;
 
 namespace Apocalypse.Any.Domain.Common.Model.Network
 {

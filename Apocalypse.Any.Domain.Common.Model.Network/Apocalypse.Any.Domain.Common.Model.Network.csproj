@@ -11,6 +11,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Apocalypse.Any.Core\Apocalypse.Any.Core.csproj" />
+    <ProjectReference Include="..\echse_net\Echse.Net.Domain\Echse.Net.Domain.csproj" />
   </ItemGroup>
 
 </Project>

@@ -7,6 +7,7 @@ using Apocalypse.Any.Core.Drawing;
 using Apocalypse.Any.Domain.Common.Model.Network;
 using Apocalypse.Any.Domain.Common.Network;
 using Echse.Net.Serialization;
+using Echse.Net.Domain;
 using Lidgren.Network;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;

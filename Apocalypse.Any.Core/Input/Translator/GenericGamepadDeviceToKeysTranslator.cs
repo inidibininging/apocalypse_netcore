@@ -1,6 +1,7 @@
 ﻿using System;
 using Microsoft.Xna.Framework.Input;
 using System.Collections.Generic;
+using Echse.Net.Domain;
 
 namespace Apocalypse.Any.Core.Input.Translator
 {

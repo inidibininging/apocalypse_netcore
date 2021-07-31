@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework.Input;
+﻿using Echse.Net.Domain;
+using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
 
