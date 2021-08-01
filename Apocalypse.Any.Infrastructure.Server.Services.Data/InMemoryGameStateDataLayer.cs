@@ -1,14 +1,19 @@
-﻿using Apocalypse.Any.Domain.Common.Model;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using Apocalypse.Any.Domain.Common.Model;
 using Apocalypse.Any.Domain.Common.Model.Network;
 using Apocalypse.Any.Domain.Common.Network;
 using Apocalypse.Any.Domain.Server.Model.Interfaces;
+using Apocalypse.Any.Domain.Server.Model.Network;
 using Apocalypse.Any.Infrastructure.Server.Services.Data.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 
-namespace Apocalypse.Any.Infrastructure.Common.Services.Network.Interfaces.Data
+namespace Apocalypse.Any.Infrastructure.Server.Services.Data
 {
+    /// <summary>
+    /// In memory IO Data Layer for accessing game states of client. 
+    /// This should be seen as the "rendering" of game state data
+    /// </summary>
     public class InMemoryGameStateDataLayer :
         IWorldGameStateDataIOLayer
     {
@@ -44,6 +49,7 @@ namespace Apocalypse.Any.Infrastructure.Common.Services.Network.Interfaces.Data
 
         public GameStateData RegisterGameStateData(string loginToken)
         {
+            Console.WriteLine($"{nameof(RegisterGameStateData)} in {nameof(InMemoryGameStateDataLayer)}");
             if (string.IsNullOrWhiteSpace(loginToken))
                 throw new NoLoginTokenException();
 
@@ -58,7 +64,7 @@ namespace Apocalypse.Any.Infrastructure.Common.Services.Network.Interfaces.Data
                 var player = PlayerSpaceshipFactory.Create(loginToken);
                 var gameState = GameStateFactory.Create(player);
                 DataCache.Add(gameState);
-                Console.WriteLine("added cache");
+                Console.WriteLine($"{gameState.Id} added player. {player.DisplayName}");
                 return gameState;
             }
         }
@@ -70,7 +76,7 @@ namespace Apocalypse.Any.Infrastructure.Common.Services.Network.Interfaces.Data
             {
                 if (cache.LoginToken != updateData.LoginToken)
                     return false;
-                cache.Commands = updateData.Commands ?? new List<string>();
+                cache.Commands = updateData.Commands ?? Array.Empty<string>().ToList();
                 if(updateData.Screen != null)
                     cache.Screen = updateData.Screen;
                 return true;
@@ -84,13 +90,16 @@ namespace Apocalypse.Any.Infrastructure.Common.Services.Network.Interfaces.Data
                 if (cache.LoginToken != gameStateData.LoginToken)
                     return false;
 
+
                 cache.Camera = gameStateData.Camera;
                 cache.Images = gameStateData.Images;
                 cache.Metadata = gameStateData.Metadata;                
                 cache.Screen = gameStateData.Screen;
-                cache.Sounds = gameStateData.Sounds;
+                // cache.Sounds = gameStateData.Sounds;
                 return true;
             });
         }
+
+        public UserDataRoleSource Source { get; }
     }
 }

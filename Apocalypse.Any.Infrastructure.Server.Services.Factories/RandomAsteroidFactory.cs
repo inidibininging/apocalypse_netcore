@@ -7,6 +7,7 @@ using Apocalypse.Any.Domain.Server.Model.Interfaces;
 using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
+using Apocalypse.Any.Constants;
 
 namespace Apocalypse.Any.Infrastructure.Server.Services.Factories
 {
@@ -15,27 +16,22 @@ namespace Apocalypse.Any.Infrastructure.Server.Services.Factories
         private string Path { get; set; } = "Image/gamesheetExtended";
         private string IdPrefix { get; set; } = "asteroid";
 
-        public override bool CanUse<TParam>(TParam instance)
-        {
-            return CanUseByTType<TParam, IGameSectorBoundaries>();
-        }
+        public override bool CanUse<TParam>(TParam instance) => CanUseByTType<TParam, IGameSectorBoundaries>();
 
-        public override List<Type> GetValidParameterTypes()
-        {
-            return new List<Type>() { typeof(IGameSectorBoundaries) };
-        }
+        public override List<Type> GetValidParameterTypes() => new List<Type>() { typeof(IGameSectorBoundaries) };
 
+        private static (int frame, int x, int y) GetRandomAsteroidFrame() => (ImagePaths.AsteroidFrame, Randomness.Instance.From(0, 7), Randomness.Instance.From(4, 6));
         protected override ImageData UseConverter<TParam>(TParam parameter)
         {
-            var sectorBoundaries = parameter as IGameSectorBoundaries;
+            var sectorBoundaries = parameter as IGameSectorBoundaries ?? throw new ArgumentNullException(nameof(parameter));
             var x = Randomness.Instance.From(sectorBoundaries.MinSectorX, sectorBoundaries.MaxSectorX);
             var y = Randomness.Instance.From(sectorBoundaries.MinSectorY, sectorBoundaries.MaxSectorY);
             return new ImageData()
             {
                 Alpha = new AlphaBehaviour() { Alpha = 1.00f },
-                SelectedFrame = $"{IdPrefix}_{Randomness.Instance.From(0, 7)}_{(Randomness.Instance.From(4, 6))}",
+                SelectedFrame = GetRandomAsteroidFrame(),
                 Color = Color.White,
-                Scale = new Vector2((float)(Randomness.Instance.From(0, 200) / 100)),
+                Scale = new Vector2(Randomness.Instance.From(0, 200) / 100f),
                 Position = new MovementBehaviour()
                 {
                     X = x,

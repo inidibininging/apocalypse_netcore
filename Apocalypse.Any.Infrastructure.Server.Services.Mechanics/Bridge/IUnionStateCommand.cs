@@ -1,7 +1,7 @@
 using Apocalypse.Any.Core;
 using States.Core.Infrastructure.Services;
 
-namespace Apocalypse.Any.Infrastructure.Common.Services.Network.Interfaces.Mechanics.Bridge
+namespace Apocalypse.Any.Infrastructure.Server.Services.Mechanics.Bridge
 {
     /// <summary>
     /// Implements the state and command pattern

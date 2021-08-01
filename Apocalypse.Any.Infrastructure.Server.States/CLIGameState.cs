@@ -3,6 +3,7 @@ using Apocalypse.Any.Domain.Common.Model.Network;
 using Apocalypse.Any.Domain.Server.Model.Network;
 using Apocalypse.Any.Infrastructure.Server.Services.Data.Interfaces;
 using Apocalypse.Any.Infrastructure.Server.States.Interfaces;
+using Echse.Net.Domain;
 using System;
 using System.Collections.Concurrent;
 
@@ -33,28 +34,31 @@ namespace Apocalypse.Any.Infrastructure.Server.States
                 userData = CurrentNetworkCommandToFullUserDataTranslator.Translate(networkCommandConnectionToHandle);
 
                 //check permissions
-                if (!userData.Roles.HasFlag(UserDataRole.CanSendRemoteStateCommands))
+                if (userData.Roles == null || !userData.Roles[UserDataRoleSource.SyncServer].HasFlag(UserDataRole.CanSendRemoteStateCommands))
                 {
-                    gameStateContext.ChangeHandlerEasier(gameStateContext.GameStateRegistrar.GetNeworkLayerState((byte)ServerInternalGameStates.Error), networkCommandConnectionToHandle);
+                    gameStateContext.ChangeHandlerEasier(gameStateContext.GameStateRegistrar.GetNetworkLayerState((byte)ServerInternalGameStates.Error), networkCommandConnectionToHandle);
                     return;
                 }
                 if (!CachedAuthorizedUsers.TryAdd(networkCommandConnectionToHandle.ConnectionId, userData))
                 {
                     Console.ForegroundColor = ConsoleColor.Red;
                     Console.WriteLine("Whoops! Could not add user to cached authorized users");
-                    gameStateContext.ChangeHandlerEasier(gameStateContext.GameStateRegistrar.GetNeworkLayerState((byte)ServerInternalGameStates.Error), networkCommandConnectionToHandle);
+                    gameStateContext.ChangeHandlerEasier(gameStateContext.GameStateRegistrar.GetNetworkLayerState((byte)ServerInternalGameStates.Error), networkCommandConnectionToHandle);
                     return;
                 }
+
                 //say to client ready for rsc, waiting for signal
                 gameStateContext.CurrentNetOutgoingMessageBusService.SendToClient(
                     CLINetworkCommandConstants.WaitForSignalCommand,
                     gameStateContext.GameStateRegistrar.WorldGameStateDataLayer.GetGameStateByLoginToken(userData?.LoginToken),
+                    Lidgren.Network.NetDeliveryMethod.ReliableOrdered,
+                    0,
                     networkCommandConnectionToHandle.Connection);
             }
             else
             {
                 //this is only triggered if the user has been registered as a CLI user
-                gameStateContext.GameStateRegistrar.GetNeworkLayerState((byte)ServerInternalGameStates.CLIPassthrough).Handle(gameStateContext, networkCommandConnectionToHandle);
+                gameStateContext.GameStateRegistrar.GetNetworkLayerState((byte)ServerInternalGameStates.CLIPassthrough).Handle(gameStateContext, networkCommandConnectionToHandle);
             }
         }
 

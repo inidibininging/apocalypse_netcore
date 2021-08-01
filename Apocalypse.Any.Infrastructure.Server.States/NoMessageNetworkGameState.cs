@@ -1,6 +1,7 @@
 using Apocalypse.Any.Domain.Common.Model.Network;
 using Apocalypse.Any.Infrastructure.Server.Services.Data.Interfaces;
 using Apocalypse.Any.Infrastructure.Server.States.Interfaces;
+using Echse.Net.Domain;
 
 namespace Apocalypse.Any.Infrastructure.Server.States
 {
@@ -11,7 +12,7 @@ namespace Apocalypse.Any.Infrastructure.Server.States
         {
             if (networkCommandConnection == null)
                 return;
-            gameStatecontext.ChangeHandlerEasier(gameStatecontext.GameStateRegistrar.GetNeworkLayerState((byte)ServerInternalGameStates.Login), networkCommandConnection); //where to?
+            gameStatecontext.ChangeHandlerEasier(gameStatecontext.GameStateRegistrar.GetNetworkLayerState((byte)ServerInternalGameStates.Login), networkCommandConnection); //where to?
             gameStatecontext[networkCommandConnection.ConnectionId].Handle(gameStatecontext, networkCommandConnection);
         }
     }

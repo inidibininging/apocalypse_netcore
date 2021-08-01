@@ -1,19 +1,20 @@
-﻿using Apocalypse.Any.Core.Input;
+﻿using System;
+using Apocalypse.Any.Core.Input;
 using Apocalypse.Any.Domain.Common.Model.Network;
 using Apocalypse.Any.Domain.Common.Network;
 using Apocalypse.Any.Infrastructure.Common.Services.Serializer.Interfaces;
 using Apocalypse.Any.Infrastructure.Server.Services.Data.Interfaces;
-using Newtonsoft.Json;
-using System;
+using Echse.Net.Serialization;
+using Echse.Net.Domain;
 
-namespace Apocalypse.Any.Core.Network.Server.Services
+namespace Apocalypse.Any.Infrastructure.Server.Services.Network
 {
     public class NetworkCommandServerToLoginTokenTranslator : IInputTranslator<NetworkCommandConnection, string>
     {
         private IUserRegistrationService UserRegistration { get; set; }
-        public ISerializationAdapter SerializationAdapter { get; }
+        public IByteArraySerializationAdapter SerializationAdapter { get; }
 
-        public NetworkCommandServerToLoginTokenTranslator(IUserRegistrationService userRegistrationDataLayer, ISerializationAdapter serializationAdapter)
+        public NetworkCommandServerToLoginTokenTranslator(IUserRegistrationService userRegistrationDataLayer, IByteArraySerializationAdapter serializationAdapter)
         {
             if (userRegistrationDataLayer == null)
                 throw new ArgumentNullException(nameof(userRegistrationDataLayer));

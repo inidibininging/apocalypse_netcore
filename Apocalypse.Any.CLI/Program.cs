@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Text;
 using System.Threading.Tasks;
+using Apocalypse.Any.Infrastructure.Common.Services.Serializer.MsgPackAdapter;
 
 namespace Apocalypse.Any.CLI
 {
@@ -25,7 +26,7 @@ namespace Apocalypse.Any.CLI
             var serverPort = System.Console.ReadLine();
 
             //TODO:Load the cli server connector serializer needed for this. For now it shall be yaml
-            var connector = new CLIServerConnector(new YamlSerializerAdapter()) { ServerIp = string.IsNullOrWhiteSpace(serverIp) ? "127.0.0.1" : serverIp, ServerPort = 8080 };
+            var connector = new CLIServerConnector(new MsgPackByteArraySerializerAdapter()) { ServerIp = string.IsNullOrWhiteSpace(serverIp) ? "127.0.0.1" : serverIp, ServerPort = 8080 };
             connector.User = new UserData() { Username = "admin", Password = "12345" };
             connector.Initialize();
             System.Console.WriteLine("Connected");

@@ -1,1 +1,1 @@
-dotnet Apocalypse.Any.Language.CLI/bin/Debug/netcoreapp2.1/Apocalypse.Any.Language.CLI.dll
+dotnet Apocalypse.Any.Language.CLI/bin/Debug/net5.0/Apocalypse.Any.Language.CLI.dll

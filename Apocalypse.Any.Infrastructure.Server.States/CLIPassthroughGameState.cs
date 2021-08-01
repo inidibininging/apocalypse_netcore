@@ -2,6 +2,7 @@
 using Apocalypse.Any.Domain.Server.Model.Network;
 using Apocalypse.Any.Infrastructure.Server.Services.Data.Interfaces;
 using Apocalypse.Any.Infrastructure.Server.States.Interfaces;
+using Echse.Net.Domain;
 
 namespace Apocalypse.Any.Infrastructure.Server.States
 {
@@ -17,7 +18,7 @@ namespace Apocalypse.Any.Infrastructure.Server.States
                 networkCommandConnectionToHandle.CommandArgument = typeof(GameStateUpdateData).FullName;
                 gameStateContext
                     .GameStateRegistrar
-                    .GetNeworkLayerState((byte)ServerInternalGameStates.Update)
+                    .GetNetworkLayerState((byte)ServerInternalGameStates.Update)
                     .Handle(gameStateContext, networkCommandConnectionToHandle);
             }
         }

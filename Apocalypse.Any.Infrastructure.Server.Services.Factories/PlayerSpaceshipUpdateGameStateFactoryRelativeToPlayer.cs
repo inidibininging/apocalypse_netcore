@@ -1,15 +1,10 @@
-﻿using Apocalypse.Any.Domain.Common.Model;
+﻿using System;
+using System.Collections.Generic;
 using Apocalypse.Any.Domain.Common.Model.Network;
 using Apocalypse.Any.Domain.Server.Model;
-using Apocalypse.Any.Domain.Server.Sector.Model;
-using Apocalypse.Any.Infrastructure.Server.Services.Data.Interfaces;
 using Microsoft.Xna.Framework;
-using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 
-namespace Apocalypse.Any.Infrastructure.Server.Services.Transformations
+namespace Apocalypse.Any.Infrastructure.Server.Services.Factories
 {
     public class PlayerSpaceshipUpdateGameStateFactoryRelativeToPlayer : CheckWithReflectionFactoryBase<GameStateData>
     {

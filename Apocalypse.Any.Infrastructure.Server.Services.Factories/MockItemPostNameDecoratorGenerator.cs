@@ -1,10 +1,10 @@
-using Apocalypse.Any.Core.Utilities;
-using Apocalypse.Any.Domain.Common.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Apocalypse.Any.Core.Utilities;
+using Apocalypse.Any.Domain.Common.Model;
 
-namespace Apocalypse.Any.Infrastructure.Common.Services.Network.Interfaces.Factories
+namespace Apocalypse.Any.Infrastructure.Server.Services.Factories
 {
     /// <summary>
     /// Generates the item name, based on the stats

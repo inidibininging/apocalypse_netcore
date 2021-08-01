@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -19,23 +20,31 @@ namespace Apocalypse.Any.Core.Utilities
             return LoadType(typeName, referenced, true);
         }
 
-        public static Type GetApocalypseTypes(this string apocType)
+
+        private static ConcurrentBag<Type> CachedApocalypseTypes = new ConcurrentBag<Type>();
+        public static Type GetApocalypseTypes(this string apocType, string directory)
         {
+            var foundCachedType = CachedApocalypseTypes.FirstOrDefault(t => t.FullName == apocType);
+
+            if (foundCachedType != null)
+                return foundCachedType;
+            
             string baseNameSpace = "Apocalypse.Any.*.dll";
-            foreach (var file in Directory.EnumerateFiles(Directory.GetCurrentDirectory(), baseNameSpace, SearchOption.TopDirectoryOnly))
+            Console.WriteLine($"Looking in {directory}");
+            foreach (var file in Directory.EnumerateFiles(directory, baseNameSpace, SearchOption.TopDirectoryOnly))
             {
                 try
                 {
-                    Console.WriteLine(file);
-                    var leAssembly = AssemblyLoadContext.Default.LoadFromAssemblyPath(file);
-                    var leSerializerType = leAssembly.GetTypes().Where(t => t.FullName == apocType);
-                    var leType = leSerializerType.FirstOrDefault();
-                    if (leType != null)
-                        return leType;
+                    var loadedAssembly = AssemblyLoadContext.Default.LoadFromAssemblyPath(file);
+                    var foundLoadedType = loadedAssembly.GetTypes().FirstOrDefault(t => t.FullName == apocType);
+                    if (foundLoadedType != null)
+                    {
+                        CachedApocalypseTypes.Add(foundLoadedType);
+                        return foundLoadedType;
+                    }
                 }
                 catch (Exception ex)
                 {
-
                     Console.WriteLine(ex);
                 }
             }
@@ -51,25 +60,52 @@ namespace Apocalypse.Any.Core.Utilities
         /// <returns></returns>
         public static Type[] LoadType(this string typeName, bool referenced, bool gac)
         {
+            if (string.IsNullOrEmpty(typeName))
+                return new Type[]{};
+
+            if (typeName.StartsWith("System."))
+                return new Type[] {Type.GetType(typeName)};
+            
             //check for problematic work
-            if (string.IsNullOrEmpty(typeName) || !referenced && !gac)
-                return new Type[] { };
+            if (!referenced && !gac)
+            {
+                var directoryPathOfExecution = Directory.GetCurrentDirectory();
+                var directoryPathOfDll = Assembly.GetExecutingAssembly().CodeBase;
+
+                
+                if (directoryPathOfDll.StartsWith("file:"))
+                    directoryPathOfDll = Path.GetDirectoryName(string.Join("",directoryPathOfDll.Skip("file:".Length)));
+                
+                //lets assume the file is a local file
+                if (directoryPathOfDll.StartsWith("\\\\"))
+                    directoryPathOfDll = string.Join("",directoryPathOfDll.Skip("\\\\".Length));
+
+                var directoryPathOfExecutionType = typeName.GetApocalypseTypes(directoryPathOfExecution);
+                if (directoryPathOfExecutionType != null)
+                    return new[] { directoryPathOfExecutionType };
+
+                var directoryPathOfDllType = typeName.GetApocalypseTypes(directoryPathOfDll);
+                if (directoryPathOfDllType != null)
+                    return new[] { directoryPathOfDllType };
+
+                return null;
+            }
 
             Assembly currentAssembly = Assembly.GetCallingAssembly();
-
+            
             List<string> assemblyFullnames = new List<string>();
             List<Type> types = new List<Type>();
 
             if (referenced)
             {            //Check refrenced assemblies
-                foreach (AssemblyName assemblyName in currentAssembly.GetReferencedAssemblies())
+                foreach (AssemblyName assemblyName in currentAssembly.GetReferencedAssemblies().Where(a => !a.Name.StartsWith("System.")))
                 {
-                    //Console.WriteLine("loading " + assemblyName.FullName);
+                    
                     //Load method resolve refrenced loaded assembly
                     Assembly assembly = Assembly.Load(assemblyName.FullName);
 
                     var type = assembly.GetType(typeName, false, true);
-
+                    
                     if (type != null && !assemblyFullnames.Contains(assembly.FullName))
                     {
                         types.Add(type);

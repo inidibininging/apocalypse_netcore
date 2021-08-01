@@ -21,9 +21,9 @@ namespace Apocalypse.Any.Domain.Common.Model.RPG
 
             props.ToList().ForEach(p =>
             {
-                Console.WriteLine($"generating randomness for {p.Name}");
+                // Console.WriteLine($"generating randomness for {p.Name}");
                 var randomValue = Randomness.Instance.From(characterSheet.GetMinAttributeValue(), characterSheet.GetMaxAttributeValue());
-                Console.WriteLine($"randomValue {randomValue}");
+                // Console.WriteLine($"randomValue {randomValue}");
                 p.SetValue(characterSheet, randomValue);
             });
             return characterSheet;

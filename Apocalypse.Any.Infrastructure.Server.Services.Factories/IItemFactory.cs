@@ -1,7 +1,7 @@
 using Apocalypse.Any.Domain.Common.Model;
 using Apocalypse.Any.Domain.Server.Model.Interfaces;
 
-namespace Apocalypse.Any.Infrastructure.Common.Services.Network.Interfaces.Factories
+namespace Apocalypse.Any.Infrastructure.Server.Services.Factories
 {
     public interface IItemFactory
     {

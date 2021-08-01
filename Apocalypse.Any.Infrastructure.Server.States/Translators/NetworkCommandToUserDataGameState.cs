@@ -4,18 +4,20 @@ using Apocalypse.Any.Domain.Common.Network;
 using Apocalypse.Any.Infrastructure.Common.Services.Network.Interfaces;
 using Apocalypse.Any.Infrastructure.Common.Services.Serializer.Interfaces;
 using Apocalypse.Any.Infrastructure.Server.Services.Data.Interfaces;
+using Echse.Net.Domain;
 using Newtonsoft.Json;
 using System;
 using System.Linq;
+using Echse.Net.Serialization;
 
 namespace Apocalypse.Any.Infrastructure.Server.States.Translators
 {
     public class NetworkCommandToUserDataGameState : INetworkCommandConnectionToGameStateTranslator
     {
         private IUserLoginService LoginService { get; }
-        public ISerializationAdapter SerializationAdapter { get; }
+        public IByteArraySerializationAdapter SerializationAdapter { get; }
 
-        public NetworkCommandToUserDataGameState(IUserLoginService loginService, ISerializationAdapter serializationAdapter)
+        public NetworkCommandToUserDataGameState(IUserLoginService loginService, IByteArraySerializationAdapter serializationAdapter)
         {
             LoginService = loginService ?? throw new ArgumentNullException(nameof(loginService));
             SerializationAdapter = serializationAdapter ?? throw new ArgumentNullException(nameof(serializationAdapter));
@@ -27,15 +29,18 @@ namespace Apocalypse.Any.Infrastructure.Server.States.Translators
                 return false;
             if (networkCommandConnection.CommandName != NetworkCommandConstants.LoginCommand)
                 return false;
-            if (string.IsNullOrWhiteSpace(networkCommandConnection.Data))
+            if (networkCommandConnection.Data.Length == 0)
+            {
+                Console.WriteLine("Warning. Data is 0");
                 return false;
+            }
             return true;
         }
 
         public GameStateData Translate(NetworkCommandConnection input)
         {
             if (!HasValidGameStateData(input))
-                throw new ArgumentException($"{nameof(input)} has no valid networkcommandconnection");
+                throw new ArgumentException($"{nameof(input)} has no valid network command connection");
 
             Console.WriteLine("casting to type...");
             var types = input.CommandArgument.LoadType(true, false);

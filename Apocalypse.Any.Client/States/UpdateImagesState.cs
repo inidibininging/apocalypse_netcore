@@ -1,3 +1,4 @@
+using System;
 using Apocalypse.Any.Client.GameObjects.Scene;
 using Apocalypse.Any.Client.Screens;
 using Apocalypse.Any.Core.Behaviour;
@@ -10,6 +11,7 @@ using Microsoft.Xna.Framework;
 using States.Core.Infrastructure.Services;
 using System.Collections.Generic;
 using System.Linq;
+using Apocalypse.Any.Constants;
 
 namespace Apocalypse.Any.Client.States
 {
@@ -21,9 +23,7 @@ namespace Apocalypse.Any.Client.States
         public void Handle(IStateMachine<string, INetworkGameScreen> machine)
         {
             machine.SharedContext.Messages.Add(nameof(UpdateImagesState));
-            if (machine.SharedContext.CurrentGameStateData == null)
-                return;
-            if (machine.SharedContext.CurrentGameStateData.Images == null)
+            if (machine.SharedContext.CurrentGameStateData?.Images == null)
                 return;
             if (machine.SharedContext.Images == null)
                 return;
@@ -32,15 +32,18 @@ namespace Apocalypse.Any.Client.States
             var newImgs = new List<ImageData>();
             foreach (var newImg in machine.SharedContext.CurrentGameStateData.Images.ToList())
             {
-                
                 var foundOldImg = machine.SharedContext.Images.Find(oldImg => oldImg.ServerData.Id == newImg.Id);
                 if (foundOldImg == default(ImageClient))
                 {
                     //no registered img in old
+                    if (newImg.SelectedFrame.frame == ImagePaths.ProjectileFrame)
+                    {
+                        
+                    }
                     var newImageClient = new ImageClient(newImg, machine.SharedContext.GameSheet.Frames);
                     newImageClient.LoadContent(ScreenService.Instance.Content);
                     machine.SharedContext.Images.Add(newImageClient);
-                    if (newImageClient.SelectedFrame != null && newImageClient.SelectedFrame.Contains("projectile"))
+                    if (newImageClient.SelectedFrame.frame != ImagePaths.UndefinedFrame && newImageClient.SelectedFrame.frame == ImagePaths.ProjectileFrame)
                         ScreenService.Instance.Sounds.Play($"SynthLaser0{Randomness.Instance.From(0, 3)}");
                 }
                 else
@@ -53,9 +56,9 @@ namespace Apocalypse.Any.Client.States
 
             foreach (var img in imagesToDispose)
             {
-                if (img.SelectedFrame.Contains("enemy"))
+                if (img.SelectedFrame.frame == ImagePaths.EnemyFrame)
                 {
-                    img.SelectedFrame = "explosion_0_8";
+                    img.SelectedFrame = (ImagePaths.ExplosionFrame, 0, 8);
                     img.Scale = new Vector2(img.Scale.X + 1, img.Scale.Y + 1);
                     img.Color = Color.Yellow;
 
@@ -74,94 +77,113 @@ namespace Apocalypse.Any.Client.States
 
                     ScreenService.Instance.Sounds.Play($"SynthRainbow0{Randomness.Instance.From(0, 3)}");
                 }
+                
+                if (img.SelectedFrame.frame == ImagePaths.ProjectileFrame)
+                {
+                    img.SelectedFrame = (ImagePaths.ExplosionFrame, 0, 8);
+                    img.Scale = new Vector2(img.Scale.X + 1, img.Scale.Y + 1);
+                    
+                    for (var i = 0; i < 2; i++)
+                    {
+                        machine.SharedContext
+                            .As<RandomSparkField>(nameof(RandomSparkField))
+                            .Add(img.Position.X,
+                                img.Position.Y,
+                                img.Color,
+                                ((float)Randomness.Instance.From(20, 150) / 200f), 
+                                img.LayerDepth);
+                    }
 
-                if (img.SelectedFrame == "thrust_6_8")
+                    ScreenService.Instance.Sounds.Play($"SynthRainbow0{Randomness.Instance.From(0, 3)}");
+                }
+
+                if (img.SelectedFrame == (ImagePaths.ThrustFrame, 6, 8))
                 {
                     img.LayerDepth = DrawingPlainOrder.EntitiesFX;
                     img.Alpha.Alpha -= 0.05f;
-                    img.SelectedFrame = "thrust_7_8";
+                    img.SelectedFrame = (ImagePaths.ThrustFrame, 7, 8);
                     continue;
                 }
-                if (img.SelectedFrame == "thrust_7_8")
+                if (img.SelectedFrame == (ImagePaths.ThrustFrame, 7, 8))
                 {
                     img.LayerDepth = DrawingPlainOrder.EntitiesFX;
                     img.Alpha.Alpha -= 0.05f;
-                    img.SelectedFrame = "thrust_8_8";
+                    img.SelectedFrame = (ImagePaths.ThrustFrame, 8, 8);
                     continue;
                 }
-                if (img.SelectedFrame == "thrust_8_8")
+                if (img.SelectedFrame == (ImagePaths.ThrustFrame, 8, 8))
                 {
                     img.LayerDepth = DrawingPlainOrder.EntitiesFX;
                     img.Alpha.Alpha -= 0.05f;
-                    img.SelectedFrame = "thrust_0_9";
+                    img.SelectedFrame = (ImagePaths.ThrustFrame, 0, 9);
                     continue;
                 }
-                if (img.SelectedFrame == "thrust_0_9")
+                if (img.SelectedFrame == (ImagePaths.ThrustFrame, 0, 9))
                 {
                     img.LayerDepth = DrawingPlainOrder.EntitiesFX;
                     img.Alpha.Alpha -= 0.05f;
-                    img.SelectedFrame = "thrust_1_9";
+                    img.SelectedFrame = (ImagePaths.ThrustFrame, 1, 9);
                     continue;
                 }
-                if (img.SelectedFrame == "thrust_1_9")
+                if (img.SelectedFrame == (ImagePaths.ThrustFrame, 1, 9))
                 {
                     img.LayerDepth = DrawingPlainOrder.EntitiesFX;
                     img.Alpha.Alpha -= 0.05f;
-                    img.SelectedFrame = "thrust_2_9";
+                    img.SelectedFrame = (ImagePaths.ThrustFrame, 2, 9);
                     // ScreenService.Instance.Sounds.Play($"SynthHitElectro0{Randomness.Instance.From(0, 2)}");
                     continue;
                 }
-                if (img.SelectedFrame == "thrust_2_9")
+                if (img.SelectedFrame == (ImagePaths.ThrustFrame, 2, 9))
                 {
                     img.LayerDepth = DrawingPlainOrder.EntitiesFX;
                     img.Alpha.Alpha -= 0.05f;
-                    img.SelectedFrame = "thrust_3_9";
+                    img.SelectedFrame = (ImagePaths.ThrustFrame, 3, 9);
                     continue;
                 }
-                if (img.SelectedFrame == "thrust_3_9")
+                if (img.SelectedFrame == (ImagePaths.ThrustFrame, 3, 9))
                 {
                     img.LayerDepth = DrawingPlainOrder.EntitiesFX;
                     img.Alpha.Alpha -= 0.05f;
-                    img.SelectedFrame = "thrust_4_9";
+                    img.SelectedFrame = (ImagePaths.ThrustFrame, 4, 9);
                     continue;
                 }
-                if (img.SelectedFrame == "thrust_4_9")
+                if (img.SelectedFrame == (ImagePaths.ThrustFrame, 4, 9))
                 {
                     img.LayerDepth = DrawingPlainOrder.EntitiesFX;
                     img.Alpha.Alpha -= 0.05f;
-                    img.SelectedFrame = "thrust_5_9";
+                    img.SelectedFrame = (ImagePaths.ThrustFrame, 5, 9);
                     continue;
                 }
-                if (img.SelectedFrame == "thrust_5_9")
+                if (img.SelectedFrame == (ImagePaths.ThrustFrame, 5, 9))
                 {
                     img.LayerDepth = DrawingPlainOrder.EntitiesFX;
                     img.Alpha.Alpha -= 0.05f;
-                    img.SelectedFrame = "thrust_6_9";
+                    img.SelectedFrame = (ImagePaths.ThrustFrame, 6, 9);
                     continue;
                 }
-                if (img.SelectedFrame == "thrust_6_9")
+                if (img.SelectedFrame == (ImagePaths.ThrustFrame, 6, 9))
                 {
                     img.LayerDepth = DrawingPlainOrder.EntitiesFX;
                     img.Alpha.Alpha -= 0.05f;
-                    img.SelectedFrame = "thrust_7_9";
+                    img.SelectedFrame = (ImagePaths.ThrustFrame, 7, 9);
                     continue;
                 }
-                if (img.SelectedFrame == "projectile_4_7")
+                if (img.SelectedFrame == (ImagePaths.ProjectileFrame, 4, 7))
                 {
-                    img.SelectedFrame = "explosion_0_8";
+                    img.SelectedFrame = (ImagePaths.ProjectileFrame, 0, 8);
                     ScreenService.Instance.Sounds.Play($"SynthBoomElector0{Randomness.Instance.From(0, 2)}");//{Randomness.Instance.From(0, 1)}");
                     continue;
                 }
 
-                if (img.SelectedFrame == "explosion_0_8")
+                if (img.SelectedFrame == (ImagePaths.ProjectileFrame, 0, 8))
                 {
-                    img.SelectedFrame = "explosion_1_8";
+                    img.SelectedFrame = (ImagePaths.ProjectileFrame, 1, 8);
                     continue;
                 }
 
-                if (img.SelectedFrame == "explosion_2_8")
+                if (img.SelectedFrame == (ImagePaths.ProjectileFrame, 2, 8))
                 {
-                    img.SelectedFrame = "explosion_3_8";
+                    img.SelectedFrame = (ImagePaths.ProjectileFrame, 3, 8);
                     continue;
                 }
 

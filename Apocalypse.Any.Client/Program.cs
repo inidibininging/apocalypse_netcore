@@ -1,9 +1,9 @@
-﻿using Apocalypse.Any.Domain.Client.Model;
+﻿using System;
+using System.IO;
+using Apocalypse.Any.Domain.Client.Model;
 using Apocalypse.Any.Infrastructure.Common.Services.Serializer.JsonAdapter;
 using Apocalypse.Any.Infrastructure.Common.Services.Serializer.MsgPackAdapter;
 using Apocalypse.Any.Infrastructure.Common.Services.Serializer.YamlAdapter;
-using SharpYaml.Serialization;
-using System;
 
 namespace Apocalypse.Any.Client
 {
@@ -27,16 +27,17 @@ namespace Apocalypse.Any.Client
             //};
             var yamler = new YamlSerializerAdapter();
             var jsonler = new JsonSerializerAdapter();
-            var msgler = new MsgPackSerializerAdapter();
+            var msgler = new MsgPackByteArraySerializerAdapter();
             //System.IO.File.WriteAllText("startup.yaml",yamler.Serialize(gameClientConfiguration));
-            var gameConfig = System.IO.File.ReadAllText(args[0]);
+            var gameConfig = File.ReadAllText(args[0]);
             var gameClientConfiguration = yamler.DeserializeObject<GameClientConfiguration>(gameConfig);
             //return;
 
             Console.WriteLine(gameConfig);
             using (var game = new Game1(gameClientConfiguration))
+            {
                 game.Run();
-            
+            }
         }
     }
 }

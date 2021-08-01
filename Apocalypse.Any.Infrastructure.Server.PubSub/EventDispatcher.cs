@@ -36,7 +36,7 @@ namespace Apocalypse.Any.Infrastructure.Server.PubSub
                     {
                         Console.WriteLine(eventQueueArgument.EventName + " fired");
                         foreach (var listener in GetListenersQuery().Where(l => l != null))
-                        {                            
+                        {
                             listener.Notify(eventQueueGroup.Key, eventQueueArgument);
                         }
                     }

@@ -1,3 +1,4 @@
+using System;
 using Apocalypse.Any.Client.Screens;
 using Apocalypse.Any.Core.Drawing;
 using Apocalypse.Any.Domain.Common.Drawing.UI;
@@ -6,14 +7,16 @@ using Microsoft.Xna.Framework;
 using States.Core.Infrastructure.Services;
 using System.Collections.Generic;
 using System.Linq;
+using Apocalypse.Any.Constants;
+using Apocalypse.Any.Core.Utilities;
 
 namespace Apocalypse.Any.Client.States.UI.Inventory
 {
     public class BuildInventoryWindowState : IState<string, INetworkGameScreen>
     {
-        private static Dictionary<string, Rectangle> InventoryHudSheet { get; set; }
+        private static Dictionary<(int frame, int x, int y), Rectangle> InventoryHudSheet { get; set; }
 
-        public BuildInventoryWindowState(Dictionary<string, Rectangle> gameSheet)
+        public BuildInventoryWindowState(Dictionary<(int frame, int x, int y), Rectangle> gameSheet)
         {
             InventoryHudSheet = gameSheet;
         }
@@ -28,8 +31,7 @@ namespace Apocalypse.Any.Client.States.UI.Inventory
 
             //build nventory slots
             var rowCount = 6;
-            var columnCount = 6;           
-
+            var columnCount = 6;
             var magicInventoryStringForNow = "inventory";
 
             var inventory = machine.SharedContext.Images.Where(img => img.ServerData.Id.Contains(magicInventoryStringForNow));
@@ -50,8 +52,8 @@ namespace Apocalypse.Any.Client.States.UI.Inventory
                     var itemPosY = (indexY * 32);
                     var currentItemSprite = new SpriteSheet(InventoryHudSheet)
                     {
-                        Path = "Image/hud_misc_edit",
-                        SelectedFrame = "hud_misc_edit_0_0",
+                        Path = ImagePaths.hud_misc_edit,
+                        SelectedFrame = (ImagePaths.HUDFrame, 0, 0),
                         LayerDepth = DrawingPlainOrder.UI,
                         ForceDraw = true,
                         Position = new Core.Behaviour.MovementBehaviour()
@@ -74,6 +76,6 @@ namespace Apocalypse.Any.Client.States.UI.Inventory
                     );
                 }
             }
-        }
+       }
     }
 }

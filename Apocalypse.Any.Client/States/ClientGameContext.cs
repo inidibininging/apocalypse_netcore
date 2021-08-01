@@ -5,8 +5,8 @@ using States.Core.Infrastructure.Services;
 namespace Apocalypse.Any.Client.States
 {
     /// <summary>
-    /// Main client game context. Holds a shared context (the network game screen)
-    /// Its kind of a replacer of the screen service
+    ///     Main client game context. Holds a shared context (the network game screen)
+    ///     Its kind of a replacer of the screen service
     /// </summary>
     public class ClientGameContext : StateMachine<string, INetworkGameScreen>
     {

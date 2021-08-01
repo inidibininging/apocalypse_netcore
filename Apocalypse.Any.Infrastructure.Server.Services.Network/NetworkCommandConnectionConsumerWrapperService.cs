@@ -1,7 +1,7 @@
-﻿using Apocalypse.Any.Domain.Common.Model.Network;
-using System;
+﻿using System;
+using Apocalypse.Any.Domain.Common.Model.Network;
 
-namespace Apocalypse.Any.Core.Network.Server.Services
+namespace Apocalypse.Any.Infrastructure.Server.Services.Network
 {
     public class NetworkCommandConnectionConsumerWrapperService : IObserver<NetworkCommandConnection>, IDisposable
     {
@@ -15,7 +15,7 @@ namespace Apocalypse.Any.Core.Network.Server.Services
         }
 
         public void Dispose()
-        {
+        {            
             Observer = null;
         }
 

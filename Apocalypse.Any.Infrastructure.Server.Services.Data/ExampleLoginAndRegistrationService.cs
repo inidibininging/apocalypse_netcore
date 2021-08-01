@@ -1,58 +1,96 @@
-﻿using Apocalypse.Any.Domain.Common.Model.Network;
-using Apocalypse.Any.Domain.Server.Model.Network;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
+using Apocalypse.Any.Domain.Common.Model.Network;
+using Apocalypse.Any.Domain.Server.Model.Network;
 
-namespace Apocalypse.Any.Infrastructure.Common.Services.Network.Interfaces.Data
+namespace Apocalypse.Any.Infrastructure.Server.Services.Data
 {
     public class ExampleLoginAndRegistrationService
         : IUserAuthenticationService
     {
-        private List<UserDataWithLoginToken> SampleDataByLoginToken { get; } = new List<UserDataWithLoginToken>()
+        private List<UserDataWithLoginToken> SampleDataByLoginToken { get; } = new()
         {
             new UserDataWithLoginToken(){
-                Roles = UserDataRole.CanViewWorldByLoginToken
-                        | UserDataRole.CanSendRemoteStateCommands,
+                Roles = new Dictionary<UserDataRoleSource, UserDataRole>(){ 
+                            { UserDataRoleSource.LocalServer, UserDataRole.CanViewWorldByLoginToken },
+                            { UserDataRoleSource.SyncServer, UserDataRole.CanSendRemoteStateCommands },
+                },
                 Username = "admin",
                 Password = "5994471ABB01112AFCC18159F6CC74B4F511B99806DA59B3CAF5A9C173CACFC5",
                 NewInGame = true // password is "12345" unhashed
             },
             new UserDataWithLoginToken(){
-                Roles = UserDataRole.CanReceiveWork,
-                Username = "workerbee0",
+                Roles = new Dictionary<UserDataRoleSource, UserDataRole>(){
+                    // { UserDataRoleSource.LocalServer, UserDataRole.CanSendRemoteStateCommands },
+                    { UserDataRoleSource.SyncServer, UserDataRole.CanReceiveWork },
+                },
+                Username = "worker.test.0",
                 Password = "5994471ABB01112AFCC18159F6CC74B4F511B99806DA59B3CAF5A9C173CACFC5",
                 NewInGame = true // password is "12345" unhashed
             },
             new UserDataWithLoginToken(){
-                Roles = UserDataRole.CanViewWorldByLoginToken,
-                Username = "foo0",
+                Roles = new Dictionary<UserDataRoleSource, UserDataRole>(){ 
+                    { UserDataRoleSource.SyncServer, UserDataRole.CanViewWorldByLoginToken },
+                },
+                Username = "remote.test.0",
                 Password = "5994471ABB01112AFCC18159F6CC74B4F511B99806DA59B3CAF5A9C173CACFC5",
                 NewInGame = true // password is "12345" unhashed
             },
             new UserDataWithLoginToken(){
-                Roles = UserDataRole.CanViewWorldByLoginToken,
-                Username = "foo1",
+                Roles = new Dictionary<UserDataRoleSource, UserDataRole>(){ 
+                    { UserDataRoleSource.SyncServer, UserDataRole.CanViewWorldByLoginToken },
+                },
+                Username = "remote.test.1",
                 Password = "5994471ABB01112AFCC18159F6CC74B4F511B99806DA59B3CAF5A9C173CACFC5",
                 NewInGame = true // password is "12345" unhashed
             },
             new UserDataWithLoginToken(){
-                Roles = UserDataRole.CanViewWorldByLoginToken,
-                Username = "foo2",
+                Roles = new Dictionary<UserDataRoleSource, UserDataRole>(){ 
+                    { UserDataRoleSource.SyncServer, UserDataRole.CanViewWorldByLoginToken },
+                },
+                Username = "remote.test.2",
+                Password = "5994471ABB01112AFCC18159F6CC74B4F511B99806DA59B3CAF5A9C173CACFC5",
+                NewInGame = true // password is "12345" unhashed
+            },
+            
+            /*
+             * The flag CanSendRemoteMovementCommands will only work if the game client config has "WithLocalServer" turned on.
+             * This is due to the desktop game client.
+             * It requests after a successful login either Update or UpdateDelta.  
+             */ 
+            new UserDataWithLoginToken(){
+                Roles = new Dictionary<UserDataRoleSource, UserDataRole>(){ 
+                    { UserDataRoleSource.LocalServer, UserDataRole.CanViewWorldByLoginToken },
+                    { UserDataRoleSource.SyncServer, UserDataRole.CanSendRemoteMovementCommands },
+                },
+                Username = "sync.test.0",
                 Password = "5994471ABB01112AFCC18159F6CC74B4F511B99806DA59B3CAF5A9C173CACFC5",
                 NewInGame = true // password is "12345" unhashed
             },
             new UserDataWithLoginToken(){
-                Roles = UserDataRole.CanViewWorldByLoginToken,
-                Username = "foo3",
+                Roles = new Dictionary<UserDataRoleSource, UserDataRole>(){ 
+                    { UserDataRoleSource.LocalServer, UserDataRole.CanViewWorldByLoginToken },
+                    { UserDataRoleSource.SyncServer, UserDataRole.CanSendRemoteMovementCommands },
+                },
+                Username = "sync.test.1",
+                Password = "5994471ABB01112AFCC18159F6CC74B4F511B99806DA59B3CAF5A9C173CACFC5",
+                NewInGame = true // password is "12345" unhashed
+            },
+            new UserDataWithLoginToken(){
+                Roles = new Dictionary<UserDataRoleSource, UserDataRole>(){ 
+                    { UserDataRoleSource.LocalServer, UserDataRole.CanViewWorldByLoginToken },
+                    { UserDataRoleSource.SyncServer, UserDataRole.CanSendRemoteMovementCommands },
+                },
+                Username = "sync.test.2",
                 Password = "5994471ABB01112AFCC18159F6CC74B4F511B99806DA59B3CAF5A9C173CACFC5",
                 NewInGame = true // password is "12345" unhashed
             }
         };
 
-        private ExampleLoginTokenGeneratorService LoginTokenGeneratorService { get; } = new ExampleLoginTokenGeneratorService();
+        private StaticLoginTokenGeneratorService<UserData> LoginTokenGeneratorService { get; } = new StaticLoginTokenGeneratorService<UserData>();
 
         public ExampleLoginAndRegistrationService()
         {
@@ -101,7 +139,7 @@ namespace Apocalypse.Any.Infrastructure.Common.Services.Network.Interfaces.Data
             return userDataWithLoginToken.LoginToken;
         }
 
-        public UserDataRole GetRoles(UserData userData)
+        public Dictionary<UserDataRoleSource, UserDataRole> GetRoles(UserData userData)
         {
             if (string.IsNullOrWhiteSpace(userData.Password))
                 throw new ArgumentNullException("Password");

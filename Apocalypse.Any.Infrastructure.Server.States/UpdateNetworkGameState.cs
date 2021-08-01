@@ -4,8 +4,11 @@ using Apocalypse.Any.Infrastructure.Common.Services.Network.Interfaces;
 using Apocalypse.Any.Infrastructure.Common.Services.Serializer.Interfaces;
 using Apocalypse.Any.Infrastructure.Server.Services.Data.Interfaces;
 using Apocalypse.Any.Infrastructure.Server.States.Interfaces;
+using Echse.Net.Domain;
 using Newtonsoft.Json;
 using System;
+using Echse.Net.Serialization;
+using Microsoft.Extensions.Logging;
 
 namespace Apocalypse.Any.Infrastructure.Server.States
 {
@@ -13,17 +16,15 @@ namespace Apocalypse.Any.Infrastructure.Server.States
         where TWorld : IWorldGameStateDataIOLayer, IWorldGameSectorInputLayer
     {
         private INetworkCommandConnectionToGameStateTranslator CurrentNetworkCommandToUpdateGameState { get; set; }
-        public ISerializationAdapter SerializationAdapter { get; }
+        public IByteArraySerializationAdapter SerializationAdapter { get; }
 
-        public UpdateNetworkGameState(INetworkCommandConnectionToGameStateTranslator networkCommandToUpdateGameState, ISerializationAdapter serializationAdapter)
+        public UpdateNetworkGameState(INetworkCommandConnectionToGameStateTranslator networkCommandToUpdateGameState, IByteArraySerializationAdapter serializationAdapter)
         {
-            if (networkCommandToUpdateGameState == null)
-                throw new ArgumentNullException(nameof(networkCommandToUpdateGameState));
-            CurrentNetworkCommandToUpdateGameState = networkCommandToUpdateGameState;
+            CurrentNetworkCommandToUpdateGameState = networkCommandToUpdateGameState ?? throw new ArgumentNullException(nameof(networkCommandToUpdateGameState));
             SerializationAdapter = serializationAdapter ?? throw new ArgumentNullException(nameof(serializationAdapter));
         }
 
-        private bool HasValidGameStateData(GameStateData gameStateData)
+        private static bool HasValidGameStateData(GameStateData gameStateData)
         {
             if (gameStateData == null ||
                 string.IsNullOrWhiteSpace(gameStateData?.LoginToken) ||
@@ -34,54 +35,44 @@ namespace Apocalypse.Any.Infrastructure.Server.States
 
         public void Handle(INetworkStateContext<TWorld> gameStateContext, NetworkCommandConnection networkCommandConnection)
         {
+            var typeArgumentAsString = networkCommandConnection?.CommandArgument;
             if (string.IsNullOrWhiteSpace(networkCommandConnection?.CommandArgument))
+            {
+                gameStateContext.Logger.LogError("networkCommandConnection has a CommandArgument with null or empty value");
                 return;
-            var typeArgumentAsString = networkCommandConnection.CommandArgument;
-            if (string.IsNullOrWhiteSpace(typeArgumentAsString))
-                return;
-
-            /*
-             * TODO: this doesnt belong here.
-             * OR... else?
-             * this is a state transition move on the server side, where the client / player receives an update command for the first time
-             * this means that the state of the client is changed here to "ok client, you can send me updates now"
-            */
-            var userDataTypeFull = typeof(UserData).FullName;
-            //if (typeArgumentAsString == userDataTypeFull)
-            //{
-            //    Console.WriteLine("UpdateGameState:Received UserData instead.");
-            //    //get login game state through the network translator
-            //    //var gameStateData = gameStateContext.NetworkCommandConnectionToGameStateTranslators.GetTranslator(networkCommandConnection);
-            //    var gameStateData = CurrentNetworkCommandToUpdateGameState.Translate(networkCommandConnection);
-
-            //    gameStateContext.CurrentNetOutgoingMessageBusService.SendToClient
-            //    (
-            //        NetworkCommandConstants.UpdateCommand,
-            //        gameStateData,
-            //        networkCommandConnection.Connection
-            //    );
-            //}
+            }
+                
+            // var typeArgumentAsString = networkCommandConnection.CommandArgument;
+            //
+            // if (string.IsNullOrWhiteSpace(typeArgumentAsString))
+            // {
+            //     gameStateContext.Logger.LogError("networkCommandConnection Command with null or empty value");
+            //     return;
+            // }
+                
 
             var gameStateUpdateDataTypeFull = typeof(GameStateUpdateData).FullName;
-            if (typeArgumentAsString == gameStateUpdateDataTypeFull)
-            {
-                // Console.WriteLine($"{nameof(UpdateGameState)}:Received GameStateUpdateData");
-                var clientData = SerializationAdapter.DeserializeObject<GameStateUpdateData>(networkCommandConnection.Data);
+            if (typeArgumentAsString != gameStateUpdateDataTypeFull) return;
+            
+            gameStateContext.Logger.Log(LogLevel.Information, $"{nameof(UpdateNetworkGameState<TWorld>)} Deserializing client data as GameStateUpdateData");
+            var clientData = SerializationAdapter.DeserializeObject<GameStateUpdateData>(networkCommandConnection.Data);
 
-                // Console.WriteLine($"{nameof(UpdateGameState)}:Forwarding client data to World");
-                gameStateContext.GameStateRegistrar.WorldGameStateDataLayer.ForwardClientDataToGame(clientData);
+            gameStateContext.Logger.Log(LogLevel.Information, $"{nameof(UpdateNetworkGameState<TWorld>)} Sending client data to client");
+            gameStateContext.GameStateRegistrar.WorldGameStateDataLayer.ForwardClientDataToGame(clientData);
 
-                // Console.WriteLine($"{nameof(UpdateGameState)}:Get game state by login token");
-                var serverGameState = gameStateContext.GameStateRegistrar.WorldGameStateDataLayer.GetGameStateByLoginToken(clientData.LoginToken);
-                //Console.WriteLine(serverGameState.Images.Count);
-                // Console.WriteLine($"{nameof(UpdateGameState)}:Sending to client");
-                gameStateContext.CurrentNetOutgoingMessageBusService.SendToClient
-                (
-                    NetworkCommandConstants.UpdateCommand,
-                    serverGameState,
-                    networkCommandConnection.Connection
-                );
-            }
+            var serverGameState = gameStateContext.GameStateRegistrar.WorldGameStateDataLayer.GetGameStateByLoginToken(clientData.LoginToken);
+                
+            gameStateContext.Logger.Log(LogLevel.Information, $"{nameof(UpdateNetworkGameState<TWorld>)} Switching to ServerInternalGameStates.UpdateDelta");
+            gameStateContext.ChangeHandlerEasier(gameStateContext[(byte)ServerInternalGameStates.UpdateDelta], networkCommandConnection);
+
+            gameStateContext.CurrentNetOutgoingMessageBusService.SendToClient
+            (
+                NetworkCommandConstants.UpdateCommand,
+                serverGameState,
+                Lidgren.Network.NetDeliveryMethod.ReliableOrdered,
+                0,
+                networkCommandConnection.Connection
+            );
         }
     }
 }

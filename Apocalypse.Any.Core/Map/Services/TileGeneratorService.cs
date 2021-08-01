@@ -30,7 +30,7 @@ namespace Apocalypse.Any.Core.Map.Services
             var layer = new Layer(Guid.NewGuid().ToString(), 3);
 
             //Yeah .. right.. hard code. The stuff that breaks every developers heart
-            List<string> images = new List<string>()
+            List<int> images = new List<int>()
             {
                 //"BigMetalPlate00",
                 //"BigMetalPlate01",
@@ -41,24 +41,24 @@ namespace Apocalypse.Any.Core.Map.Services
                 //"ChipPlate02",
                 //"ChipPlate03",
                 //"ChipPlate04",
-                "CablePlate00",
-                "CablePlate01",
-                "CablePlate02",
-                "CablePlate03",
-                "CablePlate04",
-                "CablePlate05",
-                //"Cthulu/PyramidAsset00",
-                //"Cthulu/LandAsset00",
-                //"Cthulu/LandAsset01",
-                //"Cthulu/LandAsset02",
-                // "Cthulu/TentacleAsset00",
-                // "Cthulu/TentacleAsset01",
-                // "Cthulu/TentacleAsset02",
-                // "Cthulu/TentacleAsset03",
-                // "Cthulu/TentacleAsset04",
-                "CrystalPlate00",
-                "MetalPlate00",
-                "MetalPlate01"
+                // "CablePlate00",
+                // "CablePlate01",
+                // "CablePlate02",
+                // "CablePlate03",
+                // "CablePlate04",
+                // "CablePlate05",
+                // //"Cthulu/PyramidAsset00",
+                // //"Cthulu/LandAsset00",
+                // //"Cthulu/LandAsset01",
+                // //"Cthulu/LandAsset02",
+                // // "Cthulu/TentacleAsset00",
+                // // "Cthulu/TentacleAsset01",
+                // // "Cthulu/TentacleAsset02",
+                // // "Cthulu/TentacleAsset03",
+                // // "Cthulu/TentacleAsset04",
+                // "CrystalPlate00",
+                // "MetalPlate00",
+                // "MetalPlate01"
             };
 
             int x = 0;
@@ -77,8 +77,8 @@ namespace Apocalypse.Any.Core.Map.Services
                         var someImageNr = Randomness.Instance.From(0, images.Count - 1);
                         var imageName = images.ElementAt(someImageNr);
                         var img = new MapImage(x, y, imageName);
-                        if (imageName.ToLower().Contains("tentacle"))
-                            img.CurrentImage.Color = Color.Green;
+                        // if (imageName.ToLower().Contains("tentacle"))
+                        //     img.CurrentImage.Color = Color.Green;
                         img.CurrentImage.Scale = new Vector2(2.5f, 2.5f); //TODO: Beware of this scale !!!
                         img.CurrentImage.LayerDepth = layer.LayerDepth;
                         layer.Tiles.Add(img);

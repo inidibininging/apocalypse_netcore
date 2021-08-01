@@ -1,10 +1,10 @@
+using System;
+using System.Collections.Generic;
 using Apocalypse.Any.Domain.Common.Model;
 using Apocalypse.Any.Domain.Common.Model.Network;
 using Apocalypse.Any.Domain.Server.Model;
-using System;
-using System.Collections.Generic;
 
-namespace Apocalypse.Any.Infrastructure.Common.Services.Network.Interfaces.Factories
+namespace Apocalypse.Any.Infrastructure.Server.Services.Factories
 {
     public class PlayerSpaceshipGameStateDataFactory : CheckWithReflectionFactoryBase<GameStateData>
     {
@@ -18,9 +18,8 @@ namespace Apocalypse.Any.Infrastructure.Common.Services.Network.Interfaces.Facto
 
         protected override GameStateData UseConverter<TParam>(TParam parameter)
         {
-            //aaaand a cast. fukk
-            var player = parameter as PlayerSpaceship;
-
+            var player = parameter as PlayerSpaceship ?? throw new ArgumentNullException(nameof(parameter));
+            
             Console.WriteLine($"Creating game state for player {player.DisplayName}");
             return new GameStateData()
             {

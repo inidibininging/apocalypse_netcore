@@ -2,6 +2,6 @@
 {
     public class GameSectorRoutePair : GameSectorRoute
     {
-        public string GameSectorDestinationTag { get; set; }
+        public int GameSectorDestinationTag { get; set; }
     }
 }

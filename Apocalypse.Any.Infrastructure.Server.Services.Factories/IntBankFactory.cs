@@ -7,7 +7,7 @@ using System.Text;
 namespace Apocalypse.Any.Infrastructure.Server.Services.Factories
 {
     /// <summary>
-    /// Creates an ownable bank. The parameter for creating is the owner's name
+    /// Creates a bank that can be owned. The parameter for creating is the owner's name
     /// </summary>
     public class IntBankFactory : CheckWithReflectionFactoryBase<IntBank>
     {

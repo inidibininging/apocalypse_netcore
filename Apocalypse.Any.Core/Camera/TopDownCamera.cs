@@ -19,6 +19,12 @@ namespace Apocalypse.Any.Core.Camera
         IRotatableGameObject
     {
         public float Zoom { get; set; }
+        private  float ZoomDelta { get; set; }
+        const float ZoomMinimum = 0.25f;
+        const float ZoomMaximum = 2.5f;
+        private const float ZoomSpeed = 0.025f;
+        
+        private const float ScrollZoomFactor = 1.00f;
 
         public Viewport CurrentViewport { get; set; }
 
@@ -38,6 +44,18 @@ namespace Apocalypse.Any.Core.Camera
             }
         }
 
+        public void ZoomIn(float zoomFactor = ScrollZoomFactor)
+        {
+            if ((Zoom + ZoomDelta > ZoomMinimum && Zoom + ZoomDelta < ZoomMaximum))
+                ZoomDelta = zoomFactor;
+        }
+
+        public void ZoomOut(float zoomFactor = ScrollZoomFactor)
+        {
+            if ((Zoom + ZoomDelta > ZoomMinimum && Zoom + ZoomDelta < ZoomMaximum))
+                ZoomDelta = zoomFactor * -1;
+        }
+
         public TopDownCamera(Viewport viewport)
         {
             CurrentViewport = viewport;
@@ -49,10 +67,10 @@ namespace Apocalypse.Any.Core.Camera
 
         private int scrollWheelValueRaw = 0;
         private int scrollWheelValueBefore = 0;
-        public float NextZoom { get; private set; }
-        public float ZoomDifference { get; set; }
-        private TimeSpan delayed = TimeSpan.FromMilliseconds(200);
-        private TimeSpan counter = TimeSpan.Zero;
+        private float NextZoom { get; set; }
+        float ZoomDifference { get; set; }
+        private readonly TimeSpan delayed = TimeSpan.FromMilliseconds(200);
+        private TimeSpan _counter = TimeSpan.Zero;
 
         public CameraInfoText CameraDebugInfo { get; set; }
         public MovementBehaviour Position { get; set; }
@@ -71,9 +89,10 @@ namespace Apocalypse.Any.Core.Camera
             if (time == null)
                 return;
 
-            if (counter < delayed)
+            
+            if (_counter < delayed)
             {
-                counter += time.ElapsedGameTime;
+                _counter += time.ElapsedGameTime;
                 return;
             }
             else
@@ -81,27 +100,14 @@ namespace Apocalypse.Any.Core.Camera
                 ZoomDifference = Math.Abs(NextZoom - Zoom);
                 if (ZoomDifference >= 0.0004 && NextZoom != 0)
                 {
-                    Zoom = MathHelper.Lerp(Zoom, NextZoom, 0.02f);
+                    Zoom = MathHelper.Lerp(Zoom, NextZoom, ZoomSpeed);
                 }
                 
-                //nextZoom = 0;
-                scrollWheelValueBefore = scrollWheelValueRaw;
-                scrollWheelValueRaw = Mouse.GetState().ScrollWheelValue;
-
-                float delta = scrollWheelValueRaw - scrollWheelValueBefore;
-                if(delta != 0)
-                {
-                    if (delta > 0)
-                        delta = 0.25f;
-                    if (delta < 0)
-                        delta = -0.25f;
-
-                    if (Zoom + delta > 0.5 && Zoom + delta < 1.5)
-                        NextZoom = Zoom + delta;
-
-                }
-
-                counter = TimeSpan.Zero;
+                // if ((Zoom + ZoomDelta > ZoomMinimum && Zoom + ZoomDelta < ZoomMaximum))
+                NextZoom = Zoom + ZoomDelta;
+                
+                ZoomDelta = 0;
+                _counter = TimeSpan.Zero;
             }
 
             CameraDebugInfo?.Update(time);

@@ -1,4 +1,6 @@
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 using Apocalypse.Any.Core.Model;
 using Apocalypse.Any.Domain.Common.Model.Network;
 using Apocalypse.Any.Domain.Common.Model.RPG;
@@ -18,5 +20,13 @@ namespace Apocalypse.Any.Domain.Common.Model
         public ImageData CurrentImage { get; set; }
         public List<string> Tags { get; set; }
 
+        public void AddReplaceTag(string tag)
+        {
+            if (Tags == null)
+                return;
+            if (Tags.Contains(tag))
+                return;
+            Tags.Add(tag);
+        }
     }
 }

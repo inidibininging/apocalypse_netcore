@@ -1,8 +1,8 @@
+using System;
 using Apocalypse.Any.Core.Drawing;
 using Microsoft.Xna.Framework;
-using System;
 
-namespace Apocalypse.Any.Infrastructure.Common.Services.Network.Interfaces.Transformations
+namespace Apocalypse.Any.Infrastructure.Server.Services.Transformations
 {
     public class ImageToRectangleTransformationService
     {

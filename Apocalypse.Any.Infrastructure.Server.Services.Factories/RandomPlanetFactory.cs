@@ -7,6 +7,8 @@ using Apocalypse.Any.Domain.Server.Model.Interfaces;
 using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
+using System.Net.Http.Headers;
+using Apocalypse.Any.Constants;
 
 namespace Apocalypse.Any.Infrastructure.Server.Services.Factories
 {
@@ -15,9 +17,29 @@ namespace Apocalypse.Any.Infrastructure.Server.Services.Factories
         public string IdPrefix { get; set; } = "planetsRandom";
 
         public override bool CanUse<TParam>(TParam instance) => CanUseByTType<TParam, IGameSectorBoundaries>();
-        public override List<Type> GetValidParameterTypes()
+        public override List<Type> GetValidParameterTypes() => new List<Type>() { typeof(IGameSectorBoundaries) };
+
+        private (int frame, int x, int y) RandomPlanetFrame()
         {
-            return new List<Type>() { typeof(IGameSectorBoundaries) };
+            var randomPlanetId = Randomness.Instance.From(0, 2);
+            switch (randomPlanetId)
+            {
+                case 0:
+                    randomPlanetId = ImagePaths.RandomPlanetFrame0;
+                    break;
+                case 1:
+                    randomPlanetId = ImagePaths.RandomPlanetFrame1;
+                    break;
+                case 2:
+                    randomPlanetId = ImagePaths.RandomPlanetFrame2;
+                    break;
+                default:
+                    randomPlanetId = ImagePaths.RandomPlanetFrame0;
+                    break;
+            }
+
+            return (randomPlanetId, Randomness.Instance.From(0, 7), Randomness.Instance.From(0, 7));
+
         }
         protected override ImageData UseConverter<TParam>(TParam parameter)
         {
@@ -26,17 +48,12 @@ namespace Apocalypse.Any.Infrastructure.Server.Services.Factories
             {
                 Id = $"{IdPrefix}{Guid.NewGuid().ToString()}",
                 Alpha = new AlphaBehaviour() { Alpha = 1.0f },
-                Path = $"Image/{IdPrefix}{Randomness.Instance.From(0, 2)}_edit",
-                SelectedFrame = $"{IdPrefix}{Randomness.Instance.From(0, 2)}_{Randomness.Instance.From(0, 7)}_{Randomness.Instance.From(0, 7)}",
+                Path = Randomness.Instance.From(ImagePaths.planetsRandom0_edit, ImagePaths.planetsRandom2_edit),
+                SelectedFrame = RandomPlanetFrame(),
                 Height = 128,
                 Width = 128,
                 Scale = new Vector2(Randomness.Instance.From(1, 4)),
-                Color = new Color
-                            (
-                                                Randomness.Instance.From(100, 255),
-                                                Randomness.Instance.From(100, 255),
-                                                Randomness.Instance.From(100, 255)
-                            ),
+                Color = GetRandomColor<TParam>(),
                 Position = new MovementBehaviour()
                 {
                     X = Randomness.Instance.RollTheDice(5) ? Randomness.Instance.From(sectorBoundaries.MinSectorX, sectorBoundaries.MaxSectorX) : Randomness.Instance.From(sectorBoundaries.MinSectorX, sectorBoundaries.MaxSectorX),
@@ -45,6 +62,16 @@ namespace Apocalypse.Any.Infrastructure.Server.Services.Factories
                 Rotation = new RotationBehaviour() { Rotation = Randomness.Instance.From(0, 360) },
                 LayerDepth = DrawingPlainOrder.Background + DrawingPlainOrder.MicroPlainStep
             };
+        }
+
+        private static Color GetRandomColor<TParam>()
+        {
+            return new Color
+            (
+                Randomness.Instance.From(100, 255),
+                Randomness.Instance.From(100, 255),
+                Randomness.Instance.From(100, 255)
+            );
         }
     }
 }

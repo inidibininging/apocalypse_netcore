@@ -92,18 +92,6 @@
 /processorParam:TextureFormat=Color
 /build:Image/faces.png
 
-#begin Image/fog.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:Image/fog.png
-
 #begin Image/fog_edit.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -115,6 +103,18 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:Image/fog_edit.png
+
+#begin Image/fog.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Image/fog.png
 
 #begin Image/gamesheet.png
 /importer:TextureImporter
@@ -140,18 +140,6 @@
 /processorParam:TextureFormat=Color
 /build:Image/gamesheetExtended.png
 
-#begin Image/hud_misc.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:Image/hud_misc.png
-
 #begin Image/hud_misc_edit.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -163,6 +151,18 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:Image/hud_misc_edit.png
+
+#begin Image/hud_misc.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Image/hud_misc.png
 
 #begin Image/Map/BigMetalPlate00.png
 /importer:TextureImporter
@@ -284,18 +284,6 @@
 /processorParam:TextureFormat=Color
 /build:Image/Map/CablePlate05.png
 
-#begin Image/Map/ChipPlate00.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:Image/Map/ChipPlate00.png
-
 #begin Image/Map/ChipPlate00_1.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -332,7 +320,7 @@
 /processorParam:TextureFormat=Color
 /build:Image/Map/ChipPlate00_3.png
 
-#begin Image/Map/ChipPlate01.png
+#begin Image/Map/ChipPlate00.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -342,7 +330,7 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:Image/Map/ChipPlate01.png
+/build:Image/Map/ChipPlate00.png
 
 #begin Image/Map/ChipPlate01_1.png
 /importer:TextureImporter
@@ -380,7 +368,7 @@
 /processorParam:TextureFormat=Color
 /build:Image/Map/ChipPlate01_3.png
 
-#begin Image/Map/ChipPlate02.png
+#begin Image/Map/ChipPlate01.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -390,7 +378,7 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:Image/Map/ChipPlate02.png
+/build:Image/Map/ChipPlate01.png
 
 #begin Image/Map/ChipPlate02_1.png
 /importer:TextureImporter
@@ -428,7 +416,7 @@
 /processorParam:TextureFormat=Color
 /build:Image/Map/ChipPlate02_3.png
 
-#begin Image/Map/ChipPlate03.png
+#begin Image/Map/ChipPlate02.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -438,7 +426,7 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:Image/Map/ChipPlate03.png
+/build:Image/Map/ChipPlate02.png
 
 #begin Image/Map/ChipPlate03_1.png
 /importer:TextureImporter
@@ -475,6 +463,18 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:Image/Map/ChipPlate03_3.png
+
+#begin Image/Map/ChipPlate03.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Image/Map/ChipPlate03.png
 
 #begin Image/Map/ChipPlate04.png
 /importer:TextureImporter
@@ -536,18 +536,6 @@
 /processorParam:TextureFormat=Color
 /build:Image/Map/MetalPlate01.png
 
-#begin Image/mediumShips.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:Image/mediumShips.png
-
 #begin Image/mediumShips_edit.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -559,6 +547,18 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:Image/mediumShips_edit.png
+
+#begin Image/mediumShips.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Image/mediumShips.png
 
 #begin Image/miniCity.png
 /importer:TextureImporter
@@ -596,18 +596,6 @@
 /processorParam:TextureFormat=Color
 /build:Image/planets.png
 
-#begin Image/planetsRandom0.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:Image/planetsRandom0.png
-
 #begin Image/planetsRandom0_edit.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -620,7 +608,7 @@
 /processorParam:TextureFormat=Color
 /build:Image/planetsRandom0_edit.png
 
-#begin Image/planetsRandom1.png
+#begin Image/planetsRandom0.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -630,7 +618,7 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:Image/planetsRandom1.png
+/build:Image/planetsRandom0.png
 
 #begin Image/planetsRandom1_edit.png
 /importer:TextureImporter
@@ -644,7 +632,7 @@
 /processorParam:TextureFormat=Color
 /build:Image/planetsRandom1_edit.png
 
-#begin Image/planetsRandom2.png
+#begin Image/planetsRandom1.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -654,7 +642,7 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:Image/planetsRandom2.png
+/build:Image/planetsRandom1.png
 
 #begin Image/planetsRandom2_edit.png
 /importer:TextureImporter
@@ -667,6 +655,18 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:Image/planetsRandom2_edit.png
+
+#begin Image/planetsRandom2.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Image/planetsRandom2.png
 
 #begin Image/Player/DummyPlayer.png
 /importer:TextureImporter
@@ -691,18 +691,6 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:Image/Player/EnemySpaceShip256x256.png
-
-#begin Image/Player/PlayerSpaceShip256x256.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:Image/Player/PlayerSpaceShip256x256.png
 
 #begin Image/Player/PlayerSpaceShip256x256_JunkA.png
 /importer:TextureImporter
@@ -788,6 +776,18 @@
 /processorParam:TextureFormat=Color
 /build:Image/Player/PlayerSpaceShip256x256_JunkGeneral02.png
 
+#begin Image/Player/PlayerSpaceShip256x256.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Image/Player/PlayerSpaceShip256x256.png
+
 #begin Image/Projectile/ShootingBall00.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -836,18 +836,6 @@
 /processorParam:TextureFormat=Color
 /build:Image/ships.png
 
-#begin Image/SplashScreen/apocalypse_logo.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:Image/SplashScreen/apocalypse_logo.png
-
 #begin Image/SplashScreen/apocalypse_logo_glitch1.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -872,6 +860,18 @@
 /processorParam:TextureFormat=Color
 /build:Image/SplashScreen/apocalypse_logo_glitch2.png
 
+#begin Image/SplashScreen/apocalypse_logo.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Image/SplashScreen/apocalypse_logo.png
+
 #begin Image/SplashScreen/game_over_glitch.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -883,12 +883,6 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:Image/SplashScreen/game_over_glitch.png
-
-#begin Shader/ambient_light.fx
-/importer:EffectImporter
-/processor:EffectProcessor
-/processorParam:DebugMode=Auto
-/build:Shader/ambient_light.fx
 
 #begin Sound/FX/Armor00.wav
 /importer:WavImporter

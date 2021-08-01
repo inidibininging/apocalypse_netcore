@@ -3,7 +3,7 @@ using System;
 
 namespace Apocalypse.Any.Infrastructure.Common.Services.Serializer.YamlAdapter
 {
-    public class YamlSerializerAdapter : ISerializationAdapter
+    public class YamlSerializerAdapter : IStringSerializationAdapter
     {
         private SharpYaml.Serialization.Serializer Serializer { get; set; } = new SharpYaml.Serialization.Serializer(
                 new SharpYaml.Serialization.SerializerSettings()

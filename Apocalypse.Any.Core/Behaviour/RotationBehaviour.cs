@@ -8,11 +8,11 @@
     {
         public float Rotation { get; set; } = 0;
 
-        public float Delta { get; set; } = 0.05f; // WHY?? //TODO: verify this
+        // public float Delta { get; set; } = 0.05f; // WHY?? //TODO: verify this
 
         public static implicit operator float(RotationBehaviour p)
         {
-            return p.Rotation * p.Delta;
+            return p.Rotation;// * p.Delta;
         }
     }
 }

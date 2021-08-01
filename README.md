@@ -49,12 +49,15 @@ I know that there are some cool frameworks on top of MonoGame like MonoGame.Exte
 
 ## Requirements
 Things you need for the code to compile:
-- .NET Core 2.1 SDK (client/server) https://dotnet.microsoft.com/download/dotnet-core/2.1
-- Monogame https://www.monogame.net/downloads/
-- Monogame Pipeline (included in some installations)
-- Git Bash
+- .NET5 SDK (client/server) https://dotnet.microsoft.com/download/dotnet/5.0
+- Monogame 3.8 https://www.monogame.net/downloads/
+- Download and install the font (FFF Forward Font). Please note that I do not own this font and it is for PERSONAL USE ONLY!. If you don't want to use the font, change it in the monogame pipeline and in the VisualText class in the Apocalypse.Any.Core project.
+- mgcb-editor dotnet tool https://docs.monogame.net/articles/tools/mgcb_editor.html
+- .NET3.1.0 for compiling the game data with the mgcb-editor (ignore the .fx errors for now. There is no usage now for shaders)
+- Git
 
 ## Installation Steps
+- Download and install the font required
 - build the content pipeline with the MonoGame Pipeline 
 - build the client
 - create a folder in the clients output folder named "Content"

@@ -72,17 +72,18 @@ namespace Apocalypse.Any.Core.Map.Services
                 layerFile.Name = layer.Name;
                 layer.Tiles.ToList().ForEach(tile =>
                 {
-                    var imgPath = tile.CurrentImage.Path.Replace(MapImage.BasePath, "");
-                    if (!mappedUsedImages.ContainsKey(imgPath))
-                    {
-                        mappedUsedImages.Add(imgPath, mappedUsedImageCursor);
-                        mappedUsedImageCursor += 1;
-                    }
-                    currentMapChunk
-                    [
-                        Convert.ToInt32(tile.LocationUnit.X),
-                        Convert.ToInt32(tile.LocationUnit.Y)
-                    ] = mappedUsedImages[imgPath];
+                    throw new NotImplementedException();
+                    // var imgPath = tile.CurrentImage.Path.Replace(MapImage.BasePath, "");
+                    // if (!mappedUsedImages.ContainsKey(imgPath))
+                    // {
+                    //     mappedUsedImages.Add(imgPath, mappedUsedImageCursor);
+                    //     mappedUsedImageCursor += 1;
+                    // }
+                    // currentMapChunk
+                    // [
+                    //     Convert.ToInt32(tile.LocationUnit.X),
+                    //     Convert.ToInt32(tile.LocationUnit.Y)
+                    // ] = mappedUsedImages[imgPath];
                 });
                 layerFile.Depth = layer.LayerDepth;
                 layerFile.Chunk = currentMapChunk;
@@ -93,9 +94,11 @@ namespace Apocalypse.Any.Core.Map.Services
                 Layers = layerFiles,
                 SizeX = mapChunk.SizeX,
                 SizeY = mapChunk.SizeY,
-                MappedUsedImages = mappedUsedImages
-                .GroupBy(p => p.Value)
-                .ToDictionary(g => g.Key, g => g.Select(pp => pp.Key).ToList().Single())
+                
+                //TODO: this was a group by string. now all paths are integers.. so this class doesn't work anymore
+                // MappedUsedImages = mappedUsedImages
+                //     .GroupBy(p => p.Value)
+                // .ToDictionary(g => g.Key, g => g.Select(pp => pp.Key).ToList().Single())
             };
             var stringCompressorService = new StringCompressorService();
 

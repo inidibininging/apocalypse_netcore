@@ -1,4 +1,4 @@
-﻿namespace Apocalypse.Any.Infrastructure.Common.Services.Network.Interfaces.Data
+﻿namespace Apocalypse.Any.Infrastructure.Server.Services.Data
 {
     public class ExampleLoginTokenGeneratorService
     {

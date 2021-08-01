@@ -4,9 +4,9 @@ using System.Text;
 
 namespace Apocalypse.Any.Infrastructure.Server.PubSub.Interfaces
 {
-    public interface ISubscribeable<TopicType, ContentType>
+    public interface ISubscribeable<in TTopicType>
     {
-        void Subscribe(TopicType topic);
-        void Unsubscribe(TopicType topic);
+        void Subscribe(TTopicType topic);
+        void Unsubscribe(TTopicType topic);
     }
 }

@@ -1,4 +1,5 @@
-﻿using Apocalypse.Any.Core.Behaviour;
+﻿using System;
+using Apocalypse.Any.Core.Behaviour;
 
 namespace Apocalypse.Any.Core.Input
 {
@@ -15,6 +16,7 @@ namespace Apocalypse.Any.Core.Input
         public void Execute(MovementBehaviour parameters)
         {
             parameters.Y -= 1;
+            Console.WriteLine($"{nameof(MoveUpCommand)}");
         }
     }
 }

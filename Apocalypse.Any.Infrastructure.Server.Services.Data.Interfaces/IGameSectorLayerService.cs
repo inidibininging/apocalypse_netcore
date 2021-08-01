@@ -5,10 +5,11 @@ using Apocalypse.Any.Domain.Server.Model.Interfaces;
 using Apocalypse.Any.Infrastructure.Server.PubSub.Interfaces;
 using Microsoft.Xna.Framework;
 using System.Collections.Generic;
+using Echse.Domain;
 
 namespace Apocalypse.Any.Infrastructure.Server.Services.Data.Interfaces
 {
-    public interface IGameSectorLayerService : IGameSectorData
+    public interface IGameSectorLayerService : IGameSectorData, IEchseContext
     {
         GameTime CurrentGameTime { get; set; }
 

@@ -33,12 +33,7 @@ namespace Apocalypse.Any.Client.States
             
             machine.SharedContext.CursorImage.Position.X = (float)mouseState.X + playerImage.Position.X - (ScreenService.Instance.Resolution.X/2);
             machine.SharedContext.CursorImage.Position.Y = (float)mouseState.Y + playerImage.Position.Y - (ScreenService.Instance.Resolution.Y/2);
-            var CursorImage = machine.SharedContext.CursorImage.Position.ToVector2();
-
-            // var lerp = Vector2.Lerp(CursorImage,playerImage.Position,0.2f);
-            // machine.SharedContext.LerpCursorImage.Position.X = lerp.X;
-            // machine.SharedContext.LerpCursorImage.Position.Y = lerp.Y;
-
+            var cursorImage = machine.SharedContext.CursorImage.Position.ToVector2();
 
             //facepoint mechanics
             var targetVector = machine.SharedContext.CursorImage.Position.ToVector2() - playerImage.Position.ToVector2();

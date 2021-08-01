@@ -1,5 +1,6 @@
 ﻿using Apocalypse.Any.Core.Input;
 using Apocalypse.Any.Domain.Common.Model.Network;
+using Echse.Net.Domain;
 
 namespace Apocalypse.Any.Infrastructure.Common.Services.Network.Interfaces
 {

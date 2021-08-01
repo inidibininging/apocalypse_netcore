@@ -4,8 +4,8 @@ using System;
 
 namespace Apocalypse.Any.Infrastructure.Server.Services.Mechanics.Proxy
 {
-    public class ThrustProxyFuncFactorMechanic
-        : ISingleFullPositionHolderMechanic<IFullPositionHolder>
+    public class ThrustProxyFuncFactorMechanic<T>
+        : ISingleFullPositionHolderMechanic<IFullPositionHolder>        
     {
         public bool Active { get; set; } = true;
         private ThrustMechanic ThrustMechanics { get; set; }
@@ -25,5 +25,6 @@ namespace Apocalypse.Any.Infrastructure.Server.Services.Mechanics.Proxy
         {
             return ThrustMechanics.Update(entity, GetFactor());
         }
+
     }
 }

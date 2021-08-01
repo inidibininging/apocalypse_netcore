@@ -1,11 +1,9 @@
-using System;
-using System.Collections;
-using System.Linq;
 using System.Collections.Generic;
+using System.Linq;
 using Apocalypse.Any.Domain.Common.Mechanics;
 using Apocalypse.Any.Domain.Common.Model;
 
-namespace Apocalypse.Any.Infrastructure.Server.Services.Mechanics.EnemyMechanics
+namespace Apocalypse.Any.Infrastructure.Server.Services.Mechanics.ItemMechanics
 {
     public class NotTakenItemsIterator: IEnumerableCharacterEntityMechanic<Item>
     {

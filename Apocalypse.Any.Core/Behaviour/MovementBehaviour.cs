@@ -71,7 +71,7 @@ namespace Apocalypse.Any.Core.Behaviour
             }
         }
 
-        public float Delta { get; set; } = 1;
+        private float Delta { get; set; } = 1;
 
         #endregion properties
     }

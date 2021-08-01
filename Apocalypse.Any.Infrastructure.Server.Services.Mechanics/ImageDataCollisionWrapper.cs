@@ -2,9 +2,9 @@
 using Apocalypse.Any.Core.Collision;
 using Apocalypse.Any.Domain.Common.Model;
 using Apocalypse.Any.Domain.Server.Model.Interfaces;
-using Apocalypse.Any.Infrastructure.Common.Services.Network.Interfaces.Transformations;
 using Microsoft.Xna.Framework;
 using System;
+using Apocalypse.Any.Infrastructure.Server.Services.Transformations;
 
 namespace Apocalypse.Any.Infrastructure.Server.Services.Mechanics
 {

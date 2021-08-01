@@ -13,7 +13,7 @@ namespace Apocalypse.Any.Domain.Common.Network
 
         public SpriteSheetClient(
             ImageData data,
-            Dictionary<string, Rectangle> registeredFrames) : base(registeredFrames)
+            Dictionary<(int frame,int x, int y), Rectangle> registeredFrames) : base(registeredFrames)
         {
             ServerData = data;
             ApplyImageData(data);

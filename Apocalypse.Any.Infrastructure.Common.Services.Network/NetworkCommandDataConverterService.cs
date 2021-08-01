@@ -6,6 +6,8 @@ using Newtonsoft.Json;
 using System;
 using System.Linq;
 using System.Reflection.Metadata.Ecma335;
+using Echse.Net.Serialization;
+using Echse.Net.Domain;
 
 namespace Apocalypse.Any.Infrastructure.Common.Services.Network
 {
@@ -15,21 +17,20 @@ namespace Apocalypse.Any.Infrastructure.Common.Services.Network
     public class NetworkCommandDataConverterService
     {
         
-        public NetworkCommandDataConverterService(ISerializationAdapter serializationAdapter)
+        public NetworkCommandDataConverterService(IByteArraySerializationAdapter serializationAdapter)
         {
             SerializationAdapter = serializationAdapter ?? throw new ArgumentNullException(nameof(serializationAdapter));
-            var lol = typeof(PlayerMetadataBag).Name;
         }
 
-        public ISerializationAdapter SerializationAdapter { get; }
+        public IByteArraySerializationAdapter SerializationAdapter { get; }
 
         public object ConvertToObject(NetworkCommand command)
         {
             //command.CommandArgument
             
-            var types = command.CommandArgument.LoadType(true, false);
-            if (types.Count() == 0)
-                types = new Type[] { command.CommandArgument.GetApocalypseTypes() };
+            var types = command.CommandArgument.LoadType(false, false);
+            // if (types.Any())
+            //     types = new Type[] { command.CommandArgument.GetApocalypseTypes() };
 
             var metaDataTyped = SerializationAdapter.DeserializeObject(command.Data, types.FirstOrDefault());
 

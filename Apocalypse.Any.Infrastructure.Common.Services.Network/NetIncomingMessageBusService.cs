@@ -20,19 +20,19 @@ namespace Apocalypse.Any.Infrastructure.Common.Services.Network
             Peer = peer;
         }
 
-        public Task<IList<NetIncomingMessage>> FetchMessageChunkAsync()
+        public Task<List<NetIncomingMessage>> FetchMessageChunkAsync()
         {
-            return new Task<IList<NetIncomingMessage>>(() =>
+            return new Task<List<NetIncomingMessage>>(() =>
             {
                 return FetchMessageChunk();
             });
         }
 
-        public IList<NetIncomingMessage> FetchMessageChunk()
+        public List<NetIncomingMessage> FetchMessageChunk()
         {
-            IList<NetIncomingMessage> fetchedMessages = new List<NetIncomingMessage>();
+            List<NetIncomingMessage> fetchedMessages = new List<NetIncomingMessage>();
             var fetchMessageResult = Peer.ReadMessages(fetchedMessages);
-            return fetchedMessages.Where(message => !string.IsNullOrWhiteSpace(message.PeekString())).ToList();
+            return fetchedMessages;
         }
     }
 }

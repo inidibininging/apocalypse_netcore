@@ -1,4 +1,4 @@
-﻿using Apocalypse.Any.Infrastructure.Common.Services.Serializer.Interfaces;
+﻿using Echse.Net.Serialization;
 using MsgPack;
 using MsgPack.Serialization;
 using System;
@@ -9,11 +9,15 @@ using System.Text;
 
 namespace Apocalypse.Any.Infrastructure.Common.Services.Serializer.MsgPackAdapter
 {
-    public class MsgPackSerializerAdapter : ISerializationAdapter
+    public class MsgPackSerializerAdapter : IStringSerializationAdapter
     {
         public T DeserializeObject<T>(string content)
         {
-            var serializer = MessagePackSerializer.Get<T>();
+            var context = new SerializationContext { SerializationMethod = SerializationMethod.Map };
+            context.DictionarySerlaizationOptions.OmitNullEntry = true;
+            
+            var serializer = SerializationContext.Default.GetSerializer<T>(context);
+
             T subject;
             using (var ms = new MemoryStream(Convert.FromBase64String(content)))
             {
@@ -27,9 +31,11 @@ namespace Apocalypse.Any.Infrastructure.Common.Services.Serializer.MsgPackAdapte
         {
             var serializer = MessagePackSerializer.Get(type);
             object subject;
+
+
             using (var ms = new MemoryStream(Convert.FromBase64String(content)))
             {
-                ms.Position = 0;
+                ms.Position = 0;                
                 subject = serializer.Unpack(ms);
             }
             return subject;
@@ -37,8 +43,13 @@ namespace Apocalypse.Any.Infrastructure.Common.Services.Serializer.MsgPackAdapte
 
         public string SerializeObject<T>(T instance)
         {
-            var serializer = MessagePackSerializer.Get<T>();
             var finalString = new StringBuilder();
+
+            var context = new SerializationContext { SerializationMethod = SerializationMethod.Map };
+            context.DictionarySerlaizationOptions.OmitNullEntry = true;
+            var serializer = SerializationContext.Default.GetSerializer<T>(context);
+           
+
             using (var ms = new MemoryStream())
             {
                 serializer.Pack(ms, instance);

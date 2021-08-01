@@ -47,7 +47,7 @@ namespace Apocalypse.Any.Client.States
                 return;
 
             machine.SharedContext.PlayerImageId = machine.SharedContext.CurrentGameStateData.Metadata.Id;
-            if (string.IsNullOrWhiteSpace(machine.SharedContext.CurrentGameStateData.Metadata.Data))
+            if (machine.SharedContext.CurrentGameStateData.Metadata.Data == null)
                 return;
 
             //convert to object
@@ -79,7 +79,7 @@ namespace Apocalypse.Any.Client.States
                 LastItemCount = metadataBagConverted.Items.Count;
             }
             
-            machine.SharedContext.Messages.Add(metadataBagConverted.GameSectorTag);
+            machine.SharedContext.Messages.Add(metadataBagConverted.GameSectorTag.ToString());
             machine.SharedContext.LastMetadataBag = metadataBagConverted;
 
             // //assign the first character sheet

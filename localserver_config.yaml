@@ -1,0 +1,18 @@
+!Apocalypse.Any.Domain.Server.Model.GameServerConfiguration,%20Apocalypse.Any.Domain.Server.Model,%20Version=1.0.0.0,%20Culture=neutral,%20PublicKeyToken=null
+BuildOperation: BuildDefaultSectorState
+RunOperation: RunAsDefaultSector
+MaxEnemies: 16
+MaxPlayers: 4
+RedisHost: 
+RedisPort: 0
+SerializationAdapterType: Apocalypse.Any.Infrastructure.Common.Services.Serializer.MsgPackAdapter.MsgPackByteArraySerializerAdapter
+ServerIp: 127.0.0.1
+ServerPeerName: asteroid
+ServerPort: 8079
+ServerUpdateInSeconds: 0.0119999997764825821
+StartingSector: 1
+StartupFunction: Main
+StartupScript: '/home/develop/src/apocalypse_netcore/apocalypse.echse'
+SectorXSize: 32000
+SectorYSize: 32000
+WebAuthenticationServiceUrl: http://localhost:5000/api/ExampleAuth/

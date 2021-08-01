@@ -51,6 +51,21 @@
         /// User role gateway tha routes messages to the corresponding game state
         /// </summary>
         UserRoleGateWay = 9,
+        UpdateDelta = 10,
 
-    };
+        /// <summary>
+        /// Sends the player keys 
+        /// </summary>
+        SendPressedRelease = 11,
+        
+        /// <summary>
+        /// Sends a specific part of a game state data layer
+        /// </summary>
+        ReceiveGameStateDataLayerPart = 12,
+
+        /// <summary>
+        /// Used for synching server-side
+        /// </summary>
+        PlayerPositionSync = 13
+    }
 }

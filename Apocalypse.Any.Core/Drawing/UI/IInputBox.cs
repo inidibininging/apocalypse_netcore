@@ -2,7 +2,7 @@ using Apocalypse.Any.Core.Text;
 
 namespace Apocalypse.Any.Core.Drawing.UI
 {
-    public interface IInputBox : UIElement
+    public interface IInputBox : IUIElement
     {
         VisualText Text { get; set; }
 

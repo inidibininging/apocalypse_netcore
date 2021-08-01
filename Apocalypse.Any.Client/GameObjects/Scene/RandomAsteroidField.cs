@@ -1,13 +1,10 @@
-﻿using Apocalypse.Any.Core;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
+using Apocalypse.Any.Constants;
+using Apocalypse.Any.Core;
 using Apocalypse.Any.Core.Drawing;
-using Apocalypse.Any.Core.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace Apocalypse.Any.Client.GameObjects.Scene
 {
@@ -15,27 +12,30 @@ namespace Apocalypse.Any.Client.GameObjects.Scene
         GameObject,
         IVisualGameObject
     {
-        private SpriteSheet Sheet { get; set; }
-        
-        public List<RandomAsteroid> RandomAsteroids { get; set; } = new List<RandomAsteroid>();
-        public int AsteroidCount { get; set; }
+        private Task CalcMass;
 
-        public RandomAsteroidField(int asteroidCount = 50) : base()
+        public RandomAsteroidField(int asteroidCount = 50)
         {
             AsteroidCount = asteroidCount;
         }
 
+        private SpriteSheet Sheet { get; set; }
+
+        public List<RandomAsteroid> RandomAsteroids { get; set; } = new();
+        public int AsteroidCount { get; set; }
+
         public override void Initialize()
         {
-            var frames = new Dictionary<string, Rectangle>();
-            for (int i = 0; i < AsteroidCount; i++)
+            var frames = new Dictionary<(int asteroidNr, int dummyA, int dummyB), Rectangle>();
+            for (var i = 0; i < AsteroidCount; i++)
             {
                 var randomAsteroid = new RandomAsteroid();
                 RandomAsteroids.Add(randomAsteroid);
 
-                frames.Add(i.ToString(), new Rectangle(randomAsteroid.FramePosition.ToPoint(), new Point(32)));
+                frames.Add((i, 0, 0), new Rectangle(randomAsteroid.FramePosition.ToPoint(), new Point(32)));
             }
-            Sheet = new SpriteSheet(frames) { Path = "Image/gamesheetExtended" };
+
+            Sheet = new SpriteSheet(frames) {Path = ImagePaths.gamesheetExtended};
 
             //Add(new AsteroidScreenBehaviour(Sheet));
             base.Initialize();
@@ -46,7 +46,7 @@ namespace Apocalypse.Any.Client.GameObjects.Scene
             var i = 0;
             RandomAsteroids.ForEach(randomAsteroid =>
             {
-                Sheet.SelectedFrame = i.ToString();
+                Sheet.SelectedFrame = (i, 0, 0);
                 Sheet.Position.X = randomAsteroid.Position.X;
                 Sheet.Position.Y = randomAsteroid.Position.Y;
                 Sheet.Rotation.Rotation = randomAsteroid.Rotation.Rotation;
@@ -57,7 +57,7 @@ namespace Apocalypse.Any.Client.GameObjects.Scene
                 i++;
             });
         }
-        private Task CalcMass;
+
         public override void Update(GameTime time)
         {
             // if(CalcMass == null)
@@ -77,9 +77,9 @@ namespace Apocalypse.Any.Client.GameObjects.Scene
             //                 if(distance > 5000)
             //                     continue;
             //                 Console.WriteLine(distance);
-                            
+
             //                 // Console.WriteLine(asteroidA.Position.ToVector2().Length());
-                            
+
             //                 double force = 1f;
             //                 try
             //                 {
@@ -89,10 +89,10 @@ namespace Apocalypse.Any.Client.GameObjects.Scene
             //                 {
             //                     Console.WriteLine("ups");
             //                 }
-                            
-                            
+
+
             //                 Console.WriteLine("force "+ force);
-                            
+
             //                 if(force > 20)
             //                     force = 0;
 
@@ -113,9 +113,9 @@ namespace Apocalypse.Any.Client.GameObjects.Scene
             //     });
             //     if(CalcMass.IsCompletedSuccessfully || CalcMass.Status == TaskStatus.Created){
             //         CalcMass.Start();
-                    
+
             //     }
-                    
+
             // }
 
             RandomAsteroids.ForEach(randomAsteroid => randomAsteroid.Update(time));

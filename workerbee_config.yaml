@@ -8,7 +8,7 @@ Screen:
   ScreenWidth: 1024
 ServerIp: 127.0.0.1
 ServerPeerName: asteroid
-SerializationAdapterType: Apocalypse.Any.Infrastructure.Common.Services.Serializer.MsgPackAdapter.MsgPackSerializerAdapter
+SerializationAdapterType: Apocalypse.Any.Infrastructure.Common.Services.Serializer.MsgPackAdapter.MsgPackByteArraySerializerAdapter
 ServerPort: 8080
 User:
   Username: foo3

@@ -6,7 +6,8 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using System;
-using System.Collections.Generic;
+using Apocalypse.Any.Constants;
+using Apocalypse.Any.Domain.Common.DrawingOrder;
 
 namespace Apocalypse.Any.Core.Drawing
 {
@@ -16,28 +17,27 @@ namespace Apocalypse.Any.Core.Drawing
     /// </summary>
     public class Image : GameObject, IImage, IDisposable, IImageData
     {
-        #region static
-
-        private static Image _emptyImage;
         
-        public static Image EmptyImage // the image should be "empty"
+        /// <summary>
+        /// This is the anchor/origin of the image (ehem.. texture) drawn.
+        /// This will be the position you get from the image 
+        /// </summary>
+        public Vector2 Origin
         {
-            get
-            {
-                return _emptyImage ?? (_emptyImage = new Image()
-                {
-                    Path = "Image/dummytile.png"
-                });
-            }
+            get;
+            protected set;
         }
 
-        #endregion static
 
-        private Vector2 _origin;
         private RenderTarget2D _renderTarget;
-        private string _path;
-        
-        public string Path
+
+        private int _path;
+        private Vector2 _scale;
+
+        /// <summary>
+        /// Path to texture used. For more see Apocalypse.Any.Constants.ImagePaths
+        /// </summary>
+        public int Path
         {
             get
             {
@@ -50,21 +50,38 @@ namespace Apocalypse.Any.Core.Drawing
                     _path = value;
                     //
                 }
-                if (!string.IsNullOrWhiteSpace(Path))
+                if (Path != ImagePaths.empty)
                     LoadContent(ScreenService.Instance.Content); // PORTS HERE
             }
         }
 
         private int TimesContentLoaded { get; set; }
 
+        /// <summary>
+        /// This is the "Z"
+        /// </summary>
         public float LayerDepth { get; set; }
-
+        
         public Vector2 Scale { get; set; }
+        
+        /// <summary>
+        /// The rect to be displayed of an image
+        /// </summary>
         public Rectangle SourceRect { get; set; }
+        
+        /// <summary>
+        /// Monogame Texture
+        /// </summary>
         public Texture2D Texture { get; set; }
 
+        /// <summary>
+        /// Used to forward if the Texture and so on is disposed. Will return false if disposed was never called.
+        /// </summary>
         public bool Disposed { get; private set; }
 
+        /// <summary>
+        /// Current Position of Image in respect to the anchor
+        /// </summary>
         public MovementBehaviour Position
         {
             get;
@@ -101,7 +118,7 @@ namespace Apocalypse.Any.Core.Drawing
             }
         }
 
-        public string SelectedFrame { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public (int frame,int x, int y) SelectedFrame { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
         public bool ForceDraw {get;set;}
         public Image()
@@ -110,7 +127,7 @@ namespace Apocalypse.Any.Core.Drawing
             Rotation = new RotationBehaviour();
             Alpha = new AlphaBehaviour();
 
-            _path = string.Empty;
+            _path = ImagePaths.empty;
             Scale = Vector2.One;
             SourceRect = Rectangle.Empty;
             Color = Color.White;
@@ -134,9 +151,15 @@ namespace Apocalypse.Any.Core.Drawing
             {
                 Texture = Texture2D.FromStream(ScreenService.Instance.GraphicsDevice,imgStream);
             }
-#else            
-            Texture = manager.Load<Texture2D>(Path);
+#else
+            var lePath = ImagePaths.ConvertToString(Path);
+            Texture = manager.Load<Texture2D>(lePath);
 #endif
+            if (Texture == null)
+            {
+                throw new InvalidCastException();
+            }
+
 
             var dimensions = Vector2.Zero;
 
@@ -188,16 +211,17 @@ namespace Apocalypse.Any.Core.Drawing
                ScreenService.Instance.DefaultScreenCamera.Position.X + ScreenService.Instance.Resolution.X/2 < Position.X ||
                ScreenService.Instance.DefaultScreenCamera.Position.Y - ScreenService.Instance.Resolution.Y/2 > Position.Y ||
                ScreenService.Instance.DefaultScreenCamera.Position.Y + ScreenService.Instance.Resolution.Y/2 < Position.Y) && Alpha.Alpha <= 0 && !ForceDraw;
+        
         public virtual void Draw(SpriteBatch spriteBatch)
         {
             if (Disposed)
                 return;
 
-            if (string.IsNullOrEmpty(Path))
+            if (Path == ImagePaths.empty)
                 return;
 
-            if(_origin == Vector2.Zero)
-                _origin = new Vector2(SourceRect.Width / 2, SourceRect.Height / 2);
+            if(Origin == Vector2.Zero)
+                Origin = new Vector2(SourceRect.Width / 2, SourceRect.Height / 2);
 
             //only draw texture if it lies within the camera bounds
             if(CannotDraw())
@@ -207,11 +231,11 @@ namespace Apocalypse.Any.Core.Drawing
             
             spriteBatch.Draw(
                 Texture,
-                Position,
+                Position + Origin,
                 SourceRect,
                 Color * Alpha,
                 Rotation,
-                _origin,
+                Origin,
                 Scale * ScreenService.Instance.Ratio,
                 SpriteEffects.None,
                 (LayerDepth > 1 && LayerDepth > 0 ? LayerDepth / 100f : LayerDepth));
@@ -223,6 +247,15 @@ namespace Apocalypse.Any.Core.Drawing
             
         }
 
+        public void Add(Image image)
+        {
+            if(image.LayerDepth == 0 && LayerDepth != 0)
+                image.LayerDepth = LayerDepth + DrawingPlainOrder.MicroPlainStep;
+            base.Add(image);
+        }
+        
+
         public override void Update(GameTime time) => ForEach(obj => obj.Update(time));
+        
     }
 }

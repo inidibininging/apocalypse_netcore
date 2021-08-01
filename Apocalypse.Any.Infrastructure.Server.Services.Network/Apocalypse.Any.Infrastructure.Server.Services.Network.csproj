@@ -1,12 +1,13 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp2.1</TargetFramework>
+    <TargetFramework>net5.0</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Lidgren.Network.Core2" Version="1.0.0" />
-    <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
+    <PackageReference Include="MonoGame.Framework.DesktopGL" Version="3.8.0.1641" />
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
   </ItemGroup>
 
   <ItemGroup>
@@ -14,6 +15,7 @@
     <ProjectReference Include="..\Apocalypse.Any.Domain.Server.Model.Network\Apocalypse.Any.Domain.Server.Model.Network.csproj" />
     <ProjectReference Include="..\Apocalypse.Any.Infrastructure.Common.Services.Network\Apocalypse.Any.Infrastructure.Common.Services.Network.csproj" />
     <ProjectReference Include="..\Apocalypse.Any.Infrastructure.Server.Services.Data\Apocalypse.Any.Infrastructure.Server.Services.Data.csproj" />
+    <ProjectReference Include="..\echse_net\Echse.Net.Domain\Echse.Net.Domain.csproj" />
   </ItemGroup>
 
 </Project>

@@ -1,6 +1,7 @@
 ﻿using Apocalypse.Any.Core.Drawing;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Newtonsoft.Json.Bson;
 
 namespace Apocalypse.Any.Core.Camera
 {
@@ -12,5 +13,8 @@ namespace Apocalypse.Any.Core.Camera
         float Zoom { get; set; }
         Viewport CurrentViewport { get; set; }
         Matrix TransformMatrix { get; }
+
+        void ZoomIn(float zoomFactor);
+        void ZoomOut(float zoomFactor);
     }
 }

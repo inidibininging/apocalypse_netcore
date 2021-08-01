@@ -12,7 +12,7 @@ namespace Apocalypse.Any.Infrastructure.Server.Services.Data
     /// Provides a generic in memory data layer
     /// </summary>
     public class GenericInMemoryDataLayer<TData> : CheckedWithReflectionGameStateDataLayer
-        where TData : class, IIdentifiableModel
+        where TData : class 
     {
         /// <summary>
         /// If true, every AddSafe will avoid items with the same id.
@@ -28,9 +28,19 @@ namespace Apocalypse.Any.Infrastructure.Server.Services.Data
         private ConcurrentBag<TData> Data { get; set; } = new ConcurrentBag<TData>();
         public override bool CanUse<T>(T instance)
         {
-            return instance != null && 
-                   CanUseByTType<T, TData>() &&
-                   OnlyUniques ? !Data.Any(item => item.Id == (instance as TData)?.Id) : true;
+            var instanceId = instance?.GetType().GetProperty("Id");
+            if (instanceId == null)
+                return false;
+            
+            return !CanUseByTType<T, TData>() || !OnlyUniques || Data.All(item =>
+            {
+                var idItem = item.GetType().GetProperty("Id");
+                
+                if (idItem == null)
+                    return false;
+                //fixed for now with reflection. needs to be done without it
+                return idItem.GetValue(instance) != instanceId.GetValue(instance);
+            });
         }
 
         public override List<Type> GetValidTypes()
@@ -53,7 +63,7 @@ namespace Apocalypse.Any.Infrastructure.Server.Services.Data
         {
             if (!items.All(item => CanUse(item)))
                 return false;
-            Data = new ConcurrentBag<TData>(items.Cast<TData>());
+            Data = new ConcurrentBag<TData>(items.Cast<TData>());	    
             return true;
         }
     }

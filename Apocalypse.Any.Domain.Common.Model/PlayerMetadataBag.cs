@@ -15,7 +15,7 @@ namespace Apocalypse.Any.Domain.Common.Model
         public List<Item> Items { get; set; }
         public CharacterSheet Stats { get; set; }
         public string ChosenStat { get; set; }
-        public string GameSectorTag { get; set; }
+        public int GameSectorTag { get; set; }
         public string ClientEventName { get; set; }
         public string ServerEventName { get; set; }
         public DialogNode CurrentDialog { get; set; }

@@ -11,19 +11,13 @@ namespace Apocalypse.Any.Infrastructure.Server.Services.Factories
         where T1 : IIdentifiableModel
         where T2 : IIdentifiableModel
     {
-        public override bool CanUse<TParam>(TParam instance)
-        {
-            return CanUseByTType<TParam, DynamicRelationFactoryArgument<T1, T2>>();
-        }
+        public override bool CanUse<TParam>(TParam instance) => CanUseByTType<TParam, DynamicRelationFactoryArgument<T1, T2>>();
 
-        public override List<Type> GetValidParameterTypes()
-        {
-            return new List<Type>() { typeof(DynamicRelationFactoryArgument<T1, T2>) };
-        }
+        public override List<Type> GetValidParameterTypes() => new List<Type>() { typeof(DynamicRelationFactoryArgument<T1, T2>) };
 
         protected override DynamicRelation UseConverter<TParam>(TParam parameter)
         {
-            var relation = parameter as DynamicRelationFactoryArgument<T1, T2>;
+            var relation = parameter as DynamicRelationFactoryArgument<T1, T2> ?? throw new ArgumentNullException(nameof(parameter));
             return new DynamicRelation()
             {
                 Id = Guid.NewGuid().ToString(),

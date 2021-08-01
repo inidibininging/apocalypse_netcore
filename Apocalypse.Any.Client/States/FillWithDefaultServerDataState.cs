@@ -5,7 +5,7 @@ using States.Core.Infrastructure.Services;
 namespace Apocalypse.Any.Client.States
 {
     /// <summary>
-    /// Fills empty connection variables (ip, port, peer, username, pass) with default values
+    ///     Fills empty connection variables (ip, port, peer, username, pass) with default values
     /// </summary>
     public class FillWithDefaultServerDataState : IState<string, INetworkGameScreen>
     {

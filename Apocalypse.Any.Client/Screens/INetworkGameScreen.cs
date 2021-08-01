@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Apocalypse.Any.Core.Drawing;
 using Apocalypse.Any.Core.Drawing.UI;
 using Apocalypse.Any.Core.Screen;
@@ -10,7 +11,6 @@ using Apocalypse.Any.Domain.Common.Model.RPG;
 using Apocalypse.Any.Domain.Common.Network;
 using Lidgren.Network;
 using Microsoft.Xna.Framework;
-using System.Collections.Generic;
 
 namespace Apocalypse.Any.Client.Screens
 {
@@ -18,17 +18,6 @@ namespace Apocalypse.Any.Client.Screens
     {
         string LoginToken { get; set; }
         string PlayerImageId { get; set; }
-
-        #region UI
-
-        SpriteSheet HealthImage { get; set; }
-        SpriteSheet SpeedImage { get; set; }
-        SpriteSheet StrenghImage { get; set; }
-        SpriteSheet DialogImage { get; set; }
-        SpriteSheet CursorImage { get; set; }
-        // SpriteSheet LerpMouseImage { get; set; }
-
-        #endregion UI
 
         ICharacterSheet FirstSheetSnapshot { get; set; }
         ICharacterSheet CurrentSheetSnapshot { get; set; }
@@ -50,6 +39,7 @@ namespace Apocalypse.Any.Client.Screens
         IInputService InputService { get; set; }
         IdentifiableNetworkCommand CurrentNetworkCommand { get; set; }
         GameStateData CurrentGameStateData { get; set; }
+
         PlayerMetadataBag LastMetadataBag { get; set; }
 
         VisualText MoneyCount { get; set; }
@@ -58,7 +48,18 @@ namespace Apocalypse.Any.Client.Screens
         IWindow InventoryWindow { get; set; }
         IWindow CharacterWindow { get; set; }
         IWindow TradeWindow { get; set; }
-        IWindow ChatWindow { get; set; }        
+        IWindow ChatWindow { get; set; }
         IWindow DialogWindow { get; set; }
+
+        #region UI
+
+        SpriteSheet HealthImage { get; set; }
+        SpriteSheet SpeedImage { get; set; }
+        SpriteSheet StrenghImage { get; set; }
+        SpriteSheet DialogImage { get; set; }
+
+        // SpriteSheet LerpMouseImage { get; set; }
+
+        #endregion UI
     }
 }

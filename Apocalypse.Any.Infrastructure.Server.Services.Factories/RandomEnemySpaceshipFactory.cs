@@ -8,6 +8,7 @@ using Apocalypse.Any.Domain.Server.Model;
 using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
+using Apocalypse.Any.Constants;
 
 namespace Apocalypse.Any.Infrastructure.Server.Services.Factories
 {
@@ -17,12 +18,12 @@ namespace Apocalypse.Any.Infrastructure.Server.Services.Factories
 
         public override bool CanUse<TParam>(TParam instance) => CanUseByTType<TParam, string>();
 
-        public override List<Type> GetValidParameterTypes()
-        {
-            return new List<Type>() { typeof(string) };
-        }
+        public override List<Type> GetValidParameterTypes() => new List<Type>() { typeof(string) };
 
-        private static CharacterSheetFactory RandomSheet {get;set;} = new CharacterSheetFactory();
+        private static CharacterSheetFactory RandomSheet { get; set; } = new CharacterSheetFactory();
+
+        static (int frame, int x, int y) RandomEnemyFrame() => (ImagePaths.EnemyFrame, Randomness.Instance.From(0, 8), Randomness.Instance.From(0, 1));
+        
         protected override EnemySpaceship UseConverter<TParam>(TParam parameter)
         {
             var enemyName = parameter as string;
@@ -43,18 +44,20 @@ namespace Apocalypse.Any.Infrastructure.Server.Services.Factories
                 {
                     Id = Guid.NewGuid().ToString(),
                     Alpha = new AlphaBehaviour() { Alpha = 1 },
-                    Path = "Image/gamesheetExtended", //TODO: look for Image/gamesheetExtended when replacing it with an atlas
-                    SelectedFrame = $"{IdPrefix}_{Randomness.Instance.From(0, 8)}_{Randomness.Instance.From(0, 1)}",
-                    Height = 32,
-                    Width = 32,
-                    Scale = new Vector2(1.5f, 1.5f),
+                    Path = ImagePaths.gamesheetExtended, //TODO: look for Image/gamesheetExtended when replacing it with an atlas
+                    SelectedFrame = RandomEnemyFrame(),
+                    Height = 64,
+                    Width = 64,
+                    Scale = new Vector2(2f, 2f),
                     Color = Color.White,
                     Position = new MovementBehaviour() { X = 0, Y = 0 },
                     Rotation = new RotationBehaviour() { Rotation = 180 },
                     LayerDepth = DrawingPlainOrder.Entities
                 },
-                Tags = new List<string>() { "Enemies","Generated" }
+                Tags = GetTags
             };
         }
+
+        private static List<string> GetTags => new List<string>() { "Enemies","Generated" };
     }
 }

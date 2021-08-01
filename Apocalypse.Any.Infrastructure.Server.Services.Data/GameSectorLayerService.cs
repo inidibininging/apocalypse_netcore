@@ -1,12 +1,15 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using Apocalypse.Any.Domain.Common.Model;
 using Apocalypse.Any.Domain.Common.Model.Network;
 using Apocalypse.Any.Domain.Server.Model.Interfaces;
 using Apocalypse.Any.Infrastructure.Server.PubSub.Interfaces;
 using Apocalypse.Any.Infrastructure.Server.Services.Data.Interfaces;
+using Echse.Domain;
 using Microsoft.Xna.Framework;
-using System.Collections.Generic;
 
-namespace Apocalypse.Any.GameServer.States.Sector
+namespace Apocalypse.Any.Infrastructure.Server.Services.Data
 {
     /// <summary>
     /// Representation of a game sector
@@ -19,7 +22,7 @@ namespace Apocalypse.Any.GameServer.States.Sector
         public int MaxPlayers { get; set; }
         public IGameSectorBoundaries SectorBoundaries { get; set; }
         public Dictionary<string, IGenericTypeFactory<GameStateData>> GameStateDataLayer { get; set; }
-        public string Tag { get; set; }
+        public int Tag { get; set; }
         public GameSectorStatus CurrentStatus { get; set; }
         public GameTime CurrentGameTime { get; set; }
         
@@ -88,5 +91,23 @@ namespace Apocalypse.Any.GameServer.States.Sector
         public IWorldGameStateDataIOLayer IODataLayer { get; set; }
         public IPlayerDialogService PlayerDialogService { get; set; }
         public IEventDispatcher EventDispatcher { get; set; }
+        public TimeSpan LanguageTick => CurrentGameTime.ElapsedGameTime;
+
+        public IEnumerable<TagVariable> Variables => DataLayer.GetLayersByType<TagVariable>().FirstOrDefault()?.DataAsEnumerable<TagVariable>();
+
+        public void AddVariable(TagVariable variable)
+        {
+            DataLayer.GetLayersByType<TagVariable>().FirstOrDefault()?.Add(variable);
+        }
+
+        public void RemoveTagByName(string tagName)
+        => DataLayer.GetLayersByType<TagVariable>().FirstOrDefault()
+                ?.Remove(new Func<TagVariable, bool>((v) => v.Name == tagName));
+        
+
+        public void RemoveTagByNameAndScope(string tagName, string scope)
+        => DataLayer.GetLayersByType<TagVariable>().FirstOrDefault()
+            ?.Remove(new Func<TagVariable, bool>((v) => v.Name == tagName && v.Scope == scope));
+
     }
 }

@@ -1,44 +1,31 @@
-﻿using Apocalypse.Any.Core;
+﻿using System;
+using Apocalypse.Any.Core;
 using Apocalypse.Any.Core.Behaviour;
 using Apocalypse.Any.Core.Drawing;
 using Apocalypse.Any.Core.Services;
 using Apocalypse.Any.Core.Utilities;
 using Microsoft.Xna.Framework;
-using System;
 
 namespace Apocalypse.Any.Client.Mechanics
 {
-    public class ThrustMechanicBehaviour<T> : Behaviour<T> where T : IFullPositionHolder, IUpdateableLite // Behaviour<IFullPositionHolder>
+    public class ThrustMechanicBehaviour<T> : Behaviour<T>
+        where T : IFullPositionHolder, IUpdateableLite // Behaviour<IFullPositionHolder>
     {
         private const float DefaultThrustAcceleration = 0.9f;
 
-        private TimeSpan _maxStopTime = 4.Seconds();
-
-        public float Delta
-        {
-            get; set;
-        }
+        private readonly TimeSpan _maxStopTime = 4.Seconds();
 
         public ThrustMechanicBehaviour(T target) : base(target)
         {
         }
 
+        public float Delta { get; set; }
+
         public TimeSpan StopTime { get; private set; } = 4.Seconds();
-        private bool _triggered = false;
 
         //SimpleLivingObject
 
-        public bool Triggered
-        {
-            get
-            {
-                return _triggered;
-            }
-            set
-            {
-                _triggered = value;
-            }
-        }
+        public bool Triggered { get; set; }
 
         public MovementBehaviour Movement => Target.Position;
 
@@ -68,6 +55,7 @@ namespace Apocalypse.Any.Client.Mechanics
                     Thrust(GetDefaultAcceleration());
                 }
             }
+
             base.Update(gameTime);
         }
 
@@ -94,10 +82,7 @@ namespace Apocalypse.Any.Client.Mechanics
 
         private void AddStopTime()
         {
-            if (StopTime <= 4.Seconds())
-            {
-                StopTime.Add(1.Seconds());
-            }
+            if (StopTime <= 4.Seconds()) StopTime.Add(1.Seconds());
         }
 
         #endregion Time Stuff
@@ -119,27 +104,24 @@ namespace Apocalypse.Any.Client.Mechanics
 
         public void GetNextX(float accelerationDelta)
         {
-            var x = (float)(Math.Sin(Rotation));
+            var x = (float) Math.Sin(Rotation);
             Movement.X += x * 3f * accelerationDelta;
         }
 
         public void GetNextY(float accelerationDelta)
         {
-            var y = (float)(Math.Cos(Rotation)) * -1;
+            var y = (float) Math.Cos(Rotation) * -1;
             Movement.Y += y * 3f * accelerationDelta;
         }
 
         private void SlowThrust(GameTime gameTime)
         {
-            if (StopTime >= 0.Seconds())
-            {
-                StopTime -= gameTime.ElapsedGameTime;
-            }
+            if (StopTime >= 0.Seconds()) StopTime -= gameTime.ElapsedGameTime;
         }
 
         private void FixFastThrust()
         {
-            Thrust(DefaultThrustAcceleration * 2 + (float)8.Seconds().Milliseconds / 5500);
+            Thrust(DefaultThrustAcceleration * 2 + (float) 8.Seconds().Milliseconds / 5500);
         }
 
         private void FadingThrust()
@@ -152,7 +134,7 @@ namespace Apocalypse.Any.Client.Mechanics
         {
             //I wasted MONTHS!!! because of this fucking function!
             //I put Milliseconds instead of TOTALMiliseconds... grrrr
-            Delta = ((float)StopTime.TotalMilliseconds / 3000 - 1);
+            Delta = (float) StopTime.TotalMilliseconds / 3000 - 1;
             if (!(Delta < 0)) return;
             Delta = 0;
             ResetStopTime();

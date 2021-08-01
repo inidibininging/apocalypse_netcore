@@ -2,6 +2,7 @@
 using Apocalypse.Any.Infrastructure.Common.Services.Network.Interfaces;
 using Apocalypse.Any.Infrastructure.Server.Services.Data.Interfaces;
 using Apocalypse.Any.Infrastructure.Server.States.Interfaces;
+using Echse.Net.Domain;
 using System;
 
 namespace Apocalypse.Any.Infrastructure.Server.States
@@ -28,8 +29,8 @@ namespace Apocalypse.Any.Infrastructure.Server.States
                 return;
             try
             {
-                var gData = CurrentNetworkCommandToInitialGameState.Translate(networkCommandConnection);
-                if (!HasValidGameStateData(gData))
+                var gameStateData = CurrentNetworkCommandToInitialGameState.Translate(networkCommandConnection);
+                if (!HasValidGameStateData(gameStateData))
                 {
                     gameStateContext.ChangeHandlerEasier(gameStateContext[(byte)ServerInternalGameStates.Login], networkCommandConnection);
                 }

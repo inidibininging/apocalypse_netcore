@@ -17,18 +17,18 @@ namespace Apocalypse.Any.GameServer.Delegator.Delegation
         public ConcurrentBag<string> Messages { get; private set; }
         private string Token;
         private bool Feeding { get; set; }
-        public ISerializationAdapter SerializationAdapter { get; }
+        public IByteArraySerializationAdapter SerializationAdapter { get; }
 
-        public UserDataDelegationService(ISerializationAdapter serializationAdapter)
+        public UserDataDelegationService(IByteArraySerializationAdapter serializationAdapter)
         {
             Messages = new ConcurrentBag<string>();
             SerializationAdapter = serializationAdapter ?? throw new ArgumentNullException(nameof(serializationAdapter));
         }
 
-        private NetOutgoingMessage CreateMessage<T>(string commandName, T instanceToSend)
+        private NetOutgoingMessage CreateMessage<T>(byte commandName, T instanceToSend)
         {
-            return Client.CreateMessage(
-                    SerializationAdapter.SerializeObject
+            var msg = Client.CreateMessage();
+            msg.Write(SerializationAdapter.SerializeObject
                     (
                         new NetworkCommand()
                         {
@@ -36,10 +36,10 @@ namespace Apocalypse.Any.GameServer.Delegator.Delegation
                             CommandArgument = typeof(T).FullName,
                             Data = SerializationAdapter.SerializeObject(instanceToSend)
                         }
-                    )
-                );
+                    ));
+            return msg;
         }
-        public string Feed()
+        public byte[] Feed()
         {
             Feeding = true;
             //Thread.Sleep(TimeSpan.FromMilliseconds(250));
@@ -48,17 +48,18 @@ namespace Apocalypse.Any.GameServer.Delegator.Delegation
 
 
             if (currentMessage == null)
-                return string.Empty;
+                return null;
                 
             if (currentMessage.MessageType != NetIncomingMessageType.Data)
-                return string.Empty;
+                return null;
 
-            string package = String.Empty;
+            byte[] package = null;
+            var packageLength = currentMessage.LengthBytes;
             try
             {
-                package = currentMessage.ReadString();
+                package = currentMessage.ReadBytes(packageLength);
 
-                if (!string.IsNullOrWhiteSpace(package))
+                if (package.Length != 0)
                 {
                     if (Messages.Count > 64)
                     {
@@ -68,7 +69,7 @@ namespace Apocalypse.Any.GameServer.Delegator.Delegation
                         Messages = new ConcurrentBag<string>();
                     }
 
-                    Messages.Add(package);
+                    //Messages.Add(package);
                 }
 
 
@@ -98,7 +99,7 @@ namespace Apocalypse.Any.GameServer.Delegator.Delegation
                                         LoginToken = Token,
                                         Commands = new List<string>()
                                     }),
-                                NetDeliveryMethod.UnreliableSequenced);
+                                NetDeliveryMethod.ReliableOrdered);
 
             return package;
         }
@@ -128,7 +129,7 @@ namespace Apocalypse.Any.GameServer.Delegator.Delegation
                     (
                         CreateMessage(NetworkCommandConstants.LoginCommand,
                                         userData),
-                                        NetDeliveryMethod.Unreliable
+                                        NetDeliveryMethod.ReliableOrdered
                     );
 
                 Console.WriteLine($"Wait {secondsLoginTry} seconds...");

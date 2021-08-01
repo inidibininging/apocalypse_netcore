@@ -1,8 +1,8 @@
-using Apocalypse.Any.Domain.Common.Model;
 using System;
 using System.Linq;
+using Apocalypse.Any.Domain.Common.Model;
 
-namespace Apocalypse.Any.Infrastructure.Common.Services.Network.Interfaces.Data
+namespace Apocalypse.Any.Infrastructure.Server.Services.Extraction
 {
     public class ItemMaxStatExtractionService
     {

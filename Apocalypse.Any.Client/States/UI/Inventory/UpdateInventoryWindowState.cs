@@ -1,5 +1,4 @@
 using Apocalypse.Any.Client.Screens;
-using Apocalypse.Any.Client.Services.Creation;
 using Apocalypse.Any.Core.Drawing;
 using Apocalypse.Any.Core.Drawing.UI;
 using Apocalypse.Any.Core.Services;
@@ -12,6 +11,8 @@ using Newtonsoft.Json.Linq;
 using States.Core.Infrastructure.Services;
 using System;
 using System.Linq;
+using Apocalypse.Any.Client.Services;
+using Apocalypse.Any.Domain.Common.Drawing.UI;
 
 namespace Apocalypse.Any.Client.States.UI.Inventory
 {
@@ -26,8 +27,8 @@ namespace Apocalypse.Any.Client.States.UI.Inventory
         {
             return machine.SharedContext.Images.Where(oldImg => oldImg.ServerData.Id == machine.SharedContext.PlayerImageId).FirstOrDefault();
         }
-        public int Margin { get; set; } = 32;
-        public int Offset { get; set; } = 64;
+        public int Margin { get; set; } = 16;
+        public int Offset { get; set; } = 32;
         public void Handle(IStateMachine<string, INetworkGameScreen> machine)
         {
             machine.SharedContext.Messages.Add(nameof(UpdateInventoryWindowState));
@@ -96,7 +97,7 @@ namespace Apocalypse.Any.Client.States.UI.Inventory
 
             foreach (var kv in inventoryWindow.Where(kv => kv.Key.Contains(InventorySlot)))
             {
-                //validate gameobjectas a spritesheet
+                //validate gameobject as a spritesheet
                 var currentSlot = (kv.Value as SpriteSheet);
                 if (currentSlot == null)
                     continue;

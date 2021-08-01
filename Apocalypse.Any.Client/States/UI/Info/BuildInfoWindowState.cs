@@ -5,14 +5,21 @@ using Apocalypse.Any.Domain.Common.Drawing.UI;
 using Apocalypse.Any.Domain.Common.DrawingOrder;
 using Microsoft.Xna.Framework;
 using States.Core.Infrastructure.Services;
+using System.Collections.Generic;
 
 namespace Apocalypse.Any.Client.States.UI.Info
 {
     public class BuildInfoWindowState : IState<string, INetworkGameScreen>
     {
         private const string LabelName = "InfoText";
+	private Dictionary<(int frame, int x, int y), Rectangle> Frames { get; set; }
 
-        public void Handle(IStateMachine<string, INetworkGameScreen> machine)
+	public BuildInfoWindowState(Dictionary<(int frame, int x, int y), Rectangle>  frames)
+	{
+	    this.Frames = frames;
+	}
+
+	public void Handle(IStateMachine<string, INetworkGameScreen> machine)
         {
             machine.SharedContext.Messages.Add(nameof(BuildInfoWindowState));
             machine.SharedContext.InfoWindow = new ApocalypseWindow();
@@ -27,7 +34,7 @@ namespace Apocalypse.Any.Client.States.UI.Info
             machine.SharedContext.InfoWindow.Add(LabelName, new VisualText());
             machine.SharedContext.InfoWindow.As<VisualText>(LabelName).Text = "0";
             machine.SharedContext.InfoWindow.As<VisualText>(LabelName).Color = Color.Pink;
-            machine.SharedContext.InfoWindow.IsVisible = true;
+            machine.SharedContext.InfoWindow.IsVisible = false;
         }
     }
 }

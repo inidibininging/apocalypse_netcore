@@ -28,7 +28,7 @@ namespace Apocalypse.Any.Infrastructure.Server.Services.Mechanics
             //target.Position.Y = MathHelper.Lerp(target.Position.Y, target.Position.Y + (y * BasicAcceleration * accelerationDelta), 0.01f);
         }
 
-        public IFullPositionHolder Update(IFullPositionHolder target, float speedFactor = 1)
+        public virtual IFullPositionHolder Update(IFullPositionHolder target, float speedFactor = 1)
         {
             GetNextX(target, speedFactor);
             GetNextY(target, speedFactor);

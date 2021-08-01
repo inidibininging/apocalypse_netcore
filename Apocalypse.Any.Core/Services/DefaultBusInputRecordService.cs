@@ -1,5 +1,6 @@
 ﻿using Apocalypse.Any.Core.Input;
 using Apocalypse.Any.Core.Input.Translator;
+using Echse.Net.Domain;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using System;
@@ -58,6 +59,7 @@ namespace Apocalypse.Any.Core.Services
         private IList<IInputTranslator<JoystickState, IEnumerable<string>>> GetGenericJoystickTranslators()
         {
             var joystickTranslators = new List<IInputTranslator<JoystickState, IEnumerable<string>>>();
+            
             for (int i = 0; i < GamePad.MaximumGamePadCount; i++)
             {
                 try
@@ -102,6 +104,7 @@ namespace Apocalypse.Any.Core.Services
 
             if (JoystickTranslators != null)
             {
+                
                 var index = JoystickTranslators.Count;
                 allOutputs
                     .AddRange

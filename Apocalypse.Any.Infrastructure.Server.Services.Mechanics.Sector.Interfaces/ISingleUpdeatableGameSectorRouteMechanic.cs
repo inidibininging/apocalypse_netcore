@@ -8,6 +8,6 @@ namespace Apocalypse.Any.Infrastructure.Server.Services.Mechanics.Sector.Interfa
     public interface ISingleUpdeatableGameSectorRouteMechanic
         : ISingleUpdeatableMechanic<IGameSectorsOwner, IGameSectorsOwner>
     {
-        IEnumerable<EntityGameSectorRoute> EntityGameSectorRoutes { get; set; }
+        // IEnumerable<EntityGameSectorRoute> EntityGameSectorRoutes { get; set; }
     }
 }

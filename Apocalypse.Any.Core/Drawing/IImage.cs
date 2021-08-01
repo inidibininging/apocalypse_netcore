@@ -8,9 +8,11 @@ namespace Apocalypse.Any.Core.Drawing
     /// </summary>
 	public interface IImage
         : IVisualGameObject,
-        IUpdateableLite,
+            IUpdateableLite,
         IFullPositionHolder,
-        IColorChannelHolder
+        IColorChannelHolder,
+        IScaleHolder,
+        ILayerDepthHolder
     {
         /// <summary>
         /// The current texture that is used. For now the setter is public.
@@ -32,30 +34,13 @@ namespace Apocalypse.Any.Core.Drawing
         }
 
         /// <summary>
-        /// Represents the scale factor of a rectangular image
-        /// </summary>
-        Vector2 Scale
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
         /// Represents the image path. Warning! The image should be in the pipe line. Otherwise the whole game will stop working
         /// </summary>
-        string Path
+        int Path
         {
             get;
             set;
         }
-
-        /// <summary>
-        /// Represents the layer depth where the image will be rendered aka. Z-Order
-        /// </summary>
-        float LayerDepth
-        {
-            get;
-            set;
-        }
+        
     }
 }
