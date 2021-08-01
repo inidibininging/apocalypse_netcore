@@ -3,6 +3,7 @@ using Apocalypse.Any.Domain.Common.Model.Network;
 using Apocalypse.Any.Domain.Server.Model.Network;
 using Apocalypse.Any.Infrastructure.Server.Services.Data.Interfaces;
 using Apocalypse.Any.Infrastructure.Server.States.Interfaces;
+using Echse.Net.Domain;
 using System;
 using System.Collections.Concurrent;
 
@@ -33,7 +34,7 @@ namespace Apocalypse.Any.Infrastructure.Server.States
                 userData = CurrentNetworkCommandToFullUserDataTranslator.Translate(networkCommandConnectionToHandle);
 
                 //check permissions
-                if (!userData.Roles.HasFlag(UserDataRole.CanSendRemoteStateCommands))
+                if (userData.Roles == null || !userData.Roles[UserDataRoleSource.SyncServer].HasFlag(UserDataRole.CanSendRemoteStateCommands))
                 {
                     gameStateContext.ChangeHandlerEasier(gameStateContext.GameStateRegistrar.GetNetworkLayerState((byte)ServerInternalGameStates.Error), networkCommandConnectionToHandle);
                     return;

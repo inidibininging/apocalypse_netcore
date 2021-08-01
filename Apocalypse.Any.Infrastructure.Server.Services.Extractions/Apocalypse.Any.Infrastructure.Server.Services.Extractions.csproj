@@ -1,13 +1,17 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp2.1</TargetFramework>
+    <TargetFramework>net5.0</TargetFramework>
     <AssemblyName>Apocalypse.Any.Infrastructure.Server.Services.Extraction</AssemblyName>
     <RootNamespace>Apocalypse.Any.Infrastructure.Server.Services.Extraction</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Apocalypse.Any.Domain.Common.Model\Apocalypse.Any.Domain.Common.Model.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MonoGame.Framework.DesktopGL" Version="3.8.0.1641" />
   </ItemGroup>
 
 </Project>

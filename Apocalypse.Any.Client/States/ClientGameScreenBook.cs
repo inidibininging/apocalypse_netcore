@@ -1,35 +1,12 @@
 namespace Apocalypse.Any.Client.States
 {
     /// <summary>
-    /// Resource strings containing all the general states as constant strings
-    /// This class SHOULD be converted into a real serializable dictionary
-    ///
+    ///     Resource strings containing all the general states as constant strings
+    ///     This class SHOULD be converted into a real serializable dictionary
     /// </summary>
     public static class ClientGameScreenBook
     {
         public const string Init = nameof(Init);
-
-        #region UI
-
-        public const string BuildInventoryWindow = nameof(BuildInventoryWindow);
-        public const string UpdateInventoryWindow = nameof(UpdateInventoryWindow);
-        public const string UpdateInventoryImages = nameof(UpdateInventoryImages);
-
-        public const string BuildChatWindow = nameof(BuildChatWindow);
-        public const string UpdateChatWindow = nameof(UpdateChatWindow);
-
-        public const string BuildInfoWindow = nameof(BuildInfoWindow);
-        public const string UpdateInfoWindow = nameof(UpdateInfoWindow);
-
-        public const string BuildCharacterWindow = nameof(BuildCharacterWindow);
-        public const string UpdateCharacterWindow = nameof(UpdateCharacterWindow);
-
-        public const string BuildTradeWindow = nameof(BuildTradeWindow);
-        public const string UpdateTradeWindow = nameof(UpdateTradeWindow);
-
-        public const string UpdateUI = nameof(UpdateUI);
-
-        #endregion UI
 
         public const string BuildClientSideState = nameof(BuildClientSideState);
 
@@ -62,5 +39,27 @@ namespace Apocalypse.Any.Client.States
         public const string ReadServerDataFromConsole = nameof(ReadServerDataFromConsole);
         public const string Load = nameof(Load);
         public const string FillWithDefaultServerDataState = nameof(FillWithDefaultServerDataState);
+
+        #region UI
+
+        public const string BuildInventoryWindow = nameof(BuildInventoryWindow);
+        public const string UpdateInventoryWindow = nameof(UpdateInventoryWindow);
+        public const string UpdateInventoryImages = nameof(UpdateInventoryImages);
+
+        public const string BuildChatWindow = nameof(BuildChatWindow);
+        public const string UpdateChatWindow = nameof(UpdateChatWindow);
+
+        public const string BuildInfoWindow = nameof(BuildInfoWindow);
+        public const string UpdateInfoWindow = nameof(UpdateInfoWindow);
+
+        public const string BuildCharacterWindow = nameof(BuildCharacterWindow);
+        public const string UpdateCharacterWindow = nameof(UpdateCharacterWindow);
+
+        public const string BuildTradeWindow = nameof(BuildTradeWindow);
+        public const string UpdateTradeWindow = nameof(UpdateTradeWindow);
+
+        public const string UpdateUI = nameof(UpdateUI);
+
+        #endregion UI
     }
 }

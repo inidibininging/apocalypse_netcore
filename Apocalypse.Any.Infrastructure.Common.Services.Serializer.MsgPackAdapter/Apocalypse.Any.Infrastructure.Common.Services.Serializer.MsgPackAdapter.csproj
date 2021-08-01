@@ -1,15 +1,16 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp2.1</TargetFramework>
+    <TargetFramework>net5.0</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="MonoGame.Framework.DesktopGL" Version="3.8.0.1641" />
     <PackageReference Include="MsgPack.Cli" Version="1.0.1" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Apocalypse.Any.Infrastructure.Common.Services.Serializer.Interfaces\Apocalypse.Any.Infrastructure.Common.Services.Serializer.Interfaces.csproj" />
+    <ProjectReference Include="..\echse_net\Echse.Net.Serialization\Echse.Net.Serialization.csproj" />
   </ItemGroup>
 
 </Project>

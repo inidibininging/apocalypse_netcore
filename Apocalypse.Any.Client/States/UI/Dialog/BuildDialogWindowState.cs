@@ -1,15 +1,11 @@
 ﻿using Apocalypse.Any.Client.Screens;
+using Apocalypse.Any.Constants;
 using Apocalypse.Any.Core.Behaviour;
 using Apocalypse.Any.Core.Drawing;
-using Apocalypse.Any.Core.Text;
 using Apocalypse.Any.Domain.Common.Drawing.UI;
 using Apocalypse.Any.Domain.Common.DrawingOrder;
 using Microsoft.Xna.Framework;
 using States.Core.Infrastructure.Services;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using Apocalypse.Any.Constants;
 
 namespace Apocalypse.Any.Client.States.UI.Dialog
 {
@@ -32,10 +28,10 @@ namespace Apocalypse.Any.Client.States.UI.Dialog
             var upperCornerLeft = new SpriteSheet(machine.SharedContext.GameSheet.Frames)
             {
                 Path = ImagePaths.dialogue,
-                SelectedFrame = (ImagePaths.DialogueFrame, 0 ,0),
+                SelectedFrame = (ImagePaths.DialogueFrame, 0, 0),
                 LayerDepth = DrawingPlainOrder.UI,
                 ForceDraw = true,
-                Position = new MovementBehaviour()
+                Position = new MovementBehaviour
                 {
                     X = machine.SharedContext.DialogWindow.Position.X,
                     Y = machine.SharedContext.DialogWindow.Position.Y
@@ -46,10 +42,10 @@ namespace Apocalypse.Any.Client.States.UI.Dialog
             var upperCornerRight = new SpriteSheet(machine.SharedContext.GameSheet.Frames)
             {
                 Path = ImagePaths.dialogue,
-                SelectedFrame = (ImagePaths.DialogueFrame, 0 ,1),
+                SelectedFrame = (ImagePaths.DialogueFrame, 0, 1),
                 LayerDepth = DrawingPlainOrder.UI,
                 ForceDraw = true,
-                Position = new MovementBehaviour()
+                Position = new MovementBehaviour
                 {
                     X = machine.SharedContext.DialogWindow.Position.X + 640,
                     Y = machine.SharedContext.DialogWindow.Position.Y
@@ -61,12 +57,12 @@ namespace Apocalypse.Any.Client.States.UI.Dialog
             var lowerCornerLeft = new SpriteSheet(machine.SharedContext.GameSheet.Frames)
             {
                 Path = ImagePaths.dialogue,
-                SelectedFrame = (ImagePaths.DialogueFrame, 0 ,2),
+                SelectedFrame = (ImagePaths.DialogueFrame, 0, 2),
                 LayerDepth = DrawingPlainOrder.UI,
                 ForceDraw = true,
-                Position = new MovementBehaviour()
+                Position = new MovementBehaviour
                 {
-                    X = machine.SharedContext.DialogWindow.Position.X ,
+                    X = machine.SharedContext.DialogWindow.Position.X,
                     Y = machine.SharedContext.DialogWindow.Position.Y + 448
                 },
                 Scale = new Vector2(2, 2),
@@ -75,10 +71,10 @@ namespace Apocalypse.Any.Client.States.UI.Dialog
             var lowerCornerRight = new SpriteSheet(machine.SharedContext.GameSheet.Frames)
             {
                 Path = ImagePaths.dialogue,
-                SelectedFrame = (ImagePaths.DialogueFrame, 0 ,3),
+                SelectedFrame = (ImagePaths.DialogueFrame, 0, 3),
                 LayerDepth = DrawingPlainOrder.UI,
                 ForceDraw = true,
-                Position = new MovementBehaviour()
+                Position = new MovementBehaviour
                 {
                     X = machine.SharedContext.DialogWindow.Position.X + 640,
                     Y = machine.SharedContext.DialogWindow.Position.Y + 448
@@ -88,40 +84,40 @@ namespace Apocalypse.Any.Client.States.UI.Dialog
             };
 
             //build upper wall of dialog
-            for (int dialogWall = 1; dialogWall <= (machine.SharedContext.DialogWindow.Scale.X / 64) - 2; dialogWall++)
+            for (var dialogWall = 1; dialogWall <= machine.SharedContext.DialogWindow.Scale.X / 64 - 2; dialogWall++)
             {
                 var upperWall = new SpriteSheet(machine.SharedContext.GameSheet.Frames)
                 {
                     Path = ImagePaths.dialogue,
-                    SelectedFrame = (ImagePaths.DialogueFrame, 0 ,4),
+                    SelectedFrame = (ImagePaths.DialogueFrame, 0, 4),
                     LayerDepth = DrawingPlainOrder.UI + DrawingPlainOrder.PlainStep,
                     ForceDraw = true,
-                    Position = new MovementBehaviour()
+                    Position = new MovementBehaviour
                     {
-                        X = machine.SharedContext.DialogWindow.Position.X + (64 * dialogWall),
+                        X = machine.SharedContext.DialogWindow.Position.X + 64 * dialogWall,
                         Y = machine.SharedContext.DialogWindow.Position.Y
                     },
-                    Scale = new Vector2(2, 2),                    
+                    Scale = new Vector2(2, 2),
                     Color = Color.DarkViolet
                 };
                 machine.SharedContext.DialogWindow.Add($"{nameof(upperWall)}_{dialogWall}", upperWall);
             }
 
             //build lower wall of dialog
-            for (int dialogWall = 1; dialogWall <= (machine.SharedContext.DialogWindow.Scale.X / 64) - 2; dialogWall++)
+            for (var dialogWall = 1; dialogWall <= machine.SharedContext.DialogWindow.Scale.X / 64 - 2; dialogWall++)
             {
                 var lowerWall = new SpriteSheet(machine.SharedContext.GameSheet.Frames)
                 {
                     Path = ImagePaths.dialogue,
-                    SelectedFrame = (ImagePaths.DialogueFrame, 0 ,4),
+                    SelectedFrame = (ImagePaths.DialogueFrame, 0, 4),
                     LayerDepth = DrawingPlainOrder.UI + DrawingPlainOrder.PlainStep,
                     ForceDraw = true,
-                    Position = new MovementBehaviour()
+                    Position = new MovementBehaviour
                     {
-                        X = machine.SharedContext.DialogWindow.Position.X + (64 * dialogWall),
+                        X = machine.SharedContext.DialogWindow.Position.X + 64 * dialogWall,
                         Y = machine.SharedContext.DialogWindow.Position.Y + machine.SharedContext.DialogWindow.Scale.Y
                     },
-                    Rotation = new RotationBehaviour() { Rotation = 0 },
+                    Rotation = new RotationBehaviour {Rotation = 0},
                     Scale = new Vector2(2, 2),
                     Color = Color.DarkViolet
                 };
@@ -130,20 +126,21 @@ namespace Apocalypse.Any.Client.States.UI.Dialog
 
 
             //build left wall of dialog
-            for (int dialogWall = 1; dialogWall <= (machine.SharedContext.DialogWindow.Scale.X / 64) - 2; dialogWall++)
+            for (var dialogWall = 1; dialogWall <= machine.SharedContext.DialogWindow.Scale.X / 64 - 2; dialogWall++)
             {
                 var leftWall = new SpriteSheet(machine.SharedContext.GameSheet.Frames)
                 {
                     Path = ImagePaths.dialogue,
-                    SelectedFrame = (ImagePaths.DialogueFrame, 0 ,4),
+                    SelectedFrame = (ImagePaths.DialogueFrame, 0, 4),
                     LayerDepth = DrawingPlainOrder.UI + DrawingPlainOrder.PlainStep,
                     ForceDraw = true,
-                    Position = new MovementBehaviour()
+                    Position = new MovementBehaviour
                     {
-                        X = machine.SharedContext.DialogWindow.Position.X,// + machine.SharedContext.DialogWindow.Scale.Y,
-                        Y = machine.SharedContext.DialogWindow.Position.Y + (64 * dialogWall),
+                        X = machine.SharedContext.DialogWindow.Position
+                            .X, // + machine.SharedContext.DialogWindow.Scale.Y,
+                        Y = machine.SharedContext.DialogWindow.Position.Y + 64 * dialogWall
                     },
-                    Rotation = new RotationBehaviour() { Rotation = 30 },
+                    Rotation = new RotationBehaviour {Rotation = 30},
                     Scale = new Vector2(2, 2),
                     Color = Color.DarkViolet
                 };
@@ -151,7 +148,7 @@ namespace Apocalypse.Any.Client.States.UI.Dialog
             }
 
             //build right wall of dialog
-            for (int dialogWall = 1; dialogWall <= (machine.SharedContext.DialogWindow.Scale.X / 64) - 2; dialogWall++)
+            for (var dialogWall = 1; dialogWall <= machine.SharedContext.DialogWindow.Scale.X / 64 - 2; dialogWall++)
             {
                 var rightWall = new SpriteSheet(machine.SharedContext.GameSheet.Frames)
                 {
@@ -159,23 +156,23 @@ namespace Apocalypse.Any.Client.States.UI.Dialog
                     SelectedFrame = (ImagePaths.DialogueFrame, 0, 4),
                     LayerDepth = DrawingPlainOrder.UI + DrawingPlainOrder.PlainStep,
                     ForceDraw = true,
-                    Position = new MovementBehaviour()
+                    Position = new MovementBehaviour
                     {
-                        X = machine.SharedContext.DialogWindow.Position.X + machine.SharedContext.DialogWindow.Scale.X - 32,
-                        Y = machine.SharedContext.DialogWindow.Position.Y + (64 * dialogWall),
+                        X = machine.SharedContext.DialogWindow.Position.X + machine.SharedContext.DialogWindow.Scale.X -
+                            32,
+                        Y = machine.SharedContext.DialogWindow.Position.Y + 64 * dialogWall
                     },
-                    Rotation = new RotationBehaviour() { Rotation = 30 },
+                    Rotation = new RotationBehaviour {Rotation = 30},
                     Scale = new Vector2(2, 2),
                     Color = Color.DarkViolet
                 };
                 machine.SharedContext.DialogWindow.Add($"{nameof(rightWall)}_{dialogWall}", rightWall);
             }
 
-            machine.SharedContext.DialogWindow.Add(nameof(upperCornerLeft),  upperCornerLeft);
+            machine.SharedContext.DialogWindow.Add(nameof(upperCornerLeft), upperCornerLeft);
             machine.SharedContext.DialogWindow.Add(nameof(upperCornerRight), upperCornerRight);
-            machine.SharedContext.DialogWindow.Add(nameof(lowerCornerLeft),  lowerCornerLeft);
+            machine.SharedContext.DialogWindow.Add(nameof(lowerCornerLeft), lowerCornerLeft);
             machine.SharedContext.DialogWindow.Add(nameof(lowerCornerRight), lowerCornerRight);
-
         }
     }
 }

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Apocalypse.Any.Domain.Common.Mechanics;
 using Apocalypse.Any.Domain.Server.Model.Network;
-using Apocalypse.Any.Infrastructure.Common.Services.Network.Interfaces.Data;
+using Apocalypse.Any.Infrastructure.Server.Services.Data;
 using Apocalypse.Any.Infrastructure.Server.Services.Data.Interfaces;
 using Newtonsoft.Json;
 using StackExchange.Redis;
@@ -29,7 +29,7 @@ namespace Apocalypse.Any.Infrastructure.Server.Adapters.Redis
                 {
                     var gameStateDataCommand = entity.GameSectorLayerServices.Values.SelectMany(s => s.SharedContext.DataLayer.Players.Select(plyr => plyr.LoginToken))
                             .Select(loginToken => AuthenticationService.GetByLoginTokenHack(loginToken))
-                            .Where(user => (user.Roles & UserDataRole.CanSendRemoteStateCommands) != 0)
+                            .Where(user => (user.Roles != null && user.Roles[UserDataRoleSource.SyncServer] == UserDataRole.CanSendRemoteStateCommands))
                             .SelectMany(user => entity.GameSectorLayerServices.Values.Select(
                             gameSector => gameSector.SharedContext.IODataLayer.GetGameStateByLoginToken(user.LoginToken))).FirstOrDefault();
                     if (gameStateDataCommand != null){

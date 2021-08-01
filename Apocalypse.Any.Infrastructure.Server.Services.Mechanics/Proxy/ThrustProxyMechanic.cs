@@ -1,9 +1,8 @@
+using System;
 using Apocalypse.Any.Core.Drawing;
 using Apocalypse.Any.Domain.Common.Mechanics;
-using Apocalypse.Any.Infrastructure.Server.Services.Mechanics;
-using System;
 
-namespace Apocalypse.Any.GameServer.Mechanics.Proxy
+namespace Apocalypse.Any.Infrastructure.Server.Services.Mechanics.Proxy
 {
     public class ThrustProxyMechanic
     : ISingleFullPositionHolderMechanic<IFullPositionHolder>

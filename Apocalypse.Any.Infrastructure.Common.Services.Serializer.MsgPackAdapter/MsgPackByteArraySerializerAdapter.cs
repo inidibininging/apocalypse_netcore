@@ -1,4 +1,4 @@
-﻿using Apocalypse.Any.Infrastructure.Common.Services.Serializer.Interfaces;
+﻿using Echse.Net.Serialization;
 using MsgPack;
 using MsgPack.Serialization;
 using System;

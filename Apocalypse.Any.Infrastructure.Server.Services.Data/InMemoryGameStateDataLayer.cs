@@ -1,13 +1,14 @@
-﻿using Apocalypse.Any.Domain.Common.Model;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using Apocalypse.Any.Domain.Common.Model;
 using Apocalypse.Any.Domain.Common.Model.Network;
 using Apocalypse.Any.Domain.Common.Network;
 using Apocalypse.Any.Domain.Server.Model.Interfaces;
+using Apocalypse.Any.Domain.Server.Model.Network;
 using Apocalypse.Any.Infrastructure.Server.Services.Data.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 
-namespace Apocalypse.Any.Infrastructure.Common.Services.Network.Interfaces.Data
+namespace Apocalypse.Any.Infrastructure.Server.Services.Data
 {
     /// <summary>
     /// In memory IO Data Layer for accessing game states of client. 
@@ -99,5 +100,6 @@ namespace Apocalypse.Any.Infrastructure.Common.Services.Network.Interfaces.Data
             });
         }
 
+        public UserDataRoleSource Source { get; }
     }
 }

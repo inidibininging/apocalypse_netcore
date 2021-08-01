@@ -1,6 +1,4 @@
 using Apocalypse.Any.Domain.Common.Model;
-using Apocalypse.Any.Infrastructure.Common.Services.Network.Interfaces.Factories;
-using Apocalypse.Any.Infrastructure.Common.Services.Network.Interfaces.Transformations;
 using Microsoft.Xna.Framework;
 using System;
 using Apocalypse.Any.Domain.Server.Model.Interfaces;

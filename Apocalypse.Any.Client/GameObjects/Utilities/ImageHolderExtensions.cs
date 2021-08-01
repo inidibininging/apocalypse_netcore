@@ -1,7 +1,7 @@
-﻿using Apocalypse.Any.Client.GameObjects.Text;
+﻿using System;
+using Apocalypse.Any.Client.GameObjects.Text;
 using Apocalypse.Any.Core;
 using Apocalypse.Any.Core.Drawing;
-using System;
 
 namespace Apocalypse.Any.Client.GameObjects.Utilities
 {

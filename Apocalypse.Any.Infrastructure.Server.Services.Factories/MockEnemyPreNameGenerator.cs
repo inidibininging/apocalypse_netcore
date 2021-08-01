@@ -1,11 +1,10 @@
-using Apocalypse.Any.Core.Utilities;
-using Apocalypse.Any.Domain.Common.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Apocalypse.Any.Infrastructure.Server.Services.Factories;
+using Apocalypse.Any.Core.Utilities;
+using Apocalypse.Any.Domain.Common.Model;
 
-namespace Apocalypse.Any.Infrastructure.Common.Services.Network.Interfaces.Factories
+namespace Apocalypse.Any.Infrastructure.Server.Services.Factories
 {
     public class MockEnemyPreNameGenerator : ICharacterNameGenerator<EnemySpaceship>
     {

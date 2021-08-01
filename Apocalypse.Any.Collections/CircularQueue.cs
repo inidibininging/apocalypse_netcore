@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-namespace Apocalypse.Any.Collections
+namespace Apocalypse.Any.Core.Collections
 {
     public class CircularQueue<T> : IEnumerable<T>
     {

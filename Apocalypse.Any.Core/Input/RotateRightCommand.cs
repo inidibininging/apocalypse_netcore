@@ -20,7 +20,7 @@ namespace Apocalypse.Any.Core.Input
             //    parameters.Rotation = 360 - rotation;
             //parameters.Rotation -= 1;
 
-            parameters.Rotation += 1;
+            parameters.Rotation += 0.05f;//0.001f;
         }
     }
 }

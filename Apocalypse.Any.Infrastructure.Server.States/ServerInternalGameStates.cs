@@ -56,6 +56,16 @@
         /// <summary>
         /// Sends the player keys 
         /// </summary>
-        SendPressedRelease = 11
-    };
+        SendPressedRelease = 11,
+        
+        /// <summary>
+        /// Sends a specific part of a game state data layer
+        /// </summary>
+        ReceiveGameStateDataLayerPart = 12,
+
+        /// <summary>
+        /// Used for synching server-side
+        /// </summary>
+        PlayerPositionSync = 13
+    }
 }

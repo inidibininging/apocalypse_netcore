@@ -4,8 +4,6 @@ using Apocalypse.Any.Domain.Common.Mechanics;
 using Apocalypse.Any.Domain.Common.Model;
 using Apocalypse.Any.Domain.Common.Model.Network;
 using Apocalypse.Any.Domain.Common.Model.RPG;
-using Apocalypse.Any.GameServer.Mechanics.Proxy;
-using Apocalypse.Any.Infrastructure.Common.Services.Network.Interfaces.Factories;
 using Apocalypse.Any.Infrastructure.Server.Services.Data.Interfaces;
 using Apocalypse.Any.Infrastructure.Server.Services.Mechanics;
 using Apocalypse.Any.Infrastructure.Server.Services.Mechanics.Bridge;

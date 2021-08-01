@@ -30,6 +30,7 @@ namespace Apocalypse.Any.Core.Utilities
                 return foundCachedType;
             
             string baseNameSpace = "Apocalypse.Any.*.dll";
+            Console.WriteLine($"Looking in {directory}");
             foreach (var file in Directory.EnumerateFiles(directory, baseNameSpace, SearchOption.TopDirectoryOnly))
             {
                 try
@@ -75,6 +76,10 @@ namespace Apocalypse.Any.Core.Utilities
                 if (directoryPathOfDll.StartsWith("file:"))
                     directoryPathOfDll = Path.GetDirectoryName(string.Join("",directoryPathOfDll.Skip("file:".Length)));
                 
+                //lets assume the file is a local file
+                if (directoryPathOfDll.StartsWith("\\\\"))
+                    directoryPathOfDll = string.Join("",directoryPathOfDll.Skip("\\\\".Length));
+
                 var directoryPathOfExecutionType = typeName.GetApocalypseTypes(directoryPathOfExecution);
                 if (directoryPathOfExecutionType != null)
                     return new[] { directoryPathOfExecutionType };

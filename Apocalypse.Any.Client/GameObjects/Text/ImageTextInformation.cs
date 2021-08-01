@@ -10,9 +10,11 @@ namespace Apocalypse.Any.Client.GameObjects.Text
         }
 
         public override string GetText()
-            => $@"
+        {
+            return $@"
 Alpha:{Target.Alpha.Alpha}
 Position:{Target.Position.X},{Target.Position.Y}
 Rotation:{Target.Rotation.Rotation}";
+        }
     }
 }

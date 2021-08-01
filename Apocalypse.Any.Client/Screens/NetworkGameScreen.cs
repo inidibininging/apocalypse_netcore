@@ -1,3 +1,6 @@
+using System.Collections.Generic;
+using System.Linq;
+using Apocalypse.Any.Constants;
 using Apocalypse.Any.Core.Drawing;
 using Apocalypse.Any.Core.Drawing.UI;
 using Apocalypse.Any.Core.Screen;
@@ -11,76 +14,25 @@ using Apocalypse.Any.Domain.Common.Network;
 using Lidgren.Network;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Threading.Tasks.Dataflow;
-using Apocalypse.Any.Constants;
-using Apocalypse.Any.Domain.Common.Drawing.UI;
 
 namespace Apocalypse.Any.Client.Screens
 {
     public class NetworkGameScreen : GameScreen, INetworkGameScreen
     {
-        public VisualText MultiplayerText { get; set; } = new VisualText();
-        public List<ImageClient> Images { get; set; } = new List<ImageClient>();
-        public List<ImageClient> InventoryImages { get; set; } = new List<ImageClient>();
+        public NetworkGameScreen()
+        {
+            CursorImage = new SpriteSheet(null) {Path = ImagePaths.hud_misc_edit};
+        }
+
+        public VisualText MultiplayerText { get; set; } = new();
+        public List<ImageClient> Images { get; set; } = new();
+        public List<ImageClient> InventoryImages { get; set; } = new();
         public IInputService InputService { get; set; }
 
         public NetClient Client { get; set; }
         public NetSendResult LoginSendResult { get; set; }
         public string LoginToken { get; set; }
         public string PlayerImageId { get; set; }
-
-        #region UI
-
-        public SpriteSheet HealthImage { get; set; } = new SpriteSheet(null) { Path = ImagePaths.hud_misc_edit };
-        public SpriteSheet SpeedImage { get; set; } = new SpriteSheet(null) { Path = ImagePaths.hud_misc_edit };
-        public SpriteSheet StrenghImage { get; set; } = new SpriteSheet(null) { Path = ImagePaths.hud_misc_edit };       
-        public SpriteSheet DialogImage { get; set; } = new SpriteSheet(null) { Path = ImagePaths.hud_misc_edit };
-         
-
-        //public SpriteSheet LerpMouseImage { get; set; } = new SpriteSheet(null) { Path = "Image/hud_misc" };
-
-        public ICharacterSheet FirstSheetSnapshot { get; set; }
-        public ICharacterSheet CurrentSheetSnapshot { get; set; }
-
-
-        public VisualText MoneyCount { get; set; }
-        public IWindow InfoWindow { get; set; }
-        public IWindow InventoryWindow { get; set; }
-        public IWindow CharacterWindow { get; set; }
-        public IWindow TradeWindow { get; set; }
-        public IWindow ChatWindow { get; set; }
-        public IWindow DialogWindow { get; set; }
-
-        #endregion UI
-
-        #region Atlas Stuff
-        public GameClientConfiguration Configuration { get; set; }
-        public Atlas GameSheet { get; set; } = new Atlas()
-        {
-            Name = "gamesheetExtended",
-            Frames = new Dictionary<(int frame,int x, int y), Rectangle>()
-        };
-
-        //public string ServerIp { get; set; }
-        //public int ServerPort { get; set; }
-        //public UserData User { get; set; }
-        public List<string> Messages { get; set; } = new List<string>();
-        public int LoginTries { get; set; } = 0;
-        public int SecondsToNextLoginTry { get; set; } = 1;
-        public GameTime UpdateGameTime { get; set; }
-        public IdentifiableNetworkCommand CurrentNetworkCommand { get; set; }
-        public GameStateData CurrentGameStateData { get; set; }
-        public PlayerMetadataBag LastMetadataBag { get; set; }
-
-        #endregion Atlas Stuff
-
-        public NetworkGameScreen()
-        {
-            CursorImage = new SpriteSheet(null) { Path = ImagePaths.hud_misc_edit  };
-        }
 
         public override void Draw(SpriteBatch spriteBatch)
         {
@@ -95,17 +47,11 @@ namespace Apocalypse.Any.Client.Screens
                 ScreenService.Instance.DefaultScreenCamera.TransformMatrix);
             base.Draw(spriteBatch);
 
-            if (!Images.Any())
-            {
-                Messages.Add("no image received from server");
-            }
+            if (!Images.Any()) Messages.Add("no image received from server");
             foreach (var img in Images.ToList())
                 img.Draw(spriteBatch);
 
-            if (!InventoryImages.Any())
-            {
-                Messages.Add("no inventory image received from server");
-            }
+            if (!InventoryImages.Any()) Messages.Add("no inventory image received from server");
             foreach (var img in InventoryImages.ToList())
                 img.Draw(spriteBatch);
 
@@ -115,7 +61,7 @@ namespace Apocalypse.Any.Client.Screens
             StrenghImage.Draw(spriteBatch);
             DialogImage.Draw(spriteBatch);
             CursorImage.Draw(spriteBatch);
-            
+
             //LerpMouseImage.Draw(spriteBatch);
 
             if (InfoWindow?.IsVisible == true)
@@ -148,9 +94,56 @@ namespace Apocalypse.Any.Client.Screens
             Messages.Add("Updated time");
             InputService.Update(time);
             //MultiplayerText.Text = string.Join(System.Environment.NewLine,Messages);
-            
-            
+
+
             base.Update(time);
         }
+
+        #region UI
+
+        public SpriteSheet HealthImage { get; set; } = new(null) {Path = ImagePaths.hud_misc_edit};
+        public SpriteSheet SpeedImage { get; set; } = new(null) {Path = ImagePaths.hud_misc_edit};
+        public SpriteSheet StrenghImage { get; set; } = new(null) {Path = ImagePaths.hud_misc_edit};
+        public SpriteSheet DialogImage { get; set; } = new(null) {Path = ImagePaths.hud_misc_edit};
+
+
+        //public SpriteSheet LerpMouseImage { get; set; } = new SpriteSheet(null) { Path = "Image/hud_misc" };
+
+        public ICharacterSheet FirstSheetSnapshot { get; set; }
+        public ICharacterSheet CurrentSheetSnapshot { get; set; }
+
+
+        public VisualText MoneyCount { get; set; }
+        public IWindow InfoWindow { get; set; }
+        public IWindow InventoryWindow { get; set; }
+        public IWindow CharacterWindow { get; set; }
+        public IWindow TradeWindow { get; set; }
+        public IWindow ChatWindow { get; set; }
+        public IWindow DialogWindow { get; set; }
+
+        #endregion UI
+
+        #region Atlas Stuff
+
+        public GameClientConfiguration Configuration { get; set; }
+
+        public Atlas GameSheet { get; set; } = new()
+        {
+            Name = "gamesheetExtended",
+            Frames = new Dictionary<(int frame, int x, int y), Rectangle>()
+        };
+
+        //public string ServerIp { get; set; }
+        //public int ServerPort { get; set; }
+        //public UserData User { get; set; }
+        public List<string> Messages { get; set; } = new();
+        public int LoginTries { get; set; } = 0;
+        public int SecondsToNextLoginTry { get; set; } = 1;
+        public GameTime UpdateGameTime { get; set; }
+        public IdentifiableNetworkCommand CurrentNetworkCommand { get; set; }
+        public GameStateData CurrentGameStateData { get; set; }
+        public PlayerMetadataBag LastMetadataBag { get; set; }
+
+        #endregion Atlas Stuff
     }
 }

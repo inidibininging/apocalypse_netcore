@@ -2,11 +2,12 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>netcoreapp2.1</TargetFramework>
+    <TargetFramework>net5.0</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Lidgren.Network.Core2" Version="1.0.0" />
+    <PackageReference Include="MonoGame.Framework.DesktopGL" Version="3.8.0.1641" />
     <PackageReference Include="MonoGame.Framework.DesktopGL.Core" Version="3.8.0.1" />
     <PackageReference Include="SharpYaml" Version="1.6.6" />
   </ItemGroup>
@@ -27,7 +28,7 @@
     <ProjectReference Include="..\Apocalypse.Any.Infrastructure.Common.Services.Serializer.JsonAdapter\Apocalypse.Any.Infrastructure.Common.Services.Serializer.JsonAdapter.csproj" />
     <ProjectReference Include="..\Apocalypse.Any.Infrastructure.Common.Services.Serializer.MsgPackAdapter\Apocalypse.Any.Infrastructure.Common.Services.Serializer.MsgPackAdapter.csproj" />
     <ProjectReference Include="..\Apocalypse.Any.Infrastructure.Common.Services.Serializer.YamlAdapter\Apocalypse.Any.Infrastructure.Common.Services.Serializer.YamlAdapter.csproj" />
-    <ProjectReference Include="..\States\States.Core\States.Core.csproj" />
+    <ProjectReference Include="..\echse_net\Echse.Net.Domain\Echse.Net.Domain.csproj" />
   </ItemGroup>
 
   <ItemGroup>

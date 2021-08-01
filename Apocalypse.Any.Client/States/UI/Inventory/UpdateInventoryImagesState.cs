@@ -1,5 +1,4 @@
 using Apocalypse.Any.Client.Screens;
-using Apocalypse.Any.Client.Services.Creation;
 using Apocalypse.Any.Core.Services;
 using Apocalypse.Any.Domain.Common.Model.Network;
 using Apocalypse.Any.Domain.Common.Network;
@@ -7,6 +6,7 @@ using States.Core.Infrastructure.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Apocalypse.Any.Client.Services;
 
 namespace Apocalypse.Any.Client.States.UI.Inventory
 {

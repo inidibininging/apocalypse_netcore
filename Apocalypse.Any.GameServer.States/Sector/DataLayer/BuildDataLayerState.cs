@@ -1,22 +1,18 @@
+using System;
 using Apocalypse.Any.Domain.Common.Model;
+using Echse.Language;
+using Echse.Domain;
 using Apocalypse.Any.Domain.Common.Model.Network;
-using Apocalypse.Any.Domain.Common.Model.PubSub;
 using Apocalypse.Any.Domain.Server.Model.Interfaces;
 using Apocalypse.Any.GameServer.Domain;
 using Apocalypse.Any.GameServer.States.Sector.Mechanics.PlayerMechanics;
 using Apocalypse.Any.Infrastructure.Server.PubSub;
-using Apocalypse.Any.Infrastructure.Server.PubSub.Interfaces;
 using Apocalypse.Any.Infrastructure.Server.Services.Data;
 using Apocalypse.Any.Infrastructure.Server.Services.Data.Interfaces;
 using Apocalypse.Any.Infrastructure.Server.Services.Factories;
 using States.Core.Infrastructure.Services;
-using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Diagnostics.Tracing;
-using Apocalypse.Any.Domain.Common.Model.Language;
 
-namespace Apocalypse.Any.GameServer.States.Sector
+namespace Apocalypse.Any.GameServer.States.Sector.DataLayer
 {
     public class BuildDataLayerState<TDataLayer> : IState<string, IGameSectorLayerService>
         where TDataLayer : IExpandedGameSectorDataLayer<PlayerSpaceship, EnemySpaceship, Item, Projectile, CharacterEntity, CharacterEntity, ImageData>
@@ -62,7 +58,7 @@ namespace Apocalypse.Any.GameServer.States.Sector
             //language related stuff
             machine.SharedContext.DataLayer.Layers.Add(new GenericInMemoryDataLayer<TagVariable>(null));
             machine.SharedContext.DataLayer.Layers.Add(new GenericInMemoryDataLayer<ReferenceVariable>(null));
-            
+
             //dialog related stuff
             machine.SharedContext.DataLayer.Layers.Add(new GenericInMemoryDataLayer<IdentifiableCircularLocation>(null));
             machine.SharedContext.DataLayer.Layers.Add(new DynamicRelationLayer<IdentifiableCircularLocation, DialogNode>(DialogLocationRelationLayerName));
@@ -77,7 +73,7 @@ namespace Apocalypse.Any.GameServer.States.Sector
             var eventHandlers = new GenericInMemoryDataLayer<IIdentifiableNotifiableModel>(DropPlayerItemEventName);
             eventHandlers.Add(new PlayerItemDialogNotifier(DropPlayerItemEventName, PlayerBankLayerName, () => machine.SharedContext));
             eventHandlers.Add(new CreatePlayerBankOnPlayerRegistrationNotifier(PlayerRegisteredEventName,  PlayerBankLayerName, BankFactory, () => machine.SharedContext));
-            
+
             machine.SharedContext.DataLayer.Layers.Add(eventHandlers);
 
 

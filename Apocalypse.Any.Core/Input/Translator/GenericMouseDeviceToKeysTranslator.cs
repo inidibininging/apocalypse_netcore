@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework.Input;
+﻿using Echse.Net.Domain;
+using Microsoft.Xna.Framework.Input;
 using System.Collections.Generic;
 
 namespace Apocalypse.Any.Core.Input.Translator

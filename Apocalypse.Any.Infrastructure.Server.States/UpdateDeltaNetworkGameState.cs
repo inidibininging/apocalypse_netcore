@@ -7,6 +7,7 @@ using Apocalypse.Any.Infrastructure.Common.Services.Serializer.Interfaces;
 using Apocalypse.Any.Infrastructure.Server.Services.Data;
 using Apocalypse.Any.Infrastructure.Server.Services.Data.Interfaces;
 using Apocalypse.Any.Infrastructure.Server.States.Interfaces;
+using Echse.Net.Domain;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -14,6 +15,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Xml.Serialization;
+using Echse.Net.Serialization;
 
 namespace Apocalypse.Any.Infrastructure.Server.States
 {

@@ -15,9 +15,9 @@ namespace Apocalypse.Any.Core.Input
         public void Execute(RotationBehaviour parameters)
         {
             var rotation = parameters.Rotation;
-            if ((rotation - 1) < 0)
+            if ((rotation - 0.05f) < 0)
                 parameters.Rotation = 360 - rotation;
-            parameters.Rotation -= 1;
+            parameters.Rotation -= 0.05f;//0.001f;
         }
     }
 }

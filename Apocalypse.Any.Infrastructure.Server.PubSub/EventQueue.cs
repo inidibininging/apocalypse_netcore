@@ -14,8 +14,7 @@ namespace Apocalypse.Any.Infrastructure.Server.PubSub
         public EventQueue(string name) : base(name)
         {
             if (string.IsNullOrWhiteSpace(name))
-                throw new ArgumentNullException(nameof(name));            
+                throw new ArgumentNullException(nameof(name));
         }
-
     }
 }

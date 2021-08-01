@@ -1,14 +1,13 @@
-﻿using Apocalypse.Any.Domain.Common.Model.Network;
+﻿using System;
+using System.Linq;
+using Apocalypse.Any.Domain.Common.Model.Network;
 using Apocalypse.Any.Domain.Server.Model.Interfaces;
 using Apocalypse.Any.Domain.Server.Sector.Model;
-using Apocalypse.Any.Infrastructure.Common.Services.Serializer.Interfaces;
 using Apocalypse.Any.Infrastructure.Server.Services.Data.Interfaces;
-using States.Core.Infrastructure.Services;
-using System;
-using System.Linq;
 using Apocalypse.Any.Infrastructure.Server.Services.Factories;
+using States.Core.Infrastructure.Services;
 
-namespace Apocalypse.Any.GameServer.States.Sector.Factories
+namespace Apocalypse.Any.GameServer.States.Sector
 {
     public class UpdateGameStateDataState : IState<string, IGameSectorLayerService>
     {

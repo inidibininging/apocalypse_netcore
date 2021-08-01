@@ -4,8 +4,10 @@ using Apocalypse.Any.Infrastructure.Common.Services.Network.Interfaces;
 using Apocalypse.Any.Infrastructure.Common.Services.Serializer.Interfaces;
 using Apocalypse.Any.Infrastructure.Server.Services.Data.Interfaces;
 using Apocalypse.Any.Infrastructure.Server.States.Interfaces;
+using Echse.Net.Domain;
 using Newtonsoft.Json;
 using System;
+using Echse.Net.Serialization;
 using Microsoft.Extensions.Logging;
 
 namespace Apocalypse.Any.Infrastructure.Server.States
@@ -33,11 +35,21 @@ namespace Apocalypse.Any.Infrastructure.Server.States
 
         public void Handle(INetworkStateContext<TWorld> gameStateContext, NetworkCommandConnection networkCommandConnection)
         {
+            var typeArgumentAsString = networkCommandConnection?.CommandArgument;
             if (string.IsNullOrWhiteSpace(networkCommandConnection?.CommandArgument))
+            {
+                gameStateContext.Logger.LogError("networkCommandConnection has a CommandArgument with null or empty value");
                 return;
-            var typeArgumentAsString = networkCommandConnection.CommandArgument;
-            if (string.IsNullOrWhiteSpace(typeArgumentAsString))
-                return;
+            }
+                
+            // var typeArgumentAsString = networkCommandConnection.CommandArgument;
+            //
+            // if (string.IsNullOrWhiteSpace(typeArgumentAsString))
+            // {
+            //     gameStateContext.Logger.LogError("networkCommandConnection Command with null or empty value");
+            //     return;
+            // }
+                
 
             var gameStateUpdateDataTypeFull = typeof(GameStateUpdateData).FullName;
             if (typeArgumentAsString != gameStateUpdateDataTypeFull) return;

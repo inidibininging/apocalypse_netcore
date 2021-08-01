@@ -14,7 +14,7 @@ namespace Apocalypse.Any.GameServer.States.Sector.Services
             GetDelegate = getDelegate ?? throw new ArgumentNullException(nameof(getDelegate));
         }
 
-        public bool Set(IState<string, IGameSectorLayerService> state, string identifier)
+        public bool Set(string identifier, IState<string, IGameSectorLayerService> state)
         {
             GetDelegate()?.Add(identifier, state);
             return true;

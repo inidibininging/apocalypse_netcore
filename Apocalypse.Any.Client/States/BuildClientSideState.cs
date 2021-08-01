@@ -1,31 +1,37 @@
+using System;
 using Apocalypse.Any.Client.GameObjects.Scene;
 using Apocalypse.Any.Client.Screens;
 using Apocalypse.Any.Client.Services;
+using Apocalypse.Any.Constants;
+using Apocalypse.Any.Core.Camera;
 using Apocalypse.Any.Core.Drawing;
 using Apocalypse.Any.Core.Services;
 using Apocalypse.Any.Domain.Client.Model;
+using Lidgren.Network;
 using Microsoft.Xna.Framework.Graphics;
 using States.Core.Infrastructure.Services;
-using System;
-using Apocalypse.Any.Constants;
 
 namespace Apocalypse.Any.Client.States
 {
     /// <summary>
-    /// Builds only client side effects and game objects (background etc..)
+    ///     Builds only client side effects and game objects (background etc..)
     /// </summary>
     public class BuildClientSideState : IState<string, INetworkGameScreen>
     {
-        public bool Initialized { get; private set; }
-        private SpaceBackgroundElementsConfiguration SpaceBackgroundConfiguration { get; set; }
-
-        private RectangularFrameGeneratorService FrameGeneratorService { get; set; }
-
-        public BuildClientSideState(RectangularFrameGeneratorService frameGeneratorService, SpaceBackgroundElementsConfiguration spaceBackgroundElementsConfiguration)
+        public BuildClientSideState(RectangularFrameGeneratorService frameGeneratorService,
+            SpaceBackgroundElementsConfiguration spaceBackgroundElementsConfiguration)
         {
-            FrameGeneratorService = frameGeneratorService ?? throw new ArgumentNullException(nameof(frameGeneratorService));
-            SpaceBackgroundConfiguration = spaceBackgroundElementsConfiguration ?? throw new ArgumentNullException(nameof(spaceBackgroundElementsConfiguration));
+            FrameGeneratorService =
+                frameGeneratorService ?? throw new ArgumentNullException(nameof(frameGeneratorService));
+            SpaceBackgroundConfiguration = spaceBackgroundElementsConfiguration ??
+                                           throw new ArgumentNullException(
+                                               nameof(spaceBackgroundElementsConfiguration));
         }
+
+        public bool Initialized { get; private set; }
+        private SpaceBackgroundElementsConfiguration SpaceBackgroundConfiguration { get; }
+
+        private RectangularFrameGeneratorService FrameGeneratorService { get; }
 
         public void Handle(IStateMachine<string, INetworkGameScreen> machine)
         {
@@ -36,15 +42,16 @@ namespace Apocalypse.Any.Client.States
             machine.SharedContext.Messages.Add($"added {nameof(RectangleCollisionDetectionService)}");
             ScreenService.Instance.Collisions = new RectangleCollisionDetectionService();
 
-            ScreenService.Instance.DefaultScreenCamera = new Core.Camera.TopDownCamera(new Viewport(ScreenService.Instance.GraphicsDevice.Viewport.Bounds));
-            machine.SharedContext.Messages.Add($"added DefaultScreenCamera");
+            ScreenService.Instance.DefaultScreenCamera =
+                new TopDownCamera(new Viewport(ScreenService.Instance.GraphicsDevice.Viewport.Bounds));
+            machine.SharedContext.Messages.Add("added DefaultScreenCamera");
 
             BuildBackground(machine);
             BuildSparkField(machine);
             BuildLogo(machine);
             BuildGameOver(machine);
 
-            machine.SharedContext.LoginSendResult = Lidgren.Network.NetSendResult.FailedNotConnected;
+            machine.SharedContext.LoginSendResult = NetSendResult.FailedNotConnected;
             Initialized = true;
         }
 
@@ -52,15 +59,15 @@ namespace Apocalypse.Any.Client.States
         {
             if (machine.SharedContext.ContainsKey("logo"))
                 return;
-            var logo = new Image() { Path = ImagePaths.apocalypse_logo };            
-            machine.SharedContext.Add("logo",logo);
+            var logo = new Image {Path = ImagePaths.apocalypse_logo};
+            machine.SharedContext.Add("logo", logo);
         }
 
         private void BuildGameOver(IStateMachine<string, INetworkGameScreen> machine)
         {
             if (machine.SharedContext.ContainsKey("game_over"))
                 return;
-            var gameOver = new Image() { Path = ImagePaths.game_over_glitch };
+            var gameOver = new Image {Path = ImagePaths.game_over_glitch};
             gameOver.Alpha.Alpha = 0;
             machine.SharedContext.Add("game_over", gameOver);
         }
@@ -78,11 +85,11 @@ namespace Apocalypse.Any.Client.States
             var starField = new StarField(SpaceBackgroundConfiguration.StarsFieldCount);
             starField.Initialize();
             machine.SharedContext.Add(nameof(StarField), starField);
-            machine.SharedContext.Messages.Add($"Built background");
+            machine.SharedContext.Messages.Add("Built background");
         }
 
         /// <summary>
-        /// Adds a spark field generator for the game. This is used for the projectiles in the game
+        ///     Adds a spark field generator for the game. This is used for the projectiles in the game
         /// </summary>
         private void BuildSparkField(IStateMachine<string, INetworkGameScreen> machine)
         {

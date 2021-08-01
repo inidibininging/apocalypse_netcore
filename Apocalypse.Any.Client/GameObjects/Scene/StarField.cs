@@ -1,11 +1,10 @@
-﻿using Apocalypse.Any.Core;
+﻿using System;
+using System.Collections.Generic;
+using Apocalypse.Any.Core;
 using Apocalypse.Any.Core.Drawing;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace Apocalypse.Any.Client.GameObjects.Scene
 {
@@ -14,16 +13,14 @@ namespace Apocalypse.Any.Client.GameObjects.Scene
         public StarField(int quantity = 20)
         {
             if (quantity <= 0)
-                throw new InvalidOperationException("Apocalypse.Any cannot summon the stars upon you because you don't want to");
+                throw new InvalidOperationException(
+                    "Apocalypse.Any cannot summon the stars upon you because you don't want to");
             Stars = new List<Star>();
-            for (var i = 0; i < quantity; i++)
-            {
-                Stars.Add(new Star());
-            }
+            for (var i = 0; i < quantity; i++) Stars.Add(new Star());
         }
 
         private List<Star> Stars { get; }
-        public IReadOnlyList<Star> StarsAvailable { get => Stars; }
+        public IReadOnlyList<Star> StarsAvailable => Stars;
         public int Quantity { get; set; }
 
         public override void LoadContent(ContentManager manager)
@@ -47,7 +44,7 @@ namespace Apocalypse.Any.Client.GameObjects.Scene
         {
             //Parallel.ForEach(Stars, (star) => star.Update(time));
             Stars.ForEach(star =>
-            {                
+            {
                 //star.MoveRandomly();
                 star.Update(time);
             });
@@ -58,7 +55,7 @@ namespace Apocalypse.Any.Client.GameObjects.Scene
 
         public void Add(float x = 0, float y = 0)
         {
-            Stars.Add(new Star(x,y));
+            Stars.Add(new Star(x, y));
         }
     }
 }

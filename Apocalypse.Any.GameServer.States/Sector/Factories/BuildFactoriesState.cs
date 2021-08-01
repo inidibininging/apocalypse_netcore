@@ -3,8 +3,6 @@ using Apocalypse.Any.Domain.Common.Model;
 using Apocalypse.Any.Domain.Common.Model.Network;
 using Apocalypse.Any.Domain.Common.Model.RPG;
 using Apocalypse.Any.Domain.Server.Model.Interfaces;
-using Apocalypse.Any.Infrastructure.Common.Services.Network.Interfaces.Factories;
-using Apocalypse.Any.Infrastructure.Common.Services.Network.Interfaces.Transformations;
 using Apocalypse.Any.Infrastructure.Server.Services.Data.Interfaces;
 using Apocalypse.Any.Infrastructure.Server.Services.Factories;
 using Apocalypse.Any.Infrastructure.Server.Services.Mechanics;
@@ -13,6 +11,7 @@ using Apocalypse.Any.Infrastructure.Server.Services.Mechanics.Proxy;
 using States.Core.Infrastructure.Services;
 using System.Collections.Generic;
 using Apocalypse.Any.Infrastructure.Server.Services.Mechanics.ItemMechanics;
+using Apocalypse.Any.Infrastructure.Server.Services.Transformations;
 
 namespace Apocalypse.Any.GameServer.States.Sector.Factories
 {

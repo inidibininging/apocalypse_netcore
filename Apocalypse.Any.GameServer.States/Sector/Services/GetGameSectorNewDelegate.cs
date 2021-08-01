@@ -15,6 +15,8 @@ namespace Apocalypse.Any.GameServer.States.Sector.Services
                 throw new ArgumentNullException(nameof(getDelegate));
             GetDelegate = getDelegate;
         }
+        
+        public IEnumerable<string> States => GetDelegate().Keys;
 
         public IState<string, IGameSectorLayerService> Get(string identifier)
         {
@@ -24,6 +26,14 @@ namespace Apocalypse.Any.GameServer.States.Sector.Services
         public bool HasState(string identifier)
         {
             return GetDelegate().ContainsKey(identifier);
+        }
+
+        public IStateGetService<string, IGameSectorLayerService> As<TSharedContextConverted>() where TSharedContextConverted : IGameSectorLayerService
+        {
+            return new GetGameSectorNewDelegate
+            (
+                GetDelegate
+            );
         }
     }
 }

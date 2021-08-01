@@ -8,11 +8,18 @@ namespace Apocalypse.Any.Domain.Server.Model.Network
     [Flags]
     public enum UserDataRole
     {
+        Unset,
+        
         /// <summary>
         /// Can access to a view port by login token
         /// </summary>
         CanViewWorldByLoginToken,
 
+        /// <summary>
+        /// Can receive work
+        /// </summary>
+        CanReceiveWork,
+        
         /// <summary>
         /// Can send remote input commands
         /// </summary>
@@ -36,11 +43,7 @@ namespace Apocalypse.Any.Domain.Server.Model.Network
         /// <summary>
         /// Can create plural mechanic commands in a game server
         /// </summary>
-        CanSendRemotePluralMechanicCommands,
+        CanSendRemotePluralMechanicCommands
 
-        /// <summary>
-        /// Can receive work
-        /// </summary>
-        CanReceiveWork
     }
 }

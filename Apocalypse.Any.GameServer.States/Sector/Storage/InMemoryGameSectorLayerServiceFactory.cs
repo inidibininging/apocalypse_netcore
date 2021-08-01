@@ -3,7 +3,6 @@ using Apocalypse.Any.Client.States.UI.Dialog;
 using Apocalypse.Any.Core.Utilities;
 using Apocalypse.Any.Domain.Common.Model;
 using Apocalypse.Any.Domain.Common.Model.PubSub;
-using Apocalypse.Any.Domain.Server.DataLayer;
 using Apocalypse.Any.Domain.Server.Model;
 using Apocalypse.Any.Domain.Server.Model.Interfaces;
 using Apocalypse.Any.GameServer.States.Sector.Factories;
@@ -12,8 +11,6 @@ using Apocalypse.Any.GameServer.States.Sector.Mechanics.EnemyMechanics;
 using Apocalypse.Any.GameServer.States.Sector.Mechanics.ItemMechanics;
 using Apocalypse.Any.GameServer.States.Sector.Mechanics.PlayerMechanics;
 using Apocalypse.Any.GameServer.States.Sector.Mechanics.ProjectileMechanics;
-using Apocalypse.Any.Infrastructure.Common.Services.Network.Interfaces.Factories;
-using Apocalypse.Any.Infrastructure.Common.Services.Network.Interfaces.Transformations;
 using Apocalypse.Any.Infrastructure.Common.Services.Serializer.Interfaces;
 using Apocalypse.Any.Infrastructure.Server.PubSub;
 using Apocalypse.Any.Infrastructure.Server.PubSub.Interfaces;
@@ -23,14 +20,18 @@ using Apocalypse.Any.Infrastructure.Server.Services.Factories;
 using Apocalypse.Any.Infrastructure.Server.Services.Mechanics;
 using Apocalypse.Any.Infrastructure.Server.Services.Mechanics.ProjectileMechanics;
 using Apocalypse.Any.Infrastructure.Server.States.Interfaces;
+using Echse.Net.Serialization;
 using States.Core.Common;
+using States.Core.Common.Delegation;
 using States.Core.Infrastructure.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Apocalypse.Any.Constants;
+using Apocalypse.Any.GameServer.States.Sector.DataLayer;
 using Apocalypse.Any.GameServer.States.Sector.Services;
+using Apocalypse.Any.Infrastructure.Server.Services.Transformations;
 
 namespace Apocalypse.Any.GameServer.States.Sector.Storage
 {
@@ -43,7 +44,6 @@ namespace Apocalypse.Any.GameServer.States.Sector.Storage
         private const string DropPlayerItemDialogName = "DropPlayerItemDialogEvent";
         private const string PlayerRegisteredEventName = "PlayerRegisteredEvent";
         private const string DefaultSectorBank = "DefaultBank";
-
         private const string TagNameForDeactivatingMechanics = "NoPlayerInDistance";
         public IStateMachine<string, IGameSectorLayerService> BuildStateMachine(GameServerConfiguration gameServerConfiguration)
         {
@@ -77,7 +77,8 @@ namespace Apocalypse.Any.GameServer.States.Sector.Storage
             inMemoryStorage.Add(nameof(AddDroppedItemsAsCurrencyToPlayersBankState), new AddDroppedItemsAsCurrencyToPlayersBankState(new ShortCounterThreshold()));
             inMemoryStorage.Add(nameof(CreateOrUpdateItemDialogRelationsState), new CreateOrUpdateItemDialogRelationsState(DropPlayerItemDialogName));
             inMemoryStorage.Add(nameof(CreatePlayerSelectsItemDialogEventState), new CreatePlayerSelectsItemDialogEventState(DropPlayerItemDialogName));
-
+            inMemoryStorage.Add(nameof(CleanPlayerCommandsState), new CleanPlayerCommandsState());
+            
             inMemoryStorage.Add("BuildPlayerDialogService",
                 new CommandStateActionDelegate<string, IGameSectorLayerService>(
                     new Action<IStateMachine<string, IGameSectorLayerService>>((machine) =>
@@ -174,7 +175,7 @@ namespace Apocalypse.Any.GameServer.States.Sector.Storage
             inMemoryStorage.Add(nameof(CreateRandomMiniCityCommand), new CreateRandomMiniCityCommand());
 
             inMemoryStorage.Add(nameof(UpdateProjectileMechanicsState), new UpdateProjectileMechanicsState());
-            
+
             //Applies all enemy mechanisc to every enemy if the enemy is in players distance
             inMemoryStorage.Add("UpdateEnemyMechanics", new CommandStateActionDelegate<string, IGameSectorLayerService>(
                     new Action<IStateMachine<string, IGameSectorLayerService>>((machine) =>
@@ -349,6 +350,7 @@ namespace Apocalypse.Any.GameServer.States.Sector.Storage
                         }
                     })));
 
+            
             //main loop
             inMemoryStorage.Add(ServerGameSectorNewBook.RunAsDefaultSector, new RoutineState<string, IGameSectorLayerService>()
             {
@@ -364,7 +366,8 @@ namespace Apocalypse.Any.GameServer.States.Sector.Storage
                     nameof(ProcessRotationMapsForPlayerMechanicsState),
                     nameof(ProcessShootingForPlayerMechanicsState),
                     nameof(ProcessThrustForPlayerMechanicsState),
-                    nameof(ProcessPressReleaseState),
+                    // nameof(ProcessPressReleaseState),
+                    nameof(CleanPlayerCommandsState),
                     
                     //projectiles
                     nameof(UpdateProjectileMechanicsState),
@@ -398,12 +401,13 @@ namespace Apocalypse.Any.GameServer.States.Sector.Storage
                     // nameof(SectorCsvLoggerState)
                  }
             });
-
-            var getDelegation = new GetGameSectorNewDelegate(() => inMemoryStorage);
-            var setDelegation = new SetGameSectorNewDelegate(() => inMemoryStorage);
-            var newDelegation = new NewGameSectorNewDelegate(() => inMemoryStorage);
+            return new DictionaryStateMachine<string, IGameSectorLayerService>(inMemoryStorage, () => Guid.NewGuid().ToString());
             
-            return new GameSectorContext(getDelegation, setDelegation, newDelegation);
+            // var getDelegation = new GetGameSectorNewDelegate(() => inMemoryStorage);
+            // var setDelegation = new SetGameSectorNewDelegate(() => inMemoryStorage);
+            // var newDelegation = new NewGameSectorNewDelegate(() => inMemoryStorage);
+            //
+            // return new GameSectorContext(getDelegation, setDelegation, newDelegation);
         }
     }
 }

@@ -6,6 +6,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Echse.Net.Serialization;
 
 namespace Apocalypse.Any.CLI
 {

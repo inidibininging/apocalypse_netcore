@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp2.1</TargetFramework>
+    <TargetFramework>net5.0</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>
@@ -9,7 +9,12 @@
     <ProjectReference Include="..\Apocalypse.Any.Domain.Common.Network\Apocalypse.Any.Domain.Common.Network.csproj" />
     <ProjectReference Include="..\Apocalypse.Any.Domain.Server.Model.Network\Apocalypse.Any.Domain.Server.Model.Network.csproj" />
     <ProjectReference Include="..\Apocalypse.Any.Domain.Server.Model\Apocalypse.Any.Domain.Server.Model.csproj" />
+    <ProjectReference Include="..\Apocalypse.Any.Infrastructure.Common.Services.Serializer.JsonAdapter\Apocalypse.Any.Infrastructure.Common.Services.Serializer.JsonAdapter.csproj" />
     <ProjectReference Include="..\Apocalypse.Any.Infrastructure.Server.Services.Data.Interfaces\Apocalypse.Any.Infrastructure.Server.Services.Data.Interfaces.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MonoGame.Framework.DesktopGL" Version="3.8.0.1641" />
   </ItemGroup>
 
 </Project>

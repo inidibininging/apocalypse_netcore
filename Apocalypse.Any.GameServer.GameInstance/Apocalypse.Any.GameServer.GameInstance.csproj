@@ -1,14 +1,15 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp2.1</TargetFramework>
+    <TargetFramework>net5.0</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="5.0.0" />
+    <PackageReference Include="MonoGame.Framework.DesktopGL" Version="3.8.0.1641" />
     <PackageReference Include="Serilog" Version="2.10.0" />
     <PackageReference Include="Serilog.Extensions.Logging" Version="3.0.1" />
-    <PackageReference Include="Serilog.Sinks.ColoredConsole" Version="3.0.1" />
+    <PackageReference Include="Serilog.Sinks.Console" Version="4.0.0-dev-00839" />
   </ItemGroup>
 
   <ItemGroup>
@@ -29,6 +30,8 @@
     <ProjectReference Include="..\Apocalypse.Any.Infrastructure.Server.Services.Factories\Apocalypse.Any.Infrastructure.Server.Services.Factories.csproj" />
     <ProjectReference Include="..\Apocalypse.Any.Infrastructure.Server.Services.Mechanics\Apocalypse.Any.Infrastructure.Server.Services.Mechanics.csproj" />
     <ProjectReference Include="..\Apocalypse.Any.Infrastructure.Server.Services.Network\Apocalypse.Any.Infrastructure.Server.Services.Network.csproj" />
+    <ProjectReference Include="..\Apocalypse.Any.Infrastructure.Server.Worker\Apocalypse.Any.Infrastructure.Server.Worker.csproj" />
+    <ProjectReference Include="..\echse_net\Echse.Net.Domain\Echse.Net.Domain.csproj" />
   </ItemGroup>
 
 </Project>
