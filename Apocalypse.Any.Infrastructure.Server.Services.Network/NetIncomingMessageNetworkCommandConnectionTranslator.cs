@@ -30,7 +30,7 @@ namespace Apocalypse.Any.Infrastructure.Server.Services.Network
 
             try
             {
-                var messageAsBytes = input.ReadBytes(input.LengthBytes);
+                var messageAsBytes = input.Data;
 
                 if (messageAsBytes == null || messageAsBytes?.Length == 0)
                 {
