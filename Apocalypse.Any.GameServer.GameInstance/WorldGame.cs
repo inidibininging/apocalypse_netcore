@@ -490,7 +490,7 @@ namespace Apocalypse.Any.GameServer.GameInstance
             if(Source == UserDataRoleSource.LocalServer)
                 //&& TotalRealTime.TotalSeconds % 3 < 1) 
             {
-                Logger.LogWarning("DelegatePlayerPositionToSyncServer");                  
+                Logger.LogInformation("DelegatePlayerPositionToSyncServer");
                 var playerPositionData = GetLocalPlayerPositionUpdateData(GetLocalPlayer(), playerSectorKV.Key);
                 ClientOwner?.DelegatePlayerPositionToSyncServer(playerPositionData);
             }

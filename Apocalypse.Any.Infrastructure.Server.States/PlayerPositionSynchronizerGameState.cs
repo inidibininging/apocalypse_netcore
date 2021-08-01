@@ -102,6 +102,7 @@ namespace Apocalypse.Any.Infrastructure.Server.States
                     gameStateContext.Logger.LogInformation($"No Error margin: X: {playerPositionUpdate.X} Y {playerPositionUpdate.Y} R {playerPositionUpdate.R}");
                     player.CurrentImage.Position.X = playerPositionUpdate.X;
                     player.CurrentImage.Position.Y = playerPositionUpdate.Y;
+                    
                     player.CurrentImage.Rotation.Rotation = playerPositionUpdate.R;
                 }
                 return;

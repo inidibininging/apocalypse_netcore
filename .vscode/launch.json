@@ -15,6 +15,17 @@
         "stopAtEntry": false,
         "console": "internalConsole"
     },
+    {
+        "name": "Client(no local server)",
+        "type": "coreclr",
+        "request": "launch",
+        "preLaunchTask": "build",
+        "program": "${workspaceFolder}/Apocalypse.Any.Client/bin/Debug/net5.0/Apocalypse.Any.Client.dll",
+        "args": ["/home/develop/src/apocalypse_netcore/gameclient_config_to_local.yaml"],
+        "cwd": "${workspaceFolder}",
+        "stopAtEntry": false,
+        "console": "internalConsole"
+    },
         {
             "OS-COMMENT1": "Use IntelliSense to find out which attributes exist for C# debugging",
             "OS-COMMENT2": "Use hover for the description of the existing attributes",

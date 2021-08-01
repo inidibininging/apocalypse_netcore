@@ -97,7 +97,7 @@ namespace Apocalypse.Any.Infrastructure.Common.Services.Data
                         
                         X = Math.Abs(imgAfter.Position.X - imgBefore.Position.X) > FloatTolerance ? (float?)imgAfter.Position.X : null,
                         Y = Math.Abs(imgAfter.Position.Y - imgBefore.Position.Y) > FloatTolerance ? (float?)imgAfter.Position.Y : null,
-                        Rotation = Math.Abs(imgAfter.Rotation.Rotation - imgBefore.Rotation.Rotation) > FloatTolerance ? (float?)imgAfter.Rotation.Rotation : null,
+                        Rotation = (float?)imgAfter.Rotation.Rotation,//Math.Abs(imgAfter.Rotation.Rotation - imgBefore.Rotation.Rotation) > FloatTolerance ? (float?)imgAfter.Rotation.Rotation : null,
                         
                         ScaleX = Math.Abs(imgAfter.Scale.X - imgBefore.Scale.X) > FloatTolerance ? (float?)imgAfter.Scale.X : null,
                         ScaleY = Math.Abs(imgAfter.Scale.Y - imgBefore.Scale.Y) > FloatTolerance ? (float?)imgAfter.Scale.Y : null,
@@ -198,7 +198,9 @@ namespace Apocalypse.Any.Infrastructure.Common.Services.Data
                 imgPack.imgBefore.Alpha.Alpha = imgPack.delta.Alpha.HasValue && Math.Abs(imgPack.delta.Alpha.Value - imgPack.imgBefore.Alpha.Alpha) > FloatTolerance ? imgPack.delta.Alpha.Value : imgPack.imgBefore.Alpha.Alpha;
                 imgPack.imgBefore.LayerDepth = imgPack.delta.LayerDepth.HasValue && Math.Abs(imgPack.delta.LayerDepth.Value - imgPack.imgBefore.LayerDepth) > FloatTolerance ? imgPack.delta.LayerDepth.Value : imgPack.imgBefore.LayerDepth;
                 
-                imgPack.imgBefore.Rotation.Rotation = imgPack.delta.Rotation.HasValue && Math.Abs(imgPack.delta.Rotation.Value - imgPack.imgBefore.Rotation.Rotation) > FloatTolerance ? imgPack.delta.Rotation.Value : imgPack.imgBefore.Rotation.Rotation;
+                if(imgPack.delta.Rotation.HasValue)
+                    imgPack.imgBefore.Rotation.Rotation = imgPack.delta.Rotation.Value;
+
                 imgPack.imgBefore.Position.X = imgPack.delta.X.HasValue && Math.Abs(imgPack.delta.X.Value - imgPack.imgBefore.Position.X) > FloatTolerance ? imgPack.delta.X.Value : imgPack.imgBefore.Position.X;
                 imgPack.imgBefore.Position.Y = imgPack.delta.Y.HasValue && Math.Abs(imgPack.delta.Y.Value - imgPack.imgBefore.Position.Y) > FloatTolerance ? imgPack.delta.Y.Value : imgPack.imgBefore.Position.Y;
                 
